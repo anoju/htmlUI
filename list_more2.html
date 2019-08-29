@@ -1,0 +1,149 @@
+<!DOCTYPE html> 
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>list more</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css" />
+	<link rel="stylesheet" href="http://fonts.googleapis.com/earlyaccess/notosanskr.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<!--[if lt IE 9]>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+	<![endif]-->
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+<style>
+body {background-color: #FAF3DD;font-family:'Noto Sans KR';}
+#wrap{overflow: hidden;padding: 2em 3%;}
+#wrap > div{display: block;float: left;width: 25%;padding: 1em;box-sizing: border-box;overflow: hidden;}
+#wrap .box{background: #fff;padding:1em;}
+#wrap .box .btn_more{display: none;}
+#wrap ul > li +li{margin: 5px;}
+@media only screen and (max-width: 1024px){
+    #wrap{padding: 0;}
+    #wrap > div{width: 50%;}
+    #wrap > div:nth-child(odd){clear: both;}
+    #wrap .box .btn_more{display: block;}
+}
+@media only screen and (max-width: 760px){
+    #wrap > div{width: auto;float: none;}
+}
+</style>
+
+</head>
+<body>
+	<div id="wrap">
+        <div>
+            <div class="box">
+                <ul class="list">
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <div class="box">
+                <ul class="list">
+                    <li>텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 </li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <div class="box">
+                <ul class="list2">
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <div class="box">
+                <ul class="list2">
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                    <li>텍스트 텍스트 텍스트 텍스트 텍스트 </li>
+                </ul>                
+            </div>
+        </div>
+    </div>
+    
+
+<script type="text/javascript">
+$(function(){
+    listMoreUI('.list',4);
+    listMoreUI('.list2',3);
+});
+
+function listMoreUI(tar,num){
+    function listfirst(){
+        $(tar).each(function(){
+            var $leng = $(this).children('li').length;
+            if($leng > (num-1)){
+                $(this).after('<a href="#" class="btn_more">더보기 +</a>');
+            }
+        });
+    }
+    listfirst();
+
+    function listHidden(list,val){
+        $(list).each(function(){
+            if(val == true){
+                var $leng = $(this).children('li').length;
+                $(this).children('li').slice(num,$leng).hide();
+            }else if(val == false){
+                $(this).children('li').removeAttr('style');
+            }
+        });
+    }
+
+    $(tar).next('.btn_more').on('click',function(e){
+        e.preventDefault();
+        var $txt = $(this).text(),
+            $list = $(this).prev('ul');
+        if($txt == '더보기 +'){
+            listHidden($list,false);
+            $(this).text('닫기 -');
+        }else{
+            listHidden($list,true);
+            $(this).text('더보기 +');
+        }
+    });
+
+    $(window).on('load resize',function(){
+        var $winWidth = $(window).width();
+        if($winWidth <= 1024){
+            $(tar).each(function(){
+                //console.log($(this).next().text())
+                if($(this).next().text() == '더보기 +'){
+                    listHidden(this,true);
+                }
+            });
+        }else{
+            listHidden(tar,false);
+        }
+    });
+}
+</script>
+</body>
+</html>

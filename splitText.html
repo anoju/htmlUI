@@ -1,0 +1,98 @@
+<!DOCTYPE html> 
+<html lang="ko">
+<head>
+	<meta charset="utf-8">
+	<title>Anoju.com</title>
+	<meta content="IE=edge" http-equiv="X-UA-Compatible">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+	
+	<link rel="stylesheet" href="https://cdn.rawgit.com/theeluwin/NotoSansKR-Hestia/master/stylesheets/NotoSansKR-Hestia.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+	<style>
+	body{word-break:keep-all;font-family:'Noto Sans Korean';text-align:center;}
+	h1{font-size:1.25em;margin:1.5em 0;}
+	.splitText .spt{display:inline-block;opacity:0;transition:1s;}
+	.splitText.on .spt{opacity:1;transform:translate3d(0,0,0) scale(1) !important;}
+	.f-red{color:#dd0000;}
+	</style>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+</head>
+<body>
+<h1 class="splitText">글자여 순서대로 나타나거라.</h1>
+<h1 class="splitText" data-sp-delay="300">천천히 순서대로 나타나거라.</h1>
+<h1 class="splitText">BR태그가 있어도<br> 순서대로 나타나거라.</h1>
+<h1 class="splitText" style="font-weight:normal"><strong class="f-red">다른태그</strong>가 있어도 순서대로 나타나거라.</h1>
+<h1 class="splitText" data-sp-distance="50">산개되서 순서대로 나타나거라.</h1>
+<script>
+var random = function(min,max){
+	return ((Math.random() * (max-min)) + min).toFixed(2);
+}
+var splitText = function(tar){
+	var $tar = $(tar);
+	$tar.each(function(){
+		var $this = $(this),
+			$split = $this.html().split(''),
+			$html = '',
+			$tag = '',
+			$isTag = false,
+			j = 0,
+			$style = $this.attr('style'),
+			$delay = $this.data('sp-delay'),
+			$distance = $this.data('sp-distance');
+		if($delay == null)$delay = 200;
+		
+		$this.css('height',$this.height()).html('');
+		
+		for(var i in $split){
+			if($distance != null){
+				
+			}
+			if($isTag){
+				$tag += $split[i];
+				if($split[i] == '>'){
+					$isTag = false;
+					$html += $tag;
+				}
+			}else{
+				if($split[i] == '<'){
+					$tag = $split[i],
+					$isTag = true;
+				}else if($split[i] == ' '){
+					$html += '<span class="spt">&nbsp;</span>';
+				}else{
+					j++;
+					
+					$html += '<span class="spt" style="';
+					$html += '-webkit-transition-delay:'+(j * $delay)+'ms;';
+					$html += 'transition-delay:'+(j * $delay)+'ms;';
+					if($distance != null){
+						var $posX = random(-$distance,$distance),
+							$posY = random(-$distance,$distance),
+							$posZ = random(-$distance,$distance),
+							$scale = random(0.3,0.8);
+						$html += '-webkit-transform:translate3d('+$posX+'px,'+$posY+'px,'+$posZ+'px) scale('+$scale+');';
+						$html += 'transform:translate3d('+$posX+'px,'+$posY+'px,'+$posZ+'px) scale('+$scale+');';
+					}
+					$html += '">';
+					$html += $split[i];
+					$html += '</span>';
+				}
+			}
+		}
+		$this.html($html).removeAttr('style');
+		if($style)$this.attr('style',$style);
+	});
+}
+$(document).ready(function(){
+	splitText('.splitText');
+	setTimeout(function(){
+		$('.splitText').addClass('on');
+	},300)
+});
+</script>
+</body>
+</html>
