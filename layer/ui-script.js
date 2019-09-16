@@ -47,7 +47,7 @@ var isMobile ={
 	check: function(){
 		if(isMobile.any()){
 			if(isMabile.iOS())$('html').addClass('ios');
-			if(isMobile.Android())$('html').addclass('android');
+			if(isMobile.Android())$('html').addClass('android');
 		}
 	}
 };
@@ -523,7 +523,7 @@ var tooltipInit = function(){
 			var $tip= $('#'+ui.tooltip[0].id),
 				$left = parseInt($tip.css('left')),
 				$top = parseInt($tip.css('top'));
-			if($left < event.pageX)$tip.addclass('arr_right');
+			if($left < event.pageX)$tip.addClass('arr_right');
 			if($top < event.pageY)$tip.addClass('arr_bottom');
 		}	
 	});
@@ -620,7 +620,7 @@ var tabUI = function(){
 				}else{
 					location.hash = $href;
 				}
-				$(this).parent().prepend($onlext).addclass('active').siblings().removeClass('active').find('.blind').remove();
+				$(this).parent().prepend($onlext).addClass('active').siblings().removeClass('active').find('.blind').remove();
 				$(this).attr('aria-selected',true).closest('li').siblings().find('[role=tab]').attr('aria-selected',false);
 				$($href).addClass('on').attr('aria-expanded',true);
 				$(this).parent().siblings().find('a').each(function(){
@@ -757,7 +757,7 @@ var scrollItem = function(){
 				$duration = $el.data('duration'),
 				$animationIn = $el.data('animation-in');
 			
-			if(!$el.hasclass('animated') && $animationclass != 'on'){
+			if(!$el.hasClass('animated') && $animationclass != 'on'){
 				if(!!$delay){
 					$el.css({
 						'-webkit-animation-delay': $delay+'ms',
@@ -779,17 +779,17 @@ var scrollItem = function(){
 					}
 				}else{
 					if($el.hasClass('animated')){
-						$el.removeclass($animationClass);
+						$el.removeClass($animationClass);
 					}else{
-						$el.removeclass($animationClass);
+						$el.removeClass($animationClass);
 					}
 				}
 			}
 			if(($elCenter >= $scrollTop) && ($elCenter <= $winBottom)){
-				if($el.hasclass('animated')){
+				if($el.hasClass('animated')){
 					$el.removeClass('paused');
 				}else{
-					$el.addclass($animationClass);
+					$el.addClass($animationClass);
 				}
 			}					
 		});
@@ -813,7 +813,7 @@ var multiSwiper = function(tar){
 		if($prev.length)$prev.addClass('ui-swipe-prev-'+i);
 		if($next.length)$next.addClass('ui-swipe-next-'+i);
 		if($auto.length)$auto.addClass('ui-swipe-auto-'+i);
-		if($pagination.length)$pagination.addclass('ui-swipe-paginaticn-'+i);
+		if($pagination.length)$pagination.addClass('ui-swipe-paginaticn-'+i);
 		
 		//option
 		var $option,
@@ -900,7 +900,7 @@ var multiSwiper = function(tar){
 		if($length > 1){
 			$swiper = new Swiper('.ui-swipe-'+i,$option);
 		}else{
-			$this.find('.swiper-slide').addclass('full');
+			$this.find('.swiper-slide').addClass('full');
 			$('.uiswipep-prev-'+i).hide();
 			$('.ui-swipe-next-'+i).hide();
 			$('.ui-swipe-auto-'+i).hide();
@@ -910,12 +910,12 @@ var multiSwiper = function(tar){
 		$('.ui-swipe prev-'+i).click(function(e){
 			e.preventDefault();
 			$swipers[i].swipePrev();
-			if($('.ui-swipe auto-'+i).length)$('.ui-swipe-auto-'+i).addclass('play').text('재생');
+			if($('.ui-swipe auto-'+i).length)$('.ui-swipe-auto-'+i).addClass('play').text('재생');
 		});
 		$('.ui-swipe-next-'+i).click(function(e){
 			e.preventDefault();
 			$swipers[i].swipeNext();
-			if($('.ui-swipe auto-'+i).length)$('.ui-swipe-auto-'+i).addclass('play').text('재생');
+			if($('.ui-swipe auto-'+i).length)$('.ui-swipe-auto-'+i).addClass('play').text('재생');
 		});
 		$('.ui-swipe-auto-'+i).click(function(e){
 			e.preventDefault();
@@ -923,7 +923,7 @@ var multiSwiper = function(tar){
 				$(this).removeClass('play').text('정지');
 				$swipens[i].startAutoplay();
 			}else{
-				$(this).addclass('play').text('재생');
+				$(this).addClass('play').text('재생');
 				$swipers[i].stopAutoplay();
 			}
 		});
@@ -1276,7 +1276,7 @@ var Layer = {
 			if(!$popWidth)$popWidth = 500;
 			if(!$popHeight)$popHeight = 500;
 			//팝업이 부모창보다 높이가 크면 높이값 조정
-			if($(this).hasClass('screen') || $(this).parent().hasclass('screen')){
+			if($(this).hasClass('screen') || $(this).parent().hasClass('screen')){
 				//스크린기준 센터
 				if($popHeight >= screen.availHeight){
 					$popHeight = Math.min(screen.availHeight,$popHeight);
@@ -1508,9 +1508,9 @@ var todayPopUI=function(){
 var allLocalStorage = function(e){
 	var archive = [],
 		values = [],
-		keys = Object.keys(localStorage),
-		i = 0, key;
-	for(;key=keys[i];i++){
+		keys = Object.keys(localStorage);
+	for(var i = 0;i<keys.length;i++){
+		var key = keys[i];
 		archive.push(key);
 		values.push(localStorage.getItem(key));	
 	}
@@ -1580,7 +1580,7 @@ var codingListUI = function(){
 				$nextText2 = $(this).next().next().text();
 			if(!!$text){
 				if(!$(this).find('a').length){
-					if($(this).hasclass('pop')){
+					if($(this).hasClass('pop')){
 						$(this).html('<a href="'+$text+'" class="btn+winpop">'+$text+'</a>');
 					}else{
 						$(this).html('<a href="'+$text+'" target="_blank">'+$text+'</a>');
