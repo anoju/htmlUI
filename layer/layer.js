@@ -326,9 +326,11 @@ var Layer = {
 		}).on('click','.popup',function(e){
 			e.stopPropagation();
 		});
-	},
-	loadingShow:function(txt){
-		var _html = '<div id="loading" class="hide"><div><idiv><strong>LOADING</strong>';
+	}
+};
+var	Loading ={
+	open:function(txt){
+		var _html = '<div id="loading" class="hide"><div><div><strong>LOADING</strong>';
 		if(!!txt)_html +='<div>'+txt+'</div>';
 		_html += '</div></div></div>';
 		if(!$('#loading').length){
@@ -336,7 +338,7 @@ var Layer = {
 			$('#loading').fadein(100);
 		}
 	},
-	loadingHide:function(){
+	close:function(){
 		$('#loading').fadeOut(100,function(){
 			$(this).remove();
 		});
