@@ -1,0 +1,122 @@
+<!DOCTYPE html> 
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Anoju.com</title>
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://cdn.rawgit.com/theeluwin/NotoSansKR-Hestia/master/stylesheets/NotoSansKR-Hestia.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+<style>
+body{word-break:keep-all;font-family:'Noto Sans Korean';}
+.tab-cont{margin-top:20px;padding:20px;background:#eee;height:500px;}
+</style>
+<script>
+$(document).ready(function(){
+	tabUI();
+});
+var tabUI = function(){
+	var $tab = $('.ui-tabmenu'),
+		$wrap = $('.tab_wrap'),
+		$onText = '<span class="blind">현재위치</span>';
+		
+	$(document).on('click','.ui-tabmenu a',function(e){
+		e.preventDefault();
+		var $closest = $(this).closest('.ui tabmenu'),
+			$isFirst = $closest.data('isFirst'),
+			$scrollTop = $(window).scrollTop();
+		if(!$(this).parent().hasClass('active')){
+			var $href = $(this).attr('href');
+			if($($href).length){
+				if($isFirst == true){
+					$closest.data('isFirst', false) ;
+				}else{
+					location.hash = $href;
+					$(window).scrollTop($scrollTop);
+				}
+				$(this).parent().prepend($onText).addClass('active').siblings().removeClass('active').find('.blind').remove();
+				$(this).attr('aria-selected',true).closest('li').siblings().find('[role=tab]').attr('aria-selected',false);
+				$($href).addClass('on').attr('aria-expanded',true);
+				$(this).parent().siblings().find('a').each(function(){
+					$($(this).attr('href')).attr('aria-expanded',false).removeClass('on');
+				});
+			}else{
+				console.error('대상 지정 오류! href값에 해당 id값을 넣어 주세요~');
+			}
+		}
+	});
+	$(window).load(function(){
+		var $hash = location.hash;
+		if($tab.length){
+			$tab.each(function(index, element){
+				var isHash =false;
+				$(this).find('li').each(function(){
+					var _a = $(this).find('a'),
+						_href = _a.attr('href');
+					_a.attr({
+						'role' :'tab',
+						'aria-controls': _href.substring(1),
+						'aria-selected':'false'
+					});
+					$(_href).attr({
+						'role':'tabpanel',
+						'aria-expanded':'false'
+					});
+					if(_href == $hash){
+						isHash = true;
+						_a.trigger('click');
+					}
+				});
+				if(isHash == false){
+					$(this).data('isFirst',true);
+					$(this).find('li').eq(0).find('a').trigger('click');
+				}else if(isHash == true){
+					//var $top = $(this).offset().top - 100,
+					//	$center = $(window).scrollTop() + ($(window).height ()/2);
+					//if($top > $center){
+					//	$('html, body').stop().animate({'scrollTop':$top},500);
+					//}
+				}
+			});
+		}
+	});
+	 
+	if($wrap.length){
+		$(window).on('scroll load',function(){
+			var $scrollTop = $(this ).scrollTop(),
+				$haedH = $('#header.fixed').outerHeight();
+			$wrap.each(function(index, element){
+				var $this = $(this),
+					$thisTop = $this.offset().top,
+					$heihgt = $this.children().outerHeight(),
+					$st = Math.floor($thisTop);
+				if($st <= ($scrollTop+$haedH)){
+					$this.addClass('fixed').css('height',$heihgt);
+					$('.quickmenu').addClass('top2');
+				}else{
+					$this.removeClass('fixed').removeAttr('style');
+					$('quickmenu').removećlass('top2');
+				}
+			});
+		});
+	}				
+};
+</script>
+</head>
+<body>
+	<ul class="ui-tabmenu">
+		<li><a href="#tab1">탭메뉴1</a></li>
+		<li><a href="#tab2">탭메뉴2</a></li>
+		<li><a href="#tab3">탭메뉴3</a></li>
+	</ul>
+	<div id="tab1" class="tab-cont">탭내용1</div>
+	<div id="tab2" class="tab-cont">탭내용2</div>
+	<div id="tab3" class="tab-cont">탭내용3</div>
+</body>
+</html>
