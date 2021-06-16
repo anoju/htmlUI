@@ -21,9 +21,9 @@
 .bar_wrap .now_wrap{font-size:12px;margin-bottom:5px;}
 .bar_wrap .now{position:relative;}
 .bar_wrap .progress_now{position:absolute;left:0;top:0;padding:0 10px;line-height:20px;font-size:12px;mix-blend-mode:difference;}
-.bar_wrap .input{display:flex;margin-top:10px;}
-.bar_wrap .input input{width:100%;height:40px;font-size:18px;box-sizing:border-box;padding:3px 10px;border:1px solid #ddd;background:#fff;-webkit-appearance:none;border-radius:4px;}
-.bar_wrap .input button{display:block;flex:0 0 50px;width:50px;height:40px;margin-left:10px;background:#ddd;border:1px solid #bbb;border-radius:4px;-webkit-appearance:none;}
+.bar_wrap .input_wrap{display:flex;margin-top:10px;}
+.bar_wrap .input_wrap input{width:100%;height:40px;font-size:18px;box-sizing:border-box;padding:3px 10px;border:1px solid #ddd;background:#fff;-webkit-appearance:none;border-radius:4px;}
+.bar_wrap .input_wrap button{display:block;flex:0 0 50px;width:50px;height:40px;margin-left:10px;background:#ddd;border:1px solid #bbb;border-radius:4px;-webkit-appearance:none;}
 </style>
 </head>
 <body>
@@ -39,21 +39,42 @@
         <div class="total_wrap">
             <strong class="total">2,000P</strong>
         </div>
-        <div class="input">
-            <input type="text" id="input" value="1400">
-            <button type="button" id="button">수정</button>
+        <div class="input_wrap">
+            <input type="text" class="input" value="1400">
+            <button type="button" class="button">수정</button>
+        </div>
+    </div>
+    <div class="bar_wrap">
+        <div class="now_wrap">
+            <span class="now"><span class="now_num">1,000</span>P</span>
+        </div>
+        <div class="progress">
+            <i></i>
+            <span class="progress_now"><span class="now_num">1,400</span>P</span>
+        </div>
+        <progress value='0' max='100'></progress>
+        <div class="total_wrap">
+            <strong class="total">2,000P</strong>
+        </div>
+        <div class="input_wrap">
+            <input type="text" class="input" value="1000">
+            <button type="button" class="button">수정</button>
         </div>
     </div>
 <script>
     $(function(){
-        progressAnimation();
-
-        $('#button').click(function(){
-            reProgressAnimation();
+        $('.bar_wrap').each(function(){
+            progressAnimation(this);
         });
-        $('#input').keyup(function(e){
+
+        $('.button').click(function(){
+            var wrap = $(this).closest('.bar_wrap')
+            reProgressAnimation(wrap);
+        });
+        $('.input').keyup(function(e){
+            var wrap = $(this).closest('.bar_wrap')
             var $keyCode = (e.keyCode?e.keyCode:e.which);
-            if($keyCode === 13) reProgressAnimation();
+            if($keyCode === 13) reProgressAnimation(wrap);
         });
     });
 
@@ -70,26 +91,28 @@
     };
 
     //프로그레스 animation
-    var progressAnimation = function(){
-        var $now = parseInt(onlyNumber($('.now').text()),10);
-        var $total = parseInt(onlyNumber($('.total').text()),10);
+    var progressAnimation = function(wrap){
+        var $wrap = $(wrap);
+        var $now = parseInt(onlyNumber($wrap.find('.now').text()),10);
+        var $total = parseInt(onlyNumber($wrap.find('.total').text()),10);
         var $per = ($now/$total) * 100;
-        $( 'progress' ).val($per);
-        $( '.progress i' ).animate({
+        console.log($now,$total,$per)
+        $wrap.find('progress').val($per);
+        $wrap.find('.progress i').animate({
             width: $per+'%'
         },{
             duration : Math.max(500, $now), //속도
             step: function( now, fx ) {
                 var $nowval = Math.round(($now / fx.end) * now);
                 if(isNaN($nowval)) $nowval = 0;
-                $('.now_num').text(addComma($nowval));
-                var $nowWidth = $('.now').width();
+                $wrap.find('.now_num').text(addComma($nowval));
+                var $nowWidth = $wrap.find('.now').width();
                 var $nowMargin = $nowWidth / 2;
-                var $nowLeft = $('.progress i').width() - $nowMargin;
-                var $nowRight = $('.progress i').width() + $nowMargin
-                var $wrapWidth = $('.progress').width();
+                var $nowLeft = $wrap.find('.progress i').width() - $nowMargin;
+                var $nowRight = $wrap.find('.progress i').width() + $nowMargin
+                var $wrapWidth = $wrap.find('.progress').width();
                 if($nowLeft > 0 && $nowRight < $wrapWidth){
-                    $('.now').css({
+                    $wrap.find('.now').css({
                         'left':now+'%',
                         'margin-left':-($nowMargin)
                     });
@@ -99,17 +122,18 @@
     }
 
     //재실행
-    var reProgressAnimation = function(){
-        var $val = $('#input').val();
+    var reProgressAnimation = function(wrap){
+        var $wrap = $(wrap);
+        var $val = $wrap.find('.input').val();
         $val = parseInt(onlyNumber($val),10);
-        var $total = parseInt(onlyNumber($('.total').text()),10);
+        var $total = parseInt(onlyNumber($wrap.find('.total').text()),10);
         if($val > $total) {
-            $('#input').val($total);
+            $wrap.find('.input').val($total);
             $val = $total;
         }
-        $('.now_num').text(addComma($val));
-        $('.now, .progress i').removeAttr('style');
-        progressAnimation();
+        $wrap.find('.now_num').text(addComma($val));
+        $wrap.find('.now, .progress i').removeAttr('style');
+        progressAnimation($wrap);
     }
 </script>
 </body>
