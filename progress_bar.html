@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<style>
+*{margin:0;padding:0;}
+.bar_wrap{padding:10px;}
+.bar_wrap progress{width:100%;height:20px;border-radius:10px;overflow:hidden;margin:5px 0;}
+.bar_wrap progress::-webkit-progress-bar{background:#f1f1f1;}
+.bar_wrap progress::-webkit-progress-value{background:#ffdc00;border-radius:10px;animation:progressVal 1s  ease-out backwards}
+@keyframes progressVal {
+  from {width:0;} 
+}
+.bar_wrap .progress{position:relative;height:20px;border-radius:10px;margin:5px 0;overflow:hidden;background:#f1f1f1;}
+.bar_wrap .progress i{display:block;width:0;height:20px;background:#ffdc00;border-radius:10px;}
+.bar_wrap .total_wrap{text-align:right;margin-top:10px;border-radius:10px;}
+.bar_wrap .now_wrap{font-size:12px;margin-bottom:5px;}
+.bar_wrap .now{position:relative;}
+.bar_wrap .input{display:flex;margin-top:10px;}
+.bar_wrap .input input{width:100%;height:40px;font-size:18px;box-sizing:border-box;padding:3px 10px;border:1px solid #ddd;background:#fff;-webkit-appearance:none;border-radius:4px;}
+.bar_wrap .input button{display:block;flex:0 0 50px;width:50px;height:40px;margin-left:10px;background:#ddd;border:1px solid #bbb;border-radius:4px;-webkit-appearance:none;}
+</style>
+</head>
+<body>
+    <div class="bar_wrap">
+        <div class="now_wrap">
+            <span class="now"><span>1,400</span>P</span>
+        </div>
+        <div class="progress">
+            <i></i>
+        </div>
+        <progress value='0' max='100'></progress>
+        <div class="total_wrap">
+            <strong class="total">2,000P</strong>
+        </div>
+        <div class="input">
+            <input type="text" id="input" value="1400">
+            <button type="button" id="button">수정</button>
+        </div>
+    </div>
+<script>
+    $(function(){
+        progressAnimation();
+
+        $('#button').click(function(){
+            reProgressAnimation();
+        });
+        $('#input').keyup(function(e){
+            var $keyCode = (e.keyCode?e.keyCode:e.which);
+            if($keyCode === 13) reProgressAnimation();
+        });
+    });
+
+    
+
+    //숫자만
+    var onlyNumber = function(num){
+        return num.toString().replace(/[^0-9]/g,'');
+    };
+
+    //콤마넣기
+    var addComma = function(num){
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    };
+
+    //프로그레스 animation
+    var progressAnimation = function(){
+        var $now = parseInt(onlyNumber($('.now').text()),10);
+        var $total = parseInt(onlyNumber($('.total').text()),10);
+        var $per = ($now/$total) * 100;
+        $( 'progress' ).val($per);
+        $( '.progress i' ).animate({
+            width: $per+'%'
+        },{
+            duration : Math.max(500, $now), //속도
+            step: function( now, fx ) {
+                var $nowval = Math.round(($now / fx.end) * now);
+                if(isNaN($nowval)) $nowval = 0;
+                $('.now span').text(addComma($nowval));
+                var $nowWidth = $('.now').width();
+                var $nowMargin = $nowWidth / 2;
+                var $nowLeft = $('.progress i').width() - $nowMargin;
+                var $nowRight = $('.progress i').width() + $nowMargin
+                var $wrapWidth = $('.progress').width();
+                if($nowLeft > 0 && $nowRight < $wrapWidth){
+                    $('.now').css({
+                        'left':now+'%'
+                    });
+                    $('.now').css({
+                        'margin-left':-($nowMargin)
+                    });
+                }
+            }
+        });
+    }
+
+    //재실행
+    var reProgressAnimation = function(){
+        var $val = $('#input').val();
+        $val = parseInt(onlyNumber($val),10);
+        var $total = parseInt(onlyNumber($('.total').text()),10);
+        if($val > $total) {
+            $('#input').val($total);
+            $val = $total;
+        }
+        $('.now span').text(addComma($val));
+        $('.now, .progress i').removeAttr('style');
+        progressAnimation();
+    }
+</script>
+</body>
+</html>
