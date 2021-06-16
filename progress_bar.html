@@ -16,11 +16,12 @@
   from {width:0;} 
 }
 .bar_wrap .progress{position:relative;height:20px;border-radius:10px;margin:5px 0;overflow:hidden;background:#f1f1f1;}
-.bar_wrap .progress i{display:block;width:0;height:20px;background:#625bd4;border-radius:10px;}
+.bar_wrap .progress .bar{position:relative;display:block;width:0;height:20px;background:#625bd4;border-radius:10px;overflow:hidden;}
 .bar_wrap .total_wrap{text-align:right;margin-top:10px;border-radius:10px;}
 .bar_wrap .now_wrap{font-size:12px;margin-bottom:5px;}
 .bar_wrap .now{position:relative;}
-.bar_wrap .progress_now{position:absolute;left:0;top:0;padding:0 10px;line-height:20px;font-size:12px;mix-blend-mode:difference;}
+.bar_wrap .progress_now{position:absolute;display:flex;left:0;top:0;width:calc(100vw - 20px);padding:0 10px;line-height:20px;font-size:12px;justify-content:space-between;align-items:center;box-sizing:border-box;color:#222;}
+.bar_wrap .progress .bar .progress_now{color:#fff;}
 .bar_wrap .input_wrap{display:flex;margin-top:10px;}
 .bar_wrap .input_wrap input{width:100%;height:40px;font-size:18px;box-sizing:border-box;padding:3px 10px;border:1px solid #ddd;background:#fff;-webkit-appearance:none;border-radius:4px;}
 .bar_wrap .input_wrap button{display:block;flex:0 0 50px;width:50px;height:40px;margin-left:10px;background:#ddd;border:1px solid #bbb;border-radius:4px;-webkit-appearance:none;}
@@ -32,8 +33,7 @@
             <span class="now"><span class="now_num">1,400</span>P</span>
         </div>
         <div class="progress">
-            <i></i>
-            <span class="progress_now"><span class="now_num">1,400</span>P</span>
+            <i class="bar"></i>
         </div>
         <progress value='0' max='100'></progress>
         <div class="total_wrap">
@@ -45,19 +45,20 @@
         </div>
     </div>
     <div class="bar_wrap">
-        <div class="now_wrap">
-            <span class="now"><span class="now_num">1,000</span>P</span>
-        </div>
         <div class="progress">
-            <i></i>
-            <span class="progress_now"><span class="now_num">1,400</span>P</span>
-        </div>
-        <progress value='0' max='100'></progress>
-        <div class="total_wrap">
-            <strong class="total">2,000P</strong>
+            <div class="progress_now">
+                <div><span class="now_num">100</span>P</div>
+                <div><strong class="total">2,000P</strong></div>
+            </div>
+            <div class="bar">
+                <div class="progress_now">
+                    <div><span class="now_num">100</span>P</div>
+                    <div><strong class="total">2,000P</strong></div>
+                </div>
+            </div>
         </div>
         <div class="input_wrap">
-            <input type="text" class="input" value="1000">
+            <input type="text" class="input" value="100">
             <button type="button" class="button">수정</button>
         </div>
     </div>
@@ -93,12 +94,12 @@
     //프로그레스 animation
     var progressAnimation = function(wrap){
         var $wrap = $(wrap);
-        var $now = parseInt(onlyNumber($wrap.find('.now').text()),10);
-        var $total = parseInt(onlyNumber($wrap.find('.total').text()),10);
+        var $now = parseInt(onlyNumber($wrap.find('.now_num').first().text()),10);
+        var $total = parseInt(onlyNumber($wrap.find('.total').first().text()),10);
         var $per = ($now/$total) * 100;
         console.log($now,$total,$per)
         $wrap.find('progress').val($per);
-        $wrap.find('.progress i').animate({
+        $wrap.find('.progress .bar').animate({
             width: $per+'%'
         },{
             duration : Math.max(500, $now), //속도
@@ -108,8 +109,8 @@
                 $wrap.find('.now_num').text(addComma($nowval));
                 var $nowWidth = $wrap.find('.now').width();
                 var $nowMargin = $nowWidth / 2;
-                var $nowLeft = $wrap.find('.progress i').width() - $nowMargin;
-                var $nowRight = $wrap.find('.progress i').width() + $nowMargin
+                var $nowLeft = $wrap.find('.progress .bar').width() - $nowMargin;
+                var $nowRight = $wrap.find('.progress .bar').width() + $nowMargin
                 var $wrapWidth = $wrap.find('.progress').width();
                 if($nowLeft > 0 && $nowRight < $wrapWidth){
                     $wrap.find('.now').css({
@@ -132,7 +133,7 @@
             $val = $total;
         }
         $wrap.find('.now_num').text(addComma($val));
-        $wrap.find('.now, .progress i').removeAttr('style');
+        $wrap.find('.now, .progress .bar').removeAttr('style');
         progressAnimation($wrap);
     }
 </script>
