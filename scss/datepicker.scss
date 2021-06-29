@@ -55,6 +55,29 @@ html.is_app{
 	[tabindex]{outline:none;}
 }
 
+.wrap{min-height:100vh;padding:20px;background:#eee;}
+.input{
+	position:relative;display:flex;width:100%;background:#f8f8f8;border:1px solid transparent;border-radius:4px; color:#333;align-items:center;
+	input:-internal-autofill-selected{background:none;}
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+	input{
+		width:100%;height:46px;padding:0 3px;font-size:16px;border:0 none;font-weight:bold;color:inherit;background:none;vertical-align:middle;outline:none;-webkit-appearance:none;border-radius:4px;
+		&:first-child{padding-left:16px;}
+		&:last-child{padding-right:16px;}
+		&+div{padding-left:0px;}
+	}
+}
+.pop_datepicker{
+    display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);
+    >div{
+        display:flex;height:100%;align-items:center;justify-content:center;
+    }
+    .datepicker_body{background:#fff;display:inline-block;}
+}
 
 .button{
 	position:relative;overflow:hidden;display:inline-block;width:auto;
@@ -137,26 +160,16 @@ html.is_app{
 }
 
 
-.datepicker_wrap{width:320px;margin:10px auto;}
+.datepicker_wrap{width:320px;}
 
 .ui-datepicker-btn{width:24px;height:46px;font-size:3px;color:transparent;overflow:hidden;background:url("~@/assets/images/common/btn_datepicker.png") no-repeat left center;background-size:auto 24px;}
     
-.popup.modal{
-    .pop_wrap.ui-calendar{
-        width:300px;color:#333;
-        .pop_head{
-            .pop_close{top:12px;right:12px;}
-        }
-        .pop_body{padding-top:40px;padding-bottom:0;}
-    }
-}
-
 .calendar_swiper{
     position:relative;
     .swiper-pagination{display:none;}
 }
 .calendar_head{
-    position:relative;display:flex;line-height:28px;height:28px;align-items:center;justify-content:center;
+    position:relative;display:flex;line-height:28px;align-items:center;justify-content:center;padding-top:16px;
     .tit{
         position:relative;font-size:20px;font-weight:bold;min-width:160px;padding:0 10px;text-align:center;
         strong.button{vertical-align:middle;}
@@ -197,7 +210,9 @@ html.is_app{
 .ui_datepicker_calendar{
     font-size:1.5rem;position:relative;z-index:1;
     .thead,
-    .tbody{display:flex;flex-wrap:wrap;}
+    .tbody,
+    .tr{display:flex;flex-wrap:wrap;}
+    .tr{width:100%;}
     .th{font-size:12px;color:#666;font-weight:bold;}
     .td{font-size:14px;}
     .th,
