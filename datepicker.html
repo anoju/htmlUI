@@ -15,18 +15,18 @@
             <div class="calendar_head">
                 <div class="tit_prev">
                     <button type="button" class="swiper_arr swiper_arr_y swiper_prev_y" aria-label="이전년도 보기" class>이전년도 보기</button>
-                    <button type="button" class="swiper_arr swiper_prev" aria-label="이전달 보기" class>이전달 보기</button>
+                    <button type="button" class="swiper_arr swiper_arr_m swiper_prev" aria-label="이전달 보기" class>이전달 보기</button>
                 </div>
                 <div class="tit">
                     <button type="button" class="button not tit__year"><span>0000</span>년</button>
                     <button type="button" class="button not tit__month"><span>00</span>월</button>
                 </div>
                 <div class="tit_next">
-                    <button type="button" class="swiper_arr swiper_next" aria-label="이전달 보기" class>이전달 보기</button>
+                    <button type="button" class="swiper_arr swiper_arr_m swiper_next" aria-label="이전달 보기" class>이전달 보기</button>
                     <button type="button" class="swiper_arr swiper_arr_y swiper_next_y" aria-label="이전년도 보기" class>이전년도 보기</button>
                 </div>
             </div>
-            <div class="calendar_swiper_body">
+            <div class="calendar_select date">
                 
             </div>
 
@@ -41,17 +41,6 @@
     </div>
 <script>
     const $datepicker = {
-        selectDate: '',
-        isCalendarDay: true,
-        isCalendarMonth: false,
-        isCalendarYear: false,
-        isCalendarBack: false,
-        yearAry: [],
-        calendarYear: null,
-        calendarMonth: null,
-        warpHeight: null,
-        isPrevDisabled: false,
-        isNextDisabled: false,
         todayTimeString (addDay) {
             const $today = new Date();
             if (addDay)$today.setDate($today.getDate() + addDay);
@@ -117,32 +106,13 @@
             }
             return rtnVal;
         },
-        calAryPush(idx, type) {
-            if (type === undefined)type = 'next';
-            if (type !== 'prev' && type !== 'next') return;
-            let year = $datepicker.calendarYear;
-            let month = $datepicker.calendarMonth;
-            // if ($datepicker.selectDate.length === 8) {
-            //     year = Number($datepicker.selectDate.substr(0, 4))
-            //     month = Number($datepicker.selectDate.substr(4, 2))
-            // }
-            month += idx;
-            const n = Math.abs(Math.floor(month / 12));
-            if (month < 1) {
-                year -= n;
-                month += (12 * n);
-            } else if (month > 12) {
-                year += n;
-                month -= (12 * n);
-            }
-            if (month === 0) {
-                year -= 1;
-                month = 12;
-            }
-            if ((`${month}`).length === 1)month = `0${month}`;
-            
+        dateAppend(wrap, year, month) {
+            wrap.find('.calendar_select.date').empty();
+            wrap.find('.tit__year span').text(year);
+            wrap.find('.tit__month span').text(month);
+            wrap.data('year', Number(year));
+            wrap.data('month', Number(month));
             const $body = $datepicker.calendarBody(year, month);
-
             let $html = `<div class="ui_tbl_datepicker">
                 <div class="ui_datepicker_calendar">
                     <div class="thead">
@@ -159,9 +129,7 @@
                     </div>
                 </div>
             </div>`
-
-            if (type === 'prev') $('.calendar_swiper_body').prepend($html);
-            if (type === 'next') $('.calendar_swiper_body').append($html);
+            wrap.find('.calendar_select.date').append($html);
         },
         calendarBody(year, month) {
             let rtnVal = '';
@@ -198,70 +166,128 @@
                 if(el.day === 0){
                     rtnVal += `<div class="td${weekClass}"></div>`;
                 }else{
-                    rtnVal += `<div class="td${weekClass}"><button type="button" class="ui_date_btn" data-day="${year}${month}${el.day}">${el.day}</button></div>`;
+                    rtnVal += `<div class="td${weekClass}"><button type="button" class="date_btn select__date" data-day="${year}${month}${el.day}">${el.day}</button></div>`;
                 }
             });
             return rtnVal;
         },
-        monthAppend(year,month) {
+        monthAppend(wrap, year, month) {
             //month
             const $month = Number(month);
-            $('.month__wrap').empty();
+            wrap.find('.month__wrap').empty();
+            wrap.find('.tit__year span').text(year);
             let $monthHtml = '';
             let mTxt = null;
             for (let m = 1; m <= 12; m += 1) {
                 mTxt = m < 10 ? '0'+m : m
-                $monthHtml += `<li><button class="button not ui_select_btn" data-month="${year}${mTxt}">${mTxt}월</button></li>`;
+                $monthHtml += `<li><button class="button not select_btn select__month" data-month="${year}${mTxt}">${mTxt}월</button></li>`;
             }
-            $('.month__wrap').append($monthHtml);
+            wrap.find('.month__wrap').append($monthHtml);
         },
-        yaerAppend(year) {
+        yaerAppend(wrap, year) {
             //year
             const $year = Number(year);
-            $('.year__wrap').empty();
+            wrap.find('.year__wrap').empty();
             const yaerStart = (Math.floor($year / 10) * 10);
             const yaerEnd = ((Math.floor($year / 10) + 1) * 10) - 1;
-            $('.tit__year span').text(yaerStart+' ~ '+yaerEnd);
+            wrap.find('.tit__year span').text(yaerStart+' ~ '+yaerEnd);
             let $yaerHtml = '';
             for (let y = yaerStart; y <= yaerEnd; y += 1) {
-                $yaerHtml += `<li><button class="button not ui_select_btn" data-year="${y}">${y}년</button></li>`;
+                $yaerHtml += `<li><button class="button not select_btn select__year" data-year="${y}">${y}년</button></li>`;
             }
-            $('.year__wrap').append($yaerHtml);
-        },
-        
-        setYearMonth(year, month) {
-            $datepicker.isPrevDisabled = false;
-            $('.tit__year span').text(year);
-            $('.tit__month span').text(month);
-            $datepicker.calendarMonth = Number(month);
-            $datepicker.calendarYear = Number(year);
-
-            // this.calAryPush(-1);
-            $datepicker.calAryPush(0);
-            // this.calAryPush(1);
-
-            // $datepicker.yaerAppend(year);
-            // $datepicker.monthAppend(year, month);
+            wrap.find('.year__wrap').append($yaerHtml);
         },
         UI() {
-            $('.tit__month').click(function(){
-                const year = $('.tit__year span').text();
-                const month = $('.tit__month span').text();
-                $datepicker.monthAppend(year, month);
-                $('.calendar_select.month').show();
-                $('.tit__month, .calendar_swiper_body, .calendar_select.year').hide();
+            $('.tit__month').click(function(e){
+                e.preventDefault();
+                const $wrap = $(this).closest('.datepicker_wrap');
+                if($wrap.find('.calendar_select.month').is(":visible")) return;
+                let year = Number($wrap.data('year'));
+                let month = Number($wrap.data('month'));
+                $datepicker.monthAppend($wrap, year, month);
+                $wrap.find('.calendar_select.month').show();
+                $wrap.find('.tit__month, .swiper_arr_y, .calendar_select.date, .calendar_select.year').hide();
             });
-            $('.tit__year').click(function(){
-                const year = $('.tit__year span').text();
-                $datepicker.yaerAppend(year);
-                $('.calendar_select.year').show();
-                $('.tit__month, .calendar_swiper_body, .calendar_select.month').hide();
+            $('.tit__year').click(function(e){
+                e.preventDefault();
+                const $wrap = $(this).closest('.datepicker_wrap');
+                if($wrap.find('.calendar_select.year').is(":visible")) return;
+                let year = Number($wrap.data('year'));
+                $datepicker.yaerAppend($wrap, year);
+                $wrap.find('.calendar_select.year').show();
+                $wrap.find('.tit__month, .swiper_arr_y, .calendar_select.date, .calendar_select.month').hide();
+            });
+            $('.swiper_arr_m').click(function(e){
+                e.preventDefault();
+                let type = 'day';
+                let button = 'prev';
+                if($(this).hasClass('swiper_next'))button = 'next';
+                const $wrap = $(this).closest('.datepicker_wrap');
+                let year = Number($wrap.data('year'));
+                let month = Number($wrap.data('month'));
+                if($wrap.find('.calendar_select.year').is(":visible")){
+                    type = 'year';
+                }else if($wrap.find('.calendar_select.month').is(":visible")){
+                    type = 'month';
+                }
+                let setYear = year;
+                if(type === 'year'){
+                    if(button === 'next'){
+                        setYear = year+10;
+                    }else{
+                        setYear = year-10;
+                    }
+                    $wrap.data('year', setYear);
+                    $datepicker.yaerAppend($wrap, setYear);
+                }else if(type === 'month'){
+                    if(button === 'next'){
+                        setYear = year+1;
+                    }else{
+                        setYear = year-1;
+                    }
+                    $wrap.data('year', setYear);
+                    $datepicker.monthAppend($wrap, setYear, month);
+                }else{
+                    let $year = Number(year);
+                    let $month = Number(month);
+                    if(button === 'next'){
+                        $month += 1;
+                    }else{
+                        $month -= 1;
+                    }
+
+                    if (month < 1) {
+                        $year -= 1;
+                        $month += 12;
+                    } else if (month > 12) {
+                        $year += 1;
+                        $month -= 12;
+                    }
+                    if ((`${$month}`).length === 1)$month = `0${$month}`;
+                    $datepicker.dateAppend($wrap, $year, $month);
+                }
+            });
+            $('.swiper_arr_y').click(function(e){
+                e.preventDefault();
+                let button = 'prev';
+                if($(this).hasClass('swiper_next_y'))button = 'next';
+                const $wrap = $(this).closest('.datepicker_wrap');
+                let $year = Number($wrap.data('year'));
+                let $month = Number($wrap.data('month'));
+                if(button === 'next'){
+                    $year += 1;
+                }else{
+                    $year -= 1;
+                }
+                if ((`${$month}`).length === 1)$month = `0${$month}`;
+                $datepicker.dateAppend($wrap, $year, $month);
             });
         },
         init() {
             $datepicker.UI();
             const YearMonth = $datepicker.todayDateString();
-            $datepicker.setYearMonth(YearMonth.substr(0, 4), YearMonth.substr(4, 2));
+            const wrap = $('.datepicker_wrap')
+            $datepicker.dateAppend(wrap, YearMonth.substr(0, 4), YearMonth.substr(4, 2));
         }
     };
     $datepicker.init();

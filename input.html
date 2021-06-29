@@ -1,0 +1,41 @@
+<!DOCTYPE html> 
+<html lang="ko">
+<head>
+	<meta charset="utf-8">
+	<title>레이어 팝업</title>
+	<meta content="IE=edge" http-equiv="X-UA-Compatible">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+	
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+	
+	<style>
+		#wrap{padding:20px;}
+		.input{width:100%;height:40px;line-height:38px;border:1px solid #ddd;-webkit-appearance:none;box-sizing:border-box;}
+		.input+.input{margin-top:10px;}
+	</style>
+	<script>
+		$(function(){
+			$('.input').change(function(){
+				var $val = $(this).val();
+				$(this).next().text($val)
+			});
+		})
+	</script>
+</head>
+
+<body>
+	<div id="wrap">
+		<input type="date" class="input" name="" id="">
+		<div></div>
+		<br>
+		<!-- <input type="text" class="input" name="" id=""> -->
+		
+	</div>
+</body>
+</html>
+
