@@ -451,15 +451,18 @@ if(type === 'datepicker')   $html += '<button type="button" class="swiper_arr sw
                 $datepicker.pop(this, $val, 'yearpicker');
             });
 
-            $('.button.datepicker').click(function(){
+            $('.button.datepicker').click(function(e){
+                e.preventDefault();
                 const $val = $(this).val();
                 $datepicker.pop(this, $val, 'datepicker');
             });
-            $('.button.monthpicker').click(function(){
+            $('.button.monthpicker').click(function(e){
+                e.preventDefault();
                 const $val = $(this).val();
                 $datepicker.pop(this, $val, 'monthpicker');
             });
-            $('.button.yearpicker').click(function(){
+            $('.button.yearpicker').click(function(e){
+                e.preventDefault();
                 const $val = $(this).val();
                 $datepicker.pop(this, $val, 'yearpicker');
             });
