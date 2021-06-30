@@ -76,7 +76,13 @@ html.is_app{
     >div{
         display:flex;height:100%;align-items:center;justify-content:center;
     }
-    .datepicker_body{background:#fff;display:inline-block;}
+    .pop_datepicker_close{display:block;position:absolute;top:0;bottom:0;left:0;right:0;font-size:0;color:transparent;}
+    .datepicker_body{position:relative;background:#fff;display:inline-block;}
+}
+
+.btn_wrap{
+    display:flex;
+    .button{width:100%;margin:0 2px;}
 }
 
 .button{
