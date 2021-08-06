@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>javascript_textarea_auto_grow</title>
+<style>
+/*.textarea{padding:9px;border:1px solid #eee;}*/
+/*.textarea textarea{width:100%;padding:9px;border:1px solid #eee;font-size:16px;resize:none;box-sizing:border-box;}*/
+.textarea textarea{width:80%;padding:9px;border:1px solid #eee;font-size:16px;resize:none;}
+</style>
+</head>
+<body>
+  <div class="textarea">
+    <textarea></textarea>
+  </div>
+<script>
+const textareaUI = {
+  wrapClass: '.textarea',
+  focus (e) {
+    const $el = e.currentTarget;
+    const $wrap = $el.closest(textareaUI.wrapClass);
+    if(!$wrap) return;
+    $wrap.classList.add('focus');
+  },
+  blur (e){
+    const $el = e.currentTarget;
+    const $wrap = $el.closest(textareaUI.wrapClass);
+    if(!$wrap) return;
+    $wrap.classList.remove('focus');
+  },
+  resizing (e){
+    // const delay = (e.type === 'keydown' || e.type === 'cut' || e.type === 'paste' || e.type === 'drop') ? 0: 0;
+    const $el = e.currentTarget;
+    setTimeout(() => {
+      const $rows = parseInt($el.rows);
+      const $pdTop = parseInt(getComputedStyle($el).paddingTop);
+      const $pdBottom = parseInt(getComputedStyle($el).paddingBottom);
+      const $bdTop = parseInt(getComputedStyle($el).borderTopWidth);
+      const $bdBottom = parseInt(getComputedStyle($el).borderBottomWidth);
+      const $elInnerH = $el.clientHeight - $pdTop - $pdBottom;
+      let $rowHeight = parseInt($el.dataset.rowheight);
+      if (Number.isNaN($rowHeight)) {
+        $rowHeight = parseInt(getComputedStyle($el).lineHeight);
+        if(Number.isNaN($rowHeight)) $rowHeight = $elInnerH / $rows;
+        $el.dataset.rowheight = $rowHeight;
+      }
+
+      let isBorderBox = false;
+      if(getComputedStyle($el).boxSizing === 'border-box') isBorderBox = true;
+
+      $el.style.height = '0';
+      const $sclHeight = isBorderBox ? $el.scrollHeight + $bdTop + $bdBottom: $el.scrollHeight - $pdTop - $pdBottom;
+      const $minHeight = isBorderBox ? ($rows * $rowHeight) + $pdTop + $pdBottom + $bdTop + $bdBottom: $rows * $rowHeight;
+      console.log($sclHeight, $minHeight, $rowHeight)
+      const $setHeight = Math.max($minHeight,$sclHeight);
+      $el.style.height = $setHeight + 'px';
+    }, 0);
+  },
+  init(){
+    const $textarea = document.querySelector('textarea');
+    $textarea.addEventListener('focus',textareaUI.focus);
+    $textarea.addEventListener('blur',textareaUI.blur);
+    $textarea.addEventListener('change',textareaUI.resizing);
+    $textarea.addEventListener('cut',textareaUI.resizing);
+    $textarea.addEventListener('paste',textareaUI.resizing);
+    $textarea.addEventListener('drop',textareaUI.resizing);
+    $textarea.addEventListener('keydown',textareaUI.resizing);
+  }
+}
+textareaUI.init();
+</script>
+</body>
+</html>

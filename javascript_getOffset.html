@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>javascript_getOffset</title>
+<style>
+body{padding:0;margin:0;}
+.wrap{position:relative;height:100vh;background:#f1f1f1;display:flex;padding:10px;margin:0;overflow:auto;box-sizing:border-box;}
+.wrap > div{display:flex;width:150px;height:150px;background:#ddd;flex:0 0 150px;box-sizing:border-box;align-items:center;justify-content:center;text-align:center;}
+.wrap > div + div{margin-left:10px;}
+.wrap > div:nth-child(2){margin-top:50px;}
+.wrap > div:nth-child(3){transform:translateY(100px);}
+.wrap > div:nth-child(4){position:relative;border:10px solid #000;}
+.wrap > div:nth-child(5){align-self:center;}
+.wrap > div:nth-child(6){align-self:flex-end;}
+.wrap > div:nth-child(7){position:absolute;left:10px;bottom:10px;margin-left:0;}
+.wrap > div:nth-child(8){position:absolute;left:160px;bottom:10px;border:10px solid #000;}
+.wrap > div .box{display:flex;width:100px;height:100px;background:#333;align-items:center;justify-content:center;color:#fff;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div><div class="box"></div></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div><div class="box"></div></div>
+  </div>
+<script>
+const getOffset = element => {
+  let $el = element;
+  let $elX = 0;
+  let $elY = 0;
+  while ($el && !Number.isNaN($el.offsetLeft) && !Number.isNaN($el.offsetTop)) {
+    let $style = window.getComputedStyle($el);
+    const $matrix = new WebKitCSSMatrix($style.transform);
+    $elX += $el.offsetLeft;
+    $elX += $matrix.m41; //translateX
+    $elY += $el.offsetTop;
+    $elY += $matrix.m42;  //translateY
+    $el = $el.offsetParent;
+    if($el !== null) {
+      $style = window.getComputedStyle($el);
+      $elX += parseInt($style.borderLeftWidth);
+      $elY += parseInt($style.borderTopWidth);
+    }
+  }
+  return {left: $elX, top:$elY}
+}
+
+function resizeChk() {
+  const $boxes = document.querySelectorAll('.box');
+  $boxes.forEach((box) => {
+    const $offset = getOffset(box);
+    box.innerHTML = `left:${$offset.left}<br>top:${$offset.top}`; 
+  })
+}
+resizeChk();
+window.addEventListener('resize',resizeChk);
+</script>
+</body>
+</html>

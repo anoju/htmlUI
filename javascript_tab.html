@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>javascript_tab</title>
+<style>
+body{margin:0;padding:0;}
+.tab-list{display:flex;padding:10px;background:#f1f1f1;overflow:auto;margin:0;}
+.tab-list>li{width:100%;white-space:nowrap;list-style:none;}
+.tab-list>li+li{margin-left:10px;}
+.tab-list a{display:block;padding:5px 10px;background:#fff;color:#000;border-radius:15px;text-align:center;text-decoration:none;font-weight:bold;}
+.tab-list .active a{background:#333;color:#fff;}
+.tab-panel{display:none;}
+</style>
+</head>
+<body>
+
+  <ul class="tab-list">
+    <li><a href="#tabPannel1">탭메뉴 1</a></li>
+    <li><a href="#tabPannel2">탭메뉴 2</a></li>
+    <li><a href="#tabPannel3">탭메뉴 3</a></li>
+  </ul>
+  <div id="tabPannel1" class="tab-panel"><h1>탭내용 1</h1></div>
+  <div id="tabPannel2" class="tab-panel"><h1>탭내용 2</h1></div>
+  <div id="tabPannel3" class="tab-panel"><h1>탭내용 3</h1></div>
+  <br>
+  <br>
+  <br>
+  <ul class="tab-list">
+    <li><a href="#tabPannel4">탭메뉴 4</a></li>
+    <li><a href="#tabPannel5">탭메뉴 5</a></li>
+  </ul>
+  <div id="tabPannel4" class="tab-panel"><h1>탭내용 4</h1></div>
+  <div id="tabPannel5" class="tab-panel"><h1>탭내용 5</h1></div>
+  
+<script>
+const getSiblings = element => {
+	const siblings = [];
+	if (!element.parentNode) return siblings;
+	let sibling = element.parentNode.firstChild;
+	while (sibling) {
+		if (sibling.nodeType === 1 && sibling !== element) siblings.push(sibling);
+		sibling = sibling.nextSibling;
+	}
+	return siblings;
+}
+
+const tab = {
+	first(element, index){
+		const $el = element;
+		$el.setAttribute('role','tablist');
+		const $children = $el.children;
+		Array.prototype.forEach.call($children, (li, liIndex) => {
+			li.setAttribute('role','presentation');
+			const $liChild = li.children[0];
+			$liChild.setAttribute('role','tab');
+			const $btnID = $liChild.getAttribute('id')?$liChild.getAttribute('id'):'tab_btn_'+index+'_'+liIndex;
+			$liChild.setAttribute('id', $btnID);
+			const $href = $liChild.getAttribute('href');
+			const $panel = document.querySelector($href);
+			
+			if ($panel) {
+				$liChild.setAttribute('aria-controls', $href.substr(1));
+				$panel.setAttribute('role','tabpanel');
+				$panel.setAttribute('aria-labelledby', $btnID);
+
+				if(liIndex === 0){
+					li.classList.add('active');
+					$liChild.setAttribute('aria-selected','true');
+					$panel.setAttribute('aria-expanded','true');
+					$panel.style.display = 'block';
+				}else{
+					$liChild.setAttribute('aria-selected','false');
+					$panel.setAttribute('aria-expanded','false');
+					$panel.style.display = 'none';
+				}
+			}
+		});
+	},
+	click(e){
+		const $target = e.target;
+		if ($target.tagName === 'A') {
+			e.preventDefault();
+			const $href = $target.getAttribute('href');
+			const $panel = document.querySelector($href);
+			if(!$panel) return;
+			const $parent = $target.parentNode;
+			$target.setAttribute('aria-selected','true');
+			$parent.classList.add('active');
+			$panel.setAttribute('aria-expanded','true');
+			$panel.style.display = 'block';
+
+			const $liSiblings = getSiblings($parent);
+			$liSiblings.forEach(li => {
+				li.classList.remove('active');
+				const $siblingsChild = li.children[0];
+				const $siblingsChildHref = $siblingsChild.getAttribute('href');
+				const $siblingsChildPanel = document.querySelector($siblingsChildHref);
+				$siblingsChild.setAttribute('aria-selected','false');
+				if($siblingsChildPanel){
+					$siblingsChildPanel.setAttribute('aria-expanded','false');
+					$siblingsChildPanel.style.display = 'none';
+				}
+			})
+		}
+	},
+	init(){
+		const $tablist = document.querySelectorAll('.tab-list');
+		$tablist.forEach((el, i) => {
+			tab.first(el, i);
+			el.addEventListener('click', tab.click);
+		})
+	}
+}
+tab.init();
+</script>
+</body>
+</html>
