@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+<title>lottie_sample</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.11/lottie.min.js"></script>
+<style>
+*{margin:0;padding:0;}
+.wrap{width:300px;margin:0 auto;}
+.lottie{height:300px;}
+.lottie+.lottie{margin-top:20px;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="lottie" data-lottie="lottie/loading.json"></div>
+    <div class="lottie" data-lottie="lottie/haloween.json"></div>
+    <div class="lottie" data-lottie="lottie/love.json"></div>
+  </div>
+<script>
+const $lottie = document.querySelectorAll('.lottie');
+
+$lottie.forEach(element => {
+  const $data = element.dataset.lottie;
+  
+  lottie.loadAnimation({
+    container: element, // the dom element that will contain the animation
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: $data // the path to the animation json
+  });
+});
+</script>
+</body>
+</html>
