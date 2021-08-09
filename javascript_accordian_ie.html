@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>javascript_accordian</title>
+<style>
+body{margin:0;padding:0;}
+.foldings{border-top: 1px solid #333;margin:20px;}
+.folding{border-bottom: 1px solid #ddd;}
+.folding-btn{position:relative;display:block;padding:15px 30px 15px 20px;color:#333;text-decoration:none;}
+.folding-btn:after{content:'';display:block;position:absolute;right:10px;top:50%;width:14px;height:14px;margin-top:-7px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cg fill='none' fill-rule='evenodd' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg stroke='%230B0D0F' stroke-width='1.5'%3E%3Cg%3E%3Cg%3E%3Cpath d='M11 5L7 9 3 5' transform='translate(-337.000000, -761.000000) translate(24.000000, 730.000000) translate(313.000000, 31.000000)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A") no-repeat center center;transition:0.3s;}
+.folding.extend .folding-btn{font-weight:bold;}
+.folding.extend .folding-btn:after{transform:rotate3d(1,0,0,180deg);}
+.folding-panel{display:none;padding:20px;background:#f1f1f1;border-top:5px solid #ddd;}
+</style>
+</head>
+<body>
+<div class="foldings">
+  <div class="folding extend"><!-- 첨부터 열려있음(활성화 클래스: extend) -->
+    <div class="folding-head">
+      <a href="#" class="folding-btn">아코디언 버튼</a>
+    </div>
+    <div class="folding-panel">
+      아코디언 내용입니다. 아코디언 내용입니다. 아코디언 내용입니다. 아코디언 내용입니다. 아코디언 내용입니다.
+    </div>
+  </div>
+  <div class="folding">
+    <div class="folding-head">
+      <a href="#" class="folding-btn">아코디언 버튼</a>
+    </div>
+    <div class="folding-panel">
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.
+    </div>
+  </div>
+  <div class="folding">
+    <div class="folding-head">
+      <a href="#" class="folding-btn">아코디언 버튼 아코디언 버튼</a>
+    </div>
+    <div class="folding-panel">
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.
+    </div>
+  </div>
+</div>
+
+<div class="foldings is-toggle">
+  <div class="folding">
+    <div class="folding-head">
+      <a href="#" class="folding-btn">아코디언 버튼</a>
+    </div>
+    <div class="folding-panel">
+      아코디언 내용입니다. 아코디언 내용입니다. 아코디언 내용입니다. 아코디언 내용입니다. 아코디언 내용입니다.
+    </div>
+  </div>
+  <div class="folding">
+    <div class="folding-head">
+      <a href="#" class="folding-btn">아코디언 버튼</a>
+    </div>
+    <div class="folding-panel">
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.
+    </div>
+  </div>
+  <div class="folding">
+    <div class="folding-head">
+      <a href="#" class="folding-btn">아코디언 버튼 아코디언 버튼</a>
+    </div>
+    <div class="folding-panel">
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.
+    </div>
+  </div>
+</div>
+<script>
+"use strict";
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+//polyfill
+if (!Element.prototype.matches) {
+  Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+}
+
+if (!Element.prototype.closest) {
+  Element.prototype.closest = function (s) {
+    var el = this;
+
+    do {
+      if (Element.prototype.matches.call(el, s)) return el;
+      el = el.parentElement || el.parentNode;
+    } while (el !== null && el.nodeType === 1);
+
+    return null;
+  };
+}
+
+if (!Object.entries) {
+  Object.entries = function (obj) {
+    var ownProps = Object.keys(obj),
+        i = ownProps.length,
+        resArray = new Array(i); // preallocate the Array
+
+    while (i--) {
+      resArray[i] = [ownProps[i], obj[ownProps[i]]];
+    }
+
+    return resArray;
+  };
+}
+
+if (window.NodeList && !NodeList.prototype.forEach) {
+  NodeList.prototype.forEach = Array.prototype.forEach;
+}
+
+var getSiblings = function getSiblings(element) {
+  var siblings = [];
+  if (!element.parentNode) return siblings;
+  var sibling = element.parentNode.firstChild;
+
+  while (sibling) {
+    if (sibling.nodeType === 1 && sibling !== element) siblings.push(sibling);
+    sibling = sibling.nextSibling;
+  }
+
+  return siblings;
+};
+
+function animate(element, props, duration, callback) {
+  if (duration === undefined) duration = 500;
+  var $el = element;
+
+  var easeInOutQuad = function easeInOutQuad(t, b, c, d) {
+    t /= d / 2;
+
+    if (t < 1) {
+      return c / 2 * t * t + b;
+    }
+
+    t--;
+    return -c / 2 * (t * (t - 2) - 1) + b;
+  };
+
+  var requestAnimFrame = function () {
+    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+      window.setTimeout(callback, 1000 / 60);
+    };
+  }();
+
+  function setStyle(propertie, value) {
+    $el.style[propertie] = value + 'px';
+  }
+
+  function getStyle(target, propertie) {
+    var compStyles = window.getComputedStyle(target);
+    return typeof propertie === 'string' ? parseInt(compStyles.getPropertyValue(propertie)) : parseInt(compStyles.propertie);
+  }
+
+  var propertiesAry = [];
+  var startAry = [];
+  var changeAry = [];
+
+  for (var _i = 0, _Object$entries = Object.entries(props); _i < _Object$entries.length; _i++) {
+    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+        key = _Object$entries$_i[0],
+        value = _Object$entries$_i[1];
+
+    propertiesAry.push(key);
+    var start = getStyle($el, key);
+    startAry.push(start);
+    var change = value - start;
+    changeAry.push(change);
+  }
+
+  var currentTime = 0;
+  var increment = 20;
+
+  var animateInit = function animateInit() {
+    currentTime += increment;
+    propertiesAry.forEach(function (properties, i) {
+      var val = easeInOutQuad(currentTime, startAry[i], changeAry[i], duration);
+      setStyle(properties, val);
+    });
+
+    if (currentTime < duration) {
+      requestAnimFrame(animateInit);
+    } else {
+      if (callback && typeof callback === 'function') {
+        callback();
+      }
+    }
+  };
+
+  animateInit();
+}
+
+var folding = {
+  btnClass: 'folding-btn',
+  panelClass: 'folding-panel',
+  activeClass: 'extend',
+  duration: 300,
+  first: function first(element, index) {
+    var $el = element;
+    var $children = $el.children;
+    Array.prototype.forEach.call($children, function (li, liIndex) {
+      var $isOpen = li.classList.contains(folding.activeClass) ? true : false;
+      var $btn = li.querySelector('.' + folding.btnClass);
+      var $panel = li.querySelector('.' + folding.panelClass);
+      var $btnID = $btn.getAttribute('id') ? $btn.getAttribute('id') : 'fd_btn_' + index + '_' + liIndex;
+      var $panelID = $panel.getAttribute('id') ? $panel.getAttribute('id') : 'fd_panel_' + index + '_' + liIndex;
+
+      if ($btn) {
+        $btn.setAttribute('id', $btnID);
+        $btn.setAttribute('aria-controls', $panelID);
+        if ($btn.tagName === 'A') $btn.setAttribute('href', '#' + $panelID);
+
+        if ($isOpen) {
+          $btn.setAttribute('aria-expanded', 'true');
+        } else {
+          $btn.setAttribute('aria-expanded', 'false');
+        }
+      }
+
+      if ($panel) {
+        $panel.setAttribute('id', $panelID);
+        $panel.setAttribute('role', 'region');
+        $panel.setAttribute('aria-labelledby', $btnID);
+
+        if ($isOpen) {
+          $panel.style.display = 'block';
+        } else {
+          $panel.style.display = 'none';
+        }
+      }
+    });
+  },
+  slideUp: function slideUp(element) {
+    element.style.overflow = 'hidden';
+    animate(element, {
+      'height': 0,
+      'padding-top': 0,
+      'padding-bottom': 0,
+      'border-top-width': 0,
+      'border-bottom-width': 0
+    }, folding.duration, function () {
+      element.style.display = 'none';
+      element.style.overflow = '';
+      element.style.height = '';
+      element.style.paddingTop = '';
+      element.style.paddingBottom = '';
+      element.style.borderTopWidth = '';
+      element.style.borderBottomWidth = '';
+    });
+  },
+  slideDown: function slideDown(element) {
+    element.style.height = 0 + 'px';
+    element.style.display = 'block';
+    element.style.overflow = 'hidden';
+    element.style.visibilty = 'hidden';
+    var $pdT = parseInt(window.getComputedStyle(element).paddingTop);
+    var $pdB = parseInt(window.getComputedStyle(element).paddingBottom);
+    var $bdT = parseInt(window.getComputedStyle(element).borderTopWidth);
+    var $bdB = parseInt(window.getComputedStyle(element).borderBottomWidth);
+    var $ScrollHeight = window.getComputedStyle(element).boxSizing === 'border-box' ? element.scrollHeight : element.scrollHeight - $pdT - $pdB - $bdT - $bdB;
+    element.style.paddingTop = 0 + 'px';
+    element.style.paddingBottom = 0 + 'px';
+    element.style.borderTopWidth = 0 + 'px';
+    element.style.borderBottomWidth = 0 + 'px';
+    element.style.visibilty = '';
+    animate(element, {
+      'height': $ScrollHeight,
+      'padding-top': $pdT,
+      'padding-bottom': $pdB,
+      'border-top-width': $bdT,
+      'border-bottom-width': $bdB
+    }, folding.duration, function () {
+      element.style.overflow = '';
+      element.style.height = '';
+      element.style.paddingTop = '';
+      element.style.paddingBottom = '';
+      element.style.borderTopWidth = '';
+      element.style.borderBottomWidth = '';
+    });
+  },
+  click: function click(e) {
+    var $target = e.target;
+    var $isToggle = $target.closest('.is-toggle') ? true : false;
+
+    if ($target.classList.contains(folding.btnClass)) {
+      e.preventDefault();
+      var $parent = $target.parentNode.parentNode;
+      var $panel = $parent.querySelector('.' + folding.panelClass);
+      if (!$panel) return;
+
+      if ($parent.classList.contains(folding.activeClass)) {
+        $target.setAttribute('aria-expanded', 'false');
+        $parent.classList.remove(folding.activeClass);
+        folding.slideUp($panel);
+      } else {
+        $target.setAttribute('aria-expanded', 'true');
+        $parent.classList.add(folding.activeClass);
+        folding.slideDown($panel);
+
+        if ($isToggle) {
+          var $liSiblings = getSiblings($parent);
+          $liSiblings.forEach(function (siblings) {
+            siblings.classList.remove(folding.activeClass);
+            var $siblingsBtn = siblings.querySelector('.' + folding.btnClass);
+            var $siblingsPanel = siblings.querySelector('.' + folding.panelClass);
+            $siblingsBtn.setAttribute('aria-expanded', 'false');
+            folding.slideUp($siblingsPanel);
+          });
+        }
+      }
+    }
+  },
+  init: function init() {
+    var $foldings = document.querySelectorAll('.foldings');
+    $foldings.forEach(function (el, i) {
+      folding.first(el, i);
+      el.addEventListener('click', folding.click);
+    });
+  }
+};
+folding.init();
+</script>
+</body>
+</html>
