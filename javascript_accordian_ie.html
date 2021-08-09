@@ -153,7 +153,7 @@ if (window.NodeList && !NodeList.prototype.forEach) {
   NodeList.prototype.forEach = Array.prototype.forEach;
 }
 
-var getSiblings = function getSiblings(element) {
+var getSiblings = function(element) {
   var siblings = [];
   if (!element.parentNode) return siblings;
   var sibling = element.parentNode.firstChild;
@@ -166,7 +166,7 @@ var getSiblings = function getSiblings(element) {
   return siblings;
 };
 
-function animate(element, props, duration, callback) {
+var animate = function(element, props, duration, callback) {
   if (duration === undefined) duration = 500;
   var $el = element;
 
@@ -187,11 +187,11 @@ function animate(element, props, duration, callback) {
     };
   }();
 
-  function setStyle(propertie, value) {
+  var setStyle = function(propertie, value) {
     $el.style[propertie] = value + 'px';
   }
 
-  function getStyle(target, propertie) {
+  var getStyle = function(target, propertie) {
     var compStyles = window.getComputedStyle(target);
     return typeof propertie === 'string' ? parseInt(compStyles.getPropertyValue(propertie)) : parseInt(compStyles.propertie);
   }
@@ -239,7 +239,7 @@ var folding = {
   panelClass: 'folding-panel',
   activeClass: 'extend',
   duration: 300,
-  first: function first(element, index) {
+  first: function(element, index) {
     var $el = element;
     var $children = $el.children;
     Array.prototype.forEach.call($children, function (li, liIndex) {
@@ -274,7 +274,7 @@ var folding = {
       }
     });
   },
-  slideUp: function slideUp(element) {
+  slideUp: function(element) {
     element.style.overflow = 'hidden';
     animate(element, {
       'height': 0,
@@ -292,7 +292,7 @@ var folding = {
       element.style.borderBottomWidth = '';
     });
   },
-  slideDown: function slideDown(element) {
+  slideDown: function(element) {
     element.style.height = 0 + 'px';
     element.style.display = 'block';
     element.style.overflow = 'hidden';
@@ -322,7 +322,7 @@ var folding = {
       element.style.borderBottomWidth = '';
     });
   },
-  click: function click(e) {
+  click: function(e) {
     var $target = e.target;
     var $isToggle = $target.closest('.is-toggle') ? true : false;
 
@@ -354,7 +354,7 @@ var folding = {
       }
     }
   },
-  init: function init() {
+  init: function() {
     var $foldings = document.querySelectorAll('.foldings');
     $foldings.forEach(function (el, i) {
       folding.first(el, i);

@@ -158,11 +158,11 @@ function animate(element, props, duration = 500, callback) {
     return  window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function( callback ){ window.setTimeout(callback, 1000 / 60); };
   })();
 
-  function setStyle(propertie, value) {
+  const setStyle = (propertie, value) => {
     $el.style[propertie] = value + 'px';
   }
 
-  function getStyle(target, propertie) {
+  const getStyle = (target, propertie) => {
     let compStyles = window.getComputedStyle(target);
     return typeof propertie === 'string' ? parseInt(compStyles.getPropertyValue(propertie)) : parseInt(compStyles.propertie);
   }

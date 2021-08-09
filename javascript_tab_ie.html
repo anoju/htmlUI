@@ -40,9 +40,9 @@ if (window.NodeList && !NodeList.prototype.forEach) {
   NodeList.prototype.forEach = Array.prototype.forEach;
 }
 var getSiblings = function getSiblings(element) {
-  const siblings = [];
+  var siblings = [];
   if (!element.parentNode) return siblings;
-  let sibling = element.parentNode.firstChild;
+  var sibling = element.parentNode.firstChild;
 
   while (sibling) {
     if (sibling.nodeType === 1 && sibling !== element) siblings.push(sibling);
@@ -52,21 +52,21 @@ var getSiblings = function getSiblings(element) {
   return siblings;
 };
 
-const tab = {
+var tab = {
   first: function(element, index) {
-    const $el = element;
+    var $el = element;
     $el.setAttribute("role", "tablist");
-    const $children = $el.children;
+    var $children = $el.children;
     Array.prototype.forEach.call($children, function(li, liIndex) {
       li.setAttribute("role", "presentation");
-      const $liChild = li.children[0];
+      var $liChild = li.children[0];
       $liChild.setAttribute("role", "tab");
-      const $btnID = $liChild.getAttribute("id")
+      var $btnID = $liChild.getAttribute("id")
         ? $liChild.getAttribute("id")
         : "tab_btn_" + index + "_" + liIndex;
       $liChild.setAttribute("id", $btnID);
-      const $href = $liChild.getAttribute("href");
-      const $panel = document.querySelector($href);
+      var $href = $liChild.getAttribute("href");
+      var $panel = document.querySelector($href);
 
       if ($panel) {
         $liChild.setAttribute("aria-controls", $href.substr(1));
@@ -87,24 +87,24 @@ const tab = {
     });
   },
   click: function(e) {
-    const $target = e.target;
+    var $target = e.target;
 
     if ($target.tagName === "A") {
       e.preventDefault();
-      const $href = $target.getAttribute("href");
-      const $panel = document.querySelector($href);
+      var $href = $target.getAttribute("href");
+      var $panel = document.querySelector($href);
       if (!$panel) return;
-      const $parent = $target.parentNode;
+      var $parent = $target.parentNode;
       $target.setAttribute("aria-selected", "true");
       $parent.classList.add("active");
       $panel.setAttribute("aria-expanded", "true");
       $panel.style.display = "block";
-      const $liSiblings = getSiblings($parent);
+      var $liSiblings = getSiblings($parent);
       $liSiblings.forEach(function(li) {
         li.classList.remove("active");
-        const $siblingsChild = li.children[0];
-        const $siblingsChildHref = $siblingsChild.getAttribute("href");
-        const $siblingsChildPanel = document.querySelector($siblingsChildHref);
+        var $siblingsChild = li.children[0];
+        var $siblingsChildHref = $siblingsChild.getAttribute("href");
+        var $siblingsChildPanel = document.querySelector($siblingsChildHref);
         $siblingsChild.setAttribute("aria-selected", "false");
 
         if ($siblingsChildPanel) {
@@ -116,7 +116,7 @@ const tab = {
   },
 
   init: function() {
-    const $tablist = document.querySelectorAll(".tab-list");
+    var $tablist = document.querySelectorAll(".tab-list");
     $tablist.forEach(function (el, i) { 
       tab.first(el, i);
       el.addEventListener("click", tab.click);
