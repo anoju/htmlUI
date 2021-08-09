@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>javascript_accordian</title>
+<style>
+body{margin:0;padding:0;}
+.foldings{border-top: 1px solid #333;margin:20px;}
+.folding{border-bottom: 1px solid #ddd;}
+.folding-btn{position:relative;display:block;padding:15px 30px 15px 20px;color:#333;text-decoration:none;}
+.folding-btn:after{content:'';display:block;position:absolute;right:10px;top:50%;width:14px;height:14px;margin-top:-7px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cg fill='none' fill-rule='evenodd' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg stroke='%230B0D0F' stroke-width='1.5'%3E%3Cg%3E%3Cg%3E%3Cpath d='M11 5L7 9 3 5' transform='translate(-337.000000, -761.000000) translate(24.000000, 730.000000) translate(313.000000, 31.000000)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A") no-repeat center center;transition:0.3s;}
+.folding.extend .folding-btn{font-weight:bold;}
+.folding.extend .folding-btn:after{transform:rotate3d(1,0,0,180deg);}
+.folding-panel{display:none;padding:20px;background:#f1f1f1;border-top:5px solid #ddd;}
+</style>
+</head>
+<body>
+<div class="foldings">
+  <div class="folding extend"><!-- 첨부터 열려있음(활성화 클래스: extend) -->
+    <div class="folding-head">
+      <a href="#" class="folding-btn">아코디언 버튼</a>
+    </div>
+    <div class="folding-panel">
+      아코디언 내용입니다. 아코디언 내용입니다. 아코디언 내용입니다. 아코디언 내용입니다. 아코디언 내용입니다.
+    </div>
+  </div>
+  <div class="folding">
+    <div class="folding-head">
+      <a href="#" class="folding-btn">아코디언 버튼</a>
+    </div>
+    <div class="folding-panel">
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.
+    </div>
+  </div>
+  <div class="folding">
+    <div class="folding-head">
+      <a href="#" class="folding-btn">아코디언 버튼 아코디언 버튼</a>
+    </div>
+    <div class="folding-panel">
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.
+    </div>
+  </div>
+</div>
+
+<div class="foldings is-toggle">
+  <div class="folding">
+    <div class="folding-head">
+      <a href="#" class="folding-btn">아코디언 버튼</a>
+    </div>
+    <div class="folding-panel">
+      아코디언 내용입니다. 아코디언 내용입니다. 아코디언 내용입니다. 아코디언 내용입니다. 아코디언 내용입니다.
+    </div>
+  </div>
+  <div class="folding">
+    <div class="folding-head">
+      <a href="#" class="folding-btn">아코디언 버튼</a>
+    </div>
+    <div class="folding-panel">
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.
+    </div>
+  </div>
+  <div class="folding">
+    <div class="folding-head">
+      <a href="#" class="folding-btn">아코디언 버튼 아코디언 버튼</a>
+    </div>
+    <div class="folding-panel">
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.<br>
+      아코디언 내용입니다. 아코디언 내용입니다.
+    </div>
+  </div>
+</div>
+<script>
+const getSiblings = element => {
+	const siblings = [];
+	if (!element.parentNode) return siblings;
+	let sibling = element.parentNode.firstChild;
+	while (sibling) {
+		if (sibling.nodeType === 1 && sibling !== element) siblings.push(sibling);
+		sibling = sibling.nextSibling;
+	}
+	return siblings;
+}
+
+function animate(element, props, duration = 500, callback) {
+  const $el = element;
+  const easeInOutQuad = function (t, b, c, d) {
+    t /= d/2;
+    if (t < 1) {
+      return c/2*t*t + b
+    }
+    t--;
+    return -c/2 * (t*(t-2) - 1) + b;
+  };
+
+  const requestAnimFrame = (function(){
+    return  window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function( callback ){ window.setTimeout(callback, 1000 / 60); };
+  })();
+
+  function setStyle(propertie, value) {
+    $el.style[propertie] = value + 'px';
+  }
+
+  function getStyle(target, propertie) {
+    let compStyles = window.getComputedStyle(target);
+    return typeof propertie === 'string' ? parseInt(compStyles.getPropertyValue(propertie)) : parseInt(compStyles.propertie);
+  }
+  const propertiesAry = [];
+  const startAry = [];
+  const changeAry = [];
+  for (const [key, value] of Object.entries(props)) {
+    propertiesAry.push(key);
+    const start = getStyle($el, key);
+    startAry.push(start);
+    const change = value - start;
+    changeAry.push(change);
+  }
+  let currentTime = 0;
+  const increment = 20;
+
+  const animateInit = function() {
+    currentTime += increment;
+    propertiesAry.forEach((properties, i) => {
+      const val = easeInOutQuad(currentTime, startAry[i], changeAry[i], duration);
+      setStyle(properties, val);
+    });
+    if (currentTime < duration) {
+      requestAnimFrame(animateInit);
+    } else {
+      if (callback && typeof(callback) === 'function') {
+        callback();
+      }
+    }
+  };
+  animateInit();
+}
+
+const folding = {
+  btnClass: 'folding-btn',
+  panelClass: 'folding-panel',
+  activeClass: 'extend',
+  duration: 300,
+	first(element, index){
+		const $el = element;
+		const $children = $el.children;
+		Array.prototype.forEach.call($children, (li, liIndex) => {
+      const $isOpen = li.classList.contains(folding.activeClass) ? true : false;
+			const $btn = li.querySelector('.'+folding.btnClass);
+			const $panel = li.querySelector('.'+folding.panelClass);
+			const $btnID = $btn.getAttribute('id')?$btn.getAttribute('id'):'fd_btn_'+index+'_'+liIndex;
+			const $panelID = $panel.getAttribute('id')?$panel.getAttribute('id'):'fd_panel_'+index+'_'+liIndex;
+
+      if ($btn) {
+        $btn.setAttribute('id', $btnID);
+        $btn.setAttribute('aria-controls',$panelID);
+        if ($btn.tagName === 'A') $btn.setAttribute('href','#'+ $panelID);
+        if($isOpen){
+          $btn.setAttribute('aria-expanded','true');
+        }else{
+          $btn.setAttribute('aria-expanded','false');
+        }
+      }
+			
+			if ($panel) {
+        $panel.setAttribute('id', $panelID);
+        $panel.setAttribute('role', 'region');
+        $panel.setAttribute('aria-labelledby', $btnID);
+        if($isOpen) {
+          $panel.style.display = 'block';
+        }else{
+          $panel.style.display = 'none';
+        }
+			}
+		});
+	},
+  slideUp(element){
+    element.style.overflow = 'hidden';
+    animate(element, {'height': 0,'padding-top': 0,'padding-bottom': 0,'border-top-width':0,'border-bottom-width':0} , folding.duration, () => {
+      element.style.display = 'none';
+      element.style.overflow = '';
+      element.style.height = '';
+      element.style.paddingTop = '';
+      element.style.paddingBottom = '';
+      element.style.borderTopWidth = '';
+      element.style.borderBottomWidth = '';
+    });
+  },
+  slideDown(element){
+    element.style.height = 0+'px';
+    element.style.display = 'block';
+    element.style.overflow = 'hidden';
+    element.style.visibilty = 'hidden';
+    const $pdT = parseInt(window.getComputedStyle(element).paddingTop);
+    const $pdB = parseInt(window.getComputedStyle(element).paddingBottom);
+    const $bdT = parseInt(window.getComputedStyle(element).borderTopWidth);
+    const $bdB = parseInt(window.getComputedStyle(element).borderBottomWidth);
+    const $ScrollHeight = window.getComputedStyle(element).boxSizing === 'border-box' ? element.scrollHeight : element.scrollHeight-$pdT-$pdB-$bdT-$bdB;
+    element.style.paddingTop = 0+'px';
+    element.style.paddingBottom = 0+'px';
+    element.style.borderTopWidth = 0+'px';
+    element.style.borderBottomWidth = 0+'px';
+    element.style.visibilty = '';
+    animate(element, {'height': $ScrollHeight,'padding-top':$pdT,'padding-bottom':$pdB,'border-top-width':$bdT,'border-bottom-width':$bdB}, folding.duration, () => {
+      element.style.overflow = '';
+      element.style.height = '';
+      element.style.paddingTop = '';
+      element.style.paddingBottom = '';
+      element.style.borderTopWidth = '';
+      element.style.borderBottomWidth = '';
+    });
+  },
+	click(e){
+		const $target = e.target;
+    const $isToggle = $target.closest('.is-toggle') ? true : false;
+		if ($target.classList.contains(folding.btnClass)) {
+			e.preventDefault();
+      const $parent = $target.parentNode.parentNode;
+      const $panel = $parent.querySelector('.'+folding.panelClass);
+      if(!$panel) return;
+      
+      if($parent.classList.contains(folding.activeClass)){
+        $target.setAttribute('aria-expanded','false');
+        $parent.classList.remove(folding.activeClass);
+        folding.slideUp($panel);
+      }else{
+        $target.setAttribute('aria-expanded','true');
+        $parent.classList.add(folding.activeClass);
+        folding.slideDown($panel);
+        
+        if($isToggle){
+          const $liSiblings = getSiblings($parent);
+          $liSiblings.forEach(siblings => {
+            siblings.classList.remove(folding.activeClass);
+            const $siblingsBtn = siblings.querySelector('.'+folding.btnClass);
+            const $siblingsPanel = siblings.querySelector('.'+folding.panelClass);
+            $siblingsBtn.setAttribute('aria-expanded','false');
+            folding.slideUp($siblingsPanel);
+          });
+        }
+      }
+		}
+	},
+	init(){
+		const $foldings = document.querySelectorAll('.foldings');
+		$foldings.forEach((el, i) => {
+			folding.first(el, i);
+			el.addEventListener('click', folding.click);
+		})
+	}
+}
+folding.init();
+</script>
+</body>
+</html>
