@@ -1,0 +1,106 @@
+body {
+  margin: 0;
+  padding: 0;
+  color: #666;
+}
+
+.tabs {
+  margin-top: 20px;
+}
+.tabs .tab-menu {
+  position: relative;
+  overflow-y: hidden;
+  overflow-x: auto;
+  border-bottom: 1px solid #f1f1f1;
+}
+.tabs .tab-menu .tab-line {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  height: 2px;
+  width: 0;
+  background: #000;
+}
+.tabs .tab-menu.line-moving .tab-line {
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+}
+.tabs .tab-menu .tab-list {
+  position: relative;
+  display: flex;
+  padding: 0;
+  margin: 0;
+}
+.tabs .tab-menu .tab-list .tab-item {
+  list-style: none;
+  width: 100%;
+  opacity: 0.4;
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+}
+.tabs .tab-menu .tab-list .tab-item.tab-active {
+  opacity: 1;
+}
+.tabs .tab-menu .tab-list .tab-item .tab {
+  display: flex;
+  height: 44px;
+  padding: 0 15px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+  justify-content: center;
+  align-items: center;
+  color: #000;
+  text-decoration: none;
+}
+.tabs .tab-contents {
+  position: relative;
+  overflow: hidden;
+  margin-top: 10px;
+  transition: height 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+}
+.tabs .tab-contents .tab-panel {
+  display: none;
+}
+.tabs .tab-contents .tab-panel.tab-panel-active, .tabs .tab-contents .tab-panel.tab-panel-enter, .tabs .tab-contents .tab-panel.tab-panel-leave {
+  display: block;
+}
+.tabs .tab-contents .tab-panel-leave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.tabs .tab-contents.panel-in-right .tab-panel-enter {
+  animation: panelEnterRight 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+}
+.tabs .tab-contents.panel-in-right .tab-panel-leave {
+  animation: panelLeaveRight 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+}
+.tabs .tab-contents.panel-in-left .tab-panel-enter {
+  animation: panelEnterLeft 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+}
+.tabs .tab-contents.panel-in-left .tab-panel-leave {
+  animation: panelLeaveLeft 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+}
+
+@keyframes panelEnterRight {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes panelLeaveRight {
+  to {
+    transform: translateX(-100%);
+  }
+}
+@keyframes panelEnterLeft {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes panelLeaveLeft {
+  to {
+    transform: translateX(100%);
+  }
+}
