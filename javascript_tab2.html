@@ -54,7 +54,7 @@
 			<ul class="tab-list">
 				<li class="tab-item"><a href="#" class="tab">탭1</a></li>
 				<li class="tab-item"><a href="#" class="tab">탭2</a></li>
-				<li class="tab-item"><a href="#" class="tab">탭3</a></li>
+				<li class="tab-item tab-active"><a href="#" class="tab">탭3</a></li>
 				<li class="tab-item"><a href="#" class="tab">탭4</a></li>
 				<li class="tab-item"><a href="#" class="tab">탭5</a></li>
 				<li class="tab-item"><a href="#" class="tab">탭6</a></li>
@@ -313,9 +313,11 @@ const tabUI = (element, option) => {
 		const $activeL = getPositionLeft($active);
 		$line.style.width = $activeW+'px';
 		$line.style.left = $activeL+'px';
-		$line.addEventListener('transitionend',()=>{
+		const transitionendEvt = () => {
 			wrap.classList.remove(lineMovingClass);
-		});
+			$line.removeEventListener('transitionend',transitionendEvt);
+		}
+		$line.addEventListener('transitionend',transitionendEvt);
 	};
 
 	// active center scroll animation
@@ -415,11 +417,14 @@ const tabUI = (element, option) => {
 			$panel.classList.add(activePanelClass, enterPanelClass);
 			$contents.style.height = $panel.offsetHeight + 'px';
 			$beforePanel.classList.add(leavePanelClass);
-			$panel.addEventListener('animationend',() => {
+
+			const animationendEvt = () => {
 				$contents.classList.remove(panelInRightClass, panelInLeftClass);
 				$panel.classList.remove(enterPanelClass);
 				$beforePanel.classList.remove(leavePanelClass);
-			});
+				$panel.removeEventListener('animationend', animationendEvt);
+			}
+			$panel.addEventListener('animationend', animationendEvt);
 
 			lineMove($menu);
 			activeCenter($menu);
@@ -455,7 +460,7 @@ const tabUI = (element, option) => {
 }
 
 // 탭 실행
-const $tabs = document.querySelector('.tabs');
+const $tabs = document.querySelectorAll('.tabs');
 tabUI($tabs);
 </script>
 </body>
