@@ -395,22 +395,25 @@ const tabUI = (element, option) => {
 			const $beforeIdx = Array.from($items).indexOf($itemsActive);
 			const $beforePanel = $panels[$beforeIdx];
 			if($idx === $beforeIdx) return;
+      $items.forEach(item => {
+        item.classList.remove(activeClass);
+        item.querySelector('.'+btnClass).setAttribute('aria-selected', 'false');
+      });
 			$item.classList.add(activeClass);
 			$target.setAttribute('aria-selected', 'true');
-			$itemsActive.classList.remove(activeClass);
-			$itemsActive.querySelector('.'+btnClass).setAttribute('aria-selected', 'false');
 
 			if($beforeIdx < $idx){
 				$contents.classList.add(panelInRightClass);
 			}else{
 				$contents.classList.add(panelInLeftClass);
 			}
+      $panels.forEach(panel => {
+        panel.setAttribute('aria-expanded', 'false');
+        panel.classList.remove(activePanelClass, enterPanelClass, leavePanelClass);
+      });
 			$panel.setAttribute('aria-expanded', 'true');
-			$panel.classList.add(activePanelClass);
-			$panel.classList.add(enterPanelClass);
+			$panel.classList.add(activePanelClass, enterPanelClass);
 			$contents.style.height = $panel.offsetHeight + 'px';
-			$beforePanel.classList.remove(activePanelClass);
-			$beforePanel.setAttribute('aria-expanded', 'false');
 			$beforePanel.classList.add(leavePanelClass);
 			$panel.addEventListener('animationend',() => {
 				$contents.classList.remove(panelInRightClass, panelInLeftClass);
@@ -440,17 +443,19 @@ const tabUI = (element, option) => {
 			el.removeEventListener('click', clickEvt);
 			el.addEventListener('click', clickEvt);
 		});
-	}else{
+	}else if(element.textContent !== undefined){
 		readyEvt(element);
 		element.removeEventListener('click', clickEvt);
 		element.addEventListener('click', clickEvt);
+	}else{
+		return;
 	}
 	window.removeEventListener('resize', resizeEvt);
 	window.addEventListener('resize', resizeEvt);
 }
 
 // 탭 실행
-const $tabs = document.querySelectorAll('.tabs');
+const $tabs = document.querySelector('.tabs');
 tabUI($tabs);
 </script>
 </body>
