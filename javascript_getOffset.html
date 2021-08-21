@@ -11,7 +11,7 @@ body{padding:0;margin:0;}
 .wrap > div{display:flex;width:150px;height:150px;background:#ddd;flex:0 0 150px;box-sizing:border-box;align-items:center;justify-content:center;text-align:center;}
 .wrap > div + div{margin-left:10px;}
 .wrap > div:nth-child(2){margin-top:50px;}
-.wrap > div:nth-child(3){transform:translateY(100px);}
+.wrap > div:nth-child(3){transform:translate(30px, 70px);}
 .wrap > div:nth-child(4){position:relative;border:10px solid #000;}
 .wrap > div:nth-child(5){align-self:center;}
 .wrap > div:nth-child(6){align-self:flex-end;}
@@ -40,9 +40,9 @@ const getOffset = element => {
     let $style = window.getComputedStyle($el);
     const $matrix = new WebKitCSSMatrix($style.transform);
     $elX += $el.offsetLeft;
-    $elX += $matrix.m41; //translateX
+    // $elX += $matrix.m41; //translateX
     $elY += $el.offsetTop;
-    $elY += $matrix.m42;  //translateY
+    // $elY += $matrix.m42;  //translateY
     $el = $el.offsetParent;
     if($el !== null) {
       $style = window.getComputedStyle($el);
@@ -57,7 +57,9 @@ function resizeChk() {
   const $boxes = document.querySelectorAll('.box');
   $boxes.forEach((box) => {
     const $offset = getOffset(box);
-    box.innerHTML = `left:${$offset.left}<br>top:${$offset.top}`; 
+    const $offset2 = box.getBoundingClientRect();
+
+    box.innerHTML = `<div><b>getOffset</b><br>left:${$offset.left}, top:${$offset.top}<br><br><b>getBoundingClientRect</b><br>left:${$offset2.left}, top:${$offset2.top}</div>`; 
   })
 }
 resizeChk();
