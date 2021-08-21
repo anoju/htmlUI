@@ -316,7 +316,7 @@ const tabUI = (element, option) => {
 		const transitionendEvt = () => {
 			wrap.classList.remove(lineMovingClass);
 			$line.removeEventListener('transitionend',transitionendEvt);
-		}
+		};
 		$line.addEventListener('transitionend',transitionendEvt);
 	};
 
@@ -330,7 +330,7 @@ const tabUI = (element, option) => {
 		targetScroll(wrap,{left:$leftVal});
 	}
 
-	//ready
+	// ready
 	const readyEvt = el => {
 		const $el = el;
 		if(!$el) return;
@@ -380,54 +380,117 @@ const tabUI = (element, option) => {
 		activeCenter($menu);
 	};
 
+	// active
+	const activeEvt = (wrap, index, isTouch = false) => {
+		const $menu = wrap;
+		let $idx = index;
+		const $list = $menu.querySelector('.'+listClass);
+		const $items = $list.querySelectorAll('.'+itemClass);
+		if($idx >= $items.length){
+			$idx = 0;
+		}else if($idx < 0){
+			$idx = $items.length - 1;
+		}
+		const $item = $items[$idx];
+		const $btn = $item.querySelector('.'+btnClass);
+		const $contents = $menu.parentNode.querySelector('.'+contentsClass);
+		const $panels = $contents.querySelectorAll('.'+panelClass);
+		const $panel = $panels[$idx];
+		const $itemsActive = $list.querySelector('.'+itemClass+'.'+activeClass);
+		const $beforeIdx = Array.from($items).indexOf($itemsActive);
+		const $beforePanel = $panels[$beforeIdx];
+		if(!$panel || $idx === $beforeIdx) return;
+		$items.forEach(item => {
+			item.classList.remove(activeClass);
+			item.querySelector('.'+btnClass).setAttribute('aria-selected', 'false');
+		});
+		$item.classList.add(activeClass);
+		$btn.setAttribute('aria-selected', 'true');
+		if(isTouch && (($idx === 0 && $beforeIdx === $items.length - 1) || ($beforeIdx === 0 && $idx === $items.length - 1))){
+			if($idx === 0 && $beforeIdx === $items.length - 1){
+				$contents.classList.add(panelInRightClass);
+			}else if($beforeIdx === 0 && $idx === $items.length - 1){
+				$contents.classList.add(panelInLeftClass);
+			}
+		}else if($beforeIdx < $idx){
+			$contents.classList.add(panelInRightClass);
+		}else{
+			$contents.classList.add(panelInLeftClass);
+		}
+		$panels.forEach(panel => {
+			panel.setAttribute('aria-expanded', 'false');
+			panel.classList.remove(activePanelClass, enterPanelClass, leavePanelClass);
+		});
+		$panel.setAttribute('aria-expanded', 'true');
+		$panel.classList.add(activePanelClass, enterPanelClass);
+		$contents.style.height = $panel.offsetHeight + 'px';
+		$beforePanel.classList.add(leavePanelClass);
+		const animationendEvt = () => {
+			$contents.classList.remove(panelInRightClass, panelInLeftClass);
+			$panel.classList.remove(enterPanelClass);
+			$beforePanel.classList.remove(leavePanelClass);
+			$panel.removeEventListener('animationend',animationendEvt);
+		}
+		$panel.addEventListener('animationend',animationendEvt);
+
+		lineMove($menu);
+		activeCenter($menu);
+	};
+
+
 	// click
 	const clickEvt = e => {
 		const $target = e.target.closest('.'+btnClass) ? e.target.closest('.'+btnClass) : e.target;
 		if($target.classList.contains(btnClass)){
 			e.preventDefault();
 			const $menu = $target.closest('.'+menuClass);
-			const $list = $menu.querySelector('.'+listClass);
-			const $items = $list.querySelectorAll('.'+itemClass);
-			const $contents = $menu.parentNode.querySelector('.'+contentsClass);
-			const $panels = $contents.querySelectorAll('.'+panelClass);
+			const $items = $menu.querySelectorAll('.'+itemClass);
 			const $item = $target.closest('.'+itemClass);
 			const $idx = Array.from($items).indexOf($item);
-			const $panel = $panels[$idx];
-			const $itemsActive = $list.querySelector('.'+itemClass+'.'+activeClass);
-			const $beforeIdx = Array.from($items).indexOf($itemsActive);
-			const $beforePanel = $panels[$beforeIdx];
-			if($idx === $beforeIdx) return;
-      $items.forEach(item => {
-        item.classList.remove(activeClass);
-        item.querySelector('.'+btnClass).setAttribute('aria-selected', 'false');
-      });
-			$item.classList.add(activeClass);
-			$target.setAttribute('aria-selected', 'true');
+			activeEvt($menu, $idx);
+		}
+	};
 
-			if($beforeIdx < $idx){
-				$contents.classList.add(panelInRightClass);
-			}else{
-				$contents.classList.add(panelInLeftClass);
+	// touch
+	let $startTouchX = 0;
+	let $startTouchY = 0;
+	let $endTouchX = 0;
+	let $endTouchY = 0;
+	const gapX = 80;
+	const gapY = 30;
+	let $isTargetScl = false;
+	const touchEvt = e => {
+		if(e.type !== 'touchstart' && e.type !== 'touchmove' && e.type !== 'touchend') return;
+		let $target = e.target;
+		const $contents = $target.closest('.'+contentsClass) ? $target.closest('.'+contentsClass) : $target;
+		const $menu = $contents.parentNode.querySelector('.'+menuClass);
+		const $items = $menu.querySelectorAll('.'+itemClass);
+		const $active = $menu.querySelector('.'+itemClass+'.'+activeClass);
+		let $idx = Array.from($items).indexOf($active);
+
+		if(e.type === 'touchstart'){
+			$startTouchX = e.touches[0].clientX;
+			$startTouchY = e.touches[0].clientY;
+			while (!$target.classList.contains(contentsClass) && !$isTargetScl){
+				if($target.scrollWidth > $target.offsetWidth) $isTargetScl = true;
+				$target = $target.parentNode;
 			}
-      $panels.forEach(panel => {
-        panel.setAttribute('aria-expanded', 'false');
-        panel.classList.remove(activePanelClass, enterPanelClass, leavePanelClass);
-      });
-			$panel.setAttribute('aria-expanded', 'true');
-			$panel.classList.add(activePanelClass, enterPanelClass);
-			$contents.style.height = $panel.offsetHeight + 'px';
-			$beforePanel.classList.add(leavePanelClass);
+		}
 
-			const animationendEvt = () => {
-				$contents.classList.remove(panelInRightClass, panelInLeftClass);
-				$panel.classList.remove(enterPanelClass);
-				$beforePanel.classList.remove(leavePanelClass);
-				$panel.removeEventListener('animationend', animationendEvt);
+		if(e.type === 'touchend'){
+			$endTouchX = e.changedTouches[0].clientX;
+			$endTouchY = e.changedTouches[0].clientY;
+			//console.log($startTouchX, $endTouchX,$startTouchY, $endTouchY, $idx)
+			if(!$isTargetScl && Math.abs($endTouchX - $startTouchX) > gapX && Math.abs($endTouchY - $startTouchY) < gapY){
+				if($endTouchX - $startTouchX > gapX){
+					$idx -= 1;
+				}else if($startTouchX - $endTouchX > gapX){
+					$idx += 1;
+				}
+				//console.log('activeEvt',$idx)
+				activeEvt($menu, $idx, true);
 			}
-			$panel.addEventListener('animationend', animationendEvt);
-
-			lineMove($menu);
-			activeCenter($menu);
+			$isTargetScl = false;
 		}
 	};
 
@@ -439,19 +502,28 @@ const tabUI = (element, option) => {
 				lineMove(el);
 			});
 		}
+		const $contents = document.querySelectorAll('.'+contentsClass);
+		if($contents.length){
+			$contents.forEach(el => {
+				const $activePanel = el.querySelector('.'+activePanelClass);
+				if($activePanel) el.style.height = $activePanel.offsetHeight + 'px';
+			});
+		}
 	}
 
 	//init
-	if (element.length) {
-		element.forEach(el => {
-			readyEvt(el);
-			el.removeEventListener('click', clickEvt);
-			el.addEventListener('click', clickEvt);
-		});
-	}else if(element.textContent !== undefined){
+	if (element) {
 		readyEvt(element);
 		element.removeEventListener('click', clickEvt);
 		element.addEventListener('click', clickEvt);
+
+		const $contents = element.querySelector('.'+contentsClass);
+		if($contents){
+			$contents.removeEventListener('touchstart', touchEvt);
+			$contents.removeEventListener('touchend', touchEvt);
+			$contents.addEventListener('touchstart', touchEvt);
+			$contents.addEventListener('touchend', touchEvt);
+		}
 	}else{
 		return;
 	}
@@ -461,7 +533,9 @@ const tabUI = (element, option) => {
 
 // 탭 실행
 const $tabs = document.querySelectorAll('.tabs');
-tabUI($tabs);
+$tabs.forEach(el => {
+	tabUI(el);
+});
 </script>
 </body>
 </html>
