@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>debounce_throttle</title>
+<style>
+  body{margin:0;padding:0;}
+  .box{width:200px;margin:30px auto;min-height: 3000vh;background:red;color:#fff;text-align:center;}
+</style>
+</head>
+<body>
+  <div class="box"></div>
+<script>
+function debounce(fn, delay) {
+  let timer
+  return function() {
+      clearTimeout(timer);
+      timer = setTimeout(() => { // *
+          fn.apply(this, arguments);
+      }, delay);
+  }
+}
+function throttle(fn, delay) {
+    let timer
+    return function() {
+        if (!timer){
+            timer = setTimeout(() => {
+                timer = null
+                fn.apply(this, arguments)
+            }, delay)
+        }
+    }
+}
+function eventFn(e){
+  const $box = document.querySelector('.box');
+  const div = document.createElement("div")
+  div.innerHTML = e.type;
+  console.log(e.type)
+  $box.append(div);
+}
+window.addEventListener('scroll', throttle(eventFn, 500));
+window.addEventListener('resize', debounce(eventFn, 500));
+
+</script>
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>new</title>
+<style>
+*{box-sizing: border-box;}
+body{margin: 0;padding: 0;}
+.section{min-height: 100vh;padding: 10vh 0;transition:0.3s;background: #fff;}
+.section:nth-child(even){background:#f1f1f1;}
+.section.on{background: blue;}
+.section.on2{background: red;}
+.inner{padding: 0 20px;max-width:1040px;}
+.box{width: 200px;height: 200px;transition:0.3s;background: #ddd;}
+.box.active{background: yellow;}
+</style>
+</head>
+<body>
+<article class="wrap">
+  <section class="section">
+    <div class="inner">
+      <h1 data-scl-animate="opacity, translateX">타이틀1</h1>
+      <p data-scl-animate="opacity, translateX">서브텍스트 서브텍스트 서브텍스트 서브텍스트 서브텍스트</p>
+      <div class="box" data-scl-class="active"></div>
+    </div>
+  </section>
+  <section class="section" data-scl-class="on">
+    <div class="inner">
+      <h1 data-scl-animate="opacity, translateX">타이틀2 타이틀2</h1>
+      <p data-scl-animate="opacity, translateX">서브텍스트 서브텍스트 서브텍스트 서브텍스트 서브텍스트</p>
+      <div class="box" data-scl-class="active"></div>
+    </div>
+  </section>
+  <section class="section" data-scl-class="on2">
+    <div class="inner">
+      <h1 data-scl-animate="opacity, translateX">타이틀3 타이틀3 타이틀3</h1>
+      <p data-scl-animate="opacity, translateX">서브텍스트 서브텍스트 서브텍스트 서브텍스트 서브텍스트</p>
+      <div class="box" data-scl-class="active"></div>
+    </div>
+  </section>
+</article>
+
+<script>
+// 위치값구하기
+const getOffset = element => {
+  let $el = element;
+  let $elX = 0;
+  let $elY = 0;
+  while ($el && !Number.isNaN($el.offsetLeft) && !Number.isNaN($el.offsetTop)) {
+    let $style = window.getComputedStyle($el);
+    const $matrix = new WebKitCSSMatrix($style.transform);
+    $elX += $el.offsetLeft;
+    //$elX += $matrix.m41; //translateX
+    $elY += $el.offsetTop;
+    //$elY += $matrix.m42;  //translateY
+    $el = $el.offsetParent;
+    if($el !== null) {
+      $style = window.getComputedStyle($el);
+      $elX += parseInt($style.borderLeftWidth);
+      $elY += parseInt($style.borderTopWidth);
+    }
+  }
+  return {left: $elX, top:$elY}
+}
+
+// css 애니메이션
+const cssAnimate = (element, props, duration = 500, callback) => {
+  const $el = element;
+  const easeInOutQuad = function (t, b, c, d) {
+    t /= d/2;
+    if (t < 1) {
+      return c/2*t*t + b
+    }
+    t--;
+    return -c/2 * (t*(t-2) - 1) + b;
+  };
+
+  const requestAnimFrame = (function(){
+    return  window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function( callback ){ window.setTimeout(callback, 1000 / 60); };
+  })();
+
+  function setStyle(propertie, value) {
+    let unit = 'px';
+    if(propertie === 'opacity' || propertie === 'scale') unit = null;
+    if(propertie === 'translateX' || propertie === 'translateY' || propertie === 'scale'){
+      $el.style.transform = propertie+'('+value+unit+')';
+    }else{
+      $el.style[propertie] = value + unit;
+    }
+  }
+
+  function getStyle(target, propertie) {
+    let compStyles = window.getComputedStyle(target);
+    let returnVal = typeof propertie === 'string' ? parseInt(compStyles.getPropertyValue(propertie)) : parseInt(compStyles.propertie);
+    if(propertie === 'translateX' || propertie === 'translateY'){
+      let $matrix;
+      if(typeof DOMMatrix !== 'undefined'){
+        $matrix = new DOMMatrix(compStyles.transform);
+      }else if(typeof WebKitCSSMatrix !== 'undefined'){
+        $matrix = new WebKitCSSMatrix(compStyles.transform);
+      }else if(typeof MSCSSMatrix !== 'undefined'){
+        $matrix = new MSCSSMatrix(compStyles.transform);
+      }
+      if(propertie === 'translateX') returnVal = $matrix.m41;
+      if(propertie === 'translateY') returnVal = $matrix.m42;
+    }
+    return returnVal
+  }
+  const propertiesAry = [];
+  const startAry = [];
+  const changeAry = [];
+  for (const [key, value] of Object.entries(props)) {
+    propertiesAry.push(key);
+    const start = getStyle($el, key);
+    startAry.push(start);
+    const change = value - start;
+    changeAry.push(change);
+  }
+  let currentTime = 0;
+  const increment = 20;
+
+  const animateInit = function() {
+    currentTime += increment;
+    propertiesAry.forEach((properties, i) => {
+      const val = easeInOutQuad(currentTime, startAry[i], changeAry[i], duration);
+      setStyle(properties, val);
+    });
+    if (currentTime < duration) {
+      requestAnimFrame(animateInit);
+    } else if (callback && typeof(callback) === 'function') {
+      callback();
+    }
+  };
+  animateInit();
+}
+
+//스크롤 애니메이션
+const scrollAnimate = element => {
+  const $wrap = element;
+  let $winSclTop = 0;
+  let $scrollItems = [];
+
+  let $isMobile = false;
+  let $translateXVal;
+  function setTypeOption() {
+    const $winWidth = window.innerWidth;
+    if($winWidth <= 768){
+      $isMobile = true;
+    }else{
+      $isMobile = false;
+    }
+    $translateXVal = $isMobile ? 50: 100;
+  }
+
+  function setSclItems() {
+    $scrollItems = [];
+    const $items = $wrap.querySelectorAll('[data-scl-animate]');
+    $items.forEach(el => {
+      const $top = getOffset(el).top;
+      const $height = el.offsetHeight;
+      const $animation = el.dataset.sclAnimate.split(',').map(item => {
+        return item.trim();
+      });
+      const obj = {
+        obj: el,
+        active: false,
+        trueActive: false,
+        top: $top,
+        height: $height,
+        animation: $animation,
+      };
+      $scrollItems.push(obj);
+    });
+  }
+
+  function sclItemsChk() {
+    setTypeOption();
+    $winSclTop = window.pageYOffset;
+    const $winHeight = window.innerHeight;
+    const $gap = $winHeight * 0.1;
+
+    for(let i = 0; i< $scrollItems.length; i++){
+      const $item = $scrollItems[i];
+      const $start = $item.top;
+      const $end = $start + $item.height;
+      if($start < $winSclTop + $winHeight + $gap && $end > $winSclTop - $gap){
+        $item.active = true;
+      }else{
+        $item.active = false;
+      }
+      if($start < $winSclTop + $winHeight && $end > $winSclTop){
+        $item.trueActive = true;
+      }else{
+        $item.trueActive = false;
+      }
+    }
+  }
+
+  function loadAnimation() {
+    let index = 1;
+    for(let i = 0; i< $scrollItems.length; i++){
+      const $item = $scrollItems[i];
+      const $obj = $item.obj;
+      const $animation = $item.animation;
+      if($animation.includes('opacity')){
+        $obj.style.opacity = 0;
+      }
+      if($animation.includes('translateX')){
+        $obj.style.transform = 'translateX('+ $translateXVal+'px)';
+      }
+      if($item.trueActive){
+        const opt = {};
+        if($animation.includes('opacity')){
+          opt.opacity = 1;
+        }
+        if($animation.includes('translateX')){
+          opt.translateX = 0;
+        }
+        if(Object.keys(opt).length > 0){
+          setTimeout(() => {
+            cssAnimate($obj, opt)
+          }, 300 * index);
+          index += 1;
+        }
+      }
+    }
+  }
+
+  function calcValues(item, from, to, outReverse = false){
+    let returnVal = null;
+    const $elTop = item.top;
+    const $winHeight =  window.innerHeight;
+    const $winRatioIn = 0.4;
+    const $winRatioOut = 0.2;
+    let isUp = false;
+    let $sclRatio = ($winSclTop + $winHeight - $elTop) / ($winHeight * $winRatioIn);
+    if($elTop < $winSclTop + $winHeight / 2){
+      $sclRatio = ($elTop - $winSclTop) / ($winHeight * $winRatioOut);
+      if($elTop < $winHeight / 2)$sclRatio = ($elTop - $winSclTop) / $elTop;
+      isUp = true;
+    }
+    if($sclRatio < 0)$sclRatio = 0;
+    if($sclRatio > 1)$sclRatio = 1;
+    const $from = from;
+    const $to = to;
+    returnVal = $sclRatio * ($to - $from) + $from;
+    if(outReverse && isUp) returnVal = returnVal * -1;
+    return returnVal;
+  }
+
+  function sclAnimation() {
+    for(let i = 0; i< $scrollItems.length; i++){
+      const $item = $scrollItems[i];
+      if($item.active){
+        const $obj = $item.obj;
+        const $animation = $item.animation;
+        if($animation.includes('opacity')){
+          const $opacity = calcValues($item, 0, 1);
+          $obj.style.opacity = $opacity; 
+        }
+        if($animation.includes('translateX')){
+          const $move = calcValues($item, $translateXVal, 1, true);
+          $obj.style.transform = 'translateX('+$move+'px)'; 
+        }
+      }
+    }
+  }
+
+  function scrollEvt(){
+    sclItemsChk();
+    sclAnimation();
+  }
+
+  function resizeEvt(){
+    setSclItems();
+    sclItemsChk();
+    sclAnimation();
+  }
+
+  if(element) {
+    setSclItems();
+    sclItemsChk();
+    loadAnimation();
+    window.addEventListener('scroll', scrollEvt);
+    window.addEventListener('scroll', resizeEvt);
+  }else{
+    window.removeEventListener('scroll', scrollEvt);
+    window.removeEventListener('scroll', resizeEvt);
+  }
+}
+
+
+// 스크롤 addClass
+const scrollAddClass = (element, isRemove = false) => {
+  const $wrap = element;
+  let $winSclTop = 0;
+  let $scrollItems = [];
+
+  function setSclItems() {
+    $scrollItems = [];
+    const $items = $wrap.querySelectorAll('[data-scl-class]');
+    $items.forEach(el => {
+      const $top = getOffset(el).top;
+      const $height = el.offsetHeight;
+      const $class = el.dataset.sclClass;
+      const obj = {
+        obj: el,
+        active: false,
+        top: $top,
+        height: $height,
+        class: $class,
+      };
+      $scrollItems.push(obj);
+    });
+  }
+
+  function sclItemsChk() {
+    $winSclTop = window.pageYOffset;
+    const $winHeight = window.innerHeight;
+    const $topGap = 0.1;
+    const $bottomGap = 0.3;
+
+    for(let i = 0; i< $scrollItems.length; i++){
+      const $item = $scrollItems[i];
+      const $obj = $item.obj;
+      const $class = $item.class;
+      const $start = $item.top;
+      const $end = $start + $item.height;
+      if($start < $winSclTop + $winHeight && $end > $winSclTop){
+        $item.active = true;
+      }else{
+        $item.active = false;
+      }
+      if(isLoad){
+        if($item.height > $winHeight * ($topGap + $bottomGap)) {
+          if($start < $winSclTop + $winHeight && $end > $winSclTop){
+            $obj.classList.add($class);
+          }else if(isRemove)$obj.classList.remove($class);
+        }else if($start < $winSclTop + $winHeight - $winHeight * $bottomGap && $end > $winSclTop + $winHeight * $topGap){
+          $obj.classList.add($class);
+        }else if(isRemove)$obj.classList.remove($class);
+      }
+    }
+  }
+
+  let isLoad = false;
+  function loadEvt() {
+    isLoad = true;
+    let index = 1;
+    for(let i = 0; i< $scrollItems.length; i++){
+      const $item = $scrollItems[i];
+      const $obj = $item.obj;
+      const $class = $item.class;
+
+      if($item.active){
+        setTimeout(() => {
+          $obj.classList.add($class);
+        }, 300 * index);
+        index += 1;
+      }
+    }
+  }
+
+  function scrollEvt() {
+    sclItemsChk();
+  }
+
+  function resizeEvt() {
+    setSclItems();
+    sclItemsChk();
+  }
+  
+  if(element) {
+    setSclItems();
+    sclItemsChk();
+    loadEvt();
+    window.addEventListener('scroll', scrollEvt);
+    window.addEventListener('scroll', resizeEvt);
+  }else{
+    window.removeEventListener('scroll', scrollEvt);
+    window.removeEventListener('scroll', resizeEvt);
+  }
+};
+const $wrapEl = document.querySelector('.wrap')
+scrollAnimate($wrapEl);
+scrollAddClass($wrapEl, true);
+</script>
+</body>
+</html>
