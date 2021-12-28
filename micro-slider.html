@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Micro-Slider</title>
+<style>
+/*
+CDN:
+https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css
+*/
+
+html {
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+body {
+    background: #F6F9FC;
+    color: #212121;
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+}
+#micro-slider{
+  min-height: 100vh;
+  min-width: 320px;
+}
+h1 {
+    margin: 0;
+    padding: 0;
+}
+.section-header {
+    display: block;
+    margin-top: 20px;
+    position: relative;
+    text-align: center;
+}
+.section-header h1 {
+    color: #212121;
+    display: inline-block;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 36px;
+    padding: 0 0 24px;
+    position: relative;
+    z-index: 2;
+}
+.section-header h1:after {
+    position: absolute;
+    display: block;
+    width: auto;
+    height: 3px;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    border-radius: 1px;
+    content: "";
+    z-index: 1;
+    background: #e6e9ec;
+}
+section {
+    padding-bottom: 192px;
+    overflow: hidden;
+    position: relative;
+}
+a,
+a:link,
+a:visited {
+    color: #212121;
+    text-decoration: none;
+}
+.micro-slider {
+    height: 480px;
+    margin: 10px 0;
+    position: relative;
+    width: 100%;
+}
+.micro-slider.fullwidth {
+    height: 480px;
+    margin: 64px 0;
+}
+.micro-slider.fullwidth .slider-item {
+    height: 480px;
+    line-height: 480px;
+    width: 100%
+}
+.slider-wrapper {
+    overflow: hidden;
+    position: relative;
+    transform-style: preserve-3d;
+    transform-origin: 0 50%;
+}
+.slider-item {
+    background: #FFF;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.12);
+    color: #FFF;
+    display: none;
+    font-size: 72px;
+    height: 320px;
+    line-height: 320px;
+    left: 0;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 320px;
+}
+.slider-item:not(.active) {cursor: pointer;}
+.indicators {
+    bottom: -64px;
+    left: 50%;
+    list-style-type: none;
+    margin: 0 0 0 -77px;
+    padding: 0;
+    position: absolute;
+}
+.indicators li {
+    color: #fff;
+    float: left;
+    height: 16px;
+    margin-right: 8px;
+    text-align: center;
+    width: 16px;
+}
+.indicators li:last-child {margin: 0;}
+.indicators a {
+    background: #FFF;
+    border-radius: 8px;
+    border: 1px solid #E6E9EC;
+    color: #FFF;
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+}
+.indicators .active a {background: #E6E9EC;}
+.s1 {background: #3f51b5;}
+.s2 {background: #448aff;}
+.s3 {background: #03a9f4;}
+.s4 {background: #00bcd4;}
+.s5 {background: #009688;}
+.s6 {background: #4caf50;}
+</style>
+</head>
+<body>
+  <section id="micro-slider">
+    <div class="section-header">
+      <h1>Micro-Slider Autoplay + Hover Pause</h1>
+    </div>
+    <div class="micro-slider">
+      <div class="slider-item s1">1</div>
+      <div class="slider-item s2">2</div>
+      <div class="slider-item s3">3</div>
+      <div class="slider-item s4">4</div>
+      <div class="slider-item s5">5</div>
+      <div class="slider-item s6">6</div>
+    </div>
+  </section>
+
+<script src="https://cdn.jsdelivr.net/npm/micro-slider@1.0.9/dist/micro-slider.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  microSliderInit();
+});
+const microSliderInit = function(){
+  const __ms = document.querySelector('.micro-slider');
+  const __msSlider = new MicroSlider(__ms, { indicators: true, indicatorText: '' });
+	let __msTimer = 3000;
+	let __msAutoplay = null;
+  const __msAutoplayStart = function(){
+    if(__msAutoplay !== null)clearInterval(__msAutoplay);
+    __msAutoplay = setInterval(() => __msSlider.next(), __msTimer);
+  };
+  const __msAutoplayStop = function(){
+    if(__msAutoplay === null) return
+    clearInterval(__msAutoplay);
+    __msAutoplay = null;
+  };
+	
+  //set autoplay (start)
+	__msAutoplayStart();
+
+  // PC: mouse autoplay control
+	__ms.onmouseenter = function(e) {
+    __msAutoplayStop();
+  }
+	__ms.onmouseleave = function(e) {
+    __msAutoplayStart();
+  }
+
+  
+  // mobile: hammer autoplay control
+  const __hammer = new Hammer(__ms);
+  __hammer.on('panstart', function(e) {
+    __msAutoplayStop();
+  });
+  __hammer.on('panend', function(e) {
+    __msAutoplayStart();
+  });
+};
+</script>
+</body>
+</html>
