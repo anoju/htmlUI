@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<h1>if문 체크</h1>
+<div></div>
+<script>
+const wrap = document.querySelector('div');
+const aaa = null;
+const bbb = undefined;
+const ccc = '';
+const ddd = 0;
+const eee = document.querySelector('h1');
+const fff = document.querySelector('h2');
+const ggg = $('h1');
+const hhh = $('h2');
+let div = document.createElement('div');
+let html = '';
+
+html += '<p>aaa = null</p>';
+if (aaa) {
+  html += '<p>aaa true</p>';
+} else {
+  html += '<p>aaa false</p>';
+}
+html += '<br />'
+html += '<p>bbb = undefined</p>';
+if (bbb) {
+  html += '<p>bbb true</p>';
+} else {
+  html += '<p>bbb false</p>';
+}
+html += '<br />'
+html += '<p>ccc = \'\'</p>';
+if (ccc) {
+  html += '<p>ccc true</p>';
+} else {
+  html += '<p>ccc false</p>';
+}
+html += '<br />'
+html += '<p>ddd = 0</p>';
+if (ddd) {
+  html += '<p>ddd true</p>';
+} else {
+  html += '<p>ddd false</p>';
+}
+html += '<br />'
+html += '<p>eee = document.querySelector(\'h1\')</p>';
+if (eee) {
+  html += '<p>eee true</p>';
+} else {
+  html += '<p>eee false</p>';
+}
+html += '<br />'
+html += '<p>fff = document.querySelector(\'h2\')</p>';
+if (fff) {
+  html += '<p>fff true</p>';
+} else {
+  html += '<p>fff false</p>';
+}
+html += '<br />'
+html += '<p>ggg = $(\'h1\').length';
+if (ggg.length) {
+  html += '<p>ggg true</p>';
+} else {
+  html += '<p>ggg false</p>';
+}
+html += '<br />'
+html += '<p>hhh = $(\'h2\').length';
+if (hhh.length) {
+  html += '<p>hhh true</p>';
+} else {
+  html += '<p>hhh false</p>';
+}
+
+div.innerHTML = html;
+wrap.appendChild(div);
+</script>
+</body>
+</html>
