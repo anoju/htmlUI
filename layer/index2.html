@@ -1,46 +1,46 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-	<meta charset="utf-8">
-	<title>레이어 팝업</title>
-	<meta content="IE=edge" http-equiv="X-UA-Compatible">
-	<meta name="viewport" content="width=700">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css">
-	<link rel="stylesheet" href="layer.css">
-	
-	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
-	
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushCss.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js"></script>
-	<script src="ui-script.js"></script>
-	
-	<script>
-	SyntaxHighlighter.defaults['toolbar'] = false;
-	SyntaxHighlighter.all();
-	</script>
+<meta charset="utf-8">
+<title>레이어 팝업</title>
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<meta name="viewport" content="width=700">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css">
+<link rel="stylesheet" href="layer.css">
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushCss.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js"></script>
+<script src="ui-script.js"></script>
+
+<script>
+  SyntaxHighlighter.defaults['toolbar'] = false;
+  SyntaxHighlighter.all();
+</script>
 </head>
 <body>
 <div style="padding:30px;">
-<h1>레이어 팝업</h1>
-<h2>Layer.alert</h2>
-<button class="button btn-alert-01">alert:기본형태</button><strong></strong>
-<div class="pre_box">
-	<pre class="brush: js">
+  <h1>레이어 팝업</h1>
+  <h2>Layer.alert</h2>
+  <button class="button btn-alert-01">alert:기본형태</button><strong></strong>
+  <div class="pre_box">
+    <pre class="brush: js">
 	Layer.alert({
 		content: '얼럿내용를 보여주세요'
 	});</pre>
-</div>
+  </div>
 
-<button class="button btn-alert-02">alert:설정옵션</button><strong></strong>
-<div class="pre_box">
-	<pre class="brush: js">
+  <button class="button btn-alert-02">alert:설정옵션</button><strong></strong>
+  <div class="pre_box">
+    <pre class="brush: js">
 	Layer.alert({
 		title:'오늘은?',
 		content: '오늘은 가족의 날입니다. <br>일찍 퇴근하세요~' ,
@@ -51,29 +51,29 @@
 	},function(){
 		$('.btn-alert-02').next().append(' 빠른퇴근~');
 	});</pre>
-</div>
+  </div>
 
-<button class="button btn-alert-03">alert:헤더없음</button><strong></strong>
-<div class="pre_box">
-	<pre class="brush: js">
+  <button class="button btn-alert-03">alert:헤더없음</button><strong></strong>
+  <div class="pre_box">
+    <pre class="brush: js">
 	Layer.alert({
 		title:false,
 		content: '공지 내용입니다. 확인하셨습니까?'
 	});</pre>
-</div>
+  </div>
 
-<button class="button btn-alert-04">alert:약식</button><strong></strong>
-<div class="pre_box">
-	<pre class="brush: js">
+  <button class="button btn-alert-04">alert:약식</button><strong></strong>
+  <div class="pre_box">
+    <pre class="brush: js">
 	Layer.alert('얼럿창입니다!!',function (e){
 		$('.btn-alert-04').next().text('얼럿 약식 ');
 	});</pre>
-</div>
+  </div>
 
-<h2>Layer.confirm</h2>
-<button class="button btn-alert-05">confirm:기본형태</button><strong></strong>
-<div class="pre_box">
-	<pre class="brush: js">
+  <h2>Layer.confirm</h2>
+  <button class="button btn-alert-05">confirm:기본형태</button><strong></strong>
+  <div class="pre_box">
+    <pre class="brush: js">
 	Layer.confirm({
 		content:'컨펌내용을 보여주세요',
 		action:function(){
@@ -83,11 +83,11 @@
 			console.log('취소 취소 취소!');
 		}
 	});</pre>
-</div>
+  </div>
 
-<button class="button btn-alert-06">confirm:설정옵션</button><strong></strong>
-<div class="pre_box">
-	<pre class="brush: js">
+  <button class="button btn-alert-06">confirm:설정옵션</button><strong></strong>
+  <div class="pre_box">
+    <pre class="brush: js">
 	Layer.confirm({
 		title:'불타는 금융일',
 		content:'오늘은 불타는 금요일 입니다. <br>일찍 퇴근하시겠습니까?',
@@ -107,11 +107,11 @@
 			$('.btn-alert-06').next().append(' 집못가!!');
 		}
 	});</pre>
-</div>
+  </div>
 
-<button class="button btn-alert-07">confirm:헤더없음</button><strong></strong>
-<div class="pre_box">
-	<pre class="brush: js">
+  <button class="button btn-alert-07">confirm:헤더없음</button><strong></strong>
+  <div class="pre_box">
+    <pre class="brush: js">
 	Layer.confirm({
 		title:false,
 		content:'헤더 영역이 없음을 확인했습니까?',
@@ -122,11 +122,11 @@
 			$('.btn-alert-07').next().text('헤더따위 노관심~');
 		}
 	});</pre>
-</div>
+  </div>
 
-<button class="button btn-alert-08">confirm:약식</button><strong></strong>
-<div class="pre_box">
-	<pre class="brush: js">
+  <button class="button btn-alert-08">confirm:약식</button><strong></strong>
+  <div class="pre_box">
+    <pre class="brush: js">
 	Layer.confirm('confirm 약식!!',function(e){
 		if(e){
 			$('.btn-alert-08').next().text('약식 확인');
@@ -134,13 +134,13 @@
 			$('.btn-alert-08').next().text('약식 취소');
 		}
 	});</pre>
-</div>
+  </div>
 
-<h3>테스트용</h3>
-<input type="text" class="input" id="focusPop" placeholder="같은내용 중복열림 방지">
-<button class="button" id="btnPop">컨펌 후 얼럿 후 console</button>
-<div class="pre_box">
-	<pre class="brush: js">
+  <h3>테스트용</h3>
+  <input type="text" class="input" id="focusPop" placeholder="같은내용 중복열림 방지">
+  <button class="button" id="btnPop">컨펌 후 얼럿 후 console</button>
+  <div class="pre_box">
+    <pre class="brush: js">
 	$('#focusPop').focus(function(){
 		Layer.alert('focus');
 		Layer.alert('focus 2!!');
@@ -155,129 +155,129 @@
 			}
 		});	
 	});</pre>
-</div>
+  </div>
 
-<h2>loading</h2>
-<button class="button" onclick="Loading.open();">로딩창열기</button>
-<button class="button" onclick="Loading.open('로딩중입니다.');">로딩창열기+텍스트</button>
-<button class="button gray" style="z-index:101" onclick="Loading.close();">로딩창닫기</button>
-<div class="pre_box">
-	<pre class="brush: js">
+  <h2>loading</h2>
+  <button class="button" onclick="Loading.open();">로딩창열기</button>
+  <button class="button" onclick="Loading.open('로딩중입니다.');">로딩창열기+텍스트</button>
+  <button class="button gray" style="z-index:101" onclick="Loading.close();">로딩창닫기</button>
+  <div class="pre_box">
+    <pre class="brush: js">
 	Loading.open();
 	Loading.open('로딩중입니다.');
 	Loading.close();</pre>
-</div>
+  </div>
 </div>
 
 
 <script>
-$('#focusPop').focus(function(){
-	Layer.alert('focus');
-	Layer.alert('focus 2!!');
-	Layer.alert('focus');
-});
-$('#btnPop').click(function(){
-	Layer.confirm('confirm!!',function(e){
-		if(e){
-			Layer.alert({
-				content:'alert!!'
-			},function(){
-				console.log('alert callback!!');
-			});
-		}
-	});	
-});
-$('.btn-alert-01').click(function(){
-	Layer.alert({
-		content: '얼럿내용를 보여주세요'
-	});
-});
-$('.btn-alert-02').click(function(){
-	Layer.alert({
-		title:'오늘은?',
-		content: '오늘은 가족의 날입니다. <br>일찍 퇴근하세요~' ,
-		actionTxt:'가족의날 확인',
-		action:function(){
-			$('.btn-alert-02').next().text('가족의 날!!');
-		}
-	},function(){
-		$('.btn-alert-02').next().append(' 빠른퇴근~');
-	});
-});
-$('.btn-alert-03').click(function(){
-	Layer.alert({
-		title:false,
-		content: '공지 내용입니다. 확인하셨습니까?'
-	});
-});
-$('.btn-alert-04').click(function(){
-	Layer.alert('얼럿창입니다!!',function (e){
-		$('.btn-alert-04').next().text('얼럿 약식 ');
-	});
-});
+  $('#focusPop').focus(function() {
+    Layer.alert('focus');
+    Layer.alert('focus 2!!');
+    Layer.alert('focus');
+  });
+  $('#btnPop').click(function() {
+    Layer.confirm('confirm!!', function(e) {
+      if (e) {
+        Layer.alert({
+          content: 'alert!!'
+        }, function() {
+          console.log('alert callback!!');
+        });
+      }
+    });
+  });
+  $('.btn-alert-01').click(function() {
+    Layer.alert({
+      content: '얼럿내용를 보여주세요'
+    });
+  });
+  $('.btn-alert-02').click(function() {
+    Layer.alert({
+      title: '오늘은?',
+      content: '오늘은 가족의 날입니다. <br>일찍 퇴근하세요~',
+      actionTxt: '가족의날 확인',
+      action: function() {
+        $('.btn-alert-02').next().text('가족의 날!!');
+      }
+    }, function() {
+      $('.btn-alert-02').next().append(' 빠른퇴근~');
+    });
+  });
+  $('.btn-alert-03').click(function() {
+    Layer.alert({
+      title: false,
+      content: '공지 내용입니다. 확인하셨습니까?'
+    });
+  });
+  $('.btn-alert-04').click(function() {
+    Layer.alert('얼럿창입니다!!', function(e) {
+      $('.btn-alert-04').next().text('얼럿 약식 ');
+    });
+  });
 
-//컨펌
-$('.btn-alert-05').click(function(){
-	Layer.confirm({
-		content:'컨펌내용을 보여주세요',
-		action:function(){
-			console.log('확인 확인!!');
-		},
-		cancel:function(){
-			console.log('취소 취소 취소!');
-		}
-	});
-});
-$('.btn-alert-06').click(function(){
-	Layer.confirm({
-		title:'불타는 금융일',
-		content:'오늘은 불타는 금요일 입니다. <br>일찍 퇴근하시겠습니까?',
-		actionTxt:'칼퇴',
-		cancelTxt: '야근',
-		closeCancel:true,
-		action:function(){
-			$('.btn-alert-06').next().text('퇴근하세요~');
-		},
-		cancel:function(){
-			$('.btn-alert-06').next().text('야근하세요~');
-		}
-	},function(e){
-		if(e){
-			$('.btn-alert-06').next().append(' 홍대로!!');
-		}else{
-			$('.btn-alert-06').next().append(' 집못가!!');
-		}
-	});	
-});
+  //컨펌
+  $('.btn-alert-05').click(function() {
+    Layer.confirm({
+      content: '컨펌내용을 보여주세요',
+      action: function() {
+        console.log('확인 확인!!');
+      },
+      cancel: function() {
+        console.log('취소 취소 취소!');
+      }
+    });
+  });
+  $('.btn-alert-06').click(function() {
+    Layer.confirm({
+      title: '불타는 금융일',
+      content: '오늘은 불타는 금요일 입니다. <br>일찍 퇴근하시겠습니까?',
+      actionTxt: '칼퇴',
+      cancelTxt: '야근',
+      closeCancel: true,
+      action: function() {
+        $('.btn-alert-06').next().text('퇴근하세요~');
+      },
+      cancel: function() {
+        $('.btn-alert-06').next().text('야근하세요~');
+      }
+    }, function(e) {
+      if (e) {
+        $('.btn-alert-06').next().append(' 홍대로!!');
+      } else {
+        $('.btn-alert-06').next().append(' 집못가!!');
+      }
+    });
+  });
 
-$('.btn-alert-07').click(function(){
-	Layer.confirm({
-		title:false,
-		content:'헤더 영역이 없음을 확인했습니까?',
-	},function(e){
-		if(e){
-			$('.btn-alert-07').next().text('헤더 어디감?');
-		}else{
-			$('.btn-alert-07').next().text('헤더따위 노관심~');
-		}
-	});
-});
+  $('.btn-alert-07').click(function() {
+    Layer.confirm({
+      title: false,
+      content: '헤더 영역이 없음을 확인했습니까?',
+    }, function(e) {
+      if (e) {
+        $('.btn-alert-07').next().text('헤더 어디감?');
+      } else {
+        $('.btn-alert-07').next().text('헤더따위 노관심~');
+      }
+    });
+  });
 
-$('.btn-alert-08').click(function(){
-	Layer.confirm('confirm 약식!!',function(e){
-		if(e){
-			$('.btn-alert-08').next().text('약식 확인');
-		}else{
-			$('.btn-alert-08').next().text('약식 취소');
-		}
-	});
-});
-$('.btn-pop-append').click(function(){
-	if(!$('#pwdchgPop').is(':visible'))Layer.open('#pwdChgPop');
-	_html = '<tn><th scope="row">항목</th><td colspan="3">추가</td></tr>';
-	$('#pwdChgPop .table tbody').append(_html);
-	$(window).resize();
-});
+  $('.btn-alert-08').click(function() {
+    Layer.confirm('confirm 약식!!', function(e) {
+      if (e) {
+        $('.btn-alert-08').next().text('약식 확인');
+      } else {
+        $('.btn-alert-08').next().text('약식 취소');
+      }
+    });
+  });
+  $('.btn-pop-append').click(function() {
+    if (!$('#pwdchgPop').is(':visible')) Layer.open('#pwdChgPop');
+    _html = '<tn><th scope="row">항목</th><td colspan="3">추가</td></tr>';
+    $('#pwdChgPop .table tbody').append(_html);
+    $(window).resize();
+  });
 </script>
 </body>
 </html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+.zigzag {
+  width: 20px;
+}
+.zigzag:before {
+  content: '';
+  display: block;
+  padding-top: 1000%;
+  background:
+    linear-gradient(45deg, red 25%, transparent 25%) 0 -50px,
+    linear-gradient(135deg, red 25%, transparent 25%) 0 -50px,
+    linear-gradient(225deg, red 25%, transparent 25%),
+    linear-gradient(315deg, red 25%, transparent 25%);
+  background-size: 20px 20px;
+  background-position-x: -10px;
+}
+</style>
+</head>
+<body>
+<div class="zigzag"></div><!-- 주석문 -->
+</body>
+</html>

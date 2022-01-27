@@ -61,7 +61,9 @@ body {
 .tabs .tab-contents .tab-panel {
   display: none;
 }
-.tabs .tab-contents .tab-panel.tab-panel-active, .tabs .tab-contents .tab-panel.tab-panel-enter, .tabs .tab-contents .tab-panel.tab-panel-leave {
+.tabs .tab-contents .tab-panel.tab-panel-active,
+.tabs .tab-contents .tab-panel.tab-panel-enter,
+.tabs .tab-contents .tab-panel.tab-panel-leave {
   display: block;
 }
 .tabs .tab-contents .tab-panel-leave {

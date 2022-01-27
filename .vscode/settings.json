@@ -1,5 +1,5 @@
 {
-  "liveServer.settings.port": 5900,
+  "liveServer.settings.port": 6900,
   "liveSassCompile.settings.formats": [
     {
       "format": "compressed",
@@ -11,5 +11,33 @@
     "> 2%",
     "last 2 versions"
   ],
-  "editor.tabSize": 2
+  "files.eol": "\n",
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "HookyQR.beautify",
+  "beautify.ignore": [
+    "**/node_modules/*",
+    "**/*.min.*",
+    "**/lib/*",
+    "_font.scss",
+    "front.scss",
+  ],
+  "beautify.language": {
+    "js": {
+      "type": [
+        "javascript",
+        // "json"
+      ],
+      "filename": [
+        ".jsbeautifyrc"
+      ],
+    },
+    "css": [
+      "scss"
+    ],
+    "html": [
+      "htm",
+      "html"
+    ],
+  },
 }

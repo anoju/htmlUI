@@ -1,0 +1,9 @@
+{
+  "indent_size": 2,
+  "newline_between_rules": false,
+  "space_around_combinator": true,
+  "indent_head_inner_html": false,
+  "indent_body_inner_html": false,
+  "extra_liners": [],
+  "indent_scripts": "keep"
+}
