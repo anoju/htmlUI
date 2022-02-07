@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+.box {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  background: #000;
+  margin: 20px;
+  text-align: center;
+  color: #fff;
+}
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="box">ABC</div>
+<script>
+// $('.box').animate({
+//   'transform': 'rotate(45 deg)'
+// }, 200)
+$({
+  deg: 0
+}).animate({
+  deg: 45
+}, {
+  duration: 200,
+  step: function(now) {
+    // in the step-callback (that is fired each step of the animation),
+    // you can use the `now` paramter which contains the current
+    // animation-position (`0` up to `angle`)
+    $('.box').css({
+      transform: 'rotate(' + now + 'deg)'
+    });
+  }
+});
+</script>
+</body>
+</html>
