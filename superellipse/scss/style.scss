@@ -230,7 +230,7 @@ h2 {
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
     @for $i from 1 through 10 {
       &:nth-child(#{$i}) {
-        left: ($i - 1) * 20px;
+        left: ($i - 1) * 30px;
         z-index: 10 - $i;
       }
     }
