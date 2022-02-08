@@ -9,6 +9,7 @@
 </head>
 <body>
 <h1>실사용 가능할듯? (크로스브라우징 체크필요)</h1>
+<h2>svg + mask</h2>
 <div class="box-wrap">
   <div class="superellipse-box"></div>
   <div class="superellipse-box"><img src="../img/temp.jpg" alt=""></div>
@@ -18,6 +19,28 @@
   <div class="superellipse-box"><img src="../img/temp.jpg" alt=""></div>
   <div class="superellipse-box"><img src="../img/temp.jpg" alt=""></div>
 </div>
+<div class="box-wrap3">
+  <div class="superellipse-box"><img src="../img/temp.jpg" alt=""></div>
+  <div class="superellipse-box3"></div>
+</div>
+<h2>smooth-corners + mask-image</h2>
+<div class="box-wrap">
+  <div class="superellipse-box2" style="--smooth-corners: 0.6"></div>
+  <div class="superellipse-box2" style="--smooth-corners: 1.5"></div>
+  <div class="superellipse-box2" style="--smooth-corners: 2.2"></div>
+  <div class="superellipse-box2" style="--smooth-corners: 2.6"></div>
+  <div class="superellipse-box2" style="--smooth-corners: 3"></div>
+  <div class="superellipse-box2" style="--smooth-corners: 4"></div>
+</div>
+<div class="box-wrap">
+  <div class="superellipse-box2" style="--smooth-corners: 0.6"><img src="../img/temp.jpg" alt=""></div>
+  <div class="superellipse-box2" style="--smooth-corners: 1.5"><img src="../img/temp.jpg" alt=""></div>
+  <div class="superellipse-box2" style="--smooth-corners: 2.2"><img src="../img/temp.jpg" alt=""></div>
+  <div class="superellipse-box2" style="--smooth-corners: 2.6"><img src="../img/temp.jpg" alt=""></div>
+  <div class="superellipse-box2" style="--smooth-corners: 3"><img src="../img/temp.jpg" alt=""></div>
+  <div class="superellipse-box2" style="--smooth-corners: 4"><img src="../img/temp.jpg" alt=""></div>
+</div>
+
 <br>
 <br>
 <br>
@@ -30,5 +53,10 @@
   <div class="circle"></div>
   <div class="path"></div>
 </div>
+<script type="text/javascript">
+//superellipse-box2
+// if (CSS && 'paintWorklet' in CSS) CSS.paintWorklet.addModule('https://unpkg.com/smooth-corners')
+if (CSS && 'paintWorklet' in CSS) CSS.paintWorklet.addModule('./js/paint.min.js')
+</script>
 </body>
 </html>
