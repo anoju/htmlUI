@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+div {
+  --angle: 0deg;
+  width: 50vmin;
+  height: 50vmin;
+  border: 10vmin solid;
+  border-image: linear-gradient(var(--angle), green, yellow) 1;
+
+  animation: 10s rotate linear infinite;
+}
+
+@keyframes rotate {
+  to {
+    --angle: 360deg;
+  }
+}
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+input[type="checkbox"] {
+  position: fixed;
+  top: 1em;
+  left: 1em;
+}
+
+input[type="checkbox"]:after {
+  content: 'Toggle Fill';
+  white-space: nowrap;
+  padding-left: 1.5em;
+}
+
+input[type="checkbox"]:checked + div {
+  border-image-slice: 1 fill;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  place-items: center;
+}
+
+footer {
+  text-align: center;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+<input type="checkbox" />
+<div></div>
+
+<footer>
+  <p>Demo 2/4 for <a href="https://brm.us/animated-gradient-border" target="_top">https://brm.us/animated-gradient-border</a></p>
+</footer>
+</body>
+</html>
