@@ -31,6 +31,7 @@ div {
 .slider-range .range {
   position: absolute;
   left: 0;
+  right: 0;
   height: 14px;
   border-radius: 14px;
   background-color: #1ABC9C;
@@ -173,6 +174,25 @@ div {
 </style>
 <body>
 <div class="slider-range">
+  <!-- <input type="range" max="100" min="0" step="1" class="first-inp" value="30" /> -->
+  <input type="range" max="100" min="0" step="1" class="last-inp" value="60" />
+  <div>
+    <div class="range"></div>
+    <!-- <div class="thumb first">
+        <div class="tip">
+          <span class="value"></span>
+        </div>
+      </div> -->
+    <div class="thumb last">
+      <div class="tip">
+        <span class="value"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slider-range">
+  <input type="range" max="100" min="0" step="1" class="first-inp" value="30" />
+  <input type="range" max="100" min="0" step="1" class="last-inp" value="60" />
   <div>
     <div class="range"></div>
     <div class="thumb first">
@@ -186,16 +206,16 @@ div {
       </div>
     </div>
   </div>
-  <input type="range" max="100" min="0" step="1" class="first-inp" value="30" />
-  <input type="range" max="100" min="0" step="1" class="last-inp" value="60" />
 </div>
+
 <script>
 const slideRange = function() {
   const $sliderRange = document.querySelectorAll('.slider-range');
   if ($sliderRange.length) {
-    const $firstRange = function(el) {
-      const $el = el;
-      $el.value = Math.min($el.value, $el.parentNode.childNodes[5].value - 1);
+    const $firstRange = function(firstEl, lastEl) {
+      const $el = firstEl;
+      const $lastVal = lastEl ? parseInt(lastEl.value) : 0;
+      $el.value = Math.min($el.value, $lastVal - 1);
       const value = (100 / (parseInt($el.max) - parseInt($el.min))) * parseInt($el.value) - (100 / (parseInt($el.max) - parseInt($el.min))) * parseInt($el.min);
 
       const parent = $el.parentNode;
@@ -204,11 +224,11 @@ const slideRange = function() {
       parent.querySelector('.thumb.first .value').innerHTML = $el.value;
     }
 
-    const $lastRange = function(el) {
-      const $el = el;
-      $el.value = Math.max($el.value, $el.parentNode.childNodes[3].value - (-1));
+    const $lastRange = function(lastEl, firstEl) {
+      const $el = lastEl;
+      const $firstVal = firstEl ? parseInt(firstEl.value) : 0;
+      $el.value = Math.max($el.value, $firstVal + 1);
       const value = (100 / (parseInt($el.max) - parseInt($el.min))) * parseInt($el.value) - (100 / (parseInt($el.max) - parseInt($el.min))) * parseInt($el.min);
-
       const parent = $el.parentNode;
       parent.querySelector('.range').style.right = (100 - value) + '%';
       parent.querySelector('.thumb.last').style.left = value + '%';
@@ -218,16 +238,23 @@ const slideRange = function() {
     $sliderRange.forEach(function(el) {
       const $el = el;
       const $first = $el.querySelector('.first-inp');
-      $firstRange($first);
-      $first.addEventListener('input', function() {
-        $firstRange(this)
-      }, false);
-
       const $last = $el.querySelector('.last-inp');
-      $lastRange($last);
-      $last.addEventListener('input', function() {
-        $lastRange(this)
-      }, false);
+      if ($first) {
+        $firstRange($first, $last);
+        $first.addEventListener('input', function() {
+          $firstRange($first, $last)
+        }, false);
+      } else if ($el.querySelector('.thumb.first')) {
+        $el.querySelector('.thumb.first').style.display = 'none';
+      }
+      if ($last) {
+        $lastRange($last, $first);
+        $last.addEventListener('input', function() {
+          $lastRange($last, $first);
+        }, false);
+      } else if ($el.querySelector('.thumb.last')) {
+        $el.querySelector('.thumb.last').style.display = 'none';
+      }
     });
   }
 }
