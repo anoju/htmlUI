@@ -13,38 +13,39 @@ div {
   padding: 0;
 }
 .slider-range {
+  --slider-size: 28px;
   position: relative;
-  height: 14px;
+  height: var(--slider-size);
   border-radius: 10px;
   text-align: left;
   margin: 60px 20px;
+  padding: calc(var(--slider-size) / 4) calc(var(--slider-size) / 2);
 }
 
 .slider-range > div {
-  position: relative;
-  border-radius: 10px;
+  border-radius: calc(var(--slider-size) / 4);
   background-color: #CCC;
-  height: 14px;
-  margin: 14px;
+  height: calc(var(--slider-size) / 2);
 }
 
 .slider-range .range {
   position: absolute;
   left: 0;
   right: 0;
-  height: 14px;
-  border-radius: 14px;
+  top: calc(var(--slider-size) / 4);
+  height: calc(var(--slider-size) / 2);
+  border-radius: calc(var(--slider-size) / 4);
   background-color: #1ABC9C;
 }
 
 .slider-range .thumb {
   position: absolute;
-  top: -7px;
+  top: 0;
   z-index: 2;
   height: 28px;
   width: 28px;
   text-align: left;
-  margin-left: -14px;
+  margin-left: calc(var(--slider-size) / 2 * -1);
   cursor: pointer;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
   background-color: #FFF;
@@ -60,11 +61,11 @@ div {
   z-index: 3;
   background-color: #1ABC9C;
   color: #fff;
-  width: 28px;
-  height: 28px;
-  margin-left: -14px;
-  border-radius: 28px;
-  -webkit-border-radius: 28px;
+  width: var(--slider-size);
+  height: var(--slider-size);
+  margin-left: calc(var(--slider-size) / 2 * -1);
+  border-radius: var(--slider-size);
+  -webkit-border-radius: var(--slider-size);
   align-items: center;
   -webkit-justify-content: center;
   justify-content: center;
@@ -87,7 +88,7 @@ div {
 .slider-range .tip > span {
   font-size: 12px;
   font-weight: 700;
-  line-height: 28px;
+  line-height: var(--slider-size);
 }
 
 .slider-range:hover .tip {
@@ -96,10 +97,10 @@ div {
 
 .slider-range > input[type=range] {
   position: absolute;
-  top: -7px;
+  top: 0;
   left: 0;
   width: 100%;
-  height: 28px;
+  height: var(--slider-size);
   margin: 0;
   /*pointer-events: none;*/
   -webkit-appearance: none;
@@ -134,8 +135,8 @@ div {
 
 .slider-range > input[type=range]::-ms-thumb {
   /*pointer-events: all;*/
-  width: 28px;
-  height: 28px;
+  width: var(--slider-size);
+  height: var(--slider-size);
   border-radius: 0px;
   border: 0 none;
   background: red;
@@ -143,8 +144,8 @@ div {
 
 .slider-range > input[type=range]::-moz-range-thumb {
   /*pointer-events: all;*/
-  width: 28px;
-  height: 28px;
+  width: var(--slider-size);
+  height: var(--slider-size);
   border-radius: 0px;
   border: 0 none;
   background: red;
@@ -152,8 +153,8 @@ div {
 
 .slider-range > input[type=range]::-webkit-slider-thumb {
   /*pointer-events: all;*/
-  width: 28px;
-  height: 28px;
+  width: var(--slider-size);
+  height: var(--slider-size);
   border-radius: 0px;
   border: 0 none;
   background: red;
