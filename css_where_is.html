@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>:where()와 :is()의 차이점</title>
+<style>
+:where(section.where, aside.where, footer.where) p {
+  color: red;
+}
+:is(section.is, aside.is, footer.is) p {
+  color: green;
+}
+footer p {
+  color: blue;
+}
+</style>
+</head>
+<body>
+<article>
+  <h2>:where()</h2>
+  <section class="where">
+    <p>Section</p>
+  </section>
+  <aside class="where">
+    <p>Aside</p>
+  </aside>
+  <footer class="where">
+    <p>Footer</p>
+  </footer>
+</article>
+<article>
+  <h2>:is()</h2>
+  <section class="is">
+    <p>Section</p>
+  </section>
+  <aside class="is">
+    <p>Aside</p>
+  </aside>
+  <footer class="is">
+    <p>Footer</p>
+  </footer>
+</article>
+</body>
+</html>
