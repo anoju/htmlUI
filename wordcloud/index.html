@@ -73,7 +73,8 @@ function showCloud(data) {
     var idx2 = 0;
     cloud.enter()
       .append("text")
-      .style("font-family", 'Noto Sans KR')
+      .style("font-family", 'Impact')
+      // .style("font-family", 'Noto Sans KR')
       .style("fill", function(d) {
         console.log(idx2)
         var fillColor = colors[idx2 % colors.length]
