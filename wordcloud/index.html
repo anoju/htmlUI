@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<link rel="stylesheet" href="http://fonts.googleapis.com/earlyaccess/notosanskr.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://rawgit.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js" type="text/JavaScript"></script>
+<style>
+.wrap {
+  width: 600px;
+  height: 600px;
+  margin: 0 auto;
+  position: relative;
+  line-height: 1.5;
+}
+</style>
+</head>
+<body>
+<script>
+var width = 600,
+  height = 600
+
+var svg = d3.select("body").append("svg")
+  .attr("width", width)
+  .attr("height", height);
+d3.csv("worddata.csv", function(data) {
+  showCloud(data)
+  // setInterval(function() {
+  //   showCloud(data)
+  // }, 2000)
+});
+//scale.linear: 선형적인 스케일로 표준화를 시킨다. 
+//domain: 데이터의 범위, 입력 크기
+//range: 표시할 범위, 출력 크기 
+//clamp: domain의 범위를 넘어간 값에 대하여 domain의 최대값으로 고정시킨다.
+wordScale = d3.scale.linear().domain([0, 100]).range([0, 150]).clamp(true);
+var colors = ["red", "orange", "yellow", "green", "blue", "darkblue", "purple"]
+var svg = d3.select("svg")
+  .append("g")
+  .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+
+function showCloud(data) {
+  var idx1 = 0;
+  d3.layout.cloud().size([width, height])
+    //클라우드 레이아웃에 데이터 전달
+    .words(data)
+    .rotate(function(d) {
+      console.log(idx1)
+      idx1 += 1;
+      // 각도
+      var namugi = idx1 % 4
+      var deg = 0;
+      if (namugi == 1) deg = 90;
+      if (namugi == 2) deg = 0;
+      if (namugi == 3) deg = -90;
+      return deg;
+    })
+    //스케일로 각 단어의 크기를 설정
+    .fontSize(function(d) {
+      return wordScale(d.frequency);
+    })
+    //클라우드 레이아웃을 초기화 > end이벤트 발생 > 연결된 함수 작동  
+    .on("end", draw)
+    .start();
+
+  function draw(words) {
+    var cloud = svg.selectAll("text").data(words)
+    //Entering words
+    var idx2 = 0;
+    cloud.enter()
+      .append("text")
+      .style("font-family", 'Noto Sans KR')
+      .style("fill", function(d) {
+        console.log(idx2)
+        var fillColor = colors[idx2 % colors.length]
+        idx2 += 1;
+        return fillColor;
+      })
+      .style("fill-opacity", .5)
+      .attr("text-anchor", "middle")
+      .attr('font-size', 1)
+      .text(function(d) {
+        return d.text;
+      });
+    cloud
+      .transition()
+      .duration(600)
+      .style("font-size", function(d) {
+        return d.size + "px";
+      })
+      .attr("transform", function(d) {
+        return "translate(" + [d.x, d.y] + ") rotate(" + d.rotate + ")";
+      })
+      .style("fill-opacity", 1);
+  }
+}
+</script>
+</body>
+</html>
