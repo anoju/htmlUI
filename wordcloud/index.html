@@ -38,7 +38,7 @@ d3.csv("worddata.csv", function(data) {
 //range: 표시할 범위, 출력 크기 
 //clamp: domain의 범위를 넘어간 값에 대하여 domain의 최대값으로 고정시킨다.
 wordScale = d3.scale.linear().domain([0, 100]).range([0, 150]).clamp(true);
-var colors = ["red", "orange", "yellow", "green", "blue", "darkblue", "purple"]
+var colors = ["#007bff", "#6610f2", "#6f42c1", "#e83e8c", "#dc3545", "#fd7e14", "#ffc107", "#28a745", "#20c997", "#17a2b8"]
 var svg = d3.select("svg")
   .append("g")
   .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
