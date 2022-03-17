@@ -40,4 +40,10 @@
       "html"
     ],
   },
+  "imageSprites.settings": {
+    "padding": 0,
+    "orientation": "vertical",
+    "stylesheet": "scss",
+    "output": "png"
+  }
 }
