@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+
+</head>
+<body>
+<div class="wrap"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+var $i = $('<i>', {
+  class: 'box',
+  text: '<b>테스트</b>',
+  role: 'button',
+  'data-on': 'on'
+})
+var $i2 = $('<div></div>', {
+  class: 'box2',
+  html: '<b>테스트</b>',
+  'aria-hidden': 'false'
+})
+$('.wrap').append($i);
+$('.wrap').append($i2);
+</script>
+</body>
+</html>
