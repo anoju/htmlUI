@@ -287,18 +287,21 @@
   </div>
 </div>
 <script>
-function cardCls() {
-
-}
 $('.card_turn>button').click(function() {
+  const $this = $(this);
   if ($('.card_wrap').hasClass('on')) {
     $('.card_wrap').removeClass("on");
+    $this.text('뒷면보기');
   } else {
     $('.card_wrap').addClass("on");
+    $this.text('앞면보기');
   }
 });
 $('.wrap').mouseleave(function() {
-  if ($('.card_wrap').hasClass('on')) $('.card_wrap').removeClass("on");
+  if ($('.card_wrap').hasClass('on')) {
+    $('.card_wrap').removeClass("on");
+    $('.card_turn>button').text('뒷면보기');
+  }
 })
 </script>
 </body>
