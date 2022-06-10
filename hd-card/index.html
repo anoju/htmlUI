@@ -42,7 +42,15 @@
   width: 200%;
   height: 100%;
   background: linear-gradient(to right, rgba(62, 0, 0, 0) 0%, rgba(62, 0, 0, 1) 45%, rgba(62, 0, 0, 1) 55%, rgba(62, 0, 0, 0) 100%);
-  animation: shiny 6s cubic-bezier(0.15, 0.85, 0.45, 1) 0s infinite;
+  animation: shiny 6s cubic-bezier(0.15, 0.85, 0.45, 1) infinite;
+}
+.btn.type2:before {
+  right: 0;
+  background-image: url(cont1_bg.jpg);
+  background-position: 50% 50%;
+  background-size: 300% auto;
+  width: 100%;
+  animation: shiny-bg 8s infinite;
 }
 @keyframes shiny {
   0% {
@@ -62,6 +70,24 @@
     right: 100%;
     transform: rotate(0deg);
     opacity: 0;
+  }
+}
+@keyframes shiny-bg {
+  0%,
+  100% {
+    background-position: 50% 50%;
+  }
+  20% {
+    background-position: 10% 30%;
+  }
+  40% {
+    background-position: 90% 30%;
+  }
+  60% {
+    background-position: 90% 70%;
+  }
+  80% {
+    background-position: 10% 60%;
   }
 }
 
@@ -243,6 +269,9 @@
 <div class="wrap">
   <div class="btn_wrap">
     <a href="#" class="btn">
+      <span>신청하기</span>
+    </a>
+    <a href="#" class="btn type2">
       <span>신청하기</span>
     </a>
   </div>
