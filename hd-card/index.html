@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+}
+.wrap {
+  position: relative;
+}
+.btn_wrap {
+  text-align: center;
+  padding: 10px 0;
+  background: rgba(0, 0, 0, 0.15);
+}
+.btn {
+  position: relative;
+  display: inline-block;
+  padding: 10px 25px;
+  margin: 0;
+  border-radius: 30px;
+  background-color: #ea0a2a;
+  overflow: hidden;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+.btn span {
+  position: relative;
+}
+.btn:before {
+  position: absolute;
+  content: '';
+  display: inline-block;
+  top: 0px;
+  right: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(62, 0, 0, 0) 0%, rgba(62, 0, 0, 1) 45%, rgba(62, 0, 0, 1) 55%, rgba(62, 0, 0, 0) 100%);
+  animation: shiny 6s cubic-bezier(0.15, 0.85, 0.45, 1) 0s infinite;
+}
+@keyframes shiny {
+  0% {
+    right: -200%;
+    transform: rotate(0deg);
+  }
+  20% {
+    right: -100%;
+    transform: rotate(0deg);
+  }
+  60% {
+    right: -100%;
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    right: 100%;
+    transform: rotate(0deg);
+    opacity: 0;
+  }
+}
+
+.bg_wrap {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  animation: bgMov 4s ease infinite alternate;
+  background: url(cont1_bg.jpg)no-repeat 50% 50%;
+  background-size: cover;
+  pointer-events: none;
+}
+@keyframes bgMov {
+  0% {
+    height: 100%;
+  }
+  100% {
+    height: 160%;
+  }
+}
+
+.box_wrap {
+  padding: 40px 0;
+  /* transition: all .8s cubic-bezier(0.15, 0.85, 0.45, 1) 0s; */
+}
+.card_wrap {
+  z-index: 1;
+  position: relative;
+  display: block;
+  left: 50%;
+  /* width: 50%; */
+  width: 440px;
+  max-width: 180px;
+  transform: perspective(800px) translateX(-50%) translateZ(0);
+  transition: transform .6s cubic-bezier(0.175, 0.885, 0.320, 1.275) 0s;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.card_wrap > img {
+  position: relative;
+  top: 0;
+  left: 50%;
+  display: inline-block;
+  max-width: 100%;
+  transform: perspective(800px) translateX(-50%) translateZ(0px) rotateY(0deg);
+  transform-origin: center;
+  transition: transform .6s cubic-bezier(0.175, 0.885, 0.320, 1.275) 0s;
+  backface-visibility: hidden;
+  vertical-align: top;
+}
+.card_wrap > img.card_b {
+  position: absolute;
+  transform: perspective(800px) translateX(-50%) translateZ(-1px) rotateY(180deg);
+  transform-origin: center;
+  backface-visibility: hidden;
+  opacity: 0;
+  transition: all .6s cubic-bezier(0.175, 0.885, 0.320, 1.275) 0s;
+}
+.card_wrap.on,
+.card_wrap.in {
+  transform: perspective(800px) translateX(-43%) translateZ(100px);
+}
+.card_wrap.on > img {
+  transform: perspective(800px) translateX(-50%) translateZ(0px) rotateY(-180deg);
+}
+.card_wrap.on > img.card_b {
+  transform: perspective(800px) translateX(-50%) translateZ(1px) rotateY(0deg);
+  opacity: 1;
+}
+.card_wrap.on > .light_wrap::before {
+  animation: shiny2 2s ease-in-out -1s 1;
+}
+.card_wrap.in > .light_wrap::before {
+  animation: shiny3 2.5s ease-in-out -1.5s 1;
+}
+.card_wrap > .light_wrap {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateZ(2px);
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.card_wrap > .light_wrap:before {
+  z-index: 1;
+  position: absolute;
+  content: '';
+  opacity: 0;
+  display: inline-block;
+  top: -180px;
+  left: 0;
+  width: 30px;
+  height: 100%;
+  background-color: #fff;
+  transform: perspective(800px) rotate(45deg) translateZ(2px);
+  animation: shiny1 4s ease-in-out -2.7s 1;
+}
+@keyframes shiny1 {
+  0% {
+    transform: scale(0) rotate(45deg) translateZ(2px);
+    opacity: 0;
+  }
+  80% {
+    transform: scale(0) rotate(45deg) translateZ(2px);
+    opacity: .3;
+  }
+  81% {
+    transform: scale(4) rotate(45deg) translateZ(2px);
+    opacity: .6;
+  }
+  100% {
+    transform: scale(50) rotate(45deg) translateZ(2px);
+    opacity: 0;
+  }
+}
+@keyframes shiny2 {
+  0% {
+    transform: scale(0) rotate(45deg) translateZ(100px);
+    opacity: 0;
+  }
+  80% {
+    transform: scale(0) rotate(45deg) translateZ(100px);
+    opacity: .1;
+  }
+  81% {
+    transform: scale(4) rotate(45deg) translateZ(100px);
+    opacity: .2;
+  }
+  100% {
+    transform: scale(50) rotate(45deg) translateZ(100px);
+    opacity: 0;
+  }
+}
+@keyframes shiny3 {
+  0% {
+    transform: scale(0) rotate(45deg) translateZ(100px);
+    opacity: 0;
+  }
+  80% {
+    transform: scale(0) rotate(45deg) translateZ(100px);
+    opacity: .1;
+  }
+  81% {
+    transform: scale(4) rotate(45deg) translateZ(100px);
+    opacity: .2;
+  }
+  100% {
+    transform: scale(50) rotate(45deg) translateZ(100px);
+    opacity: 0;
+  }
+}
+.card_turn {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  margin: 25px auto 20px;
+}
+.card_turn > button {
+  cursor: pointer;
+  padding: 7px 12px;
+  padding-left: 37px;
+  border: 0;
+  border-radius: 25px;
+  color: #fff;
+  font-size: 13px;
+  font-family: "YouandiNewHR";
+  background: url(turn_icon.png)no-repeat 10px 45%, #d1d1d1;
+  background-size: 20px 15px;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<div class="bg_wrap"></div>
+
+<div class="wrap">
+  <div class="btn_wrap">
+    <a href="#" class="btn">
+      <span>신청하기</span>
+    </a>
+  </div>
+  <div class="box_wrap">
+    <div class="card_wrap">
+      <img src="red1_enamel.png" alt="red enamel">
+      <img class="card_b" src="red1_enamelB.png" alt="red enamel">
+      <p class="light_wrap"></p>
+    </div>
+    <p class="card_turn">
+      <button>뒷면보기</button>
+    </p>
+  </div>
+</div>
+<script>
+function cardCls() {
+
+}
+$('.card_turn>button').click(function() {
+  if ($('.card_wrap').hasClass('on')) {
+    $('.card_wrap').removeClass("on");
+  } else {
+    $('.card_wrap').addClass("on");
+  }
+});
+$('.wrap').mouseleave(function() {
+  if ($('.card_wrap').hasClass('on')) $('.card_wrap').removeClass("on");
+})
+</script>
+</body>
+</html>
