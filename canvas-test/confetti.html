@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+body {
+  height: 100vh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  font: 900 200% system-ui, sans-serif;
+}
+</style>
+</head>
+<body>
+<h1>Click!</h1>
+<!-- <script type="module">
+  import confetti from "https://cdn.skypack.dev/canvas-confetti";
+
+confetti();
+
+function randomInRange(min, max) {
+  return Math.random() * (max - min) + min;
+}
+document.addEventListener("click", () => {
+  confetti({
+    angle: randomInRange(55, 125),
+    spread: randomInRange(50, 70),
+    particleCount: randomInRange(50, 100),
+    origin: { y: 0.6 }
+  });
+});
+</script> -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+function first() {
+  var end = Date.now() + (5 * 1000);
+
+  // go Buckeyes!
+  var colors = ['#bb0000', '#ffffff'];
+
+  (function frame() {
+    confetti({
+      particleCount: 2,
+      angle: 60,
+      spread: 55,
+      origin: {
+        x: 0
+      },
+      colors: colors
+    });
+    confetti({
+      particleCount: 2,
+      angle: 120,
+      spread: 55,
+      origin: {
+        x: 1
+      },
+      colors: colors
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  }());
+}
+first();
+
+function randomInRange(min, max) {
+  return Math.random() * (max - min) + min;
+}
+document.addEventListener("click", () => {
+  confetti({
+    angle: randomInRange(55, 125),
+    spread: randomInRange(50, 70),
+    particleCount: randomInRange(50, 100),
+    origin: {
+      y: 0.6
+    }
+  });
+});
+</script>
+</body>
+</html>
