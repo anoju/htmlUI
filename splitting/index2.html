@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<link rel="stylesheet" href="css/style2.min.css">
+<link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting.css">
+<link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting-cells.css">
+</head>
+<body>
+<div class="container">
+  <h1 data-splitting data-animation="active">가나다라마바사</h1>
+  <h1 data-splitting data-animation="on">가나다라마바사</h1>
+  <h1 data-splitting data-animation="on" style="--spl-highlight-color: red">가나다라마바사</h1>
+  <br />
+  <h1 data-splitting data-animation="spl-down">가나다라마바사</h1>
+  <h1 data-splitting data-animation="spl-up">가나다라마바사</h1>
+  <br />
+  <h1 data-splitting data-animation="spl-left">가나다라마바사</h1>
+  <h1 data-splitting data-animation="spl-right">가나다라마바사</h1>
+  <br />
+  <h1 data-splitting data-animation="spl-hidden-down">가나다라마바사</h1>
+  <h1 data-splitting data-animation="spl-hidden-up">가나다라마바사</h1>
+  <br />
+  <h1 data-splitting data-animation="spl-hidden-left">가나다라마바사</h1>
+  <h1 data-splitting data-animation="spl-hidden-right">가나다라마바사</h1>
+  <br />
+  <h1 data-splitting data-animation="spl-size-down">가나다라마바사</h1>
+  <h1 data-splitting data-animation="spl-size-up">가나다라마바사</h1>
+  <br />
+  <h1 data-splitting data-animation="spl-rotate-down">가나다라마바사</h1>
+  <h1 data-splitting data-animation="spl-rotate-up">가나다라마바사</h1>
+</div>
+<script src="https://unpkg.com/splitting/dist/splitting.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+Splitting();
+
+$('[data-animation]').each(function() {
+  const $this = $(this);
+  const $idx = $this.index('[data-animation]')
+  const $class = $this.data('animation');
+  setTimeout(function() {
+    $this.addClass($class)
+  }, $idx * 200)
+});
+</script>
+</body>
+</html>
