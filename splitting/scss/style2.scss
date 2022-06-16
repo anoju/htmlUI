@@ -2,6 +2,9 @@
   --primary-color: #00caca;
   --spl-highlight-color: var(--primary-color);
 }
+body {
+  font-family: 'Noto Sans KR';
+}
 .container {
   text-align: center;
   line-height: 1.2;
@@ -64,7 +67,7 @@ h1 {
   opacity: 0;
 }
 
-// prettier-ignore
+// class, keyframes, duration, delay
 $splits: 'active''splitting-fade'1 150,
 'on''splitting-highlight'1 150,
 'spl-up''splitting-up'1 150,
