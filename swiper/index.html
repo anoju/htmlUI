@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.2.5/swiper-bundle.css" />
+<style>
+body {
+  margin: 0;
+}
+.swiper {
+  pointer-events: none;
+  user-select: none;
+}
+.swiper-wrapper {
+  transition-timing-function: linear;
+}
+.swiper-slide {
+  width: auto;
+}
+.swiper-item {
+  width: 400px;
+  height: 300px;
+}
+.swiper-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.swiper-pagination {
+  position: relative;
+  margin-top: 10px;
+}
+</style>
+</head>
+<body>
+<div class="swiper mySwiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">
+      <div class="swiper-item"><img src="../img/temp.jpg" alt=""></div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-item"><img src="../img/thumb-temp2.jpg" alt=""></div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-item"><img src="../img/thumb-temp3.jpg" alt=""></div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-item"><img src="../img/thumb-temp4.jpg" alt=""></div>
+    </div>
+    <div class="swiper-slide">
+      <div class="swiper-item"><img src="../img/thumb-temp5.jpg" alt=""></div>
+    </div>
+  </div>
+  <div class="swiper-pagination"></div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+var swiper = new Swiper(".mySwiper", {
+  slidesPerView: 'auto',
+  loop: true,
+  speed: 5000,
+  allowTouchMove: false,
+  autoplay: {
+    enabled: true,
+    delay: 0,
+  },
+  pagination: {
+    el: ".swiper-pagination",
+    clickable: false,
+  },
+});
+</script>
+</body>
+</html>
