@@ -29,14 +29,24 @@ body {
   height: 100%;
   object-fit: cover;
 }
-.swiper-pagination {
+.bg-swiper .swiper-pagination {
   position: relative;
-  margin-top: 10px;
+  bottom: auto;
+  display: flex;
+  justify-content: center;
+}
+.bg-swiper.swiper .swiper-pagination-bullet {
+  vertical-align: top;
+  margin: 0;
+  border-radius: 0;
+  width: 100%;
+  height: 2px;
+  transition: background 0.3s ease-in-out;
 }
 </style>
 </head>
 <body>
-<div class="swiper mySwiper">
+<div class="swiper bg-swiper">
   <div class="swiper-wrapper">
     <div class="swiper-slide">
       <div class="swiper-item"><img src="../img/temp.jpg" alt=""></div>
@@ -59,17 +69,17 @@ body {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 <script>
-var swiper = new Swiper(".mySwiper", {
+var swiper = new Swiper('.bg-swiper', {
   slidesPerView: 'auto',
   loop: true,
   speed: 5000,
   allowTouchMove: false,
   autoplay: {
     enabled: true,
-    delay: 0,
+    delay: 1,
   },
   pagination: {
-    el: ".swiper-pagination",
+    el: '.swiper-pagination',
     clickable: false,
   },
 });
