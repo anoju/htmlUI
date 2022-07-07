@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+</head>
+<body>
+<h1>string-util</h1>
+
+<h2>addComma, addComma2, addComma3</h2>
+<div><span>123456789.12345</span> =&gt; <strong id="text1-1"></strong></div>
+<div><span>123456789.12345</span> =&gt; <strong id="text1-2"></strong></div>
+<div><span>123456789.12345</span> =&gt; <strong id="text1-3"></strong></div>
+
+<h2>removeComma, removeComma2</h2>
+<div><span>123,456,789.12345</span> =&gt; <strong id="text1-11"></strong></div>
+<div><span>123,456,789.12345</span> =&gt; <strong id="text1-12"></strong></div>
+
+<h2>getBytes</h2>
+<div><span>123456789</span> =&gt; <strong id="text2-1"></strong></div>
+<div><span>홍길동</span> =&gt; <strong id="text2-2"></strong></div>
+<div><span>anoju</span> =&gt; <strong id="text2-3"></strong></div>
+
+<h2>maskingNumber</h2>
+<div><span>12345(2자리 이후)</span> =&gt; <strong id="text3-1"></strong></div>
+<div><span>홍길동(1자리 이후)</span> =&gt; <strong id="text3-2"></strong></div>
+
+<h2>maskingText</h2>
+<div><span>12345(2자리 이후)</span> =&gt; <strong id="text4-1"></strong></div>
+<div><span>홍길동(1자리 이후)</span> =&gt; <strong id="text4-2"></strong></div>
+<div><span>abcdefg(4자리 이후)</span> =&gt; <strong id="text4-3"></strong></div>
+
+<h2>removeTag</h2>
+<div id="text5-1"><strong>가나다라</strong>마바사<br /><em>아자차카</em>타파하</div>
+=&gt;
+<div id="text5-2"></div>
+
+<h2>ellipsisTxt</h2>
+<div><span>가나다라마바사아자(5자리 이후)</span> =&gt; <strong id="text6-1"></strong></div>
+<script>
+//comma
+const addComma = function(str) {
+  try {
+    str += '';
+    const x = str.split('.');
+    let x1 = x[0];
+    const x2 = x.length > 1 ? '.' + x[1] : '';
+    const rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+      x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+  } catch (error) {
+    console.error(error.name + ':' + error.message)
+  }
+};
+const addComma2 = function(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+const addComma3 = function(num) {
+  return num.toString().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+};
+document.querySelector('#text1-1').innerHTML = addComma('123456789.12345')
+document.querySelector('#text1-2').innerHTML = addComma2('123456789.12345')
+document.querySelector('#text1-3').innerHTML = addComma3('123456789.12345')
+
+const removeComma = function(num) {
+  return num.toString().replace(/,/gi, '');
+};
+const removeComma2 = function(str) {
+  return str.toString().replace(/[^\d]+/g, '');
+}
+document.querySelector('#text1-11').innerHTML = removeComma('123,456,789.12345')
+document.querySelector('#text1-12').innerHTML = removeComma2('123,456,789.12345')
+
+// 문자열 바이트
+const getBytes = function(str) {
+  return unescape(encodeURIComponent(str).length)
+}
+document.querySelector('#text2-1').innerHTML = getBytes('123456789');
+document.querySelector('#text2-2').innerHTML = getBytes('홍길동');
+document.querySelector('#text2-3').innerHTML = getBytes('anoju');
+
+
+// 마스킹
+const maskingNumber = function(number, count) {
+  const $num = number.toString()
+  return $num.substring(0, count) + $num.substring(count, number.length).replace(/\d(?=\d{0})/g, '*');
+}
+document.querySelector('#text3-1').innerHTML = maskingNumber(12345, 2);
+document.querySelector('#text3-2').innerHTML = maskingNumber('홍길동', 1);
+
+const maskingText = function(str, count) {
+  const $str = str.toString()
+  return $str.substring(0, count) + $str.substring(count, str.length).replace(/(?<=.{0})./gi, "*");
+}
+document.querySelector('#text4-1').innerHTML = maskingText(12345, 2);
+document.querySelector('#text4-2').innerHTML = maskingText('홍길동', 1);
+document.querySelector('#text4-3').innerHTML = maskingText('abcdefg', 4);
+
+// 태그 제거
+const removeTag = function(html) {
+  return html.replace(/(<([^>]+)>)/gi, '');
+}
+const $html = document.querySelector('#text5-1').innerHTML
+document.querySelector('#text5-2').innerHTML = removeTag($html)
+
+// 말줄임
+const ellipsisTxt = function(str, size) {
+  let $str = str;
+  if (str.length > size) {
+    $str = str.substring(0, size) + '...'
+  }
+  return $str;
+}
+document.querySelector('#text6-1').innerHTML = ellipsisTxt('가나다라마바사아자', 5);
+</script>
+</body>
+</html>
