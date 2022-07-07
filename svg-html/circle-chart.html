@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>svg</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>svg circle-chart</title>
 <style>
 /**
  * 1. The `reverse` animation direction plays the animation backwards
@@ -17,10 +17,13 @@
  *    and Edge, use the transform attribute directly on the SVG element as a
  * .  workaround (https://markus.oberlehner.net/blog/pure-css-animated-svg-circle-chart/#part-4-internet-explorer-strikes-back).
  */
- .circle-chart__circle {
-  animation: circle-chart-fill 2s reverse; /* 1 */ 
-  transform: rotate(-90deg); /* 2, 3 */
-  transform-origin: center; /* 4 */
+.circle-chart__circle {
+  animation: circle-chart-fill 2s reverse;
+  /* 1 */
+  transform: rotate(-90deg);
+  /* 2, 3 */
+  transform-origin: center;
+  /* 4 */
 }
 
 /**
@@ -33,7 +36,8 @@
  * .  workaround (https://markus.oberlehner.net/blog/pure-css-animated-svg-circle-chart/#part-4-internet-explorer-strikes-back).
  */
 .circle-chart__circle--negative {
-  transform: rotate(-90deg) scale(1,-1); /* 1, 2, 3 */
+  transform: rotate(-90deg) scale(1, -1);
+  /* 1, 2, 3 */
 }
 
 .circle-chart__info {
@@ -43,7 +47,9 @@
 }
 
 @keyframes circle-chart-fill {
-  to { stroke-dasharray: 0 100; }
+  to {
+    stroke-dasharray: 0 100;
+  }
 }
 
 @keyframes circle-chart-appear {
@@ -77,31 +83,31 @@ html {
 
 <body>
 
-  <div class="grid">
-    <section>
-      <h2>Positive chart value</h2>
-      <svg class="circle-chart" viewbox="0 0 33.83098862 33.83098862" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-        <circle class="circle-chart__background" stroke="#efefef" stroke-width="2" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
-        <circle class="circle-chart__circle" stroke="#00acc1" stroke-width="2" stroke-dasharray="30,100" stroke-linecap="round" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
-        <g class="circle-chart__info">
-          <text class="circle-chart__percent" x="16.91549431" y="15.5" alignment-baseline="central" text-anchor="middle" font-size="8">30%</text>
-          <text class="circle-chart__subline" x="16.91549431" y="20.5" alignment-baseline="central" text-anchor="middle" font-size="2">Yay 30% progress!</text>
-        </g>
-      </svg>
-    </section>
-  
-    <section>
-      <h2>Negative chart value</h2>
-      <svg class="circle-chart" viewbox="0 0 33.83098862 33.83098862" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-        <circle class="circle-chart__background" stroke="#efefef" stroke-width="2" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
-        <circle class="circle-chart__circle circle-chart__circle--negative" stroke="#00acc1" stroke-width="2" stroke-dasharray="10,100" stroke-linecap="round" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
-        <g class="circle-chart__info">
-          <text class="circle-chart__percent" x="16.91549431" y="15.5" alignment-baseline="central" text-anchor="middle" font-size="8">-10%</text>
-          <text class="circle-chart__subline" x="16.91549431" y="20.5" alignment-baseline="central" text-anchor="middle" font-size="2">Oh no :(</text>
-        </g>
-      </svg>
-    </section>
-  </div>  
+<div class="grid">
+  <section>
+    <h2>Positive chart value</h2>
+    <svg class="circle-chart" viewbox="0 0 33.83098862 33.83098862" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+      <circle class="circle-chart__background" stroke="#efefef" stroke-width="2" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
+      <circle class="circle-chart__circle" stroke="#00acc1" stroke-width="2" stroke-dasharray="30,100" stroke-linecap="round" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
+      <g class="circle-chart__info">
+        <text class="circle-chart__percent" x="16.91549431" y="15.5" alignment-baseline="central" text-anchor="middle" font-size="8">30%</text>
+        <text class="circle-chart__subline" x="16.91549431" y="20.5" alignment-baseline="central" text-anchor="middle" font-size="2">Yay 30% progress!</text>
+      </g>
+    </svg>
+  </section>
+
+  <section>
+    <h2>Negative chart value</h2>
+    <svg class="circle-chart" viewbox="0 0 33.83098862 33.83098862" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+      <circle class="circle-chart__background" stroke="#efefef" stroke-width="2" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
+      <circle class="circle-chart__circle circle-chart__circle--negative" stroke="#00acc1" stroke-width="2" stroke-dasharray="10,100" stroke-linecap="round" fill="none" cx="16.91549431" cy="16.91549431" r="15.91549431" />
+      <g class="circle-chart__info">
+        <text class="circle-chart__percent" x="16.91549431" y="15.5" alignment-baseline="central" text-anchor="middle" font-size="8">-10%</text>
+        <text class="circle-chart__subline" x="16.91549431" y="20.5" alignment-baseline="central" text-anchor="middle" font-size="2">Oh no :(</text>
+      </g>
+    </svg>
+  </section>
+</div>
 
 </body>
 </html>

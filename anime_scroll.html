@@ -1,36 +1,41 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>anime_scroll</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 <style>
-    .box{height:5000px;width:200px;background:#eee;margin:10px;}
+.box {
+  height: 5000px;
+  width: 200px;
+  background: #eee;
+  margin: 10px;
+}
 </style>
 <script>
-$(function(){
-    $('.btn').click(function(){
-        console.log('click')
-        const $el = window.document.scrollingElement || window.document.body || window.document.documentElement;
-        anime({
-            targets: $el,
-            scrollTop: 1000,
-            duration: 300,
-            easing: 'easeInOutQuad',
-            complete: (() => {
-                console.log('scroll end')
-            })
-        });
+$(function() {
+  $('.btn').click(function() {
+    console.log('click')
+    const $el = window.document.scrollingElement || window.document.body || window.document.documentElement;
+    anime({
+      targets: $el,
+      scrollTop: 1000,
+      duration: 300,
+      easing: 'easeInOutQuad',
+      complete: (() => {
+        console.log('scroll end')
+      })
     });
+  });
 });
 </script>
 </head>
 <body>
-    <button class="btn">anime scroll</button>
-    
-  <div class="box"></div>
+<button class="btn">anime scroll</button>
+
+<div class="box"></div>
 </body>
 </html>

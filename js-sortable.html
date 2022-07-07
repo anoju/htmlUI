@@ -1,248 +1,360 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-	<meta charset="utf-8">
-	<title>Anoju.com</title>
-	<meta content="IE=edge" http-equiv="X-UA-Compatible">
-	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
-	
-	<link rel="stylesheet" href="https://cdn.rawgit.com/theeluwin/NotoSansKR-Hestia/master/stylesheets/NotoSansKR-Hestia.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-	<style>
-	body{word-break:keep-all;font-family:'Noto Sans Korean';}
-	.wrap{overflow:hidden;padding:3em 0;}
-	.wrap p{padding:0 15px;margin:0;}
-	.sortable_wrap + p{padding-top:1.5em;}
-	.sortable {position:relative;list-style-type: none; margin:10px 0 0;padding:0;background:#eee;}
-	.sortable:after{content:'';display:block;width:100%;height:1px;background:#ddd;}
-	.sortable li{position:relative;padding:5px 55px;min-height:40px;background:#fff;border-top:1px solid #ddd;}	
-	.sortable .num{display:block;position:absolute;left:15px;top:50%;width:30px;height:30px;margin-top:-15px;line-height:30px;text-align:center;color:#fff;background:#ff4c87;border-radius:3px;}
-	.sortable .text{display:flex;align-items:center;min-height:40px;}
-	.sortable .icon{position:absolute;top:0;right:0;bottom:0;width:40px;text-align:center;border-radius:0 3px 3px 0;}
-	.sortable .icon .fa{margin-top:-8px;vertical-align:top;position:relative;top:50%;color:#ccc;}
-	.sortable .sortable-chosen{box-shadow:3px 3px 7px rgba(0,0,0,0.6);border-bottom-color:#ddd;z-index:1;}
-	.sortable .sortable-chosen .text{color:#ff4c87;}
-	.sortable .sortable-placeholder{background:#e1e1e1;border-color:#e1e1e1;}
-	.sortable_wrap.small_wrap{background:#f1f1f1;margin-top:20px;}
-	.sortable.small{font-size:0;padding:10px 13px;}
-	.sortable.small:after{display:none;}
-	.sortable.small li{display:inline-block;font-size:12px;margin:3px;min-height:0;padding:5px 30px;vertical-align:top;border:1px solid #ddd;border-radius:3px;}
-	.sortable.small .text{display:inline-block;white-space:nowrap;min-height:0;padding:5px;}
-	.sortable.small .num{left:5px;border-radius:50%;width:20px;height:20px;line-height:20px;font-size:10px;margin-top:-10px;}
-	.sortable.small .icon{background:none;width:25px;line-height:35px;box-sizing:border-box;}
-	.sortable.small .icon .fa{margin-top:-6px;}
-	.sortable.small .ui-sortable-placeholder {border-style:dashed;border-width:1px;}
-	.sortable.small.scroll{white-space:nowrap;overflow-x:auto;}
-	</style>
-	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.8.1/Sortable.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+<meta charset="utf-8">
+<title>js-sortable</title>
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://cdn.rawgit.com/theeluwin/NotoSansKR-Hestia/master/stylesheets/NotoSansKR-Hestia.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+<style>
+body {
+  word-break: keep-all;
+  font-family: 'Noto Sans Korean';
+}
+.wrap {
+  overflow: hidden;
+  padding: 3em 0;
+}
+.wrap p {
+  padding: 0 15px;
+  margin: 0;
+}
+.sortable_wrap + p {
+  padding-top: 1.5em;
+}
+.sortable {
+  position: relative;
+  list-style-type: none;
+  margin: 10px 0 0;
+  padding: 0;
+  background: #eee;
+}
+.sortable:after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: #ddd;
+}
+.sortable li {
+  position: relative;
+  padding: 5px 55px;
+  min-height: 40px;
+  background: #fff;
+  border-top: 1px solid #ddd;
+}
+.sortable .num {
+  display: block;
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  margin-top: -15px;
+  line-height: 30px;
+  text-align: center;
+  color: #fff;
+  background: #ff4c87;
+  border-radius: 3px;
+}
+.sortable .text {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+}
+.sortable .icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 40px;
+  text-align: center;
+  border-radius: 0 3px 3px 0;
+}
+.sortable .icon .fa {
+  margin-top: -8px;
+  vertical-align: top;
+  position: relative;
+  top: 50%;
+  color: #ccc;
+}
+.sortable .sortable-chosen {
+  box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.6);
+  border-bottom-color: #ddd;
+  z-index: 1;
+}
+.sortable .sortable-chosen .text {
+  color: #ff4c87;
+}
+.sortable .sortable-placeholder {
+  background: #e1e1e1;
+  border-color: #e1e1e1;
+}
+.sortable_wrap.small_wrap {
+  background: #f1f1f1;
+  margin-top: 20px;
+}
+.sortable.small {
+  font-size: 0;
+  padding: 10px 13px;
+}
+.sortable.small:after {
+  display: none;
+}
+.sortable.small li {
+  display: inline-block;
+  font-size: 12px;
+  margin: 3px;
+  min-height: 0;
+  padding: 5px 30px;
+  vertical-align: top;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+.sortable.small .text {
+  display: inline-block;
+  white-space: nowrap;
+  min-height: 0;
+  padding: 5px;
+}
+.sortable.small .num {
+  left: 5px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  font-size: 10px;
+  margin-top: -10px;
+}
+.sortable.small .icon {
+  background: none;
+  width: 25px;
+  line-height: 35px;
+  box-sizing: border-box;
+}
+.sortable.small .icon .fa {
+  margin-top: -6px;
+}
+.sortable.small .ui-sortable-placeholder {
+  border-style: dashed;
+  border-width: 1px;
+}
+.sortable.small.scroll {
+  white-space: nowrap;
+  overflow-x: auto;
+}
+</style>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.8.1/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
 </head>
 
 <body>
 <div class="wrap">
-	<p>질문 1. 여러분의 공감순위는?</p>
-	<div class="sortable_wrap">
-		<ul class="sortable">
-			<li>
-				<div class="text">지혜는 여전히 푼수다. 특히 위아래가 없다!! 조심해라!</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">신애는 이미 술꾼이 다되었다. 맙소사..</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">영석이 알바왕이다. 혼자 벌어서 혼자 먹는다. 알바왕!</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">효주가 여기서 제일 불쌍하다. 근데 4학년이란게 더 슬프다. 좋은 시절은 끝났다.... 아~ 옛날이여 ㅜㅜ</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-		</ul>
-	</div>
-	<p>질문 2. 누가 제일 잘생겼나?</p>
-	<div class="sortable_wrap">
-		<ul class="sortable">
-			<li>
-				<div class="text">배군</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">신애베베</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">영석아재</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">효주옵하</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">우리 아라 베베</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">원빈</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">현빈</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">옥동자</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-		</ul>
-	</div>
-	<p>질문 3. 누가 제일 바보인가?</p>
-	<div class="sortable_wrap">
-		<ul class="sortable">
-			<li>
-				<div class="text">눈웃음이 강력한 그분</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">이방 막둥이 그분</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">지금 기업은행에서 일하는 그분</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">gywn</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-		</ul>
-	</div>
-	<p>질문 4. 제일 좋아하는 동물은?</p>
-	<div class="sortable_wrap small_wrap">
-		<ul class="sortable small">
-			<li>
-				<div class="text">호랑이</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">독수리</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">원숭이</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">토끼</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">바다사자</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">고양이</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">멍뭉이</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-		</ul>
-	</div>
-	<p>질문 5. 제일 좋아하는 과일은?</p>
-	<div class="sortable_wrap small_wrap">
-		<ul class="sortable small scroll">
-			<li>
-				<div class="text">사과</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">포도</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">복숭아</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">딸기</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">바나나</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">수박</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-			<li>
-				<div class="text">자두</div>
-				<div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
-			</li>
-		</ul>
-	</div>
+  <p>질문 1. 여러분의 공감순위는?</p>
+  <div class="sortable_wrap">
+    <ul class="sortable">
+      <li>
+        <div class="text">지혜는 여전히 푼수다. 특히 위아래가 없다!! 조심해라!</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">신애는 이미 술꾼이 다되었다. 맙소사..</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">영석이 알바왕이다. 혼자 벌어서 혼자 먹는다. 알바왕!</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">효주가 여기서 제일 불쌍하다. 근데 4학년이란게 더 슬프다. 좋은 시절은 끝났다.... 아~ 옛날이여 ㅜㅜ</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+    </ul>
+  </div>
+  <p>질문 2. 누가 제일 잘생겼나?</p>
+  <div class="sortable_wrap">
+    <ul class="sortable">
+      <li>
+        <div class="text">배군</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">신애베베</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">영석아재</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">효주옵하</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">우리 아라 베베</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">원빈</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">현빈</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">옥동자</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+    </ul>
+  </div>
+  <p>질문 3. 누가 제일 바보인가?</p>
+  <div class="sortable_wrap">
+    <ul class="sortable">
+      <li>
+        <div class="text">눈웃음이 강력한 그분</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">이방 막둥이 그분</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">지금 기업은행에서 일하는 그분</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">gywn</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+    </ul>
+  </div>
+  <p>질문 4. 제일 좋아하는 동물은?</p>
+  <div class="sortable_wrap small_wrap">
+    <ul class="sortable small">
+      <li>
+        <div class="text">호랑이</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">독수리</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">원숭이</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">토끼</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">바다사자</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">고양이</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">멍뭉이</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+    </ul>
+  </div>
+  <p>질문 5. 제일 좋아하는 과일은?</p>
+  <div class="sortable_wrap small_wrap">
+    <ul class="sortable small scroll">
+      <li>
+        <div class="text">사과</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">포도</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">복숭아</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">딸기</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">바나나</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">수박</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+      <li>
+        <div class="text">자두</div>
+        <div class="icon"><i class="fa fa-bars" aria-hidden="true"></i></div>
+      </li>
+    </ul>
+  </div>
 </div>
 <script>
-var numSetting = function(tar){
-	var $li = $(tar).children('li');
-	$li.each(function(){
-		var $num = $(this).index() +1;
-		$(this).find('.num').remove();
-		$(this).prepend('<div class="num">'+$num+'</div>')
-	});
+var numSetting = function(tar) {
+  var $li = $(tar).children('li');
+  $li.each(function() {
+    var $num = $(this).index() + 1;
+    $(this).find('.num').remove();
+    $(this).prepend('<div class="num">' + $num + '</div>')
+  });
 }
-var listheight = function(tar){
-	var $parent = $(tar).parent(),
-		$children = $(tar).children(),
-		$heightArry = [];
-	
-	//$parent.removeAttr('style');
-	$children.each(function(){
-		var $txt = $(this).find('.text');
-		$txt.removeAttr('style');
-		var $height = $txt.height();
-		$heightArry.push($height);
-	});
-	var $maxHeight = Math.max.apply(null, $heightArry);
-	$children.find('.text').css('height',$maxHeight);
-	$parent.css('height',$(tar).outerHeight());
+var listheight = function(tar) {
+  var $parent = $(tar).parent(),
+    $children = $(tar).children(),
+    $heightArry = [];
+
+  //$parent.removeAttr('style');
+  $children.each(function() {
+    var $txt = $(this).find('.text');
+    $txt.removeAttr('style');
+    var $height = $txt.height();
+    $heightArry.push($height);
+  });
+  var $maxHeight = Math.max.apply(null, $heightArry);
+  $children.find('.text').css('height', $maxHeight);
+  $parent.css('height', $(tar).outerHeight());
 }
 
-$(document).ready(function(){
-	$( ".sortable" ).each(function(i, element){
-		var $this = $(this);
-		numSetting($this);
-		listheight($this);
+$(document).ready(function() {
+  $(".sortable").each(function(i, element) {
+    var $this = $(this);
+    numSetting($this);
+    listheight($this);
 
-		$(this).sortable({
-			handle: '.icon',
-			animation: 150,
-			onChoose: function (evt) {
-				//console.log(evt);
-			},
-			onUnchoose: function (evt) {
-				numSetting($this);
-			},
-			onClone: function (evt) {
-				console.log('onClone');
-				var origEl = evt.item;
-				var cloneEl = evt.clone;
-			}
-		});
-	});
-	
+    $(this).sortable({
+      handle: '.icon',
+      animation: 150,
+      onChoose: function(evt) {
+        //console.log(evt);
+      },
+      onUnchoose: function(evt) {
+        numSetting($this);
+      },
+      onClone: function(evt) {
+        console.log('onClone');
+        var origEl = evt.item;
+        var cloneEl = evt.clone;
+      }
+    });
+  });
 
-	$(window).resize(function(){
-		$( ".sortable" ).each(function(){
-			listheight(this);
-		});
-	});
+
+  $(window).resize(function() {
+    $(".sortable").each(function() {
+      listheight(this);
+    });
+  });
 });
 </script>
 </body>

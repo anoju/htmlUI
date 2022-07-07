@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="css/style.min.css">
-  <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting.css">
-  <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting-cells.css">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>splitting</title>
+<link rel="stylesheet" href="css/style.min.css">
+<link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting.css">
+<link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting-cells.css">
 </head>
 <body>
 <div class="container">
@@ -49,11 +49,15 @@ function bursty(x, y) {
   const burst = new mojs.Burst({
     left: 0,
     top: 0,
-    radius: { 0: 200 },
+    radius: {
+      0: 200
+    },
     count: 20,
     degree: 360,
     children: {
-      fill: { white: "#34E1FF" },
+      fill: {
+        white: "#34E1FF"
+      },
       duration: 2000
     }
   }).tune({
@@ -65,16 +69,20 @@ function bursty(x, y) {
 }
 
 function randomizedConfetti() {
-  let randomX = Math.floor(Math.random() * (document.body.clientWidth-100) + 0);
-  let randomY = Math.floor(Math.random() * (window.innerHeight-200) + 0);
+  let randomX = Math.floor(Math.random() * (document.body.clientWidth - 100) + 0);
+  let randomY = Math.floor(Math.random() * (window.innerHeight - 200) + 0);
   const burst = new mojs.Burst({
     left: 0,
     top: 0,
-    radius: { 0: 200 },
+    radius: {
+      0: 200
+    },
     count: 20,
     degree: 360,
     children: {
-      fill: { white: "#34E1FF" },
+      fill: {
+        white: "#34E1FF"
+      },
       duration: 2000
     }
   }).tune({
@@ -87,18 +95,17 @@ function randomizedConfetti() {
 
 let $spl = Splitting();
 
-$('.btn button').click(function(){
+$('.btn button').click(function() {
   var $html = '텍스트를 다시 넣어서 <strong>재실행!!</strong?'
-    // $('.text').removeClass('words chars');
+  // $('.text').removeClass('words chars');
   $('.text').removeClass('words chars splitting').removeAttr('style, data-splitting').html($html);
   $spl = null;
-  setTimeout(function(){
+  setTimeout(function() {
     $('.text').attr('data-splitting');
     $spl = Splitting();
     console.log($spl)
-  },10);
+  }, 10);
 });
-
 </script>
 </body>
 </html>

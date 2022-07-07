@@ -1,26 +1,42 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-	<meta charset="utf-8">
-	<title>Anoju.com</title>
-	<meta content="IE=edge" http-equiv="X-UA-Compatible">
-	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
-	
-	<link rel="stylesheet" href="https://cdn.rawgit.com/theeluwin/NotoSansKR-Hestia/master/stylesheets/NotoSansKR-Hestia.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
-	<style>
-	body{word-break:keep-all;font-family:'Noto Sans Korean';text-align:center;}
-	h1{font-size:2em;margin:1em 0;}
-	.ui-roll-number .roll,
-	.ui-roll-number .comma{display:inline-block;overflow:hidden;vertical-align:top;}
-	.ui-roll-number .rol{position:relative;display:block;}
-	.ui-roll-number .rol span{display:block;}
-	</style>
-	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+<meta charset="utf-8">
+<title>rollingNumber</title>
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://cdn.rawgit.com/theeluwin/NotoSansKR-Hestia/master/stylesheets/NotoSansKR-Hestia.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+<style>
+body {
+  word-break: keep-all;
+  font-family: 'Noto Sans Korean';
+  text-align: center;
+}
+h1 {
+  font-size: 2em;
+  margin: 1em 0;
+}
+.ui-roll-number .roll,
+.ui-roll-number .comma {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
+.ui-roll-number .rol {
+  position: relative;
+  display: block;
+}
+.ui-roll-number .rol span {
+  display: block;
+}
+</style>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
 </head>
 <body>
 <h1 id="number" class="ui-roll-number on">123,000</h1>
@@ -30,53 +46,55 @@
 <button onclick="rollingNumber('#number2',$(this).text())">5,689</button>
 <button onclick="rollingNumber('#number2',$(this).text())">19,000</button>
 <script>
-var rollingInit = function(){
-	$('.ui-roll-number').data('once',true);
-	$(window).on('load scroll resize',function(){
-		$('.ui-roll-number').each(function(){
-			var $text = $(this).text(),
-				$once = $(this).data('once');
-			if($(this).hasClass('on') && $once == true){
-				$(this).data('once',false);
-				rollingNumber(this,$text);
-			}
-		});
-	});
+var rollingInit = function() {
+  $('.ui-roll-number').data('once', true);
+  $(window).on('load scroll resize', function() {
+    $('.ui-roll-number').each(function() {
+      var $text = $(this).text(),
+        $once = $(this).data('once');
+      if ($(this).hasClass('on') && $once == true) {
+        $(this).data('once', false);
+        rollingNumber(this, $text);
+      }
+    });
+  });
 }
-var rollingNumber = function(tar,num){
-	var $this = $(tar);
-		$split = num.split(''),
-		$style = $this.attr('style'),
-		$height = $this.height(),
-		$numRepeat = 2,
-		$repeatNum = $numRepeat*10-1;
-		
-	$this.css('height',$height).html('');
-	for(var i in $split){
-		if($split[i] == ','){
-			$this.append('<span class="comma">'+$split[i]+'</span>');
-		}else{
-			$this.append('<span class="roll" style="height:'+$height+'px;line-height:'+$height+'px;"><span class="rol"></span></span>');
-			for(var j=$repeatNum; j>=0; j--){
-				var k=j%10;
-				$this.find('.roll').last().find('.rol').append('<span>'+k+'</span>');
-			}
-		}
-	}
-	$this.removeAttr('style');
-	if($style)$this.attr('style',$style);
-		
-	$this.children().each(function(e){
-		var $idx = $(this).index(),
-			$rol = $(this).find('.rol'),
-			$num = $split[e];
-				
-		$rol.animate({'top':($num-$repeatNum)*$height},1000+($idx*200));
-	});
-	
+var rollingNumber = function(tar, num) {
+  var $this = $(tar);
+  $split = num.split(''),
+    $style = $this.attr('style'),
+    $height = $this.height(),
+    $numRepeat = 2,
+    $repeatNum = $numRepeat * 10 - 1;
+
+  $this.css('height', $height).html('');
+  for (var i in $split) {
+    if ($split[i] == ',') {
+      $this.append('<span class="comma">' + $split[i] + '</span>');
+    } else {
+      $this.append('<span class="roll" style="height:' + $height + 'px;line-height:' + $height + 'px;"><span class="rol"></span></span>');
+      for (var j = $repeatNum; j >= 0; j--) {
+        var k = j % 10;
+        $this.find('.roll').last().find('.rol').append('<span>' + k + '</span>');
+      }
+    }
+  }
+  $this.removeAttr('style');
+  if ($style) $this.attr('style', $style);
+
+  $this.children().each(function(e) {
+    var $idx = $(this).index(),
+      $rol = $(this).find('.rol'),
+      $num = $split[e];
+
+    $rol.animate({
+      'top': ($num - $repeatNum) * $height
+    }, 1000 + ($idx * 200));
+  });
+
 }
-$(document).ready(function(){
-	rollingInit();
+$(document).ready(function() {
+  rollingInit();
 });
 </script>
 </body>

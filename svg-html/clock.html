@@ -4,40 +4,40 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>svg</title>
+<title>svg clock</title>
 <style>
-  .clock {
-    background: #000;
-    border-radius: 50%;
-  }
-  .hour_marker {
-    fill: transparent;
-    stroke: #f0f0c9;
-    stroke-width: 7;
-    stroke-dasharray: 0.2, 4.8;
-    stroke-dashoffset: 0.1;
-  }
+.clock {
+  background: #000;
+  border-radius: 50%;
+}
+.hour_marker {
+  fill: transparent;
+  stroke: #f0f0c9;
+  stroke-width: 7;
+  stroke-dasharray: 0.2, 4.8;
+  stroke-dashoffset: 0.1;
+}
 
-  .minute_marker {
-    fill: transparent;
-    stroke: #0f0e0e;
-    stroke-width: 7;
-    stroke-dasharray: 0.2, 0.8;
-    stroke-dashoffset: 0.1;
-  }
-  .hand {
-    stroke: #ffffff;
-    stroke-width: 2;
-    stroke-linecap: round;
-  }
+.minute_marker {
+  fill: transparent;
+  stroke: #0f0e0e;
+  stroke-width: 7;
+  stroke-dasharray: 0.2, 0.8;
+  stroke-dashoffset: 0.1;
+}
+.hand {
+  stroke: #ffffff;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
 
-  .hand--thick {
-    stroke-width: 7;
-  }
+.hand--thick {
+  stroke-width: 7;
+}
 
-  .hand--second {
-    stroke: yellow;
-  }
+.hand--second {
+  stroke: yellow;
+}
 </style>
 </head>
 
@@ -63,31 +63,31 @@
   </g>
 </svg>
 <script>
-  const hoursElement = document.getElementById("hour_hand");
-  const minutesElement = document.getElementById("minute_hand");
-  const secondsElement = document.getElementById("second_hand");
+const hoursElement = document.getElementById("hour_hand");
+const minutesElement = document.getElementById("minute_hand");
+const secondsElement = document.getElementById("second_hand");
 
-  function animate() {
-    const date = new Date();
+function animate() {
+  const date = new Date();
 
-    //끊기게
-    // const hour = date.getHours() % 12;
-    // const minute = date.getMinutes();
-    // const second = date.getSeconds();
+  //끊기게
+  // const hour = date.getHours() % 12;
+  // const minute = date.getMinutes();
+  // const second = date.getSeconds();
 
-    //스무스하게
-    const hour = date.getHours() + date.getMinutes() / 60;
-    const minute = date.getMinutes() + date.getSeconds() / 60;
-    const second = date.getSeconds() + date.getMilliseconds() / 1000;
+  //스무스하게
+  const hour = date.getHours() + date.getMinutes() / 60;
+  const minute = date.getMinutes() + date.getSeconds() / 60;
+  const second = date.getSeconds() + date.getMilliseconds() / 1000;
 
-    hoursElement.setAttribute("transform", `rotate(${(360 / 12) * hour})`);
-    minutesElement.setAttribute("transform", `rotate(${(360 / 60) * minute})`);
-    secondsElement.setAttribute("transform", `rotate(${(360 / 60) * second})`);
-
-    requestAnimationFrame(animate);
-  }
+  hoursElement.setAttribute("transform", `rotate(${(360 / 12) * hour})`);
+  minutesElement.setAttribute("transform", `rotate(${(360 / 60) * minute})`);
+  secondsElement.setAttribute("transform", `rotate(${(360 / 60) * second})`);
 
   requestAnimationFrame(animate);
+}
+
+requestAnimationFrame(animate);
 </script>
 </body>
 </html>

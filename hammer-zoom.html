@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Micro-Slider</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hammer-zoom</title>
 <style>
-html, body {
+html,
+body {
   background: #1a1a1b;
   height: 100%;
   margin: 0;
@@ -35,14 +36,14 @@ html, body {
 
 .imageContainer > img {
   display: block;
-  max-width:100%;
-  max-height:100%;
+  max-width: 100%;
+  max-height: 100%;
   cursor: move;
   touch-action: none;
 }
 
 #hud {
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   position: absolute;
   padding: 10px 20px;
   color: #FFF;
@@ -53,7 +54,7 @@ html, body {
 </style>
 </head>
 <body>
-  <div class="imageContainer"></div>
+<div class="imageContainer"></div>
 <div id="hud"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
@@ -99,12 +100,12 @@ function resizeContainer() {
     displayDefaultWidth = displayImage.offsetWidth;
     displayDefaultHeight = displayImage.offsetHeight;
     updateRange();
-    displayImageCurrentX = clamp( displayImageX, rangeMinX, rangeMaxX );
-    displayImageCurrentY = clamp( displayImageY, rangeMinY, rangeMaxY );
+    displayImageCurrentX = clamp(displayImageX, rangeMinX, rangeMaxX);
+    displayImageCurrentY = clamp(displayImageY, rangeMinY, rangeMaxY);
     updateDisplayImage(
       displayImageCurrentX,
       displayImageCurrentY,
-      displayImageCurrentScale );
+      displayImageCurrentScale);
   }
 }
 
@@ -122,7 +123,7 @@ window.addEventListener('resize', resizeContainer, true);
 
 const displayImage = new Image();
 displayImage.src = imageUrl;
-displayImage.onload = function(){
+displayImage.onload = function() {
   imageWidth = displayImage.width;
   imageHeight = displayImage.height;
   imageContainer.appendChild(displayImage);
@@ -138,7 +139,7 @@ imageContainer.addEventListener('wheel', e => {
   updateRange();
   displayImageCurrentX = clamp(displayImageCurrentX, rangeMinX, rangeMaxX)
   displayImageCurrentY = clamp(displayImageCurrentY, rangeMinY, rangeMaxY)
-	updateDisplayImage(displayImageCurrentX, displayImageCurrentY, displayImageScale);  
+  updateDisplayImage(displayImageCurrentX, displayImageCurrentY, displayImageScale);
 }, false);
 
 function updateDisplayImage(x, y, scale) {
@@ -152,7 +153,7 @@ function updateDisplayImage(x, y, scale) {
 function updateRange() {
   rangeX = Math.max(0, Math.round(displayDefaultWidth * displayImageCurrentScale) - containerWidth);
   rangeY = Math.max(0, Math.round(displayDefaultHeight * displayImageCurrentScale) - containerHeight);
-  
+
   rangeMaxX = Math.round(rangeX / 2);
   rangeMinX = 0 - rangeMaxX;
 
@@ -186,13 +187,17 @@ function updateHud() {
 
 const hammertime = new Hammer(imageContainer);
 
-hammertime.get('pinch').set({ enable: true });
-hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+hammertime.get('pinch').set({
+  enable: true
+});
+hammertime.get('pan').set({
+  direction: Hammer.DIRECTION_ALL
+});
 
-hammertime.on('pan', ev => {  
+hammertime.on('pan', ev => {
   displayImageCurrentX = clamp(displayImageX + ev.deltaX, rangeMinX, rangeMaxX);
   displayImageCurrentY = clamp(displayImageY + ev.deltaY, rangeMinY, rangeMaxY);
-	updateDisplayImage(displayImageCurrentX, displayImageCurrentY, displayImageScale);
+  updateDisplayImage(displayImageCurrentX, displayImageCurrentY, displayImageScale);
 });
 
 hammertime.on('pinch pinchmove', ev => {
@@ -207,7 +212,7 @@ hammertime.on('panend pancancel pinchend pinchcancel', () => {
   displayImageScale = displayImageCurrentScale;
   displayImageX = displayImageCurrentX;
   displayImageY = displayImageCurrentY;
-});  
+});
 </script>
 </body>
 </html>

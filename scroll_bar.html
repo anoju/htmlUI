@@ -1,48 +1,69 @@
 <!DOCTYPE HTML>
 <html lang="ko">
 <head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css" />
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" />
+<meta charset="UTF-8">
+<title>scroll_bar</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" />
 
-	<!-- 'Nanum Gothic'-->
-	<link rel="stylesheet" href="http://fonts.googleapis.com/earlyaccess/nanumgothic.css" />
-	<!-- 'Noto Sans KR'-->
-	<link rel="stylesheet" href="http://fonts.googleapis.com/earlyaccess/notosanskr.css" />
-	
-	<!--[if lt IE 9]>
+<!-- 'Nanum Gothic'-->
+<link rel="stylesheet" href="http://fonts.googleapis.com/earlyaccess/nanumgothic.css" />
+<!-- 'Noto Sans KR'-->
+<link rel="stylesheet" href="http://fonts.googleapis.com/earlyaccess/notosanskr.css" />
+
+<!--[if lt IE 9]>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
 	<![endif]-->
-	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-	<script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js"></script>
-	<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
 <style>
-.top-bar{position:fixed;left:0;top:0;height:0.5em;width:100%;background: rgba(0, 0, 0, 0.15);} 
-.scroll{position:absolute;top:0;left:0;height:0.5em;width:0%;background:#e74c3c;box-shadow:1px 2px 4px rgba(0, 0, 0, 0.15), 2px 4px 8px rgba(0, 0, 0, 0.15);}
-h1{position:fixed;left:0;bottom:0;}
+.top-bar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 0.5em;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.15);
+}
+.scroll {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 0.5em;
+  width: 0%;
+  background: #e74c3c;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.15), 2px 4px 8px rgba(0, 0, 0, 0.15);
+}
+h1 {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+}
 </style>
 <script>
-$(window).on('scroll resize',function(e){
+$(window).on('scroll resize', function(e) {
   var scrollAmount = $(window).scrollTop();
   var documentHeight = $(document).height();
   var windowHeight = $(window).height();
-console.log('aaaa')
+  console.log('aaaa')
   var scrollPercent = (scrollAmount / (documentHeight - windowHeight)) * 100;
   var roundScroll = Math.round(scrollPercent);
-  
+
   $(".scroll").css("width", (scrollPercent + '%'));
   $("h1").text("Scroll Percentage: " + roundScroll + '%');
 });
 </script>
 </head>
 <body>
-  <h1>Scroll Percentage: 0%</h1>
-  <div class="top-bar"><div class="scroll"></div></div>
-  
-  <div style="height:3000px"></div>
+<h1>Scroll Percentage: 0%</h1>
+<div class="top-bar">
+  <div class="scroll"></div>
+</div>
+
+<div style="height:3000px"></div>
 </body>
 </html>
