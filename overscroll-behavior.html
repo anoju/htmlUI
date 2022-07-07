@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>overscroll-behavior</title>
+<style>
+body {
+  margin: 0;
+}
+.wrap {
+  text-align: center;
+}
+.wrap div {
+  width: 90%;
+  margin: 0 auto;
+  overflow: auto;
+}
+.wrap.on div {
+  overscroll-behavior: contain;
+}
+.box1 {
+  height: 100vh;
+  background: #f1f1f1;
+}
+.box2 {
+  background: #e1e1e1;
+  height: 80vh;
+}
+.box3 {
+  background: #d1d1d1;
+  height: 60vh;
+}
+.btn {
+  position: fixed;
+  left: 50%;
+  bottom: 10px;
+  background: #dd0000;
+  color: #fff;
+  font-size: 1rem;
+  border: 1px solid #dd0000;
+  padding: 0.5rem 1rem;
+  transform: translateX(-50%);
+  border-radius: 1rem;
+  white-space: nowrap;
+}
+.btn:after {
+  content: 'OFF';
+  color: Yellow;
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+.btn.on:after {
+  content: 'ON';
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>wrap</h1>
+  <h1>wrap</h1>
+  <div class="box1">
+    <h1>box1</h1>
+    <h1>box1</h1>
+    <div class="box2">
+      <h1>box2</h1>
+      <h1>box2</h1>
+      <div class="box3">
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+        <h1>box3</h1>
+      </div>
+      <h1>box2</h1>
+      <h1>box2</h1>
+    </div>
+    <h1>box1</h1>
+    <h1>box1</h1>
+  </div>
+  <h1>wrap</h1>
+  <h1>wrap</h1>
+</div>
+<button class="btn">overscroll-behavior</button>
+<script>
+const $wrap = document.querySelector('.wrap');
+const $btn = document.querySelector('.btn');
+const $clickEvt = function() {
+  if ($btn.classList.contains('on')) {
+    $wrap.classList.remove('on');
+    $btn.classList.remove('on');
+  } else {
+    $wrap.classList.add('on');
+    $btn.classList.add('on');
+  }
+}
+$btn.addEventListener('click', $clickEvt);
+</script>
+</body>
+</html>
