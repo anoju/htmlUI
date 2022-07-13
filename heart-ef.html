@@ -18,12 +18,12 @@ body {
 .btn-heart {
   align-self: center;
   position: relative;
-  color: #888;
-  font-size: 2em;
-  filter: grayscale(1);
   user-select: none;
   cursor: pointer;
-  background: none;
+  width: 2.4rem;
+  height: 2.4rem;
+  background: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7.33645 3.59998C4.76124 3.59998 2.6729 5.66686 2.6729 8.21689C2.6729 10.2754 3.48902 15.1609 11.5225 20.0996C11.6664 20.1872 11.8316 20.2335 12 20.2335C12.1685 20.2335 12.3337 20.1872 12.4776 20.0996C20.511 15.1609 21.3271 10.2754 21.3271 8.21689C21.3271 5.66686 19.2388 3.59998 16.6636 3.59998C14.0883 3.59998 12 6.39811 12 6.39811C12 6.39811 9.91167 3.59998 7.33645 3.59998Z' stroke='%23C2C2C2' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A") no-repeat center center;
+  background-size: 100% 100%;
   border: 0 none;
   padding: 0;
   outline: none;
@@ -52,10 +52,9 @@ body {
   box-shadow: 0.32476rem -3rem 0 -0.1875rem #ff8080, -0.32476rem -2.625rem 0 -0.1875rem #ffed80, 2.54798rem -1.61656rem 0 -0.1875rem #ffed80, 1.84982rem -1.89057rem 0 -0.1875rem #a4ff80, 2.85252rem 0.98418rem 0 -0.1875rem #a4ff80, 2.63145rem 0.2675rem 0 -0.1875rem #80ffc8, 1.00905rem 2.84381rem 0 -0.1875rem #80ffc8, 1.43154rem 2.22414rem 0 -0.1875rem #80c8ff, -1.59425rem 2.562rem 0 -0.1875rem #80c8ff, -0.84635rem 2.50595rem 0 -0.1875rem #a480ff, -2.99705rem 0.35095rem 0 -0.1875rem #a480ff, -2.48692rem 0.90073rem 0 -0.1875rem #ff80ed, -2.14301rem -2.12438rem 0 -0.1875rem #ff80ed, -2.25479rem -1.38275rem 0 -0.1875rem #ff8080;
 }
 .btn-heart.on {
-  color: #e2264d;
-  filter: none;
-  will-change: font-size;
-  animation: heart 1s cubic-bezier(0.17, 0.89, 0.32, 1.49);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M7.33645 3.6001C4.76124 3.6001 2.6729 5.66699 2.6729 8.21702C2.6729 10.2755 3.48902 15.161 11.5225 20.0998C11.6664 20.1873 11.8316 20.2336 12 20.2336C12.1685 20.2336 12.3337 20.1873 12.4776 20.0998C20.511 15.161 21.3271 10.2755 21.3271 8.21702C21.3271 5.66699 19.2388 3.6001 16.6636 3.6001C14.0883 3.6001 12 6.39823 12 6.39823C12 6.39823 9.91167 3.6001 7.33645 3.6001Z' fill='%23FC1C5B'/%3E%3C/svg%3E");
+  will-change: background-size;
+  animation: heart-pop 1s cubic-bezier(0.17, 0.89, 0.32, 1.49);
 }
 .btn-heart.on:before,
 .btn-heart.on:after {
@@ -73,10 +72,10 @@ body {
 /* .btn-heart:focus {
   text-shadow: 0 0 3px white, 0 1px 1px white, 0 -1px 1px white, 1px 0 1px white, -1px 0 1px white;
 } */
-@keyframes heart {
+@keyframes heart-pop {
   0%,
   17.5% {
-    font-size: 0;
+    background-size: 0 0;
   }
 }
 @keyframes bubble {
@@ -105,14 +104,16 @@ body {
 </style>
 </head>
 <body>
-<button class="btn-heart">❤</button>
+<button class="btn-heart" aria-label="좋아요" role="checkbox" aria-checked="false"></button>
 <script>
 const $btn = document.querySelector('.btn-heart');
 const $heart = function() {
   if ($btn.classList.contains('on')) {
-    $btn.classList.remove('on')
+    $btn.classList.remove('on');
+    $btn.setAttribute('aria-checked', 'false');
   } else {
-    $btn.classList.add('on')
+    $btn.classList.add('on');
+    $btn.setAttribute('aria-checked', 'true');
   }
 }
 $btn.addEventListener('click', $heart)
