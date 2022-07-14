@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+.top-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 12;
+  height: 70px;
+  background-color: #55b5e9;
+}
+.top-banner .inner {
+  max-width: 1280px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 2px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.top-banner .txt {
+  width: 494px;
+  height: 25px;
+  font-size: 0;
+  color: transparent;
+  background: url(toplayerbanner-txt.png) no-repeat center center / contain;
+}
+.top-banner .btn-wrap {
+  display: flex;
+  align-items: center;
+  margin-left: 125px;
+}
+.top-banner .btn-wrap a {
+  display: block;
+  height: 66px;
+  font-size: 0;
+  color: transparent;
+}
+.top-banner .btn1 {
+  width: 256px;
+  background: url(toplayerbanner-btn1.png) no-repeat center center / contain;
+}
+.top-banner .btn2 {
+  margin-left: 20px;
+  width: 208px;
+  background: url(toplayerbanner-btn2.png) no-repeat center center / contain;
+}
+@media (max-width: 1280px) {
+  .top-banner .btn-wrap {
+    margin-left: 50px;
+  }
+}
+@media (max-width: 1080px) {
+  .top-banner .inner {
+    display: block;
+    padding: 6px 0;
+  }
+  .top-banner .txt {
+    width: 100%;
+    height: 15px;
+    margin: 0 auto;
+  }
+  .top-banner .btn-wrap {
+    margin-left: 0;
+    justify-content: center;
+    margin-top: 5px;
+  }
+  .top-banner .btn-wrap a {
+    height: 40px;
+  }
+  .top-banner .btn-wrap .btn1 {
+    width: 155px;
+  }
+  .top-banner .btn-wrap .btn2 {
+    margin-left: 10px;
+    width: 126px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="top-banner">
+  <div class="inner">
+    <div class="txt">2022 HANA BANK SEOUL E-PRIX</div>
+    <div class="btn-wrap">
+      <a href="#" class="btn1"></a>
+      <a href="#" class="btn2"></a>
+    </div>
+  </div>
+</div>
+
+<div style="height:300vh;background:#f1f1f1;max-width: 1280px;margin:0 auto;margin-top:70px;text-align:center;overflow:hidden;">
+  <h1>임시영역</h1>
+  <h1>임시영역</h1>
+  <h1>임시영역</h1>
+  <h1>임시영역</h1>
+  <h1>임시영역</h1>
+</div>
+</body>
+</html>
