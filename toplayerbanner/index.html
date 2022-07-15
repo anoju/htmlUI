@@ -5,6 +5,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>toplayerbanner</title>
+<link rel="stylesheet" media="screen" href="//assets-prd.formulae.cloud/_styles/styles.css?v=1.12.3-22-g80f56cc">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.7/flipclock.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.7/flipclock.min.js"></script>
 <style>
 body {
   margin: 0;
@@ -16,8 +20,10 @@ body {
   left: 0;
   width: 100%;
   z-index: 12;
-  height: 70px;
+  height: 80px;
   background-color: #55b5e9;
+  color: #fff;
+  font-family: "Formula E Title", Verdana, sans-serif;
 }
 .top-banner .inner {
   max-width: 1280px;
@@ -26,20 +32,67 @@ body {
   padding: 2px 0;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   box-sizing: border-box;
 }
+.top-banner li {
+  padding: 0;
+  margin: 0;
+}
+.top-banner li:before {
+  content: none;
+}
 .top-banner .txt {
-  width: 494px;
-  height: 25px;
-  font-size: 0;
-  color: transparent;
-  background: url(toplayerbanner-txt.png) no-repeat center center / contain;
+  font-size: 40px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.top-banner .flip-clock-wrapper {
+  width: auto;
+  margin: 0;
+}
+.top-banner .flip-clock-wrapper ul {
+  width: 24px;
+  height: 36px;
+  line-height: 36px;
+  font-size: 24px;
+  margin: 0 3px;
+}
+.top-banner .flip-clock-wrapper ul li {
+  line-height: 36px;
+}
+
+.top-banner .flip-clock-wrapper ul li a div div.inn {
+  font-size: 24px;
+}
+.top-banner .flip-clock-divider {
+  width: 14px;
+  height: 36px;
+}
+.top-banner .flip-clock-divider:first-child {
+  width: 0;
+}
+.top-banner .flip-clock-divider .flip-clock-label {
+  left: 100%;
+  right: auto !important;
+  width: 60px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.3);
+}
+.top-banner .flip-clock-dot {
+  left: 4px;
+  width: 6px;
+  height: 6px;
+}
+.top-banner .flip-clock-dot.top {
+  top: 10px;
+}
+.top-banner .flip-clock-dot.bottom {
+  bottom: 10px;
 }
 .top-banner .btn-wrap {
   display: flex;
   align-items: center;
-  margin-left: 125px;
 }
 .top-banner .btn-wrap a {
   display: block;
@@ -47,44 +100,57 @@ body {
   font-size: 0;
   color: transparent;
 }
+.top-banner .btn-wrap a + a {
+  margin-left: 20px;
+}
 .top-banner .btn1 {
   width: 256px;
   background: url(toplayerbanner-btn1.png) no-repeat center center / contain;
 }
 .top-banner .btn2 {
-  margin-left: 20px;
   width: 208px;
   background: url(toplayerbanner-btn2.png) no-repeat center center / contain;
 }
-@media (max-width: 1280px) {
-  .top-banner .btn-wrap {
-    margin-left: 50px;
-  }
-}
 @media (max-width: 1080px) {
   .top-banner .inner {
-    display: block;
-    padding: 6px 0;
+    flex-wrap: wrap;
+    padding: 0 10px;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
   .top-banner .txt {
     width: 100%;
-    height: 15px;
-    margin: 0 auto;
+    text-align: center;
+    font-size: 22px;
+  }
+  .top-banner .flip-clock-divider .flip-clock-label {
+    display: none;
   }
   .top-banner .btn-wrap {
     margin-left: 0;
     justify-content: center;
-    margin-top: 5px;
+    margin-left: auto;
   }
   .top-banner .btn-wrap a {
     height: 40px;
+  }
+  .top-banner .btn-wrap a + a {
+    margin-left: 10px;
   }
   .top-banner .btn-wrap .btn1 {
     width: 155px;
   }
   .top-banner .btn-wrap .btn2 {
-    margin-left: 10px;
     width: 126px;
+  }
+}
+@media (max-width: 460px) {
+  .top-banner .flip-clock-divider.seconds,
+  .top-banner .flip-clock-divider.seconds ~ ul {
+    display: none;
+  }
+  .top-banner .flip-clock-wrapper ul {
+    margin: 0 2px;
   }
 }
 </style>
@@ -93,19 +159,32 @@ body {
 <div class="top-banner">
   <div class="inner">
     <div class="txt">2022 HANA BANK SEOUL E-PRIX</div>
+    <div class="clock"></div>
     <div class="btn-wrap">
-      <a href="#" class="btn1">10% 할인 쿠폰받기</a>
+      <!-- <a href="#" class="btn1">10% 할인 쿠폰받기</a> -->
       <a href="#" class="btn2">티켓 예매하기</a>
     </div>
   </div>
 </div>
 
-<div style="height:300vh;background:#f1f1f1;max-width: 1280px;margin:0 auto;margin-top:70px;text-align:center;overflow:hidden;">
+<div style="height:300vh;background:#f1f1f1;max-width: 1280px;margin:0 auto;margin-top:80px;text-align:center;overflow:hidden;">
   <h1>임시영역</h1>
   <h1>임시영역</h1>
   <h1>임시영역</h1>
   <h1>임시영역</h1>
   <h1>임시영역</h1>
 </div>
+
+<script>
+var currentDate = new Date();
+var futureDate = new Date("Aug 10,2022,00:00:00");
+var diff = futureDate.getTime() / 1000 - currentDate.getTime() / 1000;
+
+var clock = $('.top-banner .clock').FlipClock(diff, {
+  clockFace: 'DailyCounter',
+  // showSeconds: false,
+  countdown: true
+});
+</script>
 </body>
 </html>
