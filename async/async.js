@@ -106,11 +106,11 @@ class UserStorage {
   }
 }
 
-const userStorage = new UserStorage();
-const id = prompt('enter your id');
-const password = prompt('enter your password');
 
 async function findUserRole() {
+  const userStorage = new UserStorage();
+  const id = prompt('enter your id');
+  const password = prompt('enter your password');
   const user = await userStorage.loginUser(id, password);
   const roles = await userStorage.getRoles(user);
   return roles;
