@@ -138,6 +138,9 @@ body {
   width: auto;
   flex-grow: 0;
   box-sizing: content-box;
+  color: blue;
+  font-weight: bold;
+  text-align: right;
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -197,10 +200,12 @@ function setPriceInp2(target) {
       'float': 'left',
       'white-space': 'nowrap',
       'visibility': 'hidden',
-      'font-size': $input.css('font-size')
+      'font-size': $input.css('font-size'),
+      'font-weight': $input.css('font-weight'),
+      'letter-spacing': $input.css('letter-spacing')
     })
     .appendTo($('body'))
-  const $width = $tempDiv.width();
+  const $width = Math.ceil($tempDiv.width());
   $tempDiv.remove();
 
   $input.css('width', $width);
