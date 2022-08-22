@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+html {
+  font-size: 62.5%;
+}
+body {
+  margin: 0;
+}
+* {
+  box-sizing: border-box;
+}
+.wrap {
+  padding: 2rem;
+}
+.input {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  background: #fafafa;
+  border: .1rem solid #fafafa;
+  border-radius: 1rem;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-transition: border .3s;
+  transition: border .3s
+}
+.input.line {
+  border-color: #212121;
+  background-color: #fff
+}
+.input.readonly input,
+.input input[readonly] {
+  color: #606060
+}
+.input input[readonly] {
+  color: #606060
+}
+.input.disabled {
+  background: #f8f8f8
+}
+.input.disabled {
+  border-color: #eee
+}
+.input.disabled input,
+.input input:disabled {
+  opacity: .4
+}
+.input.focus {
+  border-color: #212121
+}
+.input.is-error input:not(:focus) {
+  color: #dd0000
+}
+.input input:-internal-autofill-selected {
+  background: none
+}
+.input input::-webkit-outer-spin-button,
+.input input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none
+}
+.input input {
+  width: 100%;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  height: 4.6rem;
+  padding: 0 .8rem;
+  border: 0 none;
+  color: inherit;
+  background: none;
+  border-radius: 1rem;
+  margin: 0;
+  outline: none;
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: #212121;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none
+}
+.input input[type=file] {
+  font-size: 1.4rem;
+  line-height: 2.2rem;
+  padding-top: 1.1rem;
+  padding-bottom: 1.1rem
+}
+.input input:first-child {
+  padding-left: 1.6rem
+}
+.input input:last-child {
+  padding-right: 1.6rem
+}
+.input input:disabled {
+  color: #b0b0b0
+}
+.input .price-txt {
+  position: relative;
+  display: flex;
+  height: 4.6rem;
+  padding: 0 .8rem;
+  align-items: center;
+  width: 100%;
+  overflow-y: auto;
+}
+.input .price-txt::-webkit-scrollbar {
+  display: none;
+}
+.input .price-txt strong {
+  color: blue;
+  font-size: 1.8rem;
+  white-space: nowrap;
+}
+.input .price-txt span {
+  font-size: 1.4rem;
+  margin-left: 0.6rem;
+}
+.input .price-txt input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="input">
+    <input type="text">
+  </div>
+  <br>
+  <div class="input">
+    <div class="price-txt">
+      <strong>0</strong>
+      <span>원</span>
+      <input type="tel">
+    </div>
+  </div>
+</div>
+
+<script>
+$('.input input').on('focus', function() {
+  $(this).closest('.input').addClass('focus');
+}).on('blur', function() {
+  $(this).closest('.input').removeClass('focus');
+});
+$('.input .price-txt input').on('input', function() {
+  const $val = $(this).val();
+  const $wrap = $(this).closest('.input');
+  const $strong = $wrap.find('.price-txt strong');
+  if ($val) {
+    $strong.text($val);
+  } else {
+    $strong.text('0');
+  }
+});
+</script>
+</body>
+</html>
