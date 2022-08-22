@@ -187,11 +187,9 @@ $('.input .price-txt input').each(function() {
 });
 
 function setPriceInp2(target) {
-  const $val = $(target).val();
-  const $wrap = $(target).closest('.input');
   const $input = $(target);
+  const $val = $(target).val();
   // const $width = $val.length * parseInt($input.css('font-size')) + parseInt($input.css('padding-left')) + parseInt($input.css('padding-right'));
-  // const $width = $val.length * parseInt($input.css('font-size')) * 0.6
   const $tempDiv = $('<div></div>')
     .text($val)
     .css({
