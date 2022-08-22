@@ -146,7 +146,7 @@ body {
     <div class="price-txt">
       <strong>0</strong>
       <span>원</span>
-      <input type="tel">
+      <input type="tel" value="12">
     </div>
   </div>
 </div>
@@ -157,16 +157,23 @@ $('.input input').on('focus', function() {
 }).on('blur', function() {
   $(this).closest('.input').removeClass('focus');
 });
-$('.input .price-txt input').on('input', function() {
-  const $val = $(this).val();
-  const $wrap = $(this).closest('.input');
+
+function setPriceInp(target) {
+  const $val = $(target).val();
+  const $wrap = $(target).closest('.input');
   const $strong = $wrap.find('.price-txt strong');
   if ($val) {
     $strong.text($val);
   } else {
     $strong.text('0');
   }
+}
+$('.input .price-txt input').on('input', function() {
+  setPriceInp(this);
 });
+$('.input .price-txt input').each(function() {
+  setPriceInp(this);
+})
 </script>
 </body>
 </html>
