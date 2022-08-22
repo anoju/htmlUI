@@ -134,6 +134,11 @@ body {
   color: transparent;
   font-size: 1.8rem;
 }
+.input.price input {
+  width: auto;
+  flex-grow: 0;
+  box-sizing: content-box;
+}
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
@@ -150,6 +155,11 @@ body {
       <input type="tel" value="12">
     </div>
   </div>
+  <br>
+  <label class="input price">
+    <input type="tel" value="12">
+    <span>원</span>
+  </label>
 </div>
 
 <script>
@@ -174,7 +184,35 @@ $('.input .price-txt input').on('input', function() {
 });
 $('.input .price-txt input').each(function() {
   setPriceInp(this);
-})
+});
+
+function setPriceInp2(target) {
+  const $val = $(target).val();
+  const $wrap = $(target).closest('.input');
+  const $input = $(target);
+  // const $width = $val.length * parseInt($input.css('font-size')) + parseInt($input.css('padding-left')) + parseInt($input.css('padding-right'));
+  // const $width = $val.length * parseInt($input.css('font-size')) * 0.6
+  const $tempDiv = $('<div></div>')
+    .text($val)
+    .css({
+      'position': 'absolute',
+      'float': 'left',
+      'white-space': 'nowrap',
+      'visibility': 'hidden',
+      'font-size': $input.css('font-size')
+    })
+    .appendTo($('body'))
+  const $width = $tempDiv.width();
+  $tempDiv.remove();
+
+  $input.css('width', $width);
+}
+$('.input.price input').on('input', function() {
+  setPriceInp2(this);
+});
+$('.input.price input').each(function() {
+  setPriceInp2(this);
+});
 </script>
 </body>
 </html>
