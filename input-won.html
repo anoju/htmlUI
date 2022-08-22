@@ -143,7 +143,7 @@ body {
 .input.price .inp {
   width: auto;
   flex-grow: 0;
-  box-sizing: content-box;
+  /* box-sizing: content-box; */
   color: blue;
   font-weight: bold;
   text-align: right;
@@ -204,22 +204,23 @@ function setPriceInp2(target) {
   const $input = $(target);
   const $val = $(target).val();
   // const $width = $val.length * parseInt($input.css('font-size')) + parseInt($input.css('padding-left')) + parseInt($input.css('padding-right'));
-  const $tempDiv = $('<div></div>')
-    .text($val)
-    .css({
-      'position': 'absolute',
-      'float': 'left',
-      'white-space': 'nowrap',
-      'visibility': 'hidden',
-      'font-size': $input.css('font-size'),
-      'font-weight': $input.css('font-weight'),
-      'letter-spacing': $input.css('letter-spacing')
-    })
-    .appendTo($('body'))
-  const $width = Math.ceil($tempDiv.width());
-  $tempDiv.remove();
-
-  $input.css('width', $width);
+  // const $tempDiv = $('<div></div>')
+  //   .text($val)
+  //   .css({
+  //     'position': 'absolute',
+  //     'float': 'left',
+  //     'white-space': 'nowrap',
+  //     'visibility': 'hidden',
+  //     'font-size': $input.css('font-size'),
+  //     'font-weight': $input.css('font-weight'),
+  //     'letter-spacing': $input.css('letter-spacing')
+  //   })
+  //   .appendTo($('body'))
+  // const $width = Math.ceil($tempDiv.width());
+  // $tempDiv.remove();
+  // $input.css('width', $width);
+  $input.css('width', 0);
+  $input.css('width', $input[0].scrollWidth);
 }
 $('.input.price input').on('input', function() {
   setPriceInp2(this);
