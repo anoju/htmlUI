@@ -97,22 +97,43 @@ function setListTop() {
   timerIdx += 1;
   if (timerIdx >= $length) timerIdx = 0;
   const $top = timerIdx * $h;
-  $boxUl.css('top', -$top)
+  $boxUl.css('top', -$top);
 }
 // setListTop();
 let timer = setInterval(setListTop, 1000);
+
+function blurEvt(el) {
+  const $this = $(el);
+  const $box = $this.closest('.chart-box');
+  setTimeout(function() {
+    const $focus = $(':focus');
+    if ($focus.closest('.chart-box').length) return
+    $box.removeClass('open');
+    timer = setInterval(setListTop, 1000);
+  }, 10);
+}
 
 $('.chart-box .btn').click(function(e) {
   e.preventDefault();
   const $this = $(this);
   const $box = $this.closest('.chart-box');
   if ($box.hasClass('open')) {
-    $box.removeClass('open')
+    $box.removeClass('open');
     timer = setInterval(setListTop, 1000);
   } else {
-    $box.addClass('open')
-    clearInterval(timer)
+    $box.addClass('open');
+    clearInterval(timer);
   }
+}).blur(function() {
+  blurEvt(this);
+});
+$('.chart-box ul a').focus(function() {
+  const $this = $(this);
+  const $box = $this.closest('.chart-box');
+  $box.addClass('open');
+  clearInterval(timer);
+}).blur(function() {
+  blurEvt(this);
 });
 </script>
 </body>
