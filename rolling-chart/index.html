@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>rolling-chart</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+a {
+  color: #212121;
+  text-decoration: none;
+}
+.wrap {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #f1f1f1;
+}
+.chart-box {
+  position: relative;
+  width: 180px;
+  height: 30px;
+  overflow: hidden;
+  border: 2px solid #000;
+  border-radius: 5px;
+  background-color: #fff;
+}
+.chart-box.open {
+  overflow: visible;
+}
+.chart-box ul {
+  position: relative;
+  padding: 0 30px 0 0;
+  margin: -2px;
+  border: 2px solid #000;
+  border-radius: 5px;
+  background-color: #fff;
+  transition: top 0.3s;
+}
+.chart-box ul li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.chart-box ul li a {
+  display: block;
+  padding: 3px 10px;
+  font-size: 16px;
+  line-height: 24px;
+}
+.chart-box .btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 30px;
+  padding: 0 5px;
+  font-size: 12px;
+  line-height: 30px;
+  background-color: #fff;
+}
+.chart-box.open .btn {
+  font-weight: bold;
+  color: #ddd;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="chart-box">
+    <ul>
+      <li><a href="#">1. 아이유</a></li>
+      <li><a href="#">2. 블랙핑크</a></li>
+      <li><a href="#">3. 아이브</a></li>
+      <li><a href="#">4. 르세라핌</a></li>
+      <li><a href="#">5. 뉴진스</a></li>
+    </ul>
+    <a href="#" class="btn">확장</a>
+  </div>
+</div>
+<script>
+let timerIdx = 0;
+
+function setListTop() {
+  const $box = $('.chart-box');
+  const $boxUl = $box.find('ul');
+  const $boxLi = $box.find('li');
+  const $length = $boxLi.length;
+  if (!$length) return;
+  const $h = $box.find('li:first-child a').outerHeight();
+  timerIdx += 1;
+  if (timerIdx >= $length) timerIdx = 0;
+  const $top = timerIdx * $h;
+  $boxUl.css('top', -$top)
+}
+// setListTop();
+let timer = setInterval(setListTop, 1000);
+
+$('.chart-box .btn').click(function(e) {
+  e.preventDefault();
+  const $this = $(this);
+  const $box = $this.closest('.chart-box');
+  if ($box.hasClass('open')) {
+    $box.removeClass('open')
+    timer = setInterval(setListTop, 1000);
+  } else {
+    $box.addClass('open')
+    clearInterval(timer)
+  }
+});
+</script>
+</body>
+</html>
