@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+:lang(ko) {
+  word-break: keep-all;
+}
+.theme-dark {
+  background-color: #000;
+}
+.large-9 {
+  flex-basis: 75%;
+  max-width: 75%;
+}
+.large-offset-1 {
+  margin-left: 8.3333333333%;
+}
+.large-offset-4 {
+  margin-left: 33.3333333333%;
+}
+.theme-dark .deep-dive h1,
+.theme-dark .deep-dive h2,
+.theme-dark .deep-dive h3,
+.theme-dark .deep-dive h4,
+.theme-dark .deep-dive h5,
+.theme-dark .deep-dive h6,
+.theme-dark .deep-dive li,
+.theme-dark .deep-dive p,
+.theme-dark .main h1,
+.theme-dark .main h2,
+.theme-dark .main h3,
+.theme-dark .main h4,
+.theme-dark .main h5,
+.theme-dark .main h6,
+.theme-dark .main li,
+.theme-dark .main p {
+  color: #cecece;
+}
+.typography-header-1 {
+  font-size: 200px;
+  line-height: .93;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  font-family: SF Pro Display, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+.typography-header-1:lang(ko) {
+  letter-spacing: 0em;
+  font-family: SF Pro KR, SF Pro Display, SF Pro Icons, Apple Gothic, HY Gulim, MalgunGothic, HY Dotum, Lexi Gulim, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+.section-battery .headline-part {
+  display: inline-block;
+  margin-bottom: -7px;
+  position: relative;
+  color: #fff;
+  background-color: #000;
+  padding-top: 0.5px;
+  overflow: hidden;
+}
+.typography-header-2,
+.camera-header .headline strong,
+.section-battery .headline-part {
+  line-height: 1.1;
+}
+.section-battery .headline-part.descender-offset {
+  padding-bottom: 13px;
+}
+.section-battery .headline.play > .headline-part:before {
+  transform: translateX(0%);
+}
+
+.section-battery .headline-part:before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 260%;
+  height: 100%;
+  transform: translateX(0%);
+  background-image: linear-gradient(90deg, transparent, transparent 50%, #1d1d1f 60%), linear-gradient(180deg, #ffb6ff 0%, #b344ff);
+  background-image: linear-gradient(90deg, transparent 50%, #1d1d1f 60%), linear-gradient(180deg, #ffb6ff 0%, #b344ff);
+  background-color: #ffb6ff;
+  mix-blend-mode: darken;
+}
+.section-battery .headline > .headline-part:before {
+  transform: translateX(-60%);
+}
+.section-battery .headline > .headline-part--start:before {
+  transition: transform .75s ease-in;
+}
+.section-battery .headline > .headline-part--end:before {
+  transition: transform 1s ease-in-out;
+}
+.section-battery .headline span:nth-child(3):before {
+  transition-delay: 0s;
+}
+.section-battery .headline span:nth-child(5):before {
+  transition-delay: .75s;
+}
+</style>
+</head>
+<body class="theme-dark">
+<div class="section-battery">
+  <h3 class="headline" data-component-list="BatteryFillUp"><span class="eyebrow typography-header-5 large-5 large-offset-1 medium-11 small-11 small-offset-1">오래 가는 배터리</span><br><span class="typography-header-1 headline-part headline-part--start large-7 large-offset-1 medium-11 small-11 small-offset-1">온종일,</span><br><span class="typography-header-1 headline-part headline-part--end descender-offset large-9 large-offset-4 medium-11 small-10 small-offset-2">올인.</span></h3>
+</div>
+<script>
+setTimeout(() => {
+  const $headline = document.querySelector('.headline');
+  $headline.classList.add('play');
+}, 500);
+</script>
+</body>
+</html>
