@@ -11,8 +11,12 @@
   <h1>mutationObserver</h1>
 </div>
 <div>
-  <button class="btn aa">append 'li'</button>
-  <button class="btn bb">append 'p'</button>
+  <button class="append aa">append 'li'</button>
+  <button class="append bb">append 'p'</button>
+  <br>
+  <button class="remove aa">remove 'li'</button>
+  <button class="remove bb">remove 'p'</button>
+  <br>
   <button class="end">end</button>
   <button class="toggleClass">toggleClass</button>
 </div>
@@ -95,7 +99,7 @@ const txtAry = ['가가가', '나나나', '다다다', '라라라', '마마마',
 const txtAry2 = ['aaaa', 'bbbb', 'cccc', 'dddd', 'eeee', 'ffff']
 
 // 제이쿼리로해도 감지되는지 확인
-$('.btn').click(function(e) {
+$('.append').click(function(e) {
   e.preventDefault();
   let $wrap = $('#wrap');
   if ($(this).hasClass('aa')) {
@@ -116,6 +120,27 @@ $('.btn').click(function(e) {
     let idx = $wrap.children('p').length;
     if (txtAry2.length <= idx - 1) return;
     $wrap.append('<p>' + txtAry2[idx - 1] + '</p>')
+  }
+});
+$('.remove').click(function(e) {
+  e.preventDefault();
+  let $wrap = $('#wrap');
+  if ($(this).hasClass('aa')) {
+    const $li = $wrap.find('li');
+    if (!$li.length) {
+      return;
+    } else if ($li.length === 1) {
+      $wrap.find('ul').remove();
+    } else {
+      $li.last().remove();
+    }
+  } else {
+    const $p = $wrap.find('p');
+    if ($p.length === 1) {
+      return;
+    } else {
+      $p.last().remove();
+    }
   }
 });
 
