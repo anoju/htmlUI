@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mutationObserver</title>
+</head>
+<body>
+<div id="wrap">
+  <h1>mutationObserver</h1>
+</div>
+<div>
+  <button class="btn aa">append 'li'</button>
+  <button class="btn bb">append 'p'</button>
+  <button class="end">end</button>
+  <button class="toggleClass">toggleClass</button>
+</div>
+<p><input type="text" name="" id=""></p>
+<div><button class="toggleDisabled">toggleDisabled</button></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+const fnAry = [];
+
+function fnArySet(elem, key, val) {
+  const _aryIdx = fnAry.findIndex((item) => item.el === elem && item.key === key);
+  if (_aryIdx > -1) {
+    fnAry[_aryIdx].val = val;
+  } else {
+    fnAry.push({
+      el: elem,
+      key: key,
+      val: val
+    });
+  }
+}
+
+function fnAryGet(elem, key) {
+  const _aryIdx = fnAry.findIndex((item) => item.el === elem && item.key === key);
+  if (_aryIdx > -1) return fnAry[_aryIdx].val;
+}
+
+function fnAryRemove(elem, key) {
+  const _aryIdx = fnAry.findIndex((item) => item.el === elem && item.key === key);
+  if (_aryIdx > -1) fnAry.slice(_aryIdx, 1);
+}
+
+function htmlObserver(target, fn, opt) {
+  if (!target) return;
+  // 이중이벤트 방지 disconnect
+  const resetObserver = fnAryGet(target, 'htmlObserver');
+  if (resetObserver) resetObserver.disconnect();
+
+  // 옵저버 인스턴스 생성
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (fn) fn(mutation);
+    });
+  });
+
+  // 옵션 설정
+  const config = {
+    attributes: true,
+    childList: true,
+    characterData: true
+  };
+  if (!!opt) {
+    if (opt.attributes !== undefined) config.attributes = opt.attributes;
+    if (opt.childList !== undefined) config.childList = opt.childList;
+    if (opt.characterData !== undefined) config.characterData = opt.characterData;
+  }
+  // 실행
+  observer.observe(target, config);
+  fnArySet(target, 'htmlObserver', observer);
+}
+
+// test: 함수실행
+const _wrap = document.querySelector('#wrap');
+htmlObserver(_wrap, function(e) {
+  console.log(111, e);
+});
+const _input = document.querySelector('input');
+htmlObserver(_input, function(e) {
+  console.log(333, e);
+});
+
+// test: append
+const _P = document.createElement('p');
+_P.innerHTML = '<strong>console.log를 확인하세요</strong>';
+_wrap.append(_P);
+
+//test: click
+const txtAry = ['가가가', '나나나', '다다다', '라라라', '마마마', '바바바']
+const txtAry2 = ['aaaa', 'bbbb', 'cccc', 'dddd', 'eeee', 'ffff']
+
+// 제이쿼리로해도 감지되는지 확인
+$('.btn').click(function(e) {
+  e.preventDefault();
+  let $wrap = $('#wrap');
+  if ($(this).hasClass('aa')) {
+    if (!$wrap.find('ul').length) {
+      $wrap.append('<ul></ul>');
+      const $ul = $wrap.find('ul');
+
+      // 자식의 자식은 감지를 못함
+      htmlObserver($ul[0], function(e) {
+        console.log(222, e);
+      });
+    }
+    $wrap = $wrap.find('ul');
+    let idx = $wrap.children('li').length;
+    if (txtAry.length <= idx) return;
+    $wrap.append('<li>' + txtAry[idx] + '</li>')
+  } else {
+    let idx = $wrap.children('p').length;
+    if (txtAry2.length <= idx - 1) return;
+    $wrap.append('<p>' + txtAry2[idx - 1] + '</p>')
+  }
+});
+
+document.querySelector('.end').addEventListener('click', function(e) {
+  e.preventDefault();
+  const _ul = document.querySelector('#wrap ul');
+  const _observer = fnAryGet(_ul, 'htmlObserver');
+  _observer.disconnect(); //중지
+});
+
+document.querySelector('.toggleClass').addEventListener('click', function() {
+  if (_wrap.classList.contains('on')) {
+    _wrap.classList.remove('on');
+  } else {
+    _wrap.classList.add('on');
+  }
+});
+document.querySelector('.toggleDisabled').addEventListener('click', function() {
+  if (_input.disabled) {
+    _input.disabled = false;
+  } else {
+    _input.disabled = true;
+  }
+});
+</script>
+</body>
+</html>
