@@ -5,6 +5,14 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>mutationObserver</title>
+<style>
+#wrap.on {
+  background: red;
+}
+input.disabled {
+  background: #aaa;
+}
+</style>
 </head>
 <body>
 <div id="wrap">
@@ -20,6 +28,8 @@
   <button class="end">end</button>
   <button class="toggleClass">toggleClass</button>
 </div>
+<p><input type="text" name="" id=""></p>
+<p><input type="text" name="" id=""></p>
 <p><input type="text" name="" id=""></p>
 <div><button class="toggleDisabled">toggleDisabled</button></div>
 
@@ -50,33 +60,41 @@ function fnAryRemove(elem, key) {
   if (_aryIdx > -1) fnAry.slice(_aryIdx, 1);
 }
 
-function htmlObserver(target, fn, opt) {
-  if (!target) return;
-  // 이중이벤트 방지 disconnect
-  const resetObserver = fnAryGet(target, 'htmlObserver');
-  if (resetObserver) resetObserver.disconnect();
-
-  // 옵저버 인스턴스 생성
-  const observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-      if (fn) fn(mutation);
+function htmlObserver(target, func, option) {
+  if (target.length > 1) {
+    target.forEach(function(item, i) {
+      _init(item, func, option);
     });
-  });
-
-  // 옵션 설정
-  const config = {
-    attributes: true,
-    childList: true,
-    characterData: true
-  };
-  if (!!opt) {
-    if (opt.attributes !== undefined) config.attributes = opt.attributes;
-    if (opt.childList !== undefined) config.childList = opt.childList;
-    if (opt.characterData !== undefined) config.characterData = opt.characterData;
+  } else {
+    if (!target) return;
+    _init(target, func, option);
   }
-  // 실행
-  observer.observe(target, config);
-  fnArySet(target, 'htmlObserver', observer);
+
+  function _init(tar, fn, opt) {
+    const config = {
+      attributes: true,
+      childList: true,
+      characterData: true
+    };
+    if (!!opt) {
+      if (opt.attributes !== undefined) config.attributes = opt.attributes;
+      if (opt.childList !== undefined) config.childList = opt.childList;
+      if (opt.characterData !== undefined) config.characterData = opt.characterData;
+    }
+
+    const resetObserver = fnAryGet(tar, 'htmlObserver');
+    if (resetObserver) resetObserver.disconnect();
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (fn) {
+          fn(mutation);
+          _init(tar, fn, opt);
+        }
+      });
+    });
+    observer.observe(tar, config);
+    fnArySet(tar, 'htmlObserver', observer);
+  }
 }
 
 // test: 함수실행
@@ -84,9 +102,18 @@ const _wrap = document.querySelector('#wrap');
 htmlObserver(_wrap, function(e) {
   console.log(111, e);
 });
-const _input = document.querySelector('input');
+
+// 복수 input 처리
+// const _input = document.querySelector('input');
+const _input = document.querySelectorAll('input');
 htmlObserver(_input, function(e) {
-  console.log(333, e);
+  // console.log('input htmlObserver', e)
+  console.log('input htmlObserver');
+  if (e.target.disabled === true) {
+    e.target.classList.add('disabled');
+  } else if (e.target.disabled === false) {
+    e.target.classList.remove('disabled');
+  }
 });
 
 // test: append
@@ -159,11 +186,18 @@ document.querySelector('.toggleClass').addEventListener('click', function() {
   }
 });
 document.querySelector('.toggleDisabled').addEventListener('click', function() {
-  if (_input.disabled) {
-    _input.disabled = false;
-  } else {
-    _input.disabled = true;
-  }
+  // if (_input.disabled) {
+  //   _input.disabled = false;
+  // } else {
+  //   _input.disabled = true;
+  // }
+  _input.forEach(function(inp) {
+    if (inp.disabled) {
+      inp.disabled = false;
+    } else {
+      inp.disabled = true;
+    }
+  })
 });
 </script>
 </body>
