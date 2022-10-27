@@ -64,11 +64,18 @@ function fnAryRemove(elem, key) {
 function htmlObserver(target, func, option) {
   if (target.length > 1) {
     target.forEach(function(item, i) {
+      _reset(item);
       _init(item, func, option);
     });
   } else {
     if (!target) return;
+    _reset(target);
     _init(target, func, option);
+  }
+
+  function _reset(tar) {
+    const resetObserver = fnAryGet(tar, 'htmlObserver');
+    if (resetObserver) resetObserver.disconnect();
   }
 
   function _init(tar, fn, opt) {
@@ -82,12 +89,10 @@ function htmlObserver(target, func, option) {
       if (opt.childList !== undefined) config.childList = opt.childList;
       if (opt.characterData !== undefined) config.characterData = opt.characterData;
     }
-
-    const resetObserver = fnAryGet(tar, 'htmlObserver');
-    if (resetObserver) resetObserver.disconnect();
     const observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
         if (fn) {
+          _reset(tar);
           fn(mutation);
           _init(tar, fn, opt);
         }
