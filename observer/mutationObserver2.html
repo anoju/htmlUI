@@ -28,10 +28,11 @@ input.disabled {
   <button class="end">end</button>
   <button class="toggleClass">toggleClass</button>
 </div>
-<p><input type="text" name="" id=""></p>
-<p><input type="text" name="" id=""></p>
-<p><input type="text" name="" id=""></p>
+<p><input type="text" name="" class="inp1"></p>
+<p><input type="text" name="" class="inp2"></p>
+<p><input type="text" name="" class="inp3"></p>
 <div><button class="toggleDisabled">toggleDisabled</button></div>
+<div><button class="oneToggleDisabled">oneToggleDisabled</button></div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
@@ -185,7 +186,7 @@ document.querySelector('.toggleClass').addEventListener('click', function() {
     _wrap.classList.add('on');
   }
 });
-document.querySelector('.toggleDisabled').addEventListener('click', function() {
+document.querySelector('.toggleDisabled').addEventListener('click', function(e) {
   // if (_input.disabled) {
   //   _input.disabled = false;
   // } else {
@@ -198,6 +199,14 @@ document.querySelector('.toggleDisabled').addEventListener('click', function() {
       inp.disabled = true;
     }
   })
+});
+document.querySelector('.oneToggleDisabled').addEventListener('click', function(e) {
+  const _inp = document.querySelector('.inp2');
+  if (_inp.disabled) {
+    _inp.disabled = false;
+  } else {
+    _inp.disabled = true;
+  }
 });
 </script>
 </body>
