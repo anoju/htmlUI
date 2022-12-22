@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+button {
+  position: relative;
+}
+.loading-flipball {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  pointer-events: none;
+  backdrop-filter: blur(2px);
+}
+.flipball {
+  --flipball-size: 100px;
+  --flipball-duration: 0.5s;
+  position: relative;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  width: var(--flipball-size);
+  height: var(--flipball-size);
+}
+.flip-in {
+  display: none;
+  position: relative;
+  height: var(--flipball-size);
+  transform-style: preserve-3d;
+  border-radius: 50%;
+}
+.flip-stay {
+  display: none;
+}
+.flip-stay,
+.flip-in .front,
+.flip-in .back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backface-visibility: hidden;
+  border-radius: 50%;
+}
+.flip-in:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  opacity: 0;
+}
+.flip-in .back {
+  transform: rotateY(-180deg);
+}
+.flip-4 .back,
+.flip-4-2,
+.flip-1 .front,
+.flip-1-1 {
+  background: red;
+}
+.flip-1 .back,
+.flip-1-2,
+.flip-2 .front,
+.flip-2-1 {
+  background: yellow;
+}
+.flip-2 .back,
+.flip-2-2,
+.flip-3 .front,
+.flip-3-1 {
+  background: blue;
+}
+.flip-3 .back,
+.flip-3-2,
+.flip-4 .front,
+.flip-4-1 {
+  background: green;
+}
+.flip-1-1 {
+  clip: rect(0 var(--flipball-size) var(--flipball-size) calc(var(--flipball-size) / 2));
+}
+.flip-1-2 {
+  clip: rect(0 calc(var(--flipball-size) / 2 - 0.1px) var(--flipball-size) 0);
+}
+.flip-2-1 {
+  clip: rect(0 var(--flipball-size) calc(var(--flipball-size) / 2) 0);
+}
+.flip-2-2 {
+  clip: rect(calc(var(--flipball-size) / 2 - 0.1px) var(--flipball-size) var(--flipball-size) 0);
+}
+.flip-3-1 {
+  clip: rect(0 calc(var(--flipball-size) / 2) var(--flipball-size) 0);
+}
+.flip-3-2 {
+  clip: rect(0 var(--flipball-size) var(--flipball-size) calc(var(--flipball-size) / 2 + 0.1px));
+}
+.flip-4-1 {
+  clip: rect(calc(var(--flipball-size) / 2) var(--flipball-size) var(--flipball-size) 0);
+}
+.flip-4-2 {
+  clip: rect(0 var(--flipball-size) calc(var(--flipball-size) / 2 - 0.1px) 0);
+}
+
+.flipball[class*=step-] .flip-in:after {
+  animation: flip-step-bg var(--flipball-duration) linear;
+}
+.flipball.step-1 .flip-1-1,
+.flipball.step-1 .flip-1-2,
+.flipball.step-1 .flip-1 {
+  display: block;
+}
+.flipball.step-2 .flip-2-1,
+.flipball.step-2 .flip-2-2,
+.flipball.step-2 .flip-2 {
+  display: block;
+}
+.flipball.step-3 .flip-3-1,
+.flipball.step-3 .flip-3-2,
+.flipball.step-3 .flip-3 {
+  display: block;
+}
+.flipball.step-4 .flip-4-1,
+.flipball.step-4 .flip-4-2,
+.flipball.step-4 .flip-4 {
+  display: block;
+}
+.flipball.step-1 .flip-1 {
+  animation: flip-step-1 var(--flipball-duration) linear forwards;
+}
+.flipball.step-2 .flip-2 {
+  animation: flip-step-2 var(--flipball-duration) linear forwards;
+}
+.flipball.step-3 .flip-3 {
+  animation: flip-step-3 var(--flipball-duration) linear forwards;
+}
+.flipball.step-4 .flip-4 {
+  animation: flip-step-4 var(--flipball-duration) linear forwards;
+}
+
+@keyframes flip-step-bg {
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes flip-step-1 {
+  to {
+    transform: rotateY(180deg);
+  }
+}
+@keyframes flip-step-2 {
+  to {
+    transform: rotateX(180deg);
+  }
+}
+@keyframes flip-step-3 {
+  to {
+    transform: rotateY(-180deg);
+  }
+}
+@keyframes flip-step-4 {
+  to {
+    transform: rotateX(-180deg);
+  }
+}
+</style>
+</head>
+<body>
+<button onclick="Loading.open()">로딩 열기</button>
+<button onclick="Loading.close()" style="z-index: 1000;">로딩 닫기</button>
+<p>플립볼 로딩입니다.</p>
+<p>플립볼 로딩입니다.</p>
+<p>플립볼 로딩입니다.</p>
+<p>플립볼 로딩입니다.</p>
+<p>플립볼 로딩입니다.</p>
+<p>플립볼 로딩입니다.</p>
+<p>플립볼 로딩입니다.</p>
+<p>플립볼 로딩입니다.</p>
+<p>플립볼 로딩입니다.</p>
+<p>플립볼 로딩입니다.</p>
+<p>플립볼 로딩입니다.</p>
+<p>플립볼 로딩입니다.</p>
+<p>플립볼 로딩입니다.</p>
+<script>
+const Loading = {
+  open: function() {
+    const $html = `<div class="flipball step-1">
+      <div class="flip-stay flip-1-1"></div>
+      <div class="flip-stay flip-1-2"></div>
+      <div class="flip-stay flip-2-1"></div>
+      <div class="flip-stay flip-2-2"></div>
+      <div class="flip-stay flip-3-1"></div>
+      <div class="flip-stay flip-3-2"></div>
+      <div class="flip-stay flip-4-1"></div>
+      <div class="flip-stay flip-4-2"></div>
+      <div class="flip-in flip-1"><i class="front"></i><i class="back"></i></div>
+      <div class="flip-in flip-2"><i class="front"></i><i class="back"></i></div>
+      <div class="flip-in flip-3"><i class="front"></i><i class="back"></i></div>
+      <div class="flip-in flip-4"><i class="front"></i><i class="back"></i></div>
+    </div>`;
+    const $loading = document.querySelector('.loading-flipball');
+    if (!$loading) {
+      const $wrap = document.createElement('div');
+      $wrap.classList.add('loading-flipball');
+      $wrap.innerHTML = $html;
+      document.body.appendChild($wrap);
+      Loading.anim();
+    }
+  },
+  timer: null,
+  idx: 1,
+  anim: function() {
+    const $flipball = document.querySelector('.loading-flipball .flipball');
+    Loading.timer = setInterval(function() {
+      $flipball.classList.remove('step-' + Loading.idx);
+      Loading.idx += 1;
+      if (Loading.idx > 4) Loading.idx = 1;
+      $flipball.classList.add('step-' + Loading.idx);
+    }, 600);
+  },
+  close: function() {
+    const $loading = document.querySelector('.loading-flipball');
+    clearInterval(Loading.timer);
+    if (!$loading) return;
+    $loading.remove();
+  }
+}
+// const $flipball = document.querySelector('.flipball');
+// $flipball.classList.add('step-3');
+</script>
+</body>
+</html>
