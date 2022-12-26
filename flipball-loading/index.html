@@ -32,14 +32,10 @@ button {
   height: var(--flipball-size);
 }
 .flip-in {
-  display: none;
   position: relative;
   height: var(--flipball-size);
   transform-style: preserve-3d;
   border-radius: 50%;
-}
-.flip-stay {
-  display: none;
 }
 .flip-stay,
 .flip-in .front,
@@ -51,6 +47,18 @@ button {
   bottom: 0;
   backface-visibility: hidden;
   border-radius: 50%;
+}
+.flip-stay:before,
+.flip-in .front:before,
+.flip-in .back:before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 50px;
+  height: 50px;
+  transform: translate(-50%, -50%);
 }
 .flip-in:after {
   content: '';
@@ -67,88 +75,72 @@ button {
 .flip-in .back {
   transform: rotateY(-180deg);
 }
-.flip-4 .back,
-.flip-4-2,
-.flip-1 .front,
-.flip-1-1 {
+.flip-in .back:after {
+  transform: rotateY(-180deg);
+  backface-visibility: hidden;
+}
+.step-4 .back,
+.step-4 .stay-2,
+.step-1 .front,
+.step-1 .stay-1 {
   background: red;
 }
-.flip-1 .back,
-.flip-1-2,
-.flip-2 .front,
-.flip-2-1 {
+.step-1 .back,
+.step-1 .stay-2,
+.step-2 .front,
+.step-2 .stay-1 {
   background: yellow;
 }
-.flip-2 .back,
-.flip-2-2,
-.flip-3 .front,
-.flip-3-1 {
+.step-2 .back,
+.step-2 .stay-2,
+.step-3 .front,
+.step-3 .stay-1 {
   background: blue;
 }
-.flip-3 .back,
-.flip-3-2,
-.flip-4 .front,
-.flip-4-1 {
+.step-3 .back,
+.step-3 .stay-2,
+.step-4 .front,
+.step-4 .stay-1 {
   background: green;
 }
-.flip-1-1 {
+.step-1 .stay-1 {
   clip: rect(0 var(--flipball-size) var(--flipball-size) calc(var(--flipball-size) / 2));
 }
-.flip-1-2 {
+.step-1 .stay-2 {
   clip: rect(0 calc(var(--flipball-size) / 2 - 0.1px) var(--flipball-size) 0);
 }
-.flip-2-1 {
+.step-2 .stay-1 {
   clip: rect(0 var(--flipball-size) calc(var(--flipball-size) / 2) 0);
 }
-.flip-2-2 {
+.step-2 .stay-2 {
   clip: rect(calc(var(--flipball-size) / 2 - 0.1px) var(--flipball-size) var(--flipball-size) 0);
 }
-.flip-3-1 {
+.step-3 .stay-1 {
   clip: rect(0 calc(var(--flipball-size) / 2) var(--flipball-size) 0);
 }
-.flip-3-2 {
+.step-3 .stay-2 {
   clip: rect(0 var(--flipball-size) var(--flipball-size) calc(var(--flipball-size) / 2 + 0.1px));
 }
-.flip-4-1 {
+.step-4 .stay-1 {
   clip: rect(calc(var(--flipball-size) / 2) var(--flipball-size) var(--flipball-size) 0);
 }
-.flip-4-2 {
+.step-4 .stay-2 {
   clip: rect(0 var(--flipball-size) calc(var(--flipball-size) / 2 - 0.1px) 0);
 }
 
 .flipball[class*=step-] .flip-in:after {
   animation: flip-step-bg var(--flipball-duration) linear;
 }
-.flipball.step-1 .flip-1-1,
-.flipball.step-1 .flip-1-2,
-.flipball.step-1 .flip-1 {
-  display: block;
-}
-.flipball.step-2 .flip-2-1,
-.flipball.step-2 .flip-2-2,
-.flipball.step-2 .flip-2 {
-  display: block;
-}
-.flipball.step-3 .flip-3-1,
-.flipball.step-3 .flip-3-2,
-.flipball.step-3 .flip-3 {
-  display: block;
-}
-.flipball.step-4 .flip-4-1,
-.flipball.step-4 .flip-4-2,
-.flipball.step-4 .flip-4 {
-  display: block;
-}
-.flipball.step-1 .flip-1 {
+.flipball.step-1 .flip-in {
   animation: flip-step-1 var(--flipball-duration) linear forwards;
 }
-.flipball.step-2 .flip-2 {
+.flipball.step-2 .flip-in {
   animation: flip-step-2 var(--flipball-duration) linear forwards;
 }
-.flipball.step-3 .flip-3 {
+.flipball.step-3 .flip-in {
   animation: flip-step-3 var(--flipball-duration) linear forwards;
 }
-.flipball.step-4 .flip-4 {
+.flipball.step-4 .flip-in {
   animation: flip-step-4 var(--flipball-duration) linear forwards;
 }
 
@@ -199,18 +191,9 @@ button {
 const Loading = {
   open: function() {
     const $html = `<div class="flipball step-1">
-      <div class="flip-stay flip-1-1"></div>
-      <div class="flip-stay flip-1-2"></div>
-      <div class="flip-stay flip-2-1"></div>
-      <div class="flip-stay flip-2-2"></div>
-      <div class="flip-stay flip-3-1"></div>
-      <div class="flip-stay flip-3-2"></div>
-      <div class="flip-stay flip-4-1"></div>
-      <div class="flip-stay flip-4-2"></div>
-      <div class="flip-in flip-1"><i class="front"></i><i class="back"></i></div>
-      <div class="flip-in flip-2"><i class="front"></i><i class="back"></i></div>
-      <div class="flip-in flip-3"><i class="front"></i><i class="back"></i></div>
-      <div class="flip-in flip-4"><i class="front"></i><i class="back"></i></div>
+      <div class="flip-stay stay-1"></div>
+      <div class="flip-stay stay-2"></div>
+      <div class="flip-in"><i class="front"></i><i class="back"></i></div>
     </div>`;
     const $loading = document.querySelector('.loading-flipball');
     if (!$loading) {
