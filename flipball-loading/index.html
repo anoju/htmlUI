@@ -19,7 +19,8 @@ button {
   align-items: center;
   justify-content: center;
   z-index: 999;
-  pointer-events: none;
+  /* pointer-events: none; */
+  -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
 }
 .flipball {
@@ -60,7 +61,7 @@ button {
   height: 50px;
   transform: translate(-50%, -50%);
 }
-.flip-in:after {
+.flip-in:before {
   content: '';
   display: block;
   position: absolute;
@@ -68,9 +69,10 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.4);
   border-radius: 50%;
   opacity: 0;
+  z-index: 1;
 }
 .flip-in .back {
   transform: rotateY(-180deg);
@@ -119,7 +121,7 @@ button {
   clip: rect(0 calc(var(--flipball-size) / 2) var(--flipball-size) 0);
 }
 .step-3 .stay-2 {
-  clip: rect(0 var(--flipball-size) var(--flipball-size) calc(var(--flipball-size) / 2 + 0.1px));
+  clip: rect(0 var(--flipball-size) var(--flipball-size) calc(var(--flipball-size) / 2));
 }
 .step-4 .stay-1 {
   clip: rect(calc(var(--flipball-size) / 2) var(--flipball-size) var(--flipball-size) 0);
@@ -128,7 +130,7 @@ button {
   clip: rect(0 var(--flipball-size) calc(var(--flipball-size) / 2 - 0.1px) 0);
 }
 
-.flipball[class*=step-] .flip-in:after {
+.flipball.shadow .flip-in:before {
   animation: flip-step-bg var(--flipball-duration) linear;
 }
 .flipball.step-1 .flip-in {
@@ -190,7 +192,7 @@ button {
 <script>
 const Loading = {
   open: function() {
-    const $html = `<div class="flipball step-1">
+    const $html = `<div class="flipball step-1 shadow">
       <div class="flip-stay stay-1"></div>
       <div class="flip-stay stay-2"></div>
       <div class="flip-in"><i class="front"></i><i class="back"></i></div>
@@ -204,20 +206,28 @@ const Loading = {
       Loading.anim();
     }
   },
-  timer: null,
+  stepTimer: null,
+  shadowTimer: null,
+  duration: 500,
+  delay: 100,
   idx: 1,
   anim: function() {
     const $flipball = document.querySelector('.loading-flipball .flipball');
-    Loading.timer = setInterval(function() {
+    Loading.stepTimer = setInterval(function() {
       $flipball.classList.remove('step-' + Loading.idx);
       Loading.idx += 1;
       if (Loading.idx > 4) Loading.idx = 1;
-      $flipball.classList.add('step-' + Loading.idx);
-    }, 600);
+      $flipball.classList.add('step-' + Loading.idx, 'shadow');
+      clearTimeout(Loading.shadowTimer);
+      Loading.shadowTimer = setInterval(function() {
+        $flipball.classList.remove('shadow');
+      }, Loading.duration);
+    }, Loading.duration + Loading.delay);
   },
   close: function() {
     const $loading = document.querySelector('.loading-flipball');
-    clearInterval(Loading.timer);
+    clearInterval(Loading.stepTimer);
+    clearTimeout(Loading.shadowTimer);
     if (!$loading) return;
     $loading.remove();
   }
