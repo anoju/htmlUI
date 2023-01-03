@@ -264,7 +264,7 @@ function setWeatherApi(area, wrap) {
 
 // 날씨 api - 현재접속위치
 let $nowArea = '';
-$.get('https://ip-api.com/json', function(data) {
+$.get('http://ip-api.com/json', function(data) {
   $nowArea = data.regionName;
   setWeatherApi($nowArea, '.area.bg0');
 }, 'jsonp');
