@@ -250,7 +250,7 @@ function setWeatherData(resp, wrap, city) {
 }
 
 function setWeatherApi(area, wrap) {
-  var apiURI = 'http://api.openweathermap.org/data/2.5/weather?q=' + area + '&appid=' + $key + '&lang=kr';
+  var apiURI = 'https://api.openweathermap.org/data/2.5/weather?q=' + area + '&appid=' + $key + '&lang=kr';
   $.ajax({
     url: apiURI,
     dataType: 'json',
@@ -264,7 +264,7 @@ function setWeatherApi(area, wrap) {
 
 // 날씨 api - 현재접속위치
 let $nowArea = '';
-$.get("http://ip-api.com/json", function(data) {
+$.get("https://ip-api.com/json", function(data) {
   $nowArea = data.regionName;
   setWeatherApi($nowArea, '.area.bg0');
 }, "jsonp");
