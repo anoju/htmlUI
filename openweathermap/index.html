@@ -25,6 +25,9 @@ a {
   background: #ddd;
   color: #fff;
 }
+.area.bg0 {
+  background-color: red;
+}
 .area.bg1 {
   background-color: blue;
 }
@@ -92,6 +95,44 @@ a {
 </head>
 <body>
 <h1><a href="https://openweathermap.org/" target="_blank">openweathermap</a></h1>
+<div class="area bg0">
+  <div class="left">
+    <p>현재접속</p>
+    <dl class="city_wrap">
+      <dt class="city _city"></dt>
+      <dd class="icon _icon"></dd>
+      <dd class="desc _description"></dd>
+    </dl>
+  </div>
+  <div class="right">
+    <ul class="list">
+      <li>
+        <div class="dt">현재기온</div>
+        <div class="dd _temp"></div>
+      </li>
+      <li>
+        <div class="dt">최저기온</div>
+        <div class="dd _temp_min"></div>
+      </li>
+      <li>
+        <div class="dt">최고기온</div>
+        <div class="dd _temp_max"></div>
+      </li>
+      <li>
+        <div class="dt">습도</div>
+        <div class="dd _humidity"></div>
+      </li>
+      <li>
+        <div class="dt">바람</div>
+        <div class="dd _wind"></div>
+      </li>
+      <li>
+        <div class="dt">구름</div>
+        <div class="dd _cloud"></div>
+      </li>
+    </ul>
+  </div>
+</div>
 <div class="area bg1">
   <div class="left">
     <dl class="city_wrap">
@@ -170,12 +211,10 @@ a {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script defer src="https://use.fontawesome.com/releases/v5.15.2/js/all.js" integrity="sha384-vuFJ2JiSdUpXLKGK+tDteQZBqNlMwAjhZ3TvPaDfN9QmbPb7Q8qUpbSNapQev3YF" crossorigin="anonymous"></script>
 <script>
-var $key = '89fb8a243f9c6b021a9483e72bea6246';
-var $area1 = 'seoul';
-var $area2 = 'Gyeonggi-do';
+const $key = '89fb8a243f9c6b021a9483e72bea6246';
 
 // 날씨 api - fontawesome 아이콘
-var weatherIcon = {
+const weatherIcon = {
   '01': 'fas fa-sun',
   '02': 'fas fa-cloud-sun',
   '03': 'fas fa-cloud',
@@ -187,7 +226,7 @@ var weatherIcon = {
   '50': 'fas fa-smog'
 };
 
-function setWeatherHtml(resp, wrap, city) {
+function setWeatherData(resp, wrap, city) {
   const $wrap = $(wrap);
   const $city = resp.name;
   const $Icon = (resp.weather[0].icon).substr(0, 2);
@@ -209,30 +248,33 @@ function setWeatherHtml(resp, wrap, city) {
   $wrap.find('._wind').append($wind);
   $wrap.find('._cloud').append($cloud);
 }
-// 날씨 api - 서울
-var apiURI = 'http://api.openweathermap.org/data/2.5/weather?q=' + $area1 + '&appid=' + $key + '&lang=kr';
-$.ajax({
-  url: apiURI,
-  dataType: 'json',
-  type: 'GET',
-  async: 'false',
-  success: function(resp) {
-    setWeatherHtml(resp, '.area.bg1');
-  }
-});
 
+function setWeatherApi(area, wrap) {
+  var apiURI = 'http://api.openweathermap.org/data/2.5/weather?q=' + area + '&appid=' + $key + '&lang=kr';
+  $.ajax({
+    url: apiURI,
+    dataType: 'json',
+    type: 'GET',
+    async: 'false',
+    success: function(resp) {
+      setWeatherData(resp, wrap);
+    }
+  });
+}
+
+// 날씨 api - 현재접속위치
+let $nowArea = '';
+$.get("http://ip-api.com/json", function(data) {
+  $nowArea = data.regionName;
+  setWeatherApi($nowArea, '.area.bg0');
+}, "jsonp");
+
+
+// 날씨 api - 서울
+setWeatherApi('Seoul', '.area.bg1');
 
 // 날씨 api - 경기도
-var apiURI = 'http://api.openweathermap.org/data/2.5/weather?q=' + $area2 + '&appid=' + $key + '&lang=kr';
-$.ajax({
-  url: apiURI,
-  dataType: 'json',
-  type: 'GET',
-  async: 'false',
-  success: function(resp) {
-    setWeatherHtml(resp, '.area.bg2');
-  }
-});
+setWeatherApi('Gyeonggi-do', '.area.bg2');
 </script>
 </body>
 </html>
