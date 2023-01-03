@@ -26,13 +26,19 @@ a {
   color: #fff;
 }
 .area.bg0 {
-  background-color: red;
+  background-color: #F5624D;
 }
 .area.bg1 {
-  background-color: blue;
+  background-color: #CC231E;
 }
 .area.bg2 {
-  background-color: green;
+  background-color: #34A65F;
+}
+.area.bg3 {
+  background-color: #0F8A5F;
+}
+.area.bg4 {
+  background-color: #235E6F;
 }
 .area .left {
   flex-shrink: 0;
@@ -48,28 +54,32 @@ a {
 .area .city_wrap {
   display: inline-block;
   position: relative;
-  padding-right: 40px;
+  padding-left: 35px;
   white-space: nowrap;
   text-align: left;
   line-height: 1.2;
+}
+.area .city_wrap dd {
+  margin: 0;
 }
 .area .city_wrap .city {
   position: relative;
   font-size: 20px;
   padding-top: 10px;
   text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+  text-align: right;
 }
 .area .city_wrap .desc {
   position: relative;
   margin: 0;
   text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
-  font-size: 60px;
+  font-size: 40px;
   font-weight: 500;
 }
 .area .city_wrap .icon {
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
   color: yellow;
 }
 .area .list {
@@ -207,6 +217,80 @@ a {
     </ul>
   </div>
 </div>
+<div class="area bg3">
+  <div class="left">
+    <dl class="city_wrap">
+      <dd class="icon _icon"></dd>
+      <dt class="city _city"></dt>
+      <dd class="desc _description"></dd>
+    </dl>
+  </div>
+  <div class="right">
+    <ul class="list">
+      <li>
+        <div class="dt">현재기온</div>
+        <div class="dd _temp"></div>
+      </li>
+      <li>
+        <div class="dt">최저기온</div>
+        <div class="dd _temp_min"></div>
+      </li>
+      <li>
+        <div class="dt">최고기온</div>
+        <div class="dd _temp_max"></div>
+      </li>
+      <li>
+        <div class="dt">습도</div>
+        <div class="dd _humidity"></div>
+      </li>
+      <li>
+        <div class="dt">바람</div>
+        <div class="dd _wind"></div>
+      </li>
+      <li>
+        <div class="dt">구름</div>
+        <div class="dd _cloud"></div>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="area bg4">
+  <div class="left">
+    <dl class="city_wrap">
+      <dd class="icon _icon"></dd>
+      <dt class="city _city"></dt>
+      <dd class="desc _description"></dd>
+    </dl>
+  </div>
+  <div class="right">
+    <ul class="list">
+      <li>
+        <div class="dt">현재기온</div>
+        <div class="dd _temp"></div>
+      </li>
+      <li>
+        <div class="dt">최저기온</div>
+        <div class="dd _temp_min"></div>
+      </li>
+      <li>
+        <div class="dt">최고기온</div>
+        <div class="dd _temp_max"></div>
+      </li>
+      <li>
+        <div class="dt">습도</div>
+        <div class="dd _humidity"></div>
+      </li>
+      <li>
+        <div class="dt">바람</div>
+        <div class="dd _wind"></div>
+      </li>
+      <li>
+        <div class="dt">구름</div>
+        <div class="dd _cloud"></div>
+      </li>
+    </ul>
+  </div>
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script defer src="https://use.fontawesome.com/releases/v5.15.2/js/all.js" integrity="sha384-vuFJ2JiSdUpXLKGK+tDteQZBqNlMwAjhZ3TvPaDfN9QmbPb7Q8qUpbSNapQev3YF" crossorigin="anonymous"></script>
@@ -226,10 +310,12 @@ const weatherIcon = {
   '50': 'fas fa-smog'
 };
 
-function setWeatherData(resp, wrap, city) {
+let nowIcon = '';
+
+function setWeatherData(resp, wrap) {
   const $wrap = $(wrap);
   const $city = resp.name;
-  const $Icon = (resp.weather[0].icon).substr(0, 2);
+  const $icon = (resp.weather[0].icon).substr(0, 2);
   const $description = resp.weather[0].description;
   const $Temp = Math.floor(resp.main.temp) + 'º';
   const $temp_min = Math.floor(resp.main.temp_min) + 'º';
@@ -238,15 +324,17 @@ function setWeatherData(resp, wrap, city) {
   const $wind = resp.wind.speed + ' m/s';
   const $cloud = resp.clouds.all + ' %';
 
-  $wrap.find('._city').append($city);
-  $wrap.find('._icon').append('<i class="' + weatherIcon[$Icon] + ' fa-5x" style="height : 50px; width : 50px;"></i>');
-  $wrap.find('._temp').prepend($Temp);
-  $wrap.find('._description').prepend($description);
-  $wrap.find('._temp_min').append($temp_min);
-  $wrap.find('._temp_max').append($temp_max);
-  $wrap.find('._humidity').append($humidity);
-  $wrap.find('._wind').append($wind);
-  $wrap.find('._cloud').append($cloud);
+  $wrap.find('._city').text($city);
+  $wrap.find('._icon').html('<i class="' + weatherIcon[$icon] + ' fa-5x" style="height : 50px; width : 50px;"></i>');
+  $wrap.find('._temp').text($Temp);
+  $wrap.find('._description').text($description);
+  $wrap.find('._temp_min').text($temp_min);
+  $wrap.find('._temp_max').text($temp_max);
+  $wrap.find('._humidity').text($humidity);
+  $wrap.find('._wind').text($wind);
+  $wrap.find('._cloud').text($cloud);
+
+  if (wrap === '.area.bg0') nowIcon = $icon
 }
 
 function setWeatherApi(area, wrap) {
@@ -258,15 +346,26 @@ function setWeatherApi(area, wrap) {
     async: 'false',
     success: function(resp) {
       setWeatherData(resp, wrap);
+      if (nowIcon === '13') snowCanvas();
     }
   });
 }
 
 // 날씨 api - 현재접속위치
 let $nowArea = '';
-$.get('https://ipinfo.io', function(data) {
+let isSsl = true;
+let ipUrl = 'https://ipinfo.io';
+if (location.protocol === 'http:') {
+  isSsl = false;
+  ipUrl = 'http://ip-api.com/json';
+}
+$.get(ipUrl, function(data) {
   // console.log(data)
-  $nowArea = data.region;
+  if (isSsl) {
+    $nowArea = data.region;
+  } else {
+    $nowArea = data.regionName;
+  }
   if ($nowArea) {
     $('.area.bg0').show();
     setWeatherApi($nowArea, '.area.bg0');
@@ -279,6 +378,113 @@ setWeatherApi('Seoul', '.area.bg1');
 
 // 날씨 api - 경기도
 setWeatherApi('Gyeonggi-do', '.area.bg2');
+
+// 날씨 api - 제주도
+setWeatherApi('Jeju-do', '.area.bg3');
+
+// 날씨 api - 강원도
+setWeatherApi('Gangwon-do', '.area.bg4 ');
+
+
+// 눈그리기
+function snowCanvas() {
+  var $count = 300;
+  var masthead = document.querySelector('.sky');
+  var canvas = document.createElement('canvas');
+  var ctx = canvas.getContext('2d');
+  var width = masthead.clientWidth;
+  var height = masthead.clientHeight;
+  var i = 0;
+  //var active = false;
+
+  function onResize() {
+    width = masthead.clientWidth;
+    height = masthead.clientHeight;
+    canvas.width = width;
+    canvas.height = height;
+    ctx.fillStyle = '#fff';
+    ctx.shadowColor = "rgba(0,0,0,0.4)";
+    ctx.shadowBlur = 2;
+
+    // var wasActive = active;
+    // active = width > 600;
+
+    // if (!wasActive && active)
+    requestAnimFrame(update);
+  }
+
+  var Snowflake = function() {
+    this.x = 0;
+    this.y = 0;
+    this.vy = 0;
+    this.vx = 0;
+    this.r = 0;
+
+    this.reset();
+  }
+
+  Snowflake.prototype.reset = function() {
+    this.x = Math.random() * width;
+    this.y = Math.random() * -height;
+    this.vy = 1 + Math.random() * 3;
+    this.vx = 0.5 - Math.random();
+    this.r = 1 + Math.random() * 2;
+    this.o = 0.5 + Math.random() * 0.5;
+  }
+
+  canvas.style.position = 'absolute';
+  canvas.style.left = canvas.style.top = '0';
+
+  var snowflakes = [],
+    snowflake;
+  for (i = 0; i < $count; i++) {
+    snowflake = new Snowflake();
+    snowflake.reset();
+    snowflakes.push(snowflake);
+  }
+
+  function update() {
+
+    ctx.clearRect(0, 0, width, height);
+
+    // if (!active)
+    //   return;
+
+    for (i = 0; i < $count; i++) {
+      snowflake = snowflakes[i];
+      snowflake.y += snowflake.vy;
+      snowflake.x += snowflake.vx;
+
+      ctx.globalAlpha = snowflake.o;
+      ctx.beginPath();
+      ctx.arc(snowflake.x, snowflake.y, snowflake.r, 0, Math.PI * 2, false);
+      ctx.closePath();
+      ctx.fill();
+
+      if (snowflake.y > height) {
+        snowflake.reset();
+      }
+    }
+
+    requestAnimFrame(update);
+  }
+
+  // shim layer with setTimeout fallback
+  window.requestAnimFrame = (function() {
+    return window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      function(callback) {
+        window.setTimeout(callback, 1000 / 60);
+      };
+  })();
+
+  onResize();
+  window.addEventListener('resize', onResize, false);
+
+  document.body.appendChild(canvas);
+};
+//snowCanvas();
 </script>
 </body>
 </html>
