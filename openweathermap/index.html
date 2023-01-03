@@ -95,7 +95,7 @@ a {
 </head>
 <body>
 <h1><a href="https://openweathermap.org/" target="_blank">openweathermap</a></h1>
-<div class="area bg0">
+<div class="area bg0" style="display: none;">
   <div class="left">
     <p>현재접속</p>
     <dl class="city_wrap">
@@ -267,7 +267,10 @@ let $nowArea = '';
 $.get('https://ipinfo.io', function(data) {
   // console.log(data)
   $nowArea = data.region;
-  setWeatherApi($nowArea, '.area.bg0');
+  if ($nowArea) {
+    $('.area.bg0').show();
+    setWeatherApi($nowArea, '.area.bg0');
+  }
 }, 'jsonp');
 
 
