@@ -231,9 +231,9 @@ function setWeatherData(resp, wrap, city) {
   const $city = resp.name;
   const $Icon = (resp.weather[0].icon).substr(0, 2);
   const $description = resp.weather[0].description;
-  const $Temp = Math.floor(resp.main.temp - 273.15) + 'º';
-  const $temp_min = Math.floor(resp.main.temp_min - 273.15) + 'º';
-  const $temp_max = Math.floor(resp.main.temp_max - 273.15) + 'º';
+  const $Temp = Math.floor(resp.main.temp) + 'º';
+  const $temp_min = Math.floor(resp.main.temp_min) + 'º';
+  const $temp_max = Math.floor(resp.main.temp_max) + 'º';
   const $humidity = resp.main.humidity + ' %';
   const $wind = resp.wind.speed + ' m/s';
   const $cloud = resp.clouds.all + ' %';
@@ -250,7 +250,7 @@ function setWeatherData(resp, wrap, city) {
 }
 
 function setWeatherApi(area, wrap) {
-  var apiURI = 'https://api.openweathermap.org/data/2.5/weather?q=' + area + '&appid=' + $key + '&lang=kr';
+  var apiURI = 'https://api.openweathermap.org/data/2.5/weather?q=' + area + '&appid=' + $key + '&lang=kr&units=metric';
   $.ajax({
     url: apiURI,
     dataType: 'json',
