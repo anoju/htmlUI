@@ -3,10 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=500">
 <title>openweathermap</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/earlyaccess/notosanskr.css" />
 <style>
+body {
+  font-family: 'Noto Sans KR';
+  line-height: 1.3;
+}
 h1 {
   text-align: center;
 }
@@ -28,10 +33,60 @@ a {
 }
 .area .left {
   flex-shrink: 0;
+  max-width: 30%;
+  text-align: center;
 }
 .area .right {
+  max-width: 50%;
   flex: 1 1 auto;
   padding-left: 40px;
+  margin-left: auto;
+}
+.area .city_wrap {
+  display: inline-block;
+  position: relative;
+  padding-right: 40px;
+  white-space: nowrap;
+  text-align: left;
+  line-height: 1.2;
+}
+.area .city_wrap .city {
+  position: relative;
+  font-size: 20px;
+  padding-top: 10px;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+}
+.area .city_wrap .desc {
+  position: relative;
+  margin: 0;
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+  font-size: 60px;
+  font-weight: 500;
+}
+.area .city_wrap .icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: yellow;
+}
+.area .list {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 15px;
+  margin: 0;
+}
+.area .list li {
+  list-style: none;
+  display: flex;
+}
+.area .list li + li {
+  margin-top: 5px;
+}
+.area .list .dt {
+  opacity: 0.8;
+  font-size: 0.75em;
+}
+.area .list .dd {
+  margin-left: auto;
 }
 </style>
 </head>
@@ -39,18 +94,18 @@ a {
 <h1><a href="https://openweathermap.org/" target="_blank">openweathermap</a></h1>
 <div class="area bg1">
   <div class="left">
-    <div class="weather_icon"></div>
-
-    <div>
-      <div class="dt">현재기온</div>
-      <div class="dd _temp"></div>
-    </div>
-    <div class="_description"></div>
-    <div class="_city"></div>
+    <dl class="city_wrap">
+      <dt class="city _city"></dt>
+      <dd class="icon _icon"></dd>
+      <dd class="desc _description"></dd>
+    </dl>
   </div>
   <div class="right">
-
     <ul class="list">
+      <li>
+        <div class="dt">현재기온</div>
+        <div class="dd _temp"></div>
+      </li>
       <li>
         <div class="dt">최저기온</div>
         <div class="dd _temp_min"></div>
@@ -76,18 +131,18 @@ a {
 </div>
 <div class="area bg2">
   <div class="left">
-    <div class="weather_icon"></div>
-
-    <div>
-      <div class="dt">현재기온</div>
-      <div class="dd _temp"></div>
-    </div>
-    <div class="_description"></div>
-    <div class="_city"></div>
+    <dl class="city_wrap">
+      <dd class="icon _icon"></dd>
+      <dt class="city _city"></dt>
+      <dd class="desc _description"></dd>
+    </dl>
   </div>
   <div class="right">
-
     <ul class="list">
+      <li>
+        <div class="dt">현재기온</div>
+        <div class="dd _temp"></div>
+      </li>
       <li>
         <div class="dt">최저기온</div>
         <div class="dd _temp_min"></div>
@@ -133,20 +188,20 @@ var weatherIcon = {
 };
 
 function setWeatherHtml(resp, wrap, city) {
-  var $wrap = $(wrap);
-  var $Icon = (resp.weather[0].icon).substr(0, 2);
-  var $city = city;
-  var $description = resp.weather[0].main;
-  var $Temp = Math.floor(resp.main.temp - 273.15) + 'º';
-  var $temp_min = Math.floor(resp.main.temp_min - 273.15) + 'º';
-  var $temp_max = Math.floor(resp.main.temp_max - 273.15) + 'º';
-  var $humidity = resp.main.humidity + ' %';
-  var $wind = resp.wind.speed + ' m/s';
-  var $cloud = resp.clouds.all + "%";
+  const $wrap = $(wrap);
+  const $city = resp.name;
+  const $Icon = (resp.weather[0].icon).substr(0, 2);
+  const $description = resp.weather[0].description;
+  const $Temp = Math.floor(resp.main.temp - 273.15) + 'º';
+  const $temp_min = Math.floor(resp.main.temp_min - 273.15) + 'º';
+  const $temp_max = Math.floor(resp.main.temp_max - 273.15) + 'º';
+  const $humidity = resp.main.humidity + ' %';
+  const $wind = resp.wind.speed + ' m/s';
+  const $cloud = resp.clouds.all + "%";
 
-  $wrap.find('.weather_icon').append('<i class="' + weatherIcon[$Icon] + ' fa-5x" style="height : 150px; width : 150px;"></i>');
-  $wrap.find('._temp').prepend($Temp);
   $wrap.find('._city').append($city);
+  $wrap.find('._icon').append('<i class="' + weatherIcon[$Icon] + ' fa-5x" style="height : 50px; width : 50px;"></i>');
+  $wrap.find('._temp').prepend($Temp);
   $wrap.find('._description').prepend($description);
   $wrap.find('._temp_min').append($temp_min);
   $wrap.find('._temp_max').append($temp_max);
@@ -155,30 +210,29 @@ function setWeatherHtml(resp, wrap, city) {
   $wrap.find('._cloud').append($cloud);
 }
 // 날씨 api - 서울
-var apiURI = "http://api.openweathermap.org/data/2.5/weather?q=" + $area1 + "&appid=" + $key;
+var apiURI = 'http://api.openweathermap.org/data/2.5/weather?q=' + $area1 + '&appid=' + $key + '&lang=kr';
 $.ajax({
   url: apiURI,
-  dataType: "json",
-  type: "GET",
-  async: "false",
+  dataType: 'json',
+  type: 'GET',
+  async: 'false',
   success: function(resp) {
-    setWeatherHtml(resp, '.area.bg1', '서울');
+    setWeatherHtml(resp, '.area.bg1');
   }
-})
-
+});
 
 
 // 날씨 api - 경기도
-var apiURI = "http://api.openweathermap.org/data/2.5/weather?q=" + $area2 + "&appid=" + $key;
+var apiURI = 'http://api.openweathermap.org/data/2.5/weather?q=' + $area2 + '&appid=' + $key + '&lang=kr';
 $.ajax({
   url: apiURI,
-  dataType: "json",
-  type: "GET",
-  async: "false",
+  dataType: 'json',
+  type: 'GET',
+  async: 'false',
   success: function(resp) {
-    setWeatherHtml(resp, '.area.bg2', '경기도');
+    setWeatherHtml(resp, '.area.bg2');
   }
-})
+});
 </script>
 </body>
 </html>
