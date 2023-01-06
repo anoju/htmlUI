@@ -394,14 +394,18 @@ function snowCanvas() {
   // var masthead = document.querySelector('.sky');
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
-  var width = document.body.clientWidth;
-  var height = document.body.clientHeight;
+  // var width = document.body.clientWidth;
+  // var height = document.body.clientHeight;
+  var width = window.innerWidth;
+  var height = window.innerHeight;
   var i = 0;
   //var active = false;
 
   function onResize() {
-    width = document.body.clientWidth;
-    height = document.body.clientHeight;
+    // width = document.body.clientWidth;
+    // height = document.body.clientHeight;
+    width = window.innerWidth;
+    height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
     ctx.fillStyle = '#fff';
@@ -434,7 +438,7 @@ function snowCanvas() {
     this.o = 0.5 + Math.random() * 0.5;
   }
 
-  canvas.style.position = 'absolute';
+  canvas.style.position = 'fixed';
   canvas.style.left = canvas.style.top = '0';
 
   var snowflakes = [],
