@@ -363,8 +363,10 @@ $.get(ipUrl, function(data) {
   // console.log(data)
   if (isSsl) {
     $nowArea = data.region;
+    console.log(data);
   } else {
     $nowArea = data.regionName;
+    console.log(data);
   }
   if ($nowArea) {
     $('.area.bg0').show();
