@@ -1,0 +1,172 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+li {
+  list-style: none;
+}
+html,
+body {
+  height: 100%;
+}
+.custom-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fafafa;
+  .head {
+    background: #e1e1e1;
+    padding: 10px;
+    overflow: auto;
+    ul {
+      display: flex;
+      li + li {
+        margin-left: 10px;
+      }
+    }
+    button {
+      border: 1px solid #ddd;
+      background: #fff;
+      padding: 8px;
+      border-radius: 8px;
+      &:focus,
+      &:hover {
+        border-color: #999;
+      }
+      img {
+        vertical-align: top;
+        width: 48px;
+      }
+    }
+  }
+  .foot {
+    background: #e1e1e1;
+    padding: 5px;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    dl {
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      + dl {
+        margin-left: 20px;
+      }
+    }
+    dt {
+      margin-right: 10px;
+    }
+    input,
+    button {
+      height: 24px;
+      vertical-align: top;
+    }
+
+    .color-wrap {
+      display: flex;
+      .color-item,
+      .color-add {
+        margin: 3px 5px;
+      }
+      .color-item {
+        position: relative;
+      }
+      .color-add {
+        padding: 0 10px;
+        border: 0 none;
+        background: #000;
+        color: #fff;
+      }
+      .color-del {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #000;
+        color: #fff;
+        font-size: 5px;
+        height: 16px;
+        white-space: nowrap;
+      }
+    }
+
+  }
+  .body {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card {
+    position: relative;
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    overflow: hidden;
+    background: #fff;
+    &:before {
+      content: '';
+      display: block;
+      padding-top: 158%;
+    }
+  }
+  .card-btn {
+    text-align: center;
+    margin-top: 10px;
+    .save {
+      height: 40px;
+      padding: 0 20px;
+      border: 0 none;
+      background: #3182f7;
+      color: #fff;
+    }
+  }
+}
+.drag-item {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  border: 1px solid transparent;
+  user-select: none;
+  .inner {
+    cursor: move;
+  }
+  img {
+    vertical-align: top;
+    width: 100%;
+    pointer-events: none;
+  }
+  button {
+    position: absolute;
+    background: #000;
+    color: #fff;
+    font-size: 6px;
+    white-space: nowrap;
+    display: none;
+  }
+  .del {
+    top: -1px;
+    right: -1px;
+    cursor: pointer;
+  }
+  .size {
+    bottom: -1px;
+    right: -1px;
+    cursor: nw-resize;
+  }
+  .rotate {
+    bottom: -1px;
+    left: -1px;
+  }
+  &.select {
+    border-color: #000;
+    button {
+      display: block;
+    }
+  }
+}

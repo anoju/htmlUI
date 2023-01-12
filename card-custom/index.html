@@ -3,10 +3,335 @@
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover" />
 <title>card-custom</title>
+<link rel="stylesheet" href="./css/style.min.css">
 </head>
 <body>
+<div class="custom-card">
+  <div class="head">
+    <ul>
+      <li><button><img src="./img/ico_internet.png" alt=""></button></li>
+      <li><button><img src="./img/ico_memo_4.png" alt=""></button></li>
+      <li><button><img src="./img/ico_memo_5.png" alt=""></button></li>
+      <li><button><img src="./img/ico_memo_6.png" alt=""></button></li>
+      <li><button><img src="./img/ico_memo_7.png" alt=""></button></li>
+      <li><button><img src="./img/ico_memo_8.png" alt=""></button></li>
+      <li><button><img src="./img/ico_memo_10.png" alt=""></button></li>
+      <li><button><img src="./img/ico_memo_13.png" alt=""></button></li>
+      <li><button><img src="./img/ico_memo_14.png" alt=""></button></li>
+      <li><button><img src="./img/ico_memo_15.png" alt=""></button></li>
+      <li><button><img src="./img/ico_memo_17.png" alt=""></button></li>
+      <li><button><img src="./img/ico_memo_20.png" alt=""></button></li>
+    </ul>
+  </div>
+  <div class="body">
+    <div class="card-wrap">
+      <div class="card">
+        <!-- <div class="drag-item select">
+          <img src="./img/ico_internet.png" alt="">
+          <button class="del">삭제</button>
+          <button class="size">크기</button>
+          <button class="rotate">회전</button>
+        </div> -->
+      </div>
+      <div class="card-btn">
+        <button class="save">SAVE</button>
+        <a id="imageDown" hidden>이미지 다운로드</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <dl>
+      <dt>카드 BG</dt>
+      <dd>
+        <div class="color-wrap">
+          <div class="color-item"><input type="color" class="color" value="#ffffff"></div>
+          <button class="color-add">+</button>
+        </div>
+      </dd>
+    </dl>
+    <dl>
+      <dt>카드 BG 방향</dt>
+      <dd>
+        <input type="range" class="range" value="0" min="0" max="360" step="1" disabled>
+      </dd>
+    </dl>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+function customCard() {
+  let itemZindex = 1;
 
+  function _itemAppend(e) {
+    e.preventDefault();
+    const $this = $(e.currentTarget);
+    const $wrap = $('.card');
+    const $img = $this.find('img');
+    const $imgWidth = $img[0].naturalWidth;
+    const $imgHeight = $img[0].naturalHeight;
+    const $imgSrc = $img.attr('src');
+    const $imgLeft = ($wrap.outerWidth() - $imgWidth) / 2 - 1;
+    const $imgTop = ($wrap.outerHeight() - $imgHeight) / 2 - 1;
+    let $imgHtml = '<div class="drag-item" style="width:' + ($imgWidth + 2) + 'px;left:' + $imgLeft + 'px;top:' + $imgTop + 'px;z-index:' + itemZindex + '">';
+    $imgHtml += '<div class="inner" tabindex="0"><img src="' + $imgSrc + '" alt=""></div>';
+    $imgHtml += '<button class="del">삭제</button>';
+    $imgHtml += '<button class="rotate">회전</button>';
+    $imgHtml += '<button class="size">크기</button>';
+    $imgHtml += '</div>';
+    $wrap.find('.drag-item').removeClass('select');
+    $wrap.append($imgHtml);
+    $wrap.find('.drag-item').last().find('.inner').focus();
+  }
+
+  $('.custom-card .head button').on('click', _itemAppend);
+
+  function _itemDelete(e) {
+    e.preventDefault();
+    const $this = $(e.currentTarget);
+    const $item = $this.closest('.drag-item');
+    $item.remove();
+  }
+  $(document).on('click', '.drag-item .del', _itemDelete);
+
+  let blurTimer;
+
+  function _focusEvt(e) {
+    const $this = $(e.currentTarget);
+    clearTimeout(blurTimer);
+    const $item = $this.closest('.drag-item');
+    if (!$item.hasClass('select')) {
+      $item.css('z-index', itemZindex);
+      $item.addClass('select').siblings('.drag-item').removeClass('select');
+      itemZindex += 1;
+    };
+    $item.siblings('.drag-item').removeClass('select');
+  }
+
+  function _blurEvt(e) {
+    const $this = $(e.currentTarget);
+    // clearTimeout(blurTimer);
+    blurTimer = setTimeout(function() {
+      $this.closest('.drag-item').removeClass('select');
+    }, 10);
+  }
+
+  $(document).on('focus', '.drag-item .inner, .drag-item button', _focusEvt);
+  $(document).on('blur', '.drag-item .inner, .drag-item button', _blurEvt);
+
+
+  let _itemPos = {
+    'x': 0,
+    'y': 0,
+    'width': 0
+  }
+  let _start = {
+    'x': 0,
+    'y': 0
+  }
+  let _distance = {
+    'x': 0,
+    'y': 0
+  }
+  let _isDrag = false;
+  let _isSize = false;
+  let _isRotate = false;
+  let _item = null;
+
+  function _startEvt(e) {
+    if (e.type === 'touchstart') {
+      _focusEvt(e);
+      const $touch = e.touches[0];
+      _start.x = $touch.pageX;
+      _start.y = $touch.pageY;
+    } else {
+      _start.x = e.pageX;
+      _start.y = e.pageY;
+    }
+    _item = $(e.target).closest('.drag-item');
+    _itemPos.x = _item.position().left;
+    _itemPos.y = _item.position().top;
+    _itemPos.width = _item.outerWidth();
+  }
+
+  function _dragStartEvt(e) {
+    _isDrag = true;
+    _startEvt(e);
+  }
+
+  function _sizeStartEvt(e) {
+    _isSize = true;
+    _startEvt(e);
+  }
+
+  function _angXY(e) {
+    const bcr = _item[0].getBoundingClientRect();
+    const radius = bcr.width / 2;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const y = clientY - bcr.top - radius; // y from center
+    const x = clientX - bcr.left - radius; // x from center
+    return Math.atan2(y, x);
+  };
+
+  function _radToDeg(radians) {
+    const pi = Math.PI;
+    return radians * (180 / pi);
+  };
+
+  let _ang = 0;
+  let _angStart = 0;
+
+  function _rotateStartEvt(e) {
+    _isRotate = true;
+    _startEvt(e);
+    _angStart = _angXY(e) - _ang;
+  }
+
+  function _endEvt(e) {
+    _isDrag = false;
+    _isSize = false;
+    _isRotate = false;
+    _distance.x = 0;
+    _distance.y = 0;
+    _ang = 0;
+    _item = null;
+  }
+
+  function _moveEvt(e) {
+    if (!_item) return;
+    let pageX;
+    let pageY;
+    if (e.type === 'touchmove') {
+      const $touch = e.touches[0];
+      pageX = $touch.pageX;
+      pageY = $touch.pageY;
+    } else {
+      pageX = e.pageX;
+      pageY = e.pageY;
+    }
+    _distance.x = pageX - _start.x;
+    _distance.y = pageY - _start.y;
+    const $item = _item;
+    if (_isDrag) {
+      const $itemLeft = _itemPos.x + _distance.x;
+      const $itemTop = _itemPos.y + _distance.y;
+      $item.css({
+        'left': $itemLeft,
+        'top': $itemTop
+      });
+    }
+    if (_isSize) {
+      const $itemWidth = _itemPos.width + _distance.x;
+      $item.css({
+        'width': $itemWidth
+      });
+    }
+    if (_isRotate) {
+      _ang = _angXY(e) - _angStart;
+      const deg = _radToDeg(_ang);
+      $item.find('.inner').css('transform', 'rotate(' + deg + 'deg)');
+    }
+  }
+
+  $(document).on('touchstart, mousedown', '.drag-item .inner', _dragStartEvt);
+  $(document).on('touchstart, mousedown', '.drag-item .size', _sizeStartEvt);
+  $(document).on('touchstart, mousedown', '.drag-item .rotate', _rotateStartEvt);
+  $(document).on('touchmove, mousemove', '.card', _moveEvt);
+  $(document).on('touchend, mouseup', '.card', _endEvt);
+  $(document).on('mouseleave', '.card', _endEvt);
+
+  function _setCardBgColor() {
+    const $card = $('.card');
+    const $color = $('input.color');
+    const $range = $('input.range');
+    if ($color.length === 1) {
+      $range.prop('disabled', true);
+      const $val = $color.val();
+      $card.css({
+        'background-color': $val,
+        'background-image': ''
+      });
+    } else {
+      $range.prop('disabled', false);
+      const $rangeVal = 180 - parseInt($range.val());
+      const $colorAry = [];
+      $color.each(function() {
+        $colorAry.push($(this).val())
+      });
+      $setBg = $colorAry.join(',');
+      $card.css({
+        'background-image': 'linear-gradient(' + $rangeVal + 'deg, ' + $setBg + ')',
+        'background-color': ''
+      });
+    }
+  }
+  _setCardBgColor();
+  $(document).on('input', 'input.color', _setCardBgColor);
+  $(document).on('input', 'input.range', _setCardBgColor);
+
+  function setRandomColor() {
+    return "#" + Math.floor(Math.random() * 16777215).toString(16);
+  }
+
+  function _addBgColor(e) {
+    e.preventDefault();
+    const $target = $(e.currentTarget);
+    const $color = setRandomColor();
+    const $html = '<div class="color-item"><input type="color" class="color" value="' + $color + '"><button class="color-del">삭제</button></div>'
+    $target.before($html);
+    _setCardBgColor();
+  }
+  $(document).on('click', '.color-add', _addBgColor);
+
+  function _delBgColor(e) {
+    e.preventDefault();
+    const $target = $(e.currentTarget);
+    console.log($target)
+    $target.closest('.color-item').remove();
+    _setCardBgColor();
+  }
+  $(document).on('click', '.color-del', _delBgColor);
+
+  function _todayTimeString(addDay) {
+    const $today = new Date();
+    if (!!addDay) $today.setDate($today.getDate() + addDay);
+    return _timeString($today);
+  };
+
+  function _timeString(date) {
+    const $year = date.getFullYear();
+    let $month = date.getMonth() + 1;
+    let $day = date.getDate();
+    let $hour = date.getHours();
+    let $min = date.getMinutes();
+    let $sec = date.getSeconds();
+    if (('' + $month).length == 1) $month = '0' + $month;
+    if (('' + $day).length == 1) $day = '0' + $day;
+    if (('' + $hour).length == 1) $hour = '0' + $hour;
+    if (('' + $min).length == 1) $min = '0' + $min;
+    if (('' + $sec).length == 1) $sec = '0' + $sec;
+    return '' + $year + $month + $day + $hour + $min + $sec;
+  };
+
+  function _imgSave(e) {
+    e.preventDefault();
+    const $wrap = document.querySelector('.card');
+    html2canvas($wrap).then(function(canvas) {
+      const $downLoad = document.querySelector('#imageDown');
+      const $data = canvas.toDataURL('image/png');
+      $downLoad.setAttribute('href', $data);
+      const $today = _todayTimeString();
+      $downLoad.setAttribute('download', 'match_result_' + $today.substr(0, 8) + '_' + $today.substr(8, 6) + '.png');
+      $downLoad.click();
+    });
+  };
+  $(document).on('click', '.save', _imgSave);
+
+}
+customCard();
+</script>
 </body>
 </html>
