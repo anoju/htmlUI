@@ -236,11 +236,11 @@ function customCard() {
     }
   }
 
-  $(document).on('touchstart, mousedown', '.drag-item .inner', _dragStartEvt);
-  $(document).on('touchstart, mousedown', '.drag-item .size', _sizeStartEvt);
-  $(document).on('touchstart, mousedown', '.drag-item .rotate', _rotateStartEvt);
-  $(document).on('touchmove, mousemove', '.card', _moveEvt);
-  $(document).on('touchend, mouseup', '.card', _endEvt);
+  $(document).on('touchstart mousedown', '.drag-item .inner', _dragStartEvt);
+  $(document).on('touchstart mousedown', '.drag-item .size', _sizeStartEvt);
+  $(document).on('touchstart mousedown', '.drag-item .rotate', _rotateStartEvt);
+  $(document).on('touchmove mousemove', '.card', _moveEvt);
+  $(document).on('touchend mouseup', '.card', _endEvt);
   $(document).on('mouseleave', '.card', _endEvt);
 
   function _setCardBgColor() {
