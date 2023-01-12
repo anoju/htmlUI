@@ -76,6 +76,10 @@ body {
       }
       .color-item {
         position: relative;
+        input {
+          border-radius: 0;
+          width: 35px;
+        }
       }
       .color-add {
         padding: 0 10px;
@@ -145,7 +149,7 @@ body {
     position: absolute;
     background: #000;
     color: #fff;
-    font-size: 6px;
+    font-size: 10px;
     white-space: nowrap;
     display: none;
   }
