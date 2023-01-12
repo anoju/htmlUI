@@ -181,12 +181,13 @@ function customCard() {
     return radians * (180 / pi);
   };
 
-  let _ang = 0;
   let _angStart = 0;
 
   function _rotateStartEvt(e) {
     _isRotate = true;
     _startEvt(e);
+    console.log(_item.data('ang'))
+    const _ang = _item.data('ang') === undefined ? 0 : _item.data('ang');
     _angStart = _angXY(e) - _ang;
   }
 
@@ -196,7 +197,6 @@ function customCard() {
     _isRotate = false;
     _distance.x = 0;
     _distance.y = 0;
-    _ang = 0;
     _item = null;
   }
 
@@ -214,25 +214,25 @@ function customCard() {
     }
     _distance.x = pageX - _start.x;
     _distance.y = pageY - _start.y;
-    const $item = _item;
     if (_isDrag) {
       const $itemLeft = _itemPos.x + _distance.x;
       const $itemTop = _itemPos.y + _distance.y;
-      $item.css({
+      _item.css({
         'left': $itemLeft,
         'top': $itemTop
       });
     }
     if (_isSize) {
       const $itemWidth = _itemPos.width + _distance.x;
-      $item.css({
+      _item.css({
         'width': $itemWidth
       });
     }
     if (_isRotate) {
-      _ang = _angXY(e) - _angStart;
+      const _ang = _angXY(e) - _angStart;
+      _item.data('ang', _ang);
       const deg = _radToDeg(_ang);
-      $item.find('.inner').css('transform', 'rotate(' + deg + 'deg)');
+      _item.find('.inner').css('transform', 'rotate(' + deg + 'deg)');
     }
   }
 
