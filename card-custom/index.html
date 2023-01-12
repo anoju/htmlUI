@@ -324,7 +324,7 @@ function customCard() {
       const $data = canvas.toDataURL('image/png');
       $downLoad.setAttribute('href', $data);
       const $today = _todayTimeString();
-      $downLoad.setAttribute('download', 'match_result_' + $today.substr(0, 8) + '_' + $today.substr(8, 6) + '.png');
+      $downLoad.setAttribute('download', 'my_card_' + $today.substr(0, 8) + '_' + $today.substr(8, 6) + '.png');
       $downLoad.click();
     });
   };
