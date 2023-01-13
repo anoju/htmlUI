@@ -219,10 +219,12 @@ button {
     bottom: -1px;
     left: -1px;
   }
-  &.select {
-    border-color: #000;
-    button {
-      display: block;
+  .card:not(.save-card) & {
+    &.select {
+      border-color: #000;
+      button {
+        display: block;
+      }
     }
   }
 }
