@@ -31,6 +31,7 @@ button {
     overflow: auto;
     ul {
       display: flex;
+      align-items: center;
       li + li {
         margin-left: 10px;
       }
@@ -61,6 +62,10 @@ button {
         //max-height: 100%;
         pointer-events: none;
         transform: translate(-50%, -50%);
+      }
+      &.reset {
+        background-color: #000;
+        color: #fff;
       }
     }
   }

@@ -10,7 +10,9 @@
 <body>
 <div class="custom-card">
   <div class="head">
-    <ul></ul>
+    <ul>
+      <li><button class="reset">초기화</button></li>
+    </ul>
   </div>
   <div class="body">
     <div class="card-wrap">
@@ -111,7 +113,17 @@ function customCard() {
     $wrap.find('.drag-item').last().find('.inner').focus();
   }
 
-  $('.custom-card .head button').on('click', _itemAppend);
+  function _reset() {
+    $('.drag-item').remove();
+    if ($('.card').hasClass('_set_img')) {
+      $('input.file').val('').change();
+    } else {
+      $('.color-item').not(':first-child').remove();
+    }
+    _setCardBgColor();
+  }
+  $('.custom-card .head button').not('.reset').on('click', _itemAppend);
+  $('.custom-card .head button.reset').on('click', _reset);
 
   function _itemDelete(e) {
     e.preventDefault();
