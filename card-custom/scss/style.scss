@@ -62,19 +62,17 @@ body {
     background: #e1e1e1;
     padding: 5px;
     overflow: auto;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
     dl {
       padding: 5px;
       display: flex;
       align-items: center;
       + dl {
-        margin-left: 20px;
+        margin-top: 10px;
       }
     }
     dt {
       margin-right: 10px;
+      min-width: 80px;
     }
     input,
     button {
@@ -84,32 +82,37 @@ body {
 
     .color-wrap {
       display: flex;
+      margin-left: -8px;
+      margin-right: -8px;
       .color-item,
       .color-add {
-        margin: 3px 5px;
+        margin: 3px 8px;
       }
       .color-item {
         position: relative;
+        display: flex;
+        align-items: center;
         input {
           border-radius: 0;
-          width: 35px;
+          width: 40px;
+          text-align: center;
+          border: 1px solid #aaa;
         }
       }
       .color-add {
         padding: 0 10px;
         border: 0 none;
-        background: #000;
+        background: #3182f7;
         color: #fff;
+        white-space: nowrap;
       }
       .color-del {
-        position: absolute;
-        top: -5px;
-        right: -5px;
         background: #000;
         color: #fff;
-        font-size: 10px;
-        height: 16px;
         white-space: nowrap;
+        margin-left: 3px;
+        font-size: 11px;
+        padding: 0 3px;
       }
     }
 

@@ -30,16 +30,19 @@
   </div>
   <div class="foot">
     <dl>
-      <dt>카드 BG</dt>
+      <dt>BG</dt>
       <dd>
         <div class="color-wrap">
-          <div class="color-item"><input type="color" class="color" value="#ffffff"></div>
-          <button class="color-add">+</button>
+          <div class="color-item">
+            <input type="color" class="color" value="#ffffff">
+            <input type="number" class="per">%
+          </div>
+          <button class="color-add">추가</button>
         </div>
       </dd>
     </dl>
     <dl>
-      <dt>카드 BG 방향</dt>
+      <dt>BG 방향</dt>
       <dd>
         <input type="range" class="range" value="0" min="0" max="360" step="1" disabled>
       </dd>
@@ -73,6 +76,7 @@ function customCard() {
 
     const $color = setRandomColor();
     $('input.color').first().val($color);
+    _setBgPercenter();
     _setCardBgColor();
   }
   _customReady();
@@ -266,6 +270,7 @@ function customCard() {
     const $range = $('input.range');
     if ($color.length === 1) {
       $range.prop('disabled', true);
+      $color.next().prop('disabled', true);
       const $val = $color.val();
       $card.css({
         'background-color': $val,
@@ -273,10 +278,11 @@ function customCard() {
       });
     } else {
       $range.prop('disabled', false);
+      $color.first().next().prop('disabled', false);
       const $rangeVal = 180 - parseInt($range.val());
       const $colorAry = [];
       $color.each(function() {
-        $colorAry.push($(this).val())
+        $colorAry.push($(this).val() + ' ' + $(this).next('.per').val() + '%')
       });
       $setBg = $colorAry.join(',');
       $card.css({
@@ -286,19 +292,81 @@ function customCard() {
     }
   }
   _setCardBgColor();
+
+  function _setInputPer(e) {
+    const $target = $(e.currentTarget);
+    const $val = $target.val();
+    const $item = $target.closest('.color-item');
+    const $prev = $item.prev('.color-item');
+    const $next = $item.next('.color-item');
+    if ($prev.length) $prev.find('.per').attr('max', $val);
+    if ($next.length) $next.find('.per').attr('min', $val);
+    _setCardBgColor();
+  }
   $(document).on('input', 'input.color', _setCardBgColor);
   $(document).on('input', 'input.range', _setCardBgColor);
+  $(document).on('input', 'input.per', _setInputPer);
 
   function setRandomColor() {
     return "#" + Math.floor(Math.random() * 16777215).toString(16);
+  }
+
+  function _setBgPercenter() {
+    const $item = $('.color-item');
+    const $length = $item.length;
+    if ($length < 2) {
+      $item.find('.per').val(0).attr({
+        'min': 0,
+        'max': 100
+      });
+    } else {
+      const $divide = $length - 1;
+      const $dividedVal = parseInt(100 / $divide);
+      $item.each(function(index, item) {
+        const $this = $(this);
+        const $per = $this.find('.per');
+        if (index === 0) {
+          $per.val(0);
+        } else if (index === $length - 1) {
+          $per.val(100);
+        } else {
+          $per.val($dividedVal * index);
+        }
+      });
+      $item.each(function(index, item) {
+        const $this = $(this);
+        const $per = $this.find('.per');
+        const $prev = $this.prev('.color-item');
+        const $prevPer = $prev.find('.per');
+        const $next = $this.next('.color-item');
+        const $nextPer = $next.find('.per');
+
+        if (!$prev.length) {
+          $per.attr('min', 0);
+        } else {
+          $per.attr('min', $prevPer.val());
+        }
+
+        if (!$next.length) {
+          $per.attr('max', 100);
+        } else {
+          $per.attr('max', $nextPer.val());
+        }
+      });
+    }
   }
 
   function _addBgColor(e) {
     e.preventDefault();
     const $target = $(e.currentTarget);
     const $color = setRandomColor();
-    const $html = '<div class="color-item"><input type="color" class="color" value="' + $color + '"><button class="color-del">삭제</button></div>'
+    if ($('.color-item').length > 4) {
+      alert('bg컬러는 최대 5개까지만 가능합니다.');
+      return;
+    }
+    const $html = '<div class="color-item"><input type="color" class="color" value="' + $color + '"><input type="number" class="per" >%<button class="color-del">삭제</button></div>'
     $target.before($html);
+    _setBgPercenter();
     _setCardBgColor();
   }
   $(document).on('click', '.color-add', _addBgColor);
@@ -307,6 +375,7 @@ function customCard() {
     e.preventDefault();
     const $target = $(e.currentTarget);
     $target.closest('.color-item').remove();
+    _setBgPercenter();
     _setCardBgColor();
   }
   $(document).on('click', '.color-del', _delBgColor);
