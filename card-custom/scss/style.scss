@@ -132,6 +132,10 @@ body {
       display: block;
       padding-top: 158%;
     }
+    &.save-card {
+      border-radius: 0;
+      border-color: transparent;
+    }
   }
   .card-btn {
     text-align: center;
