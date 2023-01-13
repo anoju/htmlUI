@@ -47,6 +47,13 @@
         <input type="range" class="range" value="0" min="0" max="360" step="1" disabled>
       </dd>
     </dl>
+    <dl>
+      <dt>BG image</dt>
+      <dd>
+        <input type="file" class="file" accept="image/png, image/jpeg, image/jpg">
+        <button class="file-del">이미지 삭제</button>
+      </dd>
+    </dl>
   </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -272,10 +279,8 @@ function customCard() {
       $range.prop('disabled', true);
       $color.next().prop('disabled', true);
       const $val = $color.val();
-      $card.css({
-        'background-color': $val,
-        'background-image': ''
-      });
+      $card.css('background-color', $val);
+      if (!$card.hasClass('_set_img')) $card.css('background-image', '');
     } else {
       $range.prop('disabled', false);
       $color.first().next().prop('disabled', false);
@@ -303,9 +308,31 @@ function customCard() {
     if ($next.length) $next.find('.per').attr('min', $val);
     _setCardBgColor();
   }
+
+  function _getFileImg(e) {
+    const $target = e.target;
+    if ($target.files && $target.files[0]) {
+      $('.color-item').not(':first-child').remove();
+      _setCardBgColor();
+      const imageSrc = URL.createObjectURL($target.files[0]);
+      $('.card').addClass('_set_img').css('background-image', 'url(' + imageSrc + ')');
+      $('.color-add').prop('disabled', true);
+    } else {
+      $('.card').removeClass('_set_img');
+      $('.color-add').prop('disabled', false);
+      _setCardBgColor();
+    }
+  }
+
+  function _removeFileImg(e) {
+    e.preventDefault();
+    $('input.file').val('').change();
+  }
   $(document).on('input', 'input.color', _setCardBgColor);
   $(document).on('input', 'input.range', _setCardBgColor);
   $(document).on('input', 'input.per', _setInputPer);
+  $(document).on('change', 'input.file', _getFileImg);
+  $(document).on('click', '.file-del', _removeFileImg);
 
   function setRandomColor() {
     return "#" + Math.floor(Math.random() * 16777215).toString(16);

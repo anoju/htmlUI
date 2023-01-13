@@ -14,6 +14,12 @@ html,
 body {
   height: 100%;
 }
+button {
+  white-space: nowrap;
+  &:disabled {
+    opacity: 0.6;
+  }
+}
 .custom-card {
   height: 100%;
   display: flex;
@@ -104,16 +110,24 @@ body {
         border: 0 none;
         background: #3182f7;
         color: #fff;
-        white-space: nowrap;
       }
       .color-del {
         background: #000;
         color: #fff;
-        white-space: nowrap;
         margin-left: 3px;
         font-size: 11px;
         padding: 0 3px;
       }
+    }
+    .file {
+      background: #fff;
+      border: 1px solid #ddd;
+    }
+    .file-del {
+      padding: 0 10px;
+      border: 0 none;
+      background: #000;
+      color: #fff;
     }
 
   }
@@ -130,6 +144,9 @@ body {
     border-radius: 25px;
     overflow: hidden;
     background: #fff;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
     &:before {
       content: '';
       display: block;
@@ -181,7 +198,6 @@ body {
     background: #000;
     color: #fff;
     font-size: 10px;
-    white-space: nowrap;
     display: none;
   }
   .del {
