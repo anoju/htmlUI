@@ -10,20 +10,7 @@
 <body>
 <div class="custom-card">
   <div class="head">
-    <ul>
-      <li><button><img src="./img/ico_internet.png" alt=""></button></li>
-      <li><button><img src="./img/ico_memo_4.png" alt=""></button></li>
-      <li><button><img src="./img/ico_memo_5.png" alt=""></button></li>
-      <li><button><img src="./img/ico_memo_6.png" alt=""></button></li>
-      <li><button><img src="./img/ico_memo_7.png" alt=""></button></li>
-      <li><button><img src="./img/ico_memo_8.png" alt=""></button></li>
-      <li><button><img src="./img/ico_memo_10.png" alt=""></button></li>
-      <li><button><img src="./img/ico_memo_13.png" alt=""></button></li>
-      <li><button><img src="./img/ico_memo_14.png" alt=""></button></li>
-      <li><button><img src="./img/ico_memo_15.png" alt=""></button></li>
-      <li><button><img src="./img/ico_memo_17.png" alt=""></button></li>
-      <li><button><img src="./img/ico_memo_20.png" alt=""></button></li>
-    </ul>
+    <ul></ul>
   </div>
   <div class="body">
     <div class="card-wrap">
@@ -63,6 +50,30 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 function customCard() {
+  function _btnReady() {
+    const btnImgAry = [
+      './img/ico_internet.png',
+      './img/ico_memo_4.png',
+      './img/ico_memo_5.png',
+      './img/ico_memo_6.png',
+      './img/ico_memo_7.png',
+      './img/ico_memo_8.png',
+      './img/ico_memo_10.png',
+      './img/ico_memo_13.png',
+      './img/ico_memo_14.png',
+      './img/ico_memo_15.png',
+      './img/ico_memo_17.png',
+      './img/ico_memo_20.png'
+    ]
+    let $html = '';
+    $.each(btnImgAry, function(index, item) {
+      $html += '<li><button><div class="inner"><img src="' + item + '" alt=""></div></button></li>';
+    })
+    $('.head ul').append($html);
+    // 
+  }
+  _btnReady();
+
   let itemZindex = 1;
 
   function _itemAppend(e) {
@@ -186,7 +197,6 @@ function customCard() {
   function _rotateStartEvt(e) {
     _isRotate = true;
     _startEvt(e);
-    console.log(_item.data('ang'))
     const _ang = _item.data('ang') === undefined ? 0 : _item.data('ang');
     _angStart = _angXY(e) - _ang;
   }
@@ -223,8 +233,12 @@ function customCard() {
       });
     }
     if (_isSize) {
+      const $itemLeft = _itemPos.x - (_distance.x / 2);
+      const $itemTop = _itemPos.y - (_distance.y / 2);
       const $itemWidth = _itemPos.width + _distance.x;
       _item.css({
+        'left': $itemLeft,
+        'top': $itemTop,
         'width': $itemWidth
       });
     }
@@ -289,7 +303,6 @@ function customCard() {
   function _delBgColor(e) {
     e.preventDefault();
     const $target = $(e.currentTarget);
-    console.log($target)
     $target.closest('.color-item').remove();
     _setCardBgColor();
   }
