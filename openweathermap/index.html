@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=500">
+<title>openweathermap</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css" />
+<style>
+body {
+  font-family: 'Noto Sans KR';
+  line-height: 1.3;
+}
+h1 {
+  text-align: center;
+}
+a {
+  text-decoration: none;
+}
+.area {
+  display: flex;
+  align-items: center;
+  padding: 40px;
+  background: #ddd;
+  color: #fff;
+}
+.area.bg0 {
+  background-color: #F5624D;
+}
+.area.bg1 {
+  background-color: #CC231E;
+}
+.area.bg2 {
+  background-color: #34A65F;
+}
+.area.bg3 {
+  background-color: #0F8A5F;
+}
+.area.bg4 {
+  background-color: #235E6F;
+}
+.area .left {
+  flex-shrink: 0;
+  max-width: 30%;
+  text-align: center;
+}
+.area .right {
+  max-width: 50%;
+  flex: 1 1 auto;
+  padding-left: 40px;
+  margin-left: auto;
+}
+.area .city_wrap {
+  display: inline-block;
+  position: relative;
+  padding-left: 35px;
+  white-space: nowrap;
+  text-align: left;
+  line-height: 1.2;
+}
+.area .city_wrap dd {
+  margin: 0;
+}
+.area .city_wrap .city {
+  position: relative;
+  font-size: 20px;
+  padding-top: 10px;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+  text-align: right;
+}
+.area .city_wrap .desc {
+  position: relative;
+  margin: 0;
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+  font-size: 40px;
+  font-weight: 500;
+}
+.area .city_wrap .icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: yellow;
+}
+.area .list {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 15px;
+  margin: 0;
+}
+.area .list li {
+  list-style: none;
+  display: flex;
+}
+.area .list li + li {
+  margin-top: 5px;
+}
+.area .list .dt {
+  opacity: 0.8;
+  font-size: 0.75em;
+}
+.area .list .dd {
+  margin-left: auto;
+}
+</style>
+</head>
+<body>
+<h1><a href="https://openweathermap.org/" target="_blank">openweathermap</a></h1>
+<div class="area bg0" style="display: none;">
+  <div class="left">
+    <p>현재접속</p>
+    <dl class="city_wrap">
+      <dt class="city _city"></dt>
+      <dd class="icon _icon"></dd>
+      <dd class="desc _description"></dd>
+    </dl>
+  </div>
+  <div class="right">
+    <ul class="list">
+      <li>
+        <div class="dt">현재기온</div>
+        <div class="dd _temp"></div>
+      </li>
+      <li>
+        <div class="dt">최저기온</div>
+        <div class="dd _temp_min"></div>
+      </li>
+      <li>
+        <div class="dt">최고기온</div>
+        <div class="dd _temp_max"></div>
+      </li>
+      <li>
+        <div class="dt">습도</div>
+        <div class="dd _humidity"></div>
+      </li>
+      <li>
+        <div class="dt">바람</div>
+        <div class="dd _wind"></div>
+      </li>
+      <li>
+        <div class="dt">구름</div>
+        <div class="dd _cloud"></div>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="area bg1">
+  <div class="left">
+    <dl class="city_wrap">
+      <dt class="city _city"></dt>
+      <dd class="icon _icon"></dd>
+      <dd class="desc _description"></dd>
+    </dl>
+  </div>
+  <div class="right">
+    <ul class="list">
+      <li>
+        <div class="dt">현재기온</div>
+        <div class="dd _temp"></div>
+      </li>
+      <li>
+        <div class="dt">최저기온</div>
+        <div class="dd _temp_min"></div>
+      </li>
+      <li>
+        <div class="dt">최고기온</div>
+        <div class="dd _temp_max"></div>
+      </li>
+      <li>
+        <div class="dt">습도</div>
+        <div class="dd _humidity"></div>
+      </li>
+      <li>
+        <div class="dt">바람</div>
+        <div class="dd _wind"></div>
+      </li>
+      <li>
+        <div class="dt">구름</div>
+        <div class="dd _cloud"></div>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="area bg2">
+  <div class="left">
+    <dl class="city_wrap">
+      <dd class="icon _icon"></dd>
+      <dt class="city _city"></dt>
+      <dd class="desc _description"></dd>
+    </dl>
+  </div>
+  <div class="right">
+    <ul class="list">
+      <li>
+        <div class="dt">현재기온</div>
+        <div class="dd _temp"></div>
+      </li>
+      <li>
+        <div class="dt">최저기온</div>
+        <div class="dd _temp_min"></div>
+      </li>
+      <li>
+        <div class="dt">최고기온</div>
+        <div class="dd _temp_max"></div>
+      </li>
+      <li>
+        <div class="dt">습도</div>
+        <div class="dd _humidity"></div>
+      </li>
+      <li>
+        <div class="dt">바람</div>
+        <div class="dd _wind"></div>
+      </li>
+      <li>
+        <div class="dt">구름</div>
+        <div class="dd _cloud"></div>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="area bg3">
+  <div class="left">
+    <dl class="city_wrap">
+      <dd class="icon _icon"></dd>
+      <dt class="city _city"></dt>
+      <dd class="desc _description"></dd>
+    </dl>
+  </div>
+  <div class="right">
+    <ul class="list">
+      <li>
+        <div class="dt">현재기온</div>
+        <div class="dd _temp"></div>
+      </li>
+      <li>
+        <div class="dt">최저기온</div>
+        <div class="dd _temp_min"></div>
+      </li>
+      <li>
+        <div class="dt">최고기온</div>
+        <div class="dd _temp_max"></div>
+      </li>
+      <li>
+        <div class="dt">습도</div>
+        <div class="dd _humidity"></div>
+      </li>
+      <li>
+        <div class="dt">바람</div>
+        <div class="dd _wind"></div>
+      </li>
+      <li>
+        <div class="dt">구름</div>
+        <div class="dd _cloud"></div>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="area bg4">
+  <div class="left">
+    <dl class="city_wrap">
+      <dd class="icon _icon"></dd>
+      <dt class="city _city"></dt>
+      <dd class="desc _description"></dd>
+    </dl>
+  </div>
+  <div class="right">
+    <ul class="list">
+      <li>
+        <div class="dt">현재기온</div>
+        <div class="dd _temp"></div>
+      </li>
+      <li>
+        <div class="dt">최저기온</div>
+        <div class="dd _temp_min"></div>
+      </li>
+      <li>
+        <div class="dt">최고기온</div>
+        <div class="dd _temp_max"></div>
+      </li>
+      <li>
+        <div class="dt">습도</div>
+        <div class="dd _humidity"></div>
+      </li>
+      <li>
+        <div class="dt">바람</div>
+        <div class="dd _wind"></div>
+      </li>
+      <li>
+        <div class="dt">구름</div>
+        <div class="dd _cloud"></div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.15.2/js/all.js" integrity="sha384-vuFJ2JiSdUpXLKGK+tDteQZBqNlMwAjhZ3TvPaDfN9QmbPb7Q8qUpbSNapQev3YF" crossorigin="anonymous"></script>
+<script>
+const $key = '89fb8a243f9c6b021a9483e72bea6246';
+
+// 날씨 api - fontawesome 아이콘
+const weatherIcon = {
+  '01': 'fas fa-sun',
+  '02': 'fas fa-cloud-sun',
+  '03': 'fas fa-cloud',
+  '04': 'fas fa-cloud-meatball',
+  '09': 'fas fa-cloud-sun-rain',
+  '10': 'fas fa-cloud-showers-heavy',
+  '11': 'fas fa-poo-storm',
+  '13': 'far fa-snowflake',
+  '50': 'fas fa-smog'
+};
+
+let nowIcon = '';
+
+function setWeatherData(resp, wrap) {
+  const $wrap = $(wrap);
+  const $city = resp.name;
+  const $icon = (resp.weather[0].icon).substr(0, 2);
+  const $description = resp.weather[0].description;
+  const $Temp = Math.floor(resp.main.temp) + 'º';
+  const $temp_min = Math.floor(resp.main.temp_min) + 'º';
+  const $temp_max = Math.floor(resp.main.temp_max) + 'º';
+  const $humidity = resp.main.humidity + ' %';
+  const $wind = resp.wind.speed + ' m/s';
+  const $cloud = resp.clouds.all + ' %';
+
+  $wrap.find('._city').text($city);
+  $wrap.find('._icon').html('<i class="' + weatherIcon[$icon] + ' fa-5x" style="height : 50px; width : 50px;"></i>');
+  $wrap.find('._temp').text($Temp);
+  $wrap.find('._description').text($description);
+  $wrap.find('._temp_min').text($temp_min);
+  $wrap.find('._temp_max').text($temp_max);
+  $wrap.find('._humidity').text($humidity);
+  $wrap.find('._wind').text($wind);
+  $wrap.find('._cloud').text($cloud);
+
+  if (wrap === '.area.bg0') nowIcon = $icon
+}
+
+function setWeatherApi(area, wrap) {
+  var apiURI = 'https://api.openweathermap.org/data/2.5/weather?q=' + area + '&appid=' + $key + '&lang=kr&units=metric';
+  $.ajax({
+    url: apiURI,
+    dataType: 'json',
+    type: 'GET',
+    async: 'false',
+    success: function(resp) {
+      setWeatherData(resp, wrap);
+      if (nowIcon === '13') snowCanvas();
+    }
+  });
+}
+
+// 날씨 api - 현재접속위치
+let $nowArea = '';
+let isSsl = true;
+let ipUrl = 'https://ipinfo.io';
+if (location.protocol === 'http:') {
+  isSsl = false;
+  ipUrl = 'http://ip-api.com/json';
+}
+$.get(ipUrl, function(data) {
+  // console.log(data)
+  if (isSsl) {
+    $nowArea = data.region;
+    console.log(data);
+  } else {
+    $nowArea = data.regionName;
+    console.log(data);
+  }
+  if ($nowArea) {
+    $('.area.bg0').show();
+    setWeatherApi($nowArea, '.area.bg0');
+  }
+}, 'jsonp');
+
+
+// 날씨 api - 서울
+setWeatherApi('Seoul', '.area.bg1');
+
+// 날씨 api - 경기도
+setWeatherApi('Gyeonggi-do', '.area.bg2');
+
+// 날씨 api - 제주도
+setWeatherApi('Jeju-do', '.area.bg3');
+
+// 날씨 api - 강원도
+setWeatherApi('Gangwon-do', '.area.bg4 ');
+
+
+// 눈그리기
+function snowCanvas() {
+  var $count = 300;
+  // var masthead = document.querySelector('.sky');
+  var canvas = document.createElement('canvas');
+  var ctx = canvas.getContext('2d');
+  // var width = document.body.clientWidth;
+  // var height = document.body.clientHeight;
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+  var i = 0;
+  //var active = false;
+
+  function onResize() {
+    // width = document.body.clientWidth;
+    // height = document.body.clientHeight;
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    ctx.fillStyle = '#fff';
+    ctx.shadowColor = "rgba(0,0,0,0.4)";
+    ctx.shadowBlur = 2;
+
+    // var wasActive = active;
+    // active = width > 600;
+
+    // if (!wasActive && active)
+    requestAnimFrame(update);
+  }
+
+  var Snowflake = function() {
+    this.x = 0;
+    this.y = 0;
+    this.vy = 0;
+    this.vx = 0;
+    this.r = 0;
+
+    this.reset();
+  }
+
+  Snowflake.prototype.reset = function() {
+    this.x = Math.random() * width;
+    this.y = Math.random() * -height;
+    this.vy = 1 + Math.random() * 3;
+    this.vx = 0.5 - Math.random();
+    this.r = 1 + Math.random() * 2;
+    this.o = 0.5 + Math.random() * 0.5;
+  }
+
+  canvas.style.position = 'fixed';
+  canvas.style.left = canvas.style.top = '0';
+
+  var snowflakes = [],
+    snowflake;
+  for (i = 0; i < $count; i++) {
+    snowflake = new Snowflake();
+    snowflake.reset();
+    snowflakes.push(snowflake);
+  }
+
+  function update() {
+
+    ctx.clearRect(0, 0, width, height);
+
+    // if (!active)
+    //   return;
+
+    for (i = 0; i < $count; i++) {
+      snowflake = snowflakes[i];
+      snowflake.y += snowflake.vy;
+      snowflake.x += snowflake.vx;
+
+      ctx.globalAlpha = snowflake.o;
+      ctx.beginPath();
+      ctx.arc(snowflake.x, snowflake.y, snowflake.r, 0, Math.PI * 2, false);
+      ctx.closePath();
+      ctx.fill();
+
+      if (snowflake.y > height) {
+        snowflake.reset();
+      }
+    }
+
+    requestAnimFrame(update);
+  }
+
+  // shim layer with setTimeout fallback
+  window.requestAnimFrame = (function() {
+    return window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      function(callback) {
+        window.setTimeout(callback, 1000 / 60);
+      };
+  })();
+
+  onResize();
+  window.addEventListener('resize', onResize, false);
+
+  document.body.appendChild(canvas);
+};
+//snowCanvas();
+</script>
+</body>
+</html>

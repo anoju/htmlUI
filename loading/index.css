@@ -1,0 +1,103 @@
+body {
+  color: #fff;
+  background: url("/assets/img/c/bg/glory-low-contrast.jpg") fixed #dea478 top center no-repeat;
+  background-size: 120%;
+}
+body > .foot {
+  background: rgba(0,0,0,0.5);
+}
+.typeset p {
+  color: #fff;
+}
+.typeset p b {
+  color: #fff;
+}
+.typeset a {
+  color: #fe7;
+}
+.typeset a:hover {
+  color: #ff6;
+}
+.css-spinners {
+  width: 100%;
+  margin: auto;
+  transition: color 0.5s ease-in-out;
+}
+.css-spinner {
+  margin: 20px 60px;
+  display: inline-block;
+}
+@media (max-width: 768px) {
+  body {
+    background-size: cover;
+  }
+  .css-spinner {
+    margin: 10px 30px;
+  }
+}
+.css-spinner > .name {
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+  color: #fff;
+}
+.css-spinner:hover > .name {
+  opacity: 1;
+}
+#cssspinner-modal .panel-body {
+  padding: 0;
+  position: relative;
+}
+#cssspinner-modal .closebtn {
+  top: -40px;
+  color: #fff;
+}
+.ldcvmgr[data-name=local-css-src] span {
+  position: absolute;
+  right: 0;
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  border-radius: 3px;
+  margin: 10px;
+  padding: 0.5em 0.75em;
+  line-height: 1em;
+  font-size: 0.875em;
+}
+.ldcvmgr[data-name=local-css-src] textarea {
+  border: 0;
+  width: 100%;
+  display: block;
+  padding: 20px;
+  font-family: consolas;
+}
+#cssspinner-modal .label {
+  position: absolute;
+  z-index: 1;
+  margin: 10px;
+  opacity: 0.5;
+  font-size: 1.2em;
+  right: 0;
+}
+a.btn.bg-semi-white {
+  color: #fff;
+  border: 1px solid #fff;
+  width: 100%;
+  margin: 0;
+  background: rgba(255,255,220,0.1);
+}
+a {
+  color: #fe7;
+}
+a:hover {
+  color: #ff0;
+}
+.colorpicker {
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  margin-right: 15px;
+  cursor: pointer;
+}
+.colorpicker.active {
+  box-shadow: 0 0 2px 2px rgba(0,0,0,0.2);
+}

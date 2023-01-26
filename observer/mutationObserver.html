@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mutationObserver</title>
+</head>
+<body>
+<h1>mutationObserver</h1>
+
+<section id="div_section">
+
+</section>
+
+<script type="text/javascript">
+const div_section = document.querySelector('#div_section');
+
+const observer = new MutationObserver((mutationsList, observer) => {
+  for (const mutation of mutationsList) {
+    if (mutation.type === 'childList') {
+      console.log('A child node has been added or removed.');
+      const nodes = mutation.addedNodes;
+      nodes.forEach(node => {
+        node.addEventListener('mouseover', eventMouseOver);
+      });
+    }
+  }
+});
+
+observer.observe(div_section, {
+  attributes: false,
+  childList: true,
+  subtree: false
+});
+
+function eventMouseOver(event) {
+  console.log('This element was just moused over');
+}
+
+(function() {
+  const section = document.querySelector('#div_section');
+  let my_div_element = document.createElement('div');
+  my_div_element.className = 'div_element';
+  my_div_element.textContent = `My content goes here`;
+  section.appendChild(my_div_element);
+})();
+</script>
+</body>
+</html>

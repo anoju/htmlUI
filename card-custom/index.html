@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=450 " />
+<title>card-custom</title>
+<link rel="stylesheet" href="./css/style.min.css">
+</head>
+<body>
+<div class="custom-card">
+  <div class="head">
+    <ul>
+      <li><button class="reset">초기화</button></li>
+    </ul>
+  </div>
+  <div class="body">
+    <div class="card-wrap">
+      <div class="card">
+        <!-- <div class="drag-item select">
+          <img src="./img/ico_internet.png" alt="">
+          <button class="del">삭제</button>
+          <button class="size">크기</button>
+          <button class="rotate">회전</button>
+        </div> -->
+      </div>
+      <div class="card-btn">
+        <button class="save">SAVE</button>
+        <a id="imageDown" hidden>이미지 다운로드</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot">
+    <dl>
+      <dt>BG</dt>
+      <dd>
+        <div class="color-wrap">
+          <div class="color-item">
+            <input type="color" class="color" value="#ffffff">
+            <input type="number" class="per">%
+          </div>
+          <button class="color-add">추가</button>
+        </div>
+      </dd>
+    </dl>
+    <dl>
+      <dt>BG 방향</dt>
+      <dd>
+        <input type="range" class="range" value="0" min="0" max="360" step="1" disabled>
+      </dd>
+    </dl>
+    <dl>
+      <dt>BG image</dt>
+      <dd>
+        <input type="file" class="file" accept="image/png, image/jpeg, image/jpg">
+        <button class="file-del">이미지 삭제</button>
+      </dd>
+    </dl>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+function customCard() {
+  function _customReady() {
+    const btnImgAry = [
+      './img/ico_internet.png',
+      './img/ico_memo_4.png',
+      './img/ico_memo_5.png',
+      './img/ico_memo_6.png',
+      './img/ico_memo_7.png',
+      './img/ico_memo_8.png',
+      './img/ico_memo_10.png',
+      './img/ico_memo_13.png',
+      './img/ico_memo_14.png',
+      './img/ico_memo_15.png',
+      './img/ico_memo_17.png',
+      './img/ico_memo_20.png'
+    ]
+    let $html = '';
+    $.each(btnImgAry, function(index, item) {
+      $html += '<li><button><div class="inner"><img src="' + item + '" alt=""></div></button></li>';
+    })
+    $('.head ul').append($html);
+
+    const $color = setRandomColor();
+    $('input.color').first().val($color);
+    _setBgPercenter();
+    _setCardBgColor();
+  }
+  _customReady();
+
+  let itemZindex = 1;
+
+  function _itemAppend(e) {
+    e.preventDefault();
+    const $this = $(e.currentTarget);
+    const $wrap = $('.card');
+    const $img = $this.find('img');
+    const $imgWidth = $img[0].naturalWidth;
+    const $imgHeight = $img[0].naturalHeight;
+    const $imgSrc = $img.attr('src');
+    const $imgLeft = ($wrap.outerWidth() - $imgWidth) / 2 - 1;
+    const $imgTop = ($wrap.outerHeight() - $imgHeight) / 2 - 1;
+    let $imgHtml = '<div class="drag-item" style="width:' + ($imgWidth + 2) + 'px;left:' + $imgLeft + 'px;top:' + $imgTop + 'px;z-index:' + itemZindex + '">';
+    $imgHtml += '<div class="inner" tabindex="0"><img src="' + $imgSrc + '" alt=""></div>';
+    $imgHtml += '<button class="del">삭제</button>';
+    $imgHtml += '<button class="rotate">회전</button>';
+    $imgHtml += '<button class="size">크기</button>';
+    $imgHtml += '</div>';
+    $wrap.find('.drag-item').removeClass('select');
+    $wrap.append($imgHtml);
+    $wrap.find('.drag-item').last().find('.inner').focus();
+  }
+
+  function _reset() {
+    $('.drag-item').remove();
+    if ($('.card').hasClass('_set_img')) {
+      $('input.file').val('').change();
+    } else {
+      $('.color-item').not(':first-child').remove();
+    }
+    _setCardBgColor();
+  }
+  $('.custom-card .head button').not('.reset').on('click', _itemAppend);
+  $('.custom-card .head button.reset').on('click', _reset);
+
+  function _itemDelete(e) {
+    e.preventDefault();
+    const $this = $(e.currentTarget);
+    const $item = $this.closest('.drag-item');
+    $item.remove();
+  }
+  $(document).on('click', '.drag-item .del', _itemDelete);
+
+  let blurTimer;
+
+  function _focusEvt(e) {
+    const $this = $(e.currentTarget);
+    clearTimeout(blurTimer);
+    const $item = $this.closest('.drag-item');
+    if (!$item.hasClass('select')) {
+      $item.css('z-index', itemZindex);
+      $item.addClass('select').siblings('.drag-item').removeClass('select');
+      itemZindex += 1;
+    };
+    $item.siblings('.drag-item').removeClass('select');
+  }
+
+  function _blurEvt(e) {
+    const $this = $(e.currentTarget);
+    // clearTimeout(blurTimer);
+    blurTimer = setTimeout(function() {
+      $this.closest('.drag-item').removeClass('select');
+    }, 10);
+  }
+
+  $(document).on('focus', '.drag-item .inner, .drag-item button', _focusEvt);
+  $(document).on('blur', '.drag-item .inner, .drag-item button', _blurEvt);
+
+
+  let _itemPos = {
+    'x': 0,
+    'y': 0,
+    'width': 0
+  }
+  let _start = {
+    'x': 0,
+    'y': 0
+  }
+  let _distance = {
+    'x': 0,
+    'y': 0
+  }
+  let _isDrag = false;
+  let _isSize = false;
+  let _isRotate = false;
+  let _item = null;
+
+  function _startEvt(e) {
+    if (e.type === 'touchstart') {
+      _focusEvt(e);
+      const $touch = e.touches[0];
+      _start.x = $touch.pageX;
+      _start.y = $touch.pageY;
+    } else {
+      _start.x = e.pageX;
+      _start.y = e.pageY;
+    }
+    _item = $(e.target).closest('.drag-item');
+    _itemPos.x = _item.position().left;
+    _itemPos.y = _item.position().top;
+    _itemPos.width = _item.outerWidth();
+  }
+
+  function _dragStartEvt(e) {
+    _isDrag = true;
+    _startEvt(e);
+  }
+
+  function _sizeStartEvt(e) {
+    _isSize = true;
+    _startEvt(e);
+  }
+
+  function _angXY(e) {
+    const bcr = _item[0].getBoundingClientRect();
+    const radius = bcr.width / 2;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const y = clientY - bcr.top - radius; // y from center
+    const x = clientX - bcr.left - radius; // x from center
+    return Math.atan2(y, x);
+  };
+
+  function _radToDeg(radians) {
+    const pi = Math.PI;
+    return radians * (180 / pi);
+  };
+
+  let _angStart = 0;
+
+  function _rotateStartEvt(e) {
+    _isRotate = true;
+    _startEvt(e);
+    const _ang = _item.data('ang') === undefined ? 0 : _item.data('ang');
+    _angStart = _angXY(e) - _ang;
+  }
+
+  function _endEvt(e) {
+    _isDrag = false;
+    _isSize = false;
+    _isRotate = false;
+    _distance.x = 0;
+    _distance.y = 0;
+    _item = null;
+  }
+
+  function _moveEvt(e) {
+    if (!_item) return;
+    let pageX;
+    let pageY;
+    if (e.type === 'touchmove') {
+      const $touch = e.touches[0];
+      pageX = $touch.pageX;
+      pageY = $touch.pageY;
+    } else {
+      pageX = e.pageX;
+      pageY = e.pageY;
+    }
+    _distance.x = pageX - _start.x;
+    _distance.y = pageY - _start.y;
+    if (_isDrag) {
+      const $itemLeft = _itemPos.x + _distance.x;
+      const $itemTop = _itemPos.y + _distance.y;
+      _item.css({
+        'left': $itemLeft,
+        'top': $itemTop
+      });
+    }
+    if (_isSize) {
+      const $itemLeft = _itemPos.x - (_distance.x / 2);
+      const $itemTop = _itemPos.y - (_distance.y / 2);
+      const $itemWidth = _itemPos.width + _distance.x;
+      _item.css({
+        'left': $itemLeft,
+        'top': $itemTop,
+        'width': $itemWidth
+      });
+    }
+    if (_isRotate) {
+      const _ang = _angXY(e) - _angStart;
+      _item.data('ang', _ang);
+      const deg = _radToDeg(_ang);
+      _item.find('.inner').css('transform', 'rotate(' + deg + 'deg)');
+    }
+  }
+
+  $(document).on('touchstart mousedown', '.drag-item .inner', _dragStartEvt);
+  $(document).on('touchstart mousedown', '.drag-item .size', _sizeStartEvt);
+  $(document).on('touchstart mousedown', '.drag-item .rotate', _rotateStartEvt);
+  $(document).on('touchmove mousemove', '.card', _moveEvt);
+  $(document).on('touchend mouseup', '.card', _endEvt);
+  $(document).on('mouseleave', '.card', _endEvt);
+
+  function _setCardBgColor() {
+    const $card = $('.card');
+    const $color = $('input.color');
+    const $range = $('input.range');
+    if ($color.length === 1) {
+      $range.prop('disabled', true);
+      $color.next().prop('disabled', true);
+      const $val = $color.val();
+      $card.css('background-color', $val);
+      if (!$card.hasClass('_set_img')) $card.css('background-image', '');
+    } else {
+      $range.prop('disabled', false);
+      $color.first().next().prop('disabled', false);
+      const $rangeVal = 180 - parseInt($range.val());
+      const $colorAry = [];
+      $color.each(function() {
+        $colorAry.push($(this).val() + ' ' + $(this).next('.per').val() + '%')
+      });
+      $setBg = $colorAry.join(',');
+      $card.css({
+        'background-image': 'linear-gradient(' + $rangeVal + 'deg, ' + $setBg + ')',
+        'background-color': ''
+      });
+    }
+  }
+  _setCardBgColor();
+
+  function _setInputPer(e) {
+    const $target = $(e.currentTarget);
+    const $val = $target.val();
+    const $item = $target.closest('.color-item');
+    const $prev = $item.prev('.color-item');
+    const $next = $item.next('.color-item');
+    if ($prev.length) $prev.find('.per').attr('max', $val);
+    if ($next.length) $next.find('.per').attr('min', $val);
+    _setCardBgColor();
+  }
+
+  function _getFileImg(e) {
+    const $target = e.target;
+    if ($target.files && $target.files[0]) {
+      $('.color-item').not(':first-child').remove();
+      _setCardBgColor();
+      const imageSrc = URL.createObjectURL($target.files[0]);
+      $('.card').addClass('_set_img').css('background-image', 'url(' + imageSrc + ')');
+      $('.color-add').prop('disabled', true);
+    } else {
+      $('.card').removeClass('_set_img');
+      $('.color-add').prop('disabled', false);
+      _setCardBgColor();
+    }
+  }
+
+  function _removeFileImg(e) {
+    e.preventDefault();
+    $('input.file').val('').change();
+  }
+  $(document).on('input', 'input.color', _setCardBgColor);
+  $(document).on('input', 'input.range', _setCardBgColor);
+  $(document).on('input', 'input.per', _setInputPer);
+  $(document).on('change', 'input.file', _getFileImg);
+  $(document).on('click', '.file-del', _removeFileImg);
+
+  function setRandomColor() {
+    return "#" + Math.floor(Math.random() * 16777215).toString(16);
+  }
+
+  function _setBgPercenter() {
+    const $item = $('.color-item');
+    const $length = $item.length;
+    if ($length < 2) {
+      $item.find('.per').val(0).attr({
+        'min': 0,
+        'max': 100
+      });
+    } else {
+      const $divide = $length - 1;
+      const $dividedVal = parseInt(100 / $divide);
+      $item.each(function(index, item) {
+        const $this = $(this);
+        const $per = $this.find('.per');
+        if (index === 0) {
+          $per.val(0);
+        } else if (index === $length - 1) {
+          $per.val(100);
+        } else {
+          $per.val($dividedVal * index);
+        }
+      });
+      $item.each(function(index, item) {
+        const $this = $(this);
+        const $per = $this.find('.per');
+        const $prev = $this.prev('.color-item');
+        const $prevPer = $prev.find('.per');
+        const $next = $this.next('.color-item');
+        const $nextPer = $next.find('.per');
+
+        if (!$prev.length) {
+          $per.attr('min', 0);
+        } else {
+          $per.attr('min', $prevPer.val());
+        }
+
+        if (!$next.length) {
+          $per.attr('max', 100);
+        } else {
+          $per.attr('max', $nextPer.val());
+        }
+      });
+    }
+  }
+
+  function _addBgColor(e) {
+    e.preventDefault();
+    const $target = $(e.currentTarget);
+    const $color = setRandomColor();
+    if ($('.color-item').length > 4) {
+      alert('bg컬러는 최대 5개까지만 가능합니다.');
+      return;
+    }
+    const $html = '<div class="color-item"><input type="color" class="color" value="' + $color + '"><input type="number" class="per" >%<button class="color-del">삭제</button></div>'
+    $target.before($html);
+    _setBgPercenter();
+    _setCardBgColor();
+  }
+  $(document).on('click', '.color-add', _addBgColor);
+
+  function _delBgColor(e) {
+    e.preventDefault();
+    const $target = $(e.currentTarget);
+    $target.closest('.color-item').remove();
+    _setBgPercenter();
+    _setCardBgColor();
+  }
+  $(document).on('click', '.color-del', _delBgColor);
+
+  function _todayTimeString(addDay) {
+    const $today = new Date();
+    if (!!addDay) $today.setDate($today.getDate() + addDay);
+    return _timeString($today);
+  };
+
+  function _timeString(date) {
+    const $year = date.getFullYear();
+    let $month = date.getMonth() + 1;
+    let $day = date.getDate();
+    let $hour = date.getHours();
+    let $min = date.getMinutes();
+    let $sec = date.getSeconds();
+    if (('' + $month).length == 1) $month = '0' + $month;
+    if (('' + $day).length == 1) $day = '0' + $day;
+    if (('' + $hour).length == 1) $hour = '0' + $hour;
+    if (('' + $min).length == 1) $min = '0' + $min;
+    if (('' + $sec).length == 1) $sec = '0' + $sec;
+    return '' + $year + $month + $day + $hour + $min + $sec;
+  };
+
+  function _imgSave(e) {
+    e.preventDefault();
+    const $wrap = document.querySelector('.card');
+    $wrap.classList.add('save-card');
+    html2canvas($wrap).then(function(canvas) {
+      const $downLoad = document.querySelector('#imageDown');
+      const $data = canvas.toDataURL('image/png');
+      $downLoad.setAttribute('href', $data);
+      const $today = _todayTimeString();
+      $downLoad.setAttribute('download', 'my_card_' + $today.substr(0, 8) + '_' + $today.substr(8, 6) + '.png');
+      $downLoad.click();
+      $wrap.classList.remove('save-card');
+    });
+  };
+  $(document).on('click', '.save', _imgSave);
+
+}
+customCard();
+</script>
+</body>
+</html>
