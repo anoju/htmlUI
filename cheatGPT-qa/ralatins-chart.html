@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+</head>
+<body>
+<div id="chart"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.2/d3.min.js" integrity="sha512-oKI0pS1ut+mxQZdqnD3w9fqArLyILRsT3Dx0B+8RVEXzEk3aNK3J3pWlaGJ8MtTs1oiwyXDAH6hG6jy1sY0YqA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+// define the chart data
+var chartData = {
+  "name": "John",
+  "children": [{
+      "name": "Adam",
+      "size": 20,
+      "children": [{
+          "name": "David",
+          "size": 10
+        },
+        {
+          "name": "Emma",
+          "size": 15
+        }
+      ]
+    },
+    {
+      "name": "Sarah",
+      "size": 25,
+      "children": [{
+          "name": "Jessica",
+          "size": 18
+        },
+        {
+          "name": "Mark",
+          "size": 12
+        }
+      ]
+    }
+  ]
+};
+
+// create the chart using D3.js
+var diameter = 600;
+var bubble = d3.pack(chartData)
+  .size([diameter, diameter])
+  .padding(1.5);
+var svg = d3.select("#chart")
+  .append("svg")
+  .attr("width", diameter)
+  .attr("height", diameter)
+  .attr("class", "bubble");
+
+var nodes = d3.hierarchy(chartData)
+  .sum(function(d) {
+    return d.size;
+  });
+
+var node = svg.selectAll(".node")
+  .data(bubble(nodes).descendants())
+  .enter()
+  .filter(function(d) {
+    return !d.children
+  })
+  .append("g")
+  .attr("class", "node")
+  .attr("transform", function(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  });
+
+node.append("title")
+  .text(function(d) {
+    return d.data.name + ": " + d.data.size;
+  });
+
+node.append("circle")
+  .attr("r", function(d) {
+    return d.r;
+  })
+  .style("fill", "#2196f3");
+
+node.append("text")
+  .attr("dy", ".3em")
+  .style("text-anchor", "middle")
+  .text(function(d) {
+    return d.data.name;
+  })
+  .attr("font-family", "Arial")
+  .attr("font-size", function(d) {
+    return d.r / 5;
+  })
+  .attr("fill", "white");
+
+d3.select(self.frameElement)
+  .style("height", diameter + "px");
+</script>
+</body>
+</html>
