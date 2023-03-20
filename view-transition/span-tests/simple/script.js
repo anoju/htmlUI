@@ -1,7 +1,7 @@
 import {
   getPageContent,
   onLinkNavigate
-} from '/utils.js';
+} from '../../utils.js';
 
 onLinkNavigate(async ({
   toPath
