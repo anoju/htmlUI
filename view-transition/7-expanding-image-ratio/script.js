@@ -21,6 +21,16 @@ function getNavigationType(fromPath, toPath) {
   return 'other';
 }
 
+function setUrl() {
+  if (location.host === 'anoju.github.io') {
+    const _link = document.querySelectorAll('.gallery a')
+    _link.forEach(function(item) {
+      const _href = item.getAttribute('href');
+      item.setAttribute('href', '/htmlUI' + _href);
+    })
+  }
+}
+setUrl();
 
 onLinkNavigate(async ({
   fromPath,
@@ -28,12 +38,13 @@ onLinkNavigate(async ({
 }) => {
   const navigationType = getNavigationType(fromPath, toPath);
   const content = await getPageContent(toPath);
-
   let targetThumbnail;
 
   if (navigationType === 'gallery-to-cat-page') {
     targetThumbnail = getLink(toPath).querySelector('img');
     targetThumbnail.style.viewTransitionName = 'banner-img';
+  } else {
+    setUrl();
   }
 
   const transition = transitionHelper({
