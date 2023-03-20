@@ -43,8 +43,6 @@ onLinkNavigate(async ({
   if (navigationType === 'gallery-to-cat-page') {
     targetThumbnail = getLink(toPath).querySelector('img');
     targetThumbnail.style.viewTransitionName = 'banner-img';
-  } else {
-    setUrl();
   }
 
   const transition = transitionHelper({
@@ -67,4 +65,8 @@ onLinkNavigate(async ({
     // Clear the temporary tag
     if (targetThumbnail) targetThumbnail.style.viewTransitionName = '';
   });
+
+  if (navigationType === 'cat-page-to-gallery') {
+    setUrl();
+  }
 });
