@@ -22,6 +22,7 @@ function getNavigationType(fromPath, toPath) {
 }
 
 function setUrl() {
+  console.log('setUrl')
   if (location.host === 'anoju.github.io') {
     const _link = document.querySelectorAll('.gallery a')
     _link.forEach(function(item) {
@@ -30,7 +31,6 @@ function setUrl() {
     })
   }
 }
-setUrl();
 
 onLinkNavigate(async ({
   fromPath,
@@ -66,7 +66,8 @@ onLinkNavigate(async ({
     if (targetThumbnail) targetThumbnail.style.viewTransitionName = '';
   });
 
-  if (navigationType === 'cat-page-to-gallery') {
-    setUrl();
-  }
+  //if (navigationType === 'cat-page-to-gallery') {
+  setUrl();
+  //}
 });
+setUrl();
