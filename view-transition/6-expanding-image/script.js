@@ -5,7 +5,8 @@ import {
   getLink
 } from '../utils.js';
 
-const galleryPath = '/view-transition/6-expanding-image/';
+let galleryPath = '/view-transition/6-expanding-image/';
+if (location.host === 'anoju.github.io') galleryPath = '/htmlUI' + galleryPath;
 const catsPath = `${galleryPath}cats/`;
 
 function getNavigationType(fromPath, toPath) {
