@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Document</title>
-<style>
+<!-- <style>
 table {
   width: 100%;
   border-collapse: collapse;
@@ -19,13 +19,15 @@ td {
   padding: 3px 10px;
   width: 33%;
 }
-</style>
+</style> -->
+<link rel="stylesheet" href="https://anoju.github.io/kyobo-mydata-pub/front/css/front.min.css">
 </head>
 <body>
 <div id="wrap">
   <div id="container">
     <div class="section">
-      <div class="table">
+      <h1 class="tit-h1 t-center">view-transition API</h1>
+      <div class="table mt-30">
         <table>
           <thead>
             <tr>
@@ -154,8 +156,8 @@ function makeTd() {
   $td.each(function() {
     const $this = $(this);
     const $html = $this.text();
-    $this.wrapInner('<a href="./' + $html + '/" target="_blank"></a>')
-    const $after = '<td><a href="https://simple-set-demos.glitch.me/' + $html + '/" target="_blank">원본보기</a></td></td><td><a href="https://github.com/anoju/htmlUI/tree/master/view-transition/' + $html + '" target="_blank">소스보기</a></td></td>';
+    $this.wrapInner('<a href="./' + $html + '/" target="_blank" class="a-link"></a>')
+    const $after = '<td class="t-center"><a href="https://simple-set-demos.glitch.me/' + $html + '/" target="_blank" class="button line h24">원본보기</a></td></td><td class="t-center"><a href="https://github.com/anoju/htmlUI/tree/master/view-transition/' + $html + '" target="_blank" class="button line h24">소스보기</a></td></td>';
     $this.after($after);
   });
 }
