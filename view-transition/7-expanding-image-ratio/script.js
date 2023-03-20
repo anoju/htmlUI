@@ -25,6 +25,7 @@ function setUrl() {
   console.log('setUrl')
   if (location.host === 'anoju.github.io') {
     const _link = document.querySelectorAll('.gallery a')
+    if (!_link.length) return;
     _link.forEach(function(item) {
       const _href = item.getAttribute('href');
       item.setAttribute('href', '/htmlUI' + _href);
