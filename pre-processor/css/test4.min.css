@@ -1,0 +1,17 @@
+nav ul {
+  display: flex;
+}
+nav li:nth-child(1) {
+  margin-left: 5px;
+}
+nav li:nth-child(2) {
+  margin-left: 10px;
+}
+nav li:nth-child(3) {
+  margin-left: 15px;
+}
+nav a {
+  display: block;
+  padding: 5px 10px;
+  color: #d00;
+}

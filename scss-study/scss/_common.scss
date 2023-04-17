@@ -1,0 +1,396 @@
+@use 'sass:meta';
+@use 'sass:map';
+@use 'sass:math';
+
+$font-family: 'Noto Sans KR', -apple-system, Roboto;
+$padding: 2rem;
+$main-color: #00caca;
+:root {
+  --font-family: #{meta.inspect($font-family)};
+  --main-color: #{$main-color};
+  --main-color-rgb: #{hex-to-rgb($main-color)};
+  --base-padding: #{$padding};
+  --outer-padding: -#{$padding};
+
+  --switch-width: 3.5rem;
+  --switch-height: 2rem;
+  --switch-padding: 0.3rem;
+}
+html {
+  font-size: 62.5%;
+}
+body {
+  font-size: 1.4rem;
+  font-family: var(--font-family);
+}
+
+.wrap {
+  padding: var(--base-padding);
+}
+.list {
+  margin: {
+    bottom: 10px;
+    //top: 2px;
+  }
+  padding: 1rem 0;
+  background: red;
+  @include outer(true);
+  li {
+    float: left;
+    padding: 1rem;
+    list-style: none;
+    border: 1px solid #000;
+    background: #fff;
+  }
+  &:after {
+    @include clearfix;
+  }
+}
+
+$button-colors: (
+  'success': #28a745,
+  'info': #17a2b8,
+  'warning': #ffc107
+);
+
+.button {
+  // &:not(.not) {
+  background: none;
+  border: 0 none;
+  display: inline-block;
+  text-align: center;
+  color: #111;
+  padding: 1rem 2rem;
+  font-size: 1.6rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  // }
+  &.primary {
+    background-color: var(--main-color);
+    color: #fff;
+    &:active {
+      // background-color: rgba($main-color, 0.8);
+      background-color: rgba(var(--main-color-rgb), 0.8);
+    }
+    // &:focus {
+    //   // background-color: darken($main-color, 10%);
+    //   background-color: lighten($main-color, 10%);
+    // }
+  }
+  .btn-wrap & {
+    border: 1px solid #000;
+  }
+
+  // &.warning {
+  //   background-color: map.get($button-colors, 'warning');
+  // }
+  @each $color-name, $color-value in $button-colors {
+    &.#{$color-name} {
+      background-color: $color-value;
+      @if ($color-name == 'success' or $color-name == 'info') {
+        // @if ($color-name != 'warning') {
+        // @if (not($color-name == 'warning')) {
+        color: #fff;
+      }
+      &:active {
+        background-color: rgba($color-value, 0.8);
+      }
+    }
+  }
+}
+.btn-wrap {
+  --main-color: red;
+  --main-color-rgb: #{hex-to-rgb(red)};
+  // .button.primary {
+  //   &:active {
+  //     background-color: rgba(red, 0.8);
+  //   }
+  // }
+}
+// .btn-wrap {
+//   .button {
+//     border: 1px solid #000;
+//   }
+// }
+@include define-emoji('women-holding-hands', '👭');
+
+.tit-h {
+  &1 {
+    font-size: 2.4rem;
+  }
+  &2 {
+    font-size: 2rem;
+  }
+  &3 {
+    font-size: 1.8rem;
+  }
+  &4 {
+    font-size: 1.6rem;
+  }
+}
+
+.item-box {
+  .item {
+    border: 3px solid yellow;
+    color: #fff;
+    padding: 1rem;
+    @include unify-parent('div') {
+      background: blue;
+    }
+    @include unify-parent('p') {
+      background: green;
+    }
+  }
+}
+
+%btn {
+  background: none;
+  border: 0 none;
+  display: inline-block;
+  text-align: center;
+  color: #fff;
+  padding: 1rem 2rem;
+  font-size: 1.6rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  &:active {
+    opacity: 0.8;
+  }
+}
+.btn-primary {
+  @extend %btn;
+  background-color: var(--main-color);
+}
+.btn-secondary {
+  @extend %btn;
+  background-color: #111;
+}
+
+/*
+.primary-btn2 {
+  @extend .button;
+  background-color: var(--main-color);
+  color: #fff;
+}
+
+.secondary-btn2 {
+  @extend .button;
+  background-color: #111;
+  color: #fff;
+}
+*/
+.img-item {
+  width: 200px;
+}
+.img-box {
+  position: relative;
+  &:before {
+    content: '';
+    display: block;
+    padding-top: math.div(133, 200) * 100%;
+    // padding-top: 100%;
+    background: #ddd;
+  }
+  img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+:is(ul, ol) {
+  + :is(ul, ol) {
+    margin-top: 2rem;
+  }
+}
+ul,
+ol {
+  + ul,
+  + ol {
+    margin-top: 3rem;
+  }
+}
+
+// 23-04-06
+//@if
+.ellipsis {
+  @include ellipsis;
+}
+.ellipsis-1 {
+  @include ellipsis(1);
+}
+.ellipsis-2 {
+  @include ellipsis(2);
+}
+.ellipsis-3 {
+  @include ellipsis(3);
+}
+
+//@each
+$btn3-states: (
+  'primary': (
+    'default': (
+      text: #ffffff,
+      background: #007bff,
+      border: #007bff
+    ),
+    'hover': (
+      text: #ff0000,
+      background: #007bff,
+      border: #0062cc
+    ),
+    'active': (
+      text: #ffff00,
+      background: #0062cc,
+      border: #000
+    )
+  ),
+  'secondary': (
+    'default': (
+      text: #111,
+      background: #ddd,
+      border: #999
+    ),
+    'hover': (
+      text: #ff0000,
+      background: #bbb,
+      border: #666
+    ),
+    'active': (
+      text: #ffff00,
+      background: #999,
+      border: #000
+    )
+  ),
+  'taran': (
+    'default': (
+      text: #111,
+      background: pink,
+      border: greenyellow
+    ),
+    'hover': (
+      text: #ff0000,
+      background: darken(pink, 5%),
+      border: darken(greenyellow, 5%)
+    ),
+    'active': (
+      text: #ffff00,
+      background: darken(pink, 10%),
+      border: darken(greenyellow, 10%)
+    )
+  )
+);
+
+.btn3 {
+  display: inline-block;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  border: 1px solid transparent;
+  text-decoration: none;
+  // &.primary{
+  //   color:#ffffff;
+  //   &:hover{
+  //     color: #ff0000;
+  //   }
+  //   &:active{
+  //     color: #ff0000;
+  //   }
+  // }
+  @each $type, $option in $btn3-states {
+    &.#{$type} {
+      @each $state, $properties in $option {
+        $text-color: map.get($properties, 'text');
+        $background-color: map.get($properties, 'background');
+        $border-color: map.get($properties, 'border');
+        @if ($state == 'default') {
+          color: $text-color;
+          background-color: $background-color;
+          border-color: $border-color;
+        } @else {
+          &:#{$state} {
+            color: $text-color;
+            background-color: $background-color;
+            border-color: $border-color;
+          }
+        }
+      }
+    }
+  }
+}
+
+// @for
+@for $i from 0 through 40 {
+  .fz-#{$i} {
+    font-size: $i * 0.1rem !important;
+  }
+}
+@for $i from 1 through 9 {
+  .fw-#{$i}00 {
+    font-weight: $i * 100 !important;
+  }
+}
+@for $i from 0 through 200 {
+  .w-#{$i * 5} {
+    width: $i * 0.5rem !important;
+  }
+}
+// .w-5{
+//   width: 0.5rem
+// }
+// .w-10{
+//   width: 1rem
+// }
+// .w-15{
+//   width: 1.5rem
+// }
+
+//@while
+$number-of-boxes: 10;
+$opacity-step: math.div(1, $number-of-boxes);
+$box-width: 100px;
+$box-height: 100px;
+.fade-box {
+  width: $box-width;
+  height: $box-height;
+  display: inline-block;
+  background-color: #007bff;
+  margin-right: 10px;
+}
+$i: 1;
+@while $i <= $number-of-boxes {
+  .fade-#{$i} {
+    opacity: $i * $opacity-step;
+  }
+  $i: $i + 1;
+}
+
+$min-font-size: 14px;
+$max-font-size: 24px;
+$min-width: 300px;
+$max-width: 1200px;
+$step: 100;
+$j: $min-width;
+@while $j <= $max-width {
+  @media (min-width: $j) {
+    $ratio: math.div(($j - $min-width), ($max-width - $min-width));
+    $font-size: $min-font-size + $ratio * ($max-font-size - $min-font-size);
+    .font-box {
+      font-size: $font-size;
+    }
+  }
+  $j: $j + $step;
+}
+
+.logo {
+  width: 94px;
+  height: 20px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='94' height='20' viewBox='0 0 94 20' fill='none'%3E%3Cpath d='M14.9313 19.562H19.5882L11.9334 0H7.82945L0 19.562H4.65692L6.054 15.8832H13.5924L14.9313 19.562ZM7.36376 12.438L9.86686 5.78102L12.3117 12.438H7.36376Z' fill='%23002554'/%3E%3Cpath d='M27.0009 20C30.3772 20 32.7057 18.6569 33.6661 15.5912H29.5331C28.9801 16.4672 28.3107 16.8175 27.0591 16.8175C25.1673 16.8175 24.1194 15.562 24.1194 13.781H33.8117V13.3431C33.8117 8.78832 31.2795 6.10219 26.8263 6.10219C22.6351 6.10219 19.87 8.87591 19.87 13.0511C19.87 17.2555 22.5768 20 27.0009 20ZM24.2068 11.3285C24.4687 9.92701 25.5747 9.0219 27.1173 9.0219C28.6017 9.0219 29.6495 9.83942 29.9988 11.3285H24.2068Z' fill='%23002554'/%3E%3Cpath d='M36.095 19.562H40.2862V14.5109C40.2862 13.4015 40.3735 11.8832 41.3049 10.8905C41.8288 10.3358 42.4982 9.89781 43.6042 9.89781C44.2155 9.89781 45.0013 10.0438 45.2924 10.1022V6.42336C44.8558 6.27737 44.5647 6.21898 44.0699 6.21898C42.3236 6.21898 41.0721 7.29927 40.2862 8.84672V6.54015H36.095V19.562Z' fill='%23002554'/%3E%3Cpath d='M53.0456 20C57.4406 20 60.6713 17.2263 60.6713 13.0511C60.6713 8.9635 57.4988 6.10219 53.0456 6.10219C48.6506 6.10219 45.4199 8.87591 45.4199 13.0511C45.4199 17.1387 48.5924 20 53.0456 20ZM53.0747 16.438C51.1246 16.438 49.7275 15.0365 49.7275 13.0511C49.7275 11.0949 51.0955 9.66423 53.0456 9.66423C54.9957 9.66423 56.3637 11.0949 56.3637 13.0511C56.3637 15.0073 54.9666 16.438 53.0747 16.438Z' fill='%23002554'/%3E%3Cpath d='M93.125 19.562L84.8299 9.51825L92.8339 0H87.3621L80.4058 8.32117V0H75.9235V19.562H80.4058V11.0073L87.3621 19.562H93.125Z' fill='%23002554'/%3E%3Crect x='62.1942' y='13.3333' width='11.9732' height='6' fill='%23FEB81E'/%3E%3C/svg%3E") no-repeat center center / contain;
+}

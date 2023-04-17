@@ -1,0 +1,44 @@
+@use 'sass:selector';
+
+@mixin clearfix {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+@mixin define-emoji($name, $glyph) {
+  span.emoji-#{$name} {
+    font-family: IconFont;
+    font-variant: normal;
+    font-weight: normal;
+    content: $glyph;
+  }
+}
+
+@mixin outer($isPadding: false) {
+  margin-left: var(--outer-padding);
+  margin-right: var(--outer-padding);
+  @if $isPadding {
+    padding-left: var(--base-padding);
+    padding-right: var(--base-padding);
+  }
+}
+
+@mixin unify-parent($child) {
+  @at-root #{selector.unify(&, $child)} {
+    @content;
+  }
+}
+
+@mixin ellipsis($line: 0) {
+  overflow: hidden;
+  word-break: break-all;
+  @if ($line == 0) {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: $line;
+  }
+}

@@ -1,0 +1,7 @@
+@function hex-to-rgb($hex) {
+  $r: red($hex);
+  $g: green($hex);
+  $b: blue($hex);
+
+  @return '#{$r}, #{$g}, #{$b}';
+}

@@ -1,0 +1,28 @@
+$main-color: #d00;
+@mixin pad($x, $y) {
+  padding: $y $x;
+}
+
+nav {
+  ul {
+    display: flex;
+  }
+  @for $i from 1 through 3 {
+    li:nth-child(#{$i}) {
+      margin-left: $i * 5px;
+    }
+  }
+  a {
+    display: block;
+    @include pad(5px, 10px);
+    color: $main-color;
+  }
+}
+.radio-group {
+  display: flex;
+  .radio {
+    + .radio {
+      margin-left: 30px;
+    }
+  }
+}
