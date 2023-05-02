@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>jQuery Parallax Example</title>
+<style>
+.parallax {
+  height: 100vh;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.section1 {
+  background-image: url('https://source.unsplash.com/random/1');
+}
+
+.section2 {
+  background-image: url('https://source.unsplash.com/random/2');
+}
+
+.section3 {
+  background-image: url('https://source.unsplash.com/random/3');
+}
+</style>
+</head>
+<body>
+<div class="parallax section1" data-speed="4"></div>
+<div class="parallax section2" data-speed="6"></div>
+<div class="parallax section3" data-speed="8"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// 여기에 jQuery 코드를 작성합니다.
+$(document).ready(function() {
+  // 스크롤 이벤트에 대한 처리를 추가합니다.
+  $(window).on('scroll', function() {
+    // 패럴랙스 효과를 적용할 요소를 찾습니다.
+    $('.parallax').each(function() {
+      // 스크롤 위치에 따라 배경 이미지의 위치를 변경합니다.
+      const yPos = -($(window).scrollTop() / $(this).data('speed'));
+      const coords = '50% ' + yPos + 'px';
+      $(this).css('background-position', coords);
+    });
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zoom Effect Example</title>
+<style>
+body {
+  margin: 0;
+}
+.wrap {
+  max-width: 1024px;
+  margin: 0 auto;
+}
+.section {
+  padding: 20px;
+  font-size: 2rem;
+}
+
+.zoom-box {
+  overflow: hidden;
+}
+.zoom {
+  height: 300px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  /* transition: transform 0.3s ease; */
+}
+
+.section1 {
+  background-image: url('https://source.unsplash.com/random/1');
+}
+
+.section2 {
+  background-image: url('https://source.unsplash.com/random/2');
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="section">
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+  </div>
+  <div class="zoom-box">
+    <div class="zoom section1"></div>
+  </div>
+  <div class="section">
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+  </div>
+  <div class="zoom-box">
+    <div class="zoom section2"></div>
+  </div>
+  <div class="section">
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+    ABCDEFGHIJKLMN<br>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// 여기에 jQuery 코드를 작성합니다.
+$(document).ready(function() {
+  function updateZoom() {
+    // 확대 효과를 적용할 요소를 찾습니다.
+    $('.zoom').each(function() {
+      const windowHeight = $(window).height();
+      const scrollPos = $(window).scrollTop();
+      const elementOffset = $(this).offset().top;
+      const distance = elementOffset - scrollPos;
+      const halfWindowHeight = windowHeight / 2;
+
+      // 스크롤 위치에 따라 요소의 크기를 변경합니다.
+      if (distance >= 0 && distance <= windowHeight) {
+        let scaleValue = 1;
+        if (distance > halfWindowHeight) scaleValue = 1.5 - 0.5 * ((windowHeight - distance) / halfWindowHeight);
+        console.log(scaleValue)
+        $(this).css('transform', 'scale(' + scaleValue + ')');
+      } else if (distance > windowHeight) {
+        $(this).css('transform', 'scale(1.5)');
+      } else {
+        $(this).css('transform', 'scale(1)');
+      }
+    });
+  }
+
+  // 스크롤 이벤트에 대한 처리를 추가합니다.
+  $(window).on('scroll', updateZoom);
+
+  // 페이지 로드 시 확대 효과 업데이트
+  updateZoom();
+});
+</script>
+</body>
+</html>

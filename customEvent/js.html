@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>customEvent</title>
-  <style>
-    .your-target-element{
-      width:100px;
-      height:100px;
-      background:#ccc;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>customEvent</title>
+<style>
+.your-target-element {
+  width: 100px;
+  height: 100px;
+  background: #ccc;
+}
+</style>
 </head>
 <body>
 <div class="your-target-element"></div>
 <script>
 // HTMLElement 프로토타입에 customEvent 메서드를 추가합니다.
-HTMLElement.prototype.customEvent = function (data) {
+HTMLElement.prototype.customEvent = function(data) {
   console.log('타겟:', this);
   console.log('메세지:', data.message);
   console.log('시간:', data.time);
@@ -33,4 +33,4 @@ targetElement.customEvent({
 });
 </script>
 </body>
-</html>
+</html>ㅔ
