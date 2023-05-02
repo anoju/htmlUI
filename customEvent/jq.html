@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>customEvent</title>
+  <style>
+    .your-target-element{
+      width:100px;
+      height:100px;
+      background:#ccc;
+    }
+  </style>
+</head>
+<body>
+<div class="your-target-element"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+$.fn.customEvent = function (data) {
+  return this.each(function () {
+    console.log('타겟:', this);
+    console.log('메세지:', data.message);
+    console.log('시간:', data.time);
+  });
+};
+
+// $targetElement.customEvent() 메서드를 사용하여 커스텀 이벤트를 발생시킵니다.
+$('.your-target-element').customEvent({
+  message: '이벤트 발생',
+  time: new Date()
+});
+</script>
+</body>
+</html>
