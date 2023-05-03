@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Document</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="contents">
+  <form action="" id="joinForm">
+    <div class="joinus_form">
+      <div class="form_row">
+        <span class="stit">생일을 입력하세요</span>
+        <div class="input_wrap">
+          <input type="search" class="clear" placeholder="0000-00-00" value="" id="input_birthday" name="birthday" readonly="readonly" />
+          <!-- 					<button class="btn_clear" onClick="clearInput(this); return false;"></button> -->
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn_progress">다음</button>
+  </form>
+</div>
+
+<div class="selectboxD">
+  <div class="date-selector">
+    <div class="year" id="birthYear"></div>
+    <div class="month" id="birthMonth"></div>
+    <div class="day" id="birthDate"></div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="ios-selector.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+  // 생년월일 선택을 위한 wheel-selector init
+  fn_initDateSelector();
+
+  // 생년월일 선택하면 하단에 선택화면 띄우기
+  // 			$("#divBirthday #input_birthday").on("click", function() {
+  // 				$("#divBirthday .selectboxD").animate({bottom:"0"}, 200);
+  // 			});
+  // 생년월일은 바로 띄우는 걸로...
+  $('#divBirthday .selectboxD').animate({
+    bottom: '0'
+  }, 200);
+
+  // 생년월일이 입력 되면..
+  $('#divBirthday [name=birthday]').on('input', function() {
+    // 생년월일 validation 체크 - 성공하면 버튼 활성화
+    fn_checkBirthdayValid();
+  });
+
+  // 다음 버튼 클릭시
+  $('#divBirthday .btn_progress').on('click', function() {
+    // 한번 더 validation Check
+    if (!fn_checkBirthdayValid(true)) return;
+
+    getPageAjax('/login/gender', null).done(function(result) {
+      $('#joinForm').append(result); // 성별 선택 화면 붙이고
+      $('#divBirthday').hide(); // 현재 화면(생년월일) 숨기기
+    });
+  });
+});
+
+// 생년월일 validation 체크
+function fn_checkBirthdayValid(checkChild) {
+  var birthday = $('#divBirthday [name=birthday]').val();
+  if (birthday == '') {
+    $('#divBirthday .btn_progress').prop('disabled', true);
+    return false;
+  }
+
+  var birthdayArr = birthday.split('-');
+  var d = new Date();
+  d.setFullYear(birthdayArr[0], birthdayArr[1] - 1, birthdayArr[2]);
+
+  var month = d.getMonth() + 1;
+  var date = d.getDate();
+
+  var strD = d.getFullYear() + '-' + (month < 10 ? '0' + month : month) + '-' + (date < 10 ? '0' + date : date);
+
+  // 날짜 형식 오류 확인
+  if (birthday != strD) {
+    $('#divBirthday .btn_progress').prop('disabled', true);
+    return false;
+  } else {
+    if (checkChild) {
+      // 만 14세 확인
+      var today = new Date();
+      var age = today.getFullYear() - d.getFullYear();
+      const m = today.getMonth() - d.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < d.getDate())) {
+        age--;
+      }
+      if (age < 14) {
+        $('#divBirthday .btn_progress').prop('disabled', true);
+        layerAlert('죄송합니다. 클럽메타 앱 사용 기준 요건에 충족되지 않습니다.');
+        return false;
+      }
+    }
+
+    $('#divBirthday .btn_progress').prop('disabled', false);
+    return true;
+  }
+}
+
+var yearSelector;
+var monthSelector;
+var dateSelector;
+
+function fn_initDateSelector() {
+  var now = new Date();
+
+  yearSelector = new IosSelector({
+    el: '#birthYear',
+    // 				type: "infinite",
+    type: 'normal',
+    source: fn_getDateSource('year'),
+    value: now.getFullYear(),
+    count: 20,
+    sensitivity: 5, // 숫자가 낮을수록 돌렸을때 팽그르르 돌며, 초기 select 할때도 느려진다. 기본값은 0.8
+    onChange: (selected) => {
+      fn_dateChanged('year');
+    }
+  });
+  // 			yearSelector.select(now.getFullYear());
+
+  monthSelector = new IosSelector({
+    el: '#birthMonth',
+    // 				type: "infinite",
+    type: 'normal',
+    source: fn_getDateSource('month'),
+    value: now.getMonth() + 1,
+    count: 20,
+    sensitivity: 5, // 숫자가 낮을수록 돌렸을때 팽그르르 돌며, 초기 select 할때도 느려진다. 기본값은 0.8
+    onChange: (selected) => {
+      fn_dateChanged('month');
+    }
+  });
+
+  dateSelector = new IosSelector({
+    el: '#birthDate',
+    // 				type: "infinite",
+    type: 'normal',
+    source: fn_getDateSource('date'),
+    value: now.getDate(),
+    count: 20,
+    sensitivity: 5, // 숫자가 낮을수록 돌렸을때 팽그르르 돌며, 초기 select 할때도 느려진다. 기본값은 0.8
+    onChange: (selected) => {
+      fn_dateChanged('date');
+    }
+  });
+}
+
+// 날짜 변경시 처리(type : year/month/date)
+function fn_dateChanged(type) {
+  if (type == 'year' || type == 'month') {
+    // 연도나 월이 변경 되면 선택된 연/월로 일자 Source 재조회
+    var newDateSource = fn_getDateSource('date');
+    // 일자 목록보다 선택된 날짜가 크면
+    if (dateSelector.value > newDateSource.length) {
+      // 목록의 마지막 날짜로 설정
+      dateSelector.select(newDateSource.length);
+    }
+    // 일자 Selector Source 갱신
+    dateSelector.updateSource(newDateSource);
+  }
+
+  var dateStr = yearSelector.value;
+  dateStr += '-' + (monthSelector.value < 10 ? '0' + monthSelector.value : monthSelector.value);
+  dateStr += '-' + (dateSelector.value < 10 ? '0' + dateSelector.value : dateSelector.value);
+
+  $('#joinForm [name=birthday]').val(dateStr);
+  $('#joinForm [name=birthday]').trigger('input');
+}
+
+// 연/월/일 source 조회
+function fn_getDateSource(type) {
+  var now = new Date();
+  var dataSource = []; // 목록
+
+  if (type == 'year') {
+    var fromYear = 1901; // 연도 시작
+    // fromYear부터 현재 연도까지 표시
+    for (var i = fromYear; i <= now.getFullYear(); i++) {
+      dataSource.push({
+        value: i,
+        text: i + '년'
+      });
+    }
+  } else if (type == 'month') {
+    // 1~12월
+    for (var i = 1; i <= 12; i++) {
+      dataSource.push({
+        value: i,
+        text: i + '월'
+      });
+    }
+  } else if (type == 'date') {
+    // 선택된 연/월에 따른 날짜 목록
+    var date = [];
+    var dateCnt = new Date(yearSelector.value, monthSelector.value, 0).getDate();
+    for (var i = 1; i <= dateCnt; i++) {
+      dataSource.push({
+        value: i,
+        text: i + '일'
+      });
+    }
+  }
+
+  return dataSource;
+}
+</script>
+</body>
+</html>

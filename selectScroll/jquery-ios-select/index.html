@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <title>jquery-select-scroll</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <link rel="stylesheet" href="./main.css" />
+  </head>
+
+  <body>
+    <div id="app">
+      <div class="test" id="test"></div>
+    </div>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="./jquery.selectscroll.js"></script>
+    <script type="text/javascript">
+      // 使用
+      $(function () {
+        function init() {
+          $('#test').selectScroll({
+            data: [
+              [
+                {
+                  text: '가나다라마바사',
+                  id: 12
+                },
+                {
+                  text: 'AB',
+                  id: 13
+                },
+                {
+                  text: '홍길동',
+                  id: 14
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                },
+                {
+                  text: '안효주',
+                  id: 15
+                }
+              ]
+            ],
+            selectedIndex: [0],
+            cancel: function () {
+              console.log('취소');
+            }
+          });
+        }
+        var $doc = $(document);
+        $doc.on('click', '#test', init);
+      });
+    </script>
+  </body>
+</html>
