@@ -53,7 +53,7 @@ var scrollSelector = class {
 
     this.itemHeight = this.elems.el.offsetHeight / (this.options.outside * 2 + 1); // 각 높이
     const _wrap = this.elems.el.closest('.scroll-selector-wrap');
-    if (_wrap) _wrap.style.setProperty('--select-item-height', this.itemHeight + 'px');
+    if (_wrap) _wrap.style.setProperty('--scroll-selector-item-height', this.itemHeight + 'px');
     // this.itemAngle = 90 / this.options.count; // 각 항목 사이의 회전 각도. 필요???
     // this.radius = this.itemHeight / Math.tan((this.itemAngle * Math.PI) / 260); // 링 반경. 필요???
 
@@ -177,11 +177,11 @@ var scrollSelector = class {
     const clipPath = `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% ${this.itemHeight * (this.options.outside + 1)}px, 100% ${this.itemHeight * (this.options.outside + 1)}px, 100% ${this.itemHeight * this.options.outside}px, 0% ${this.itemHeight * this.options.outside}px, 0% 0%)`
 
     let template = `
-		<div class="scroll-selector" style="--select-item-height:${this.itemHeight}px;">
+		<div class="scroll-selector" style="--scroll-selector-item-height:${this.itemHeight}px;">
       <div class="select-options" style="-webkit-clip-path:${clipPath};clip-path:${clipPath};">
-			<ul class="select-options-list" style="padding: ${this.itemHeight * this.options.outside}px 0;">
+			<ul class="select-options-list" role="listbox" style="padding: ${this.itemHeight * this.options.outside}px 0;">
 			{{circleListHTML}}
-			<!-- <li class="select-option">a0</li> -->
+			<!-- <li class="select-option" role="option">a0</li> -->
 			</ul>
       </div>
 			<div class="select-highlight">
@@ -209,7 +209,7 @@ var scrollSelector = class {
     // selected HTML
     let circleListHTML = '';
     for (let i = 0; i < option.length; i++) {
-      circleListHTML += `<li class="select-option" data-index="${i}">${option[i].text}</li>`;
+      circleListHTML += `<li class="select-option" role="option" data-index="${i}">${option[i].text}</li>`;
     }
 
     // 중간 강조 HTML
@@ -221,8 +221,8 @@ var scrollSelector = class {
     if (this.options.loop) {
       // 링 head tail
       for (let i = 0; i < this.outside; i++) {
-        circleListHTML = `<li class="select-option" data-index="${-i - 1}">${option[optionLength - i - 1].text}</li>` + circleListHTML;
-        circleListHTML += `<li class="select-option"  data-index="${i + optionLength}">${option[i].text}</li>`;
+        circleListHTML = `<li class="select-option" role="option" data-index="${-i - 1}">${option[optionLength - i - 1].text}</li>` + circleListHTML;
+        circleListHTML += `<li class="select-option" role="option" data-index="${i + optionLength}">${option[i].text}</li>`;
 
         highListHTML = `<li class="select-highlight-item">${option[optionLength - i - 1].text}</li>` + highListHTML;
         highListHTML += `<li class="select-highlight-item">${option[i].text}</li>`;
@@ -275,15 +275,30 @@ var scrollSelector = class {
     this.elems.circleList.style.transform = `translate3d(0, ${move}px, 0)`;
     this.elems.highlightList.style.transform = `translate3d(0, ${move}px, 0)`;
 
-    /* 수정필요
+    /* 수정필요*/
     [...this.elems.circleItems].forEach((itemElem) => {
-      if (Math.abs(itemElem.dataset.index - scroll) > this.quarterCount) {
-        itemElem.style.visibility = 'hidden';
+      const idx = Math.abs(itemElem.dataset.index);
+      if ((scroll - this.outside - 1) < idx && idx < (scroll + this.outside + 1)) {
+        // itemElem.style.visibility = 'visible';
+        itemElem.style.removeProperty('visibility');
+        const gap = Math.floor((idx - scroll) * 10000) / 10000;
+        const deg = gap * (40 / this.outside);
+        const scale = 1 - Math.abs(gap / 30);
+        console.log(scale)
+        itemElem.style.transform = `rotateX(${deg}deg) scale(${scale})`;
       } else {
-        itemElem.style.visibility = 'visible';
+        itemElem.style.visibility = 'hidden';
+        itemElem.style.removeProperty('transform');
+      }
+      if (idx === scroll) {
+        itemElem.classList.add('active');
+        itemElem.ariaSelected = true;
+      } else {
+        itemElem.classList.remove('active');
+        itemElem.ariaSelected = false;
       }
     });
-    */
+
 
     return scroll;
   }
