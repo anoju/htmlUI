@@ -15,19 +15,19 @@ var scrollSelector = class {
       el: '', // dom
       loop: false,
       outside: 2,
-      count: 20,
-      sensitivity: 0.8,
+      // count: 20,
+      sensitivity: 2, // 숫자가 낮을수록 돌렸을때 팽그르르 돌며, 초기 select 할때도 느려진다. 기본값은 2
       option: [], // 옵션 {value: xx, text: xx}
       value: null,
       onChange: null
     };
 
     this.options = Object.assign({}, defaults, options);
-    this.options.count = this.options.count - (this.options.count % 4);
+    // this.options.count = this.options.count - (this.options.count % 4); 필요???
     Object.assign(this, this.options);
 
-    this.halfCount = this.options.count / 2;
-    this.quarterCount = this.options.count / 4;
+    // this.halfCount = this.options.count / 2; 필요???
+    // this.quarterCount = this.options.count / 4; 필요???
     this.a = this.options.sensitivity * 10; // 스크롤 감속
     this.minV = Math.sqrt(1 / this.a); // 최소 초기 속도
     this.selected = this.option[0];
@@ -52,8 +52,8 @@ var scrollSelector = class {
     };
 
     this.itemHeight = this.elems.el.offsetHeight / (this.options.outside * 2 + 1); // 각 높이
-    this.itemAngle = 90 / this.options.count; // 각 항목 사이의 회전 각도
-    this.radius = this.itemHeight / Math.tan((this.itemAngle * Math.PI) / 260); // 링 반경
+    // this.itemAngle = 90 / this.options.count; // 각 항목 사이의 회전 각도. 필요???
+    // this.radius = this.itemHeight / Math.tan((this.itemAngle * Math.PI) / 260); // 링 반경. 필요???
 
     this.scroll = 0; // 단위는 항목의 높이입니다.
     this._init();
@@ -172,12 +172,16 @@ var scrollSelector = class {
       return;
     }
 
+    const clipPath = `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% ${this.itemHeight * (this.options.outside + 1)}px, 100% ${this.itemHeight * (this.options.outside + 1)}px, 100% ${this.itemHeight * this.options.outside}px, 0% ${this.itemHeight * this.options.outside}px, 0% 0%)`
+
     let template = `
 		<div class="scroll-selector">
-			<ul class="select-options" style="padding: ${this.itemHeight * this.options.outside}px 0;line-height:${this.itemHeight}px">
+      <div class="select-options" style="-webkit-clip-path:${clipPath};clip-path:${clipPath};">
+			<ul class="select-options-list" style="padding: ${this.itemHeight * this.options.outside}px 0;line-height:${this.itemHeight}px;">
 			{{circleListHTML}}
 			<!-- <li class="select-option">a0</li> -->
 			</ul>
+      </div>
 			<div class="select-highlight">
 			<ul class="select-highlight-list">
 				<!-- <li class="select-highlight-item"></li> -->
@@ -188,6 +192,7 @@ var scrollSelector = class {
 		`;
 
     // option 처리
+    /* 필요???
     if (this.options.loop) {
       let concatOption = [].concat(option);
       while (concatOption.length < this.halfCount) {
@@ -195,6 +200,7 @@ var scrollSelector = class {
       }
       option = concatOption;
     }
+    */
     this.option = option;
     let optionLength = option.length;
 
@@ -222,7 +228,7 @@ var scrollSelector = class {
     }
 
     this.elems.el.innerHTML = template.replace('{{circleListHTML}}', circleListHTML).replace('{{highListHTML}}', highListHTML);
-    this.elems.circleList = this.elems.el.querySelector('.select-options');
+    this.elems.circleList = this.elems.el.querySelector('.select-options-list');
     this.elems.circleItems = this.elems.el.querySelectorAll('.select-option');
 
     this.elems.highlight = this.elems.el.querySelector('.select-highlight');
@@ -267,6 +273,7 @@ var scrollSelector = class {
     this.elems.circleList.style.transform = `translate3d(0, ${move}px, 0)`;
     this.elems.highlightList.style.transform = `translate3d(0, ${move}px, 0)`;
 
+    /* 수정필요
     [...this.elems.circleItems].forEach((itemElem) => {
       if (Math.abs(itemElem.dataset.index - scroll) > this.quarterCount) {
         itemElem.style.visibility = 'hidden';
@@ -274,6 +281,7 @@ var scrollSelector = class {
         itemElem.style.visibility = 'visible';
       }
     });
+    */
 
     return scroll;
   }

@@ -119,8 +119,7 @@ function fn_initDateSelector() {
     el: '#birthYear',
     option: fn_getDateOption('year'),
     value: now.getFullYear(),
-    count: 20,
-    sensitivity: 5, // 숫자가 낮을수록 돌렸을때 팽그르르 돌며, 초기 select 할때도 느려진다. 기본값은 0.8
+    // sensitivity: 5, // 숫자가 낮을수록 돌렸을때 팽그르르 돌며, 초기 select 할때도 느려진다. 기본값은 0.8
     onChange: (selected) => {
       fn_dateChanged('year');
     }
@@ -132,7 +131,6 @@ function fn_initDateSelector() {
     loop: true,
     option: fn_getDateOption('month'),
     value: now.getMonth() + 1,
-    count: 20,
     sensitivity: 5, // 숫자가 낮을수록 돌렸을때 팽그르르 돌며, 초기 select 할때도 느려진다. 기본값은 0.8
     onChange: (selected) => {
       fn_dateChanged('month');
@@ -143,7 +141,6 @@ function fn_initDateSelector() {
     el: '#birthDate',
     option: fn_getDateOption('date'),
     value: now.getDate(),
-    count: 20,
     sensitivity: 5, // 숫자가 낮을수록 돌렸을때 팽그르르 돌며, 초기 select 할때도 느려진다. 기본값은 0.8
     onChange: (selected) => {
       fn_dateChanged('date');
