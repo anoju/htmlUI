@@ -172,14 +172,14 @@ var scrollSelector = class {
     }
 
     let template = `
-		<div class="select-wrap">
+		<div class="scroll-selector">
 			<ul class="select-options" style="transform: translate3d(0, 0, ${-this.radius}px) rotateX(0deg);">
 			{{circleListHTML}}
 			<!-- <li class="select-option">a0</li> -->
 			</ul>
-			<div class="highlight">
-			<ul class="highlight-list">
-				<!-- <li class="highlight-item"></li> -->
+			<div class="select-highlight">
+			<ul class="select-highlight-list">
+				<!-- <li class="select-highlight-item"></li> -->
 				{{highListHTML}}
 			</ul>
 			</div>
@@ -214,7 +214,7 @@ var scrollSelector = class {
     // 중간 강조 HTML
     let highListHTML = '';
     for (let i = 0; i < source.length; i++) {
-      highListHTML += `<li class="highlight-item" style="height: ${this.itemHeight}px;">
+      highListHTML += `<li class="select-highlight-item" style="height: ${this.itemHeight}px;">
 							${source[i].text}
 						</li>`;
     }
@@ -247,19 +247,19 @@ var scrollSelector = class {
 
       // 강조
       highListHTML =
-        `<li class="highlight-item" style="height: ${this.itemHeight}px;">
+        `<li class="select-highlight-item" style="height: ${this.itemHeight}px;">
 							${source[sourceLength - 1].text}
 						</li>` + highListHTML;
-      highListHTML += `<li class="highlight-item" style="height: ${this.itemHeight}px;">${source[0].text}</li>`;
+      highListHTML += `<li class="select-highlight-item" style="height: ${this.itemHeight}px;">${source[0].text}</li>`;
     }
 
     this.elems.el.innerHTML = template.replace('{{circleListHTML}}', circleListHTML).replace('{{highListHTML}}', highListHTML);
     this.elems.circleList = this.elems.el.querySelector('.select-options');
     this.elems.circleItems = this.elems.el.querySelectorAll('.select-option');
 
-    this.elems.highlight = this.elems.el.querySelector('.highlight');
-    this.elems.highlightList = this.elems.el.querySelector('.highlight-list');
-    this.elems.highlightitems = this.elems.el.querySelectorAll('.highlight-item');
+    this.elems.highlight = this.elems.el.querySelector('.select-highlight');
+    this.elems.highlightList = this.elems.el.querySelector('.select-highlight-list');
+    this.elems.highlightitems = this.elems.el.querySelectorAll('.select-highlight-item');
 
     if (this.type === 'infinite') {
       this.elems.highlightList.style.top = -this.itemHeight + 'px';
