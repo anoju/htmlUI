@@ -52,6 +52,8 @@ var scrollSelector = class {
     };
 
     this.itemHeight = this.elems.el.offsetHeight / (this.options.outside * 2 + 1); // 각 높이
+    const _wrap = this.elems.el.closest('.scroll-selector-wrap');
+    if (_wrap) _wrap.style.setProperty('--select-item-height', this.itemHeight + 'px');
     // this.itemAngle = 90 / this.options.count; // 각 항목 사이의 회전 각도. 필요???
     // this.radius = this.itemHeight / Math.tan((this.itemAngle * Math.PI) / 260); // 링 반경. 필요???
 
@@ -175,9 +177,9 @@ var scrollSelector = class {
     const clipPath = `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% ${this.itemHeight * (this.options.outside + 1)}px, 100% ${this.itemHeight * (this.options.outside + 1)}px, 100% ${this.itemHeight * this.options.outside}px, 0% ${this.itemHeight * this.options.outside}px, 0% 0%)`
 
     let template = `
-		<div class="scroll-selector">
+		<div class="scroll-selector" style="--select-item-height:${this.itemHeight}px;">
       <div class="select-options" style="-webkit-clip-path:${clipPath};clip-path:${clipPath};">
-			<ul class="select-options-list" style="padding: ${this.itemHeight * this.options.outside}px 0;line-height:${this.itemHeight}px;">
+			<ul class="select-options-list" style="padding: ${this.itemHeight * this.options.outside}px 0;">
 			{{circleListHTML}}
 			<!-- <li class="select-option">a0</li> -->
 			</ul>
@@ -239,8 +241,8 @@ var scrollSelector = class {
       this.elems.highlightList.style.top = -this.itemHeight + 'px';
     }
 
-    this.elems.highlight.style.height = this.itemHeight + 'px';
-    this.elems.highlight.style.lineHeight = this.itemHeight + 'px';
+    // this.elems.highlight.style.height = this.itemHeight + 'px';
+    // this.elems.highlight.style.lineHeight = this.itemHeight + 'px';
   }
 
   /**
