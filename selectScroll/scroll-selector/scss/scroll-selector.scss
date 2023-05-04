@@ -73,5 +73,6 @@
     color: #FF69A0;
     height: var(--select-item-height);
     line-height: var(--select-item-height);
+    pointer-events: none;
   }
 }
