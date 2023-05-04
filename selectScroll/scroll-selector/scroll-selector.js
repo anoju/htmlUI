@@ -14,6 +14,7 @@ var scrollSelector = class {
     let defaults = {
       el: '', // dom
       loop: false,
+      outside: 2,
       count: 20,
       sensitivity: 0.8,
       option: [], // 옵션 {value: xx, text: xx}
@@ -50,7 +51,7 @@ var scrollSelector = class {
       touchend: null
     };
 
-    this.itemHeight = (this.elems.el.offsetHeight * 3) / this.options.count; // 각 높이
+    this.itemHeight = this.elems.el.offsetHeight / (this.options.outside * 2 + 1); // 각 높이
     this.itemAngle = 90 / this.options.count; // 각 항목 사이의 회전 각도
     this.radius = this.itemHeight / Math.tan((this.itemAngle * Math.PI) / 260); // 링 반경
 
@@ -173,7 +174,7 @@ var scrollSelector = class {
 
     let template = `
 		<div class="scroll-selector">
-			<ul class="select-options" style="transform: translate3d(0, 0, ${-this.radius}px) rotateX(0deg);">
+			<ul class="select-options" style="padding: ${this.itemHeight * this.options.outside}px 0;line-height:${this.itemHeight}px">
 			{{circleListHTML}}
 			<!-- <li class="select-option">a0</li> -->
 			</ul>
@@ -200,57 +201,24 @@ var scrollSelector = class {
     // selected HTML
     let circleListHTML = '';
     for (let i = 0; i < option.length; i++) {
-      circleListHTML += `<li class="select-option"
-						style="
-						top: ${this.itemHeight * -0.5}px;
-						height: ${this.itemHeight}px;
-						line-height: ${this.itemHeight}px;
-						transform: rotateX(${-this.itemAngle * i}deg) translate3d(0, 0, ${this.radius}px);
-						"
-						data-index="${i}"
-						>${option[i].text}</li>`;
+      circleListHTML += `<li class="select-option" data-index="${i}">${option[i].text}</li>`;
     }
 
     // 중간 강조 HTML
     let highListHTML = '';
     for (let i = 0; i < option.length; i++) {
-      highListHTML += `<li class="select-highlight-item" style="height: ${this.itemHeight}px;">
-							${option[i].text}
-						</li>`;
+      highListHTML += `<li class="select-highlight-item">${option[i].text}</li>`;
     }
 
     if (this.options.loop) {
       // 링 head tail
-      for (let i = 0; i < this.quarterCount; i++) {
-        // head
-        circleListHTML =
-          `<li class="select-option"
-						style="
-							top: ${this.itemHeight * -0.5}px;
-							height: ${this.itemHeight}px;
-							line-height: ${this.itemHeight}px;
-							transform: rotateX(${this.itemAngle * (i + 1)}deg) translate3d(0, 0, ${this.radius}px);
-						"
-						data-index="${-i - 1}"
-						>${option[optionLength - i - 1].text}</li>` + circleListHTML;
-        // tail
-        circleListHTML += `<li class="select-option"
-						style="
-							top: ${this.itemHeight * -0.5}px;
-							height: ${this.itemHeight}px;
-							line-height: ${this.itemHeight}px;
-							transform: rotateX(${-this.itemAngle * (i + optionLength)}deg) translate3d(0, 0, ${this.radius}px);
-						"
-						data-index="${i + optionLength}"
-						>${option[i].text}</li>`;
-      }
+      for (let i = 0; i < this.outside; i++) {
+        circleListHTML = `<li class="select-option" data-index="${-i - 1}">${option[optionLength - i - 1].text}</li>` + circleListHTML;
+        circleListHTML += `<li class="select-option"  data-index="${i + optionLength}">${option[i].text}</li>`;
 
-      // 강조
-      highListHTML =
-        `<li class="select-highlight-item" style="height: ${this.itemHeight}px;">
-							${option[optionLength - 1].text}
-						</li>` + highListHTML;
-      highListHTML += `<li class="select-highlight-item" style="height: ${this.itemHeight}px;">${option[0].text}</li>`;
+        highListHTML = `<li class="select-highlight-item">${option[optionLength - i - 1].text}</li>` + highListHTML;
+        highListHTML += `<li class="select-highlight-item">${option[i].text}</li>`;
+      }
     }
 
     this.elems.el.innerHTML = template.replace('{{circleListHTML}}', circleListHTML).replace('{{highListHTML}}', highListHTML);
@@ -291,11 +259,13 @@ var scrollSelector = class {
    * @return 지정된 정규화 후 스크롤을 반환
    */
   _moveTo(scroll) {
+    let move = -scroll * this.itemHeight;
     if (this.loop) {
       scroll = this._normalizeScroll(scroll);
+      move = -(scroll + this.outside) * this.itemHeight;
     }
-    this.elems.circleList.style.transform = `translate3d(0, 0, ${-this.radius}px) rotateX(${this.itemAngle * scroll}deg)`;
-    this.elems.highlightList.style.transform = `translate3d(0, ${-scroll * this.itemHeight}px, 0)`;
+    this.elems.circleList.style.transform = `translate3d(0, ${move}px, 0)`;
+    this.elems.highlightList.style.transform = `translate3d(0, ${move}px, 0)`;
 
     [...this.elems.circleItems].forEach((itemElem) => {
       if (Math.abs(itemElem.dataset.index - scroll) > this.quarterCount) {
@@ -305,8 +275,6 @@ var scrollSelector = class {
       }
     });
 
-    // console.log(scroll);
-    // console.log(`translate3d(0, 0, ${-this.radius}px) rotateX(${-this.itemAngle * scroll}deg)`);
     return scroll;
   }
 
