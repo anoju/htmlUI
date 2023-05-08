@@ -1,7 +1,9 @@
 $scroll-selector-bg: #000;
-.scroll-selector-wrap {
+:root {
   --scroll-selector-item-height: 32px;
   --scroll-selector-outside: 2;
+}
+.scroll-selector-wrap {
   display: flex;
   justify-content: center;
   height: 200px;
