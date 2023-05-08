@@ -243,6 +243,22 @@ var scrollSelector = class {
     return normalizedScroll;
   }
 
+  _cubicBezier(t) {
+    const p0 = 0;
+    const p1 = 0;
+    const p2 = 1;
+    const p3 = 1;
+
+    const t2 = t * t;
+    const t3 = t2 * t;
+    const mt = 1 - t;
+    const mt2 = mt * mt;
+    const mt3 = mt2 * mt;
+
+    const x = p0 * mt3 + 3 * p1 * mt2 * t + 3 * p2 * mt * t2 + p3 * t3;
+    return x;
+  }
+
   /**
    * 스크롤로 이동, 애니메이션 없음
    * @param {init} scroll
@@ -257,29 +273,15 @@ var scrollSelector = class {
     this.elems.circleList.style.transform = `translate3d(0, ${move}px, 0)`;
     this.elems.highlightList.style.transform = `translate3d(0, ${move}px, 0)`;
 
-    function cubicBezier(t) {
-      const p0 = 0;
-      const p1 = 0;
-      const p2 = 1;
-      const p3 = 1;
-
-      const t2 = t * t;
-      const t3 = t2 * t;
-      const mt = 1 - t;
-      const mt2 = mt * mt;
-      const mt3 = mt2 * mt;
-
-      const x = p0 * mt3 + 3 * p1 * mt2 * t + 3 * p2 * mt * t2 + p3 * t3;
-      return x;
-    }
-
     /* 수정*/
     [...this.elems.circleItems].forEach((itemElem) => {
       const idx = Math.abs(itemElem.dataset.index);
       if ((scroll - this.outside - 1) < idx && idx < (scroll + this.outside + 1)) {
         itemElem.style.removeProperty('visibility');
-        const deg = 15 * cubicBezier((scroll - idx) / (this.outside + 1));
-        const scale = 1 - (cubicBezier(Math.abs(scroll - idx) / (this.outside + 1)) / 10);
+        const sclIdxVal = this._cubicBezier(Math.abs(scroll - idx) / (this.outside + 1))
+        let deg = 30 * sclIdxVal;
+        if (idx > scroll) deg = '-' + deg;
+        const scale = 1 - (sclIdxVal / 20);
 
         // console.log(scale)
         itemElem.style.transform = `rotateX(${deg}deg) scale(${scale})`;
