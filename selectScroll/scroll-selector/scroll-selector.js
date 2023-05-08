@@ -437,7 +437,17 @@ var scrollSelector = class {
     document.removeEventListener('mousedown', this.events['touchstart']);
     document.removeEventListener('mousemove', this.events['touchmove']);
     document.removeEventListener('mouseup', this.events['touchend']);
+
     // 요소제거
+    this.elems.el.classList.remove('scroll-selector');
+    const elWrap = this.elems.el.closest('.scroll-selector-wrap');
+    if (elWrap && !elWrap.querySelector('.scroll-selector')){
+      elWrap.style.removeProperty('--scroll-selector-item-height');
+      elWrap.style.removeProperty('--scroll-selector-outside');
+    } else {
+      this.elems.el.style.removeProperty('--scroll-selector-item-height');
+      this.elems.el.style.removeProperty('--scroll-selector-outside');
+    }
     this.elems.el.innerHTML = '';
     this.elems = null;
   }

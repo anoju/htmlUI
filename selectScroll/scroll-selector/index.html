@@ -55,14 +55,20 @@ $(document).ready(function() {
   });
 
   // 다음 버튼 클릭시
-  $('#divBirthday .btn_progress').on('click', function() {
+  $('.btn_progress').on('click', function() {
     // 한번 더 validation Check
-    if (!fn_checkBirthdayValid(true)) return;
-
-    getPageAjax('/login/gender', null).done(function(result) {
-      $('#joinForm').append(result); // 성별 선택 화면 붙이고
-      $('#divBirthday').hide(); // 현재 화면(생년월일) 숨기기
-    });
+    if(yearSelector) {
+      yearSelector.destroy();
+      yearSelector = null;
+    }else if(monthSelector) {
+      monthSelector.destroy();
+      monthSelector = null;
+    } else if(dateSelector) {
+      dateSelector.destroy();
+      dateSelector = null;
+    } else{
+      fn_initDateSelector();
+    }
   });
 });
 
