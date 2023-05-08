@@ -267,7 +267,7 @@ var scrollSelector = class {
         const gap = Math.floor((idx - scroll) * 10000) / 10000;
         const deg = gap * (40 / this.outside);
         const scale = 1 - Math.abs(gap / 30);
-        console.log(scale)
+        // console.log(scale)
         itemElem.style.transform = `rotateX(${deg}deg) scale(${scale})`;
       } else {
         itemElem.style.visibility = 'hidden';
