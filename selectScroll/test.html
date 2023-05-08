@@ -32,6 +32,28 @@
 <div class="cropped">
   <img src="../img/temp.jpg" alt="">
 </div>
+<script>
+function cubicBezier(t) {
+  const p0 = 0;
+  const p1 = 0;
+  const p2 = 1;
+  const p3 = 1;
 
+  const t2 = t * t;
+  const t3 = t2 * t;
+  const mt = 1 - t;
+  const mt2 = mt * mt;
+  const mt3 = mt2 * mt;
+
+  const x = p0 * mt3 + 3 * p1 * mt2 * t + 3 * p2 * mt * t2 + p3 * t3;
+  return x;
+}
+
+
+for (let i = 0; i <= 1; i += 0.01) {
+  const value = cubicBezier(i);
+  console.log(value);
+}
+</script>
 </body>
 </html>

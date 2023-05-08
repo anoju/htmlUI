@@ -48,8 +48,6 @@ var scrollSelector = class {
     };
 
     this.itemHeight = this.elems.el.offsetHeight / (this.options.outside * 2 + 1); // 각 높이
-    const _wrap = this.elems.el.closest('.scroll-selector-wrap');
-    if (_wrap) _wrap.style.setProperty('--scroll-selector-item-height', this.itemHeight + 'px');
 
     this.scroll = 0; // 단위는 항목의 높이입니다.
     this._init();
@@ -170,22 +168,16 @@ var scrollSelector = class {
 
     const clipPath = `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% ${this.itemHeight * (this.options.outside + 1)}px, 100% ${this.itemHeight * (this.options.outside + 1)}px, 100% ${this.itemHeight * this.options.outside}px, 0% ${this.itemHeight * this.options.outside}px, 0% 0%)`
 
-    let template = `
-		<div class="scroll-selector" style="--scroll-selector-item-height:${this.itemHeight}px;">
-      <div class="select-options" style="-webkit-clip-path:${clipPath};clip-path:${clipPath};">
-			<ul class="select-options-list" role="listbox" style="padding: ${this.itemHeight * this.options.outside}px 0;">
-			{{circleListHTML}}
-			<!-- <li class="select-option" role="option">a0</li> -->
-			</ul>
+    let template = `<div class="select-options" style="-webkit-clip-path:${clipPath};clip-path:${clipPath};">
+        <ul class="select-options-list" role="listbox" style="padding: ${this.itemHeight * this.options.outside}px 0;">
+          {{circleListHTML}}
+        </ul>
       </div>
 			<div class="select-highlight">
-			<ul class="select-highlight-list">
-				<!-- <li class="select-highlight-item"></li> -->
-				{{highListHTML}}
-			</ul>
-			</div>
-		</div>
-		`;
+        <ul class="select-highlight-list">
+          {{highListHTML}}
+        </ul>
+			</div>`;
 
     this.option = option;
     let optionLength = option.length;
@@ -212,6 +204,12 @@ var scrollSelector = class {
         highListHTML += `<li class="select-highlight-item">${option[i].text}</li>`;
       }
     }
+
+    this.elems.el.classList.add('scroll-selector');
+    const elWrap = this.elems.el.closest('.scroll-selector-wrap');
+    const setWrapCss = `--scroll-selector-item-height:${this.itemHeight}px;--scroll-selector-outside:${this.options.outside};`;
+    if (elWrap) elWrap.style.cssText = setWrapCss;
+    else this.elems.el.style.cssText = setWrapCss;
 
     this.elems.el.innerHTML = template.replace('{{circleListHTML}}', circleListHTML).replace('{{highListHTML}}', highListHTML);
     this.elems.circleList = this.elems.el.querySelector('.select-options-list');
@@ -258,6 +256,8 @@ var scrollSelector = class {
     }
     this.elems.circleList.style.transform = `translate3d(0, ${move}px, 0)`;
     this.elems.highlightList.style.transform = `translate3d(0, ${move}px, 0)`;
+
+
 
     /* 수정*/
     [...this.elems.circleItems].forEach((itemElem) => {

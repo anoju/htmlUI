@@ -1,6 +1,7 @@
 $scroll-selector-bg: #000;
 .scroll-selector-wrap {
   --scroll-selector-item-height: 32px;
+  --scroll-selector-outside: 2;
   display: flex;
   justify-content: center;
   height: 200px;
@@ -47,15 +48,17 @@ $scroll-selector-bg: #000;
     display: block;
     content: '';
     width: 100%;
-    height: calc(50% - calc(var(--scroll-selector-item-height) / 2));
+    // height: calc(50% - calc(var(--scroll-selector-item-height) / 2));
+    height: calc(var(--scroll-selector-item-height) * var(--scroll-selector-outside));
+    pointer-events: none;
   }
   &:before {
     top: 0;
-    background: linear-gradient(0deg, rgba($scroll-selector-bg, 0) 0%, rgba($scroll-selector-bg, .1) 60%, rgba($scroll-selector-bg, .8) 100%);
+    background: linear-gradient(0deg, rgba($scroll-selector-bg, 0) 0%, rgba($scroll-selector-bg, .1) 60%, rgba($scroll-selector-bg, .8) 90%, rgba($scroll-selector-bg, .9) 100%);
   }
   &:after {
     bottom: 0;
-    background: linear-gradient(180deg, rgba($scroll-selector-bg, 0) 0%, rgba($scroll-selector-bg, .1) 60%, rgba($scroll-selector-bg, .8) 100%);
+    background: linear-gradient(180deg, rgba($scroll-selector-bg, 0) 0%, rgba($scroll-selector-bg, .1) 60%, rgba($scroll-selector-bg, .8) 90%, rgba($scroll-selector-bg, .9) 100%);
   }
   ul {
     padding: 0;
