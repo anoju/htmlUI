@@ -243,6 +243,7 @@ var scrollSelector = class {
     return normalizedScroll;
   }
 
+  //cubic-bezier(0.5, 0, 1, 0.5)
   _cubicBezier(t) {
     const p0 = 0;
     const p1 = 0;
@@ -441,7 +442,7 @@ var scrollSelector = class {
     // 요소제거
     this.elems.el.classList.remove('scroll-selector');
     const elWrap = this.elems.el.closest('.scroll-selector-wrap');
-    if (elWrap && !elWrap.querySelector('.scroll-selector')){
+    if (elWrap && !elWrap.querySelector('.scroll-selector')) {
       elWrap.style.removeProperty('--scroll-selector-item-height');
       elWrap.style.removeProperty('--scroll-selector-outside');
     } else {
