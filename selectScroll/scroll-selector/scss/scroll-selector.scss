@@ -1,4 +1,5 @@
 $scroll-selector-bg: #000;
+$scroll-selector-color: #FF69A0;
 :root {
   --scroll-selector-item-height: 32px;
   --scroll-selector-outside: 2;
@@ -17,7 +18,7 @@ $scroll-selector-bg: #000;
     left: 24px;
     right: 24px;
     height: var(--scroll-selector-item-height);
-    border: 1px solid #FFA4BD;
+    border: 1px solid $scroll-selector-color;
     transform: translateY(-50%);
     border-radius: 8px;
     box-sizing: border-box;
@@ -78,7 +79,7 @@ $scroll-selector-bg: #000;
     transform: translateY(-50%);
     width: 100%;
     overflow: hidden;
-    color: #FF69A0;
+    color: $scroll-selector-color;
     height: var(--scroll-selector-item-height);
     line-height: var(--scroll-selector-item-height);
     pointer-events: none;
