@@ -1,15 +1,5 @@
-// wheel datepicker
-var easing = {
-  easeOutCubic: function(pos) {
-    return Math.pow(pos - 1, 3) + 1;
-  },
-  easeOutQuart: function(pos) {
-    return -(Math.pow(pos - 1, 4) - 1);
-  }
-};
-
 //class scrollSelector {
-var scrollSelector = class {
+const scrollSelector = class {
   constructor(options) {
     let defaults = {
       el: '', // dom
@@ -32,8 +22,10 @@ var scrollSelector = class {
     this.moveT = 0; // 스크롤 tick
     this.moving = false;
 
+    const setEl = typeof this.options.el === 'string' ? document.querySelector(this.options.el) : this.options.el;
+    if (!setEl) return console.error('scrollSelector - Invalid Element');
     this.elems = {
-      el: document.querySelector(this.options.el),
+      el: setEl,
       circleList: null,
       circleItems: null, // list
 
@@ -160,6 +152,15 @@ var scrollSelector = class {
 
     // console.log('end');
   }
+
+  _easing = {
+    easeOutCubic: function(pos) {
+      return Math.pow(pos - 1, 3) + 1;
+    },
+    easeOutQuart: function(pos) {
+      return -(Math.pow(pos - 1, 4) - 1);
+    }
+  };
 
   _create(option) {
     if (!option.length) {
@@ -375,7 +376,7 @@ var scrollSelector = class {
         pass = new Date().getTime() / 1000 - start;
 
         if (pass < t) {
-          this.scroll = this._moveTo(initScroll + easing[easingName](pass / t) * totalScrollLen);
+          this.scroll = this._moveTo(initScroll + this._easing[easingName](pass / t) * totalScrollLen);
           this.moveT = requestAnimationFrame(tick);
         } else {
           resolve();

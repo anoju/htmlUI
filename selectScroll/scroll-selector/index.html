@@ -39,21 +39,6 @@ $(document).ready(function() {
   // 생년월일 선택을 위한 wheel-selector init
   fn_initDateSelector();
 
-  // 생년월일 선택하면 하단에 선택화면 띄우기
-  // 			$("#divBirthday #input_birthday").on("click", function() {
-  // 				$("#divBirthday .selectboxD").animate({bottom:"0"}, 200);
-  // 			});
-  // 생년월일은 바로 띄우는 걸로...
-  $('#divBirthday .selectboxD').animate({
-    bottom: '0'
-  }, 200);
-
-  // 생년월일이 입력 되면..
-  $('#divBirthday [name=birthday]').on('input', function() {
-    // 생년월일 validation 체크 - 성공하면 버튼 활성화
-    fn_checkBirthdayValid();
-  });
-
   // 다음 버튼 클릭시
   $('.btn_progress').on('click', function() {
     // 한번 더 validation Check
@@ -71,48 +56,6 @@ $(document).ready(function() {
     }
   });
 });
-
-// 생년월일 validation 체크
-function fn_checkBirthdayValid(checkChild) {
-  var birthday = $('#divBirthday [name=birthday]').val();
-  if (birthday == '') {
-    $('#divBirthday .btn_progress').prop('disabled', true);
-    return false;
-  }
-
-  var birthdayArr = birthday.split('-');
-  var d = new Date();
-  d.setFullYear(birthdayArr[0], birthdayArr[1] - 1, birthdayArr[2]);
-
-  var month = d.getMonth() + 1;
-  var date = d.getDate();
-
-  var strD = d.getFullYear() + '-' + (month < 10 ? '0' + month : month) + '-' + (date < 10 ? '0' + date : date);
-
-  // 날짜 형식 오류 확인
-  if (birthday != strD) {
-    $('#divBirthday .btn_progress').prop('disabled', true);
-    return false;
-  } else {
-    if (checkChild) {
-      // 만 14세 확인
-      var today = new Date();
-      var age = today.getFullYear() - d.getFullYear();
-      const m = today.getMonth() - d.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < d.getDate())) {
-        age--;
-      }
-      if (age < 14) {
-        $('#divBirthday .btn_progress').prop('disabled', true);
-        layerAlert('죄송합니다. 클럽메타 앱 사용 기준 요건에 충족되지 않습니다.');
-        return false;
-      }
-    }
-
-    $('#divBirthday .btn_progress').prop('disabled', false);
-    return true;
-  }
-}
 
 var yearSelector;
 var monthSelector;
