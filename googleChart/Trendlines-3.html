@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>googleChart - Trendlines</title>
+<script type="text/javascript" src="./google.charts.loader.js"></script>
+<script type="text/javascript">
+google.charts.load('current', {
+  packages: ['corechart']
+});
+google.charts.setOnLoadCallback(drawChart);
+
+function drawChart() {
+  var data = google.visualization.arrayToDataTable([
+    ['X', 'Y', 'Z'],
+    [0, 4, 5],
+    [1, 2, 6],
+    [2, 4, 8],
+    [3, 6, 10],
+    [4, 4, 11],
+    [5, 8, 13],
+    [6, 12, 15],
+    [7, 15, 19],
+    [8, 25, 21],
+    [9, 34, 23],
+    [10, 50, 27]
+  ]);
+
+  var options = {
+    height: 500,
+    legend: 'none',
+    colors: ['#9575cd', '#33ac71'],
+    pointShape: 'diamond',
+    trendlines: {
+      0: {
+        type: 'exponential',
+        pointSize: 20,
+        opacity: 0.6,
+        pointsVisible: false
+      },
+      1: {
+        type: 'linear',
+        pointSize: 10,
+        pointsVisible: true
+      }
+    }
+  };
+
+  var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+
+  chart.draw(data, options);
+}
+</script>
+</head>
+<body>
+<div id="chart_div"></div>
+</body>
+</html>

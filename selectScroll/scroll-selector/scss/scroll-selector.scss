@@ -5,6 +5,7 @@ $scroll-selector-color: #FF69A0;
   --scroll-selector-outside: 2;
 }
 .scroll-selector-wrap {
+  position: relative;
   display: flex;
   justify-content: center;
   height: 200px;

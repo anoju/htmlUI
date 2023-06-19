@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>googleChart - WordTrees</title>
+<script type="text/javascript" src="./google.charts.loader.js"></script>
+<script type="text/javascript">
+google.charts.load('current', {
+  packages: ['wordtree']
+});
+google.charts.setOnLoadCallback(drawSimpleNodeChart);
+
+function drawSimpleNodeChart() {
+  var nodeListData = new google.visualization.arrayToDataTable([
+    ['id', 'childLabel', 'parent', 'size', 'weight'],
+    [0, 'Life', -1, 1, 0],
+    [1, 'Archaea', 0, 1, 0],
+    [2, 'Eukarya', 0, 5, 0],
+    [3, 'Bacteria', 0, 1, 0],
+
+    [4, 'Crenarchaeota', 1, 1, 0],
+    [5, 'Euryarchaeota', 1, 1, 0],
+    [6, 'Korarchaeota', 1, 1, 0],
+    [7, 'Nanoarchaeota', 1, 1, 0],
+    [8, 'Thaumarchaeota', 1, 1, 0],
+
+    [9, 'Amoebae', 2, 1, 0],
+    [10, 'Plants', 2, 1, 0],
+    [11, 'Chromalveolata', 2, 1, 0],
+    [12, 'Opisthokonta', 2, 5, 0],
+    [13, 'Rhizaria', 2, 1, 0],
+    [14, 'Excavata', 2, 1, 0],
+
+    [15, 'Animalia', 12, 5, 0],
+    [16, 'Fungi', 12, 2, 0],
+
+    [17, 'Parazoa', 15, 2, 0],
+    [18, 'Eumetazoa', 15, 5, 0],
+
+    [19, 'Radiata', 18, 2, 0],
+    [20, 'Bilateria', 18, 5, 0],
+
+    [21, 'Orthonectida', 20, 2, 0],
+    [22, 'Rhombozoa', 20, 2, 0],
+    [23, 'Acoelomorpha', 20, 1, 0],
+    [24, 'Deuterostomia', 20, 5, 0],
+    [25, 'Chaetognatha', 20, 2, 0],
+    [26, 'Protostomia', 20, 2, 0],
+
+    [27, 'Chordata', 24, 5, 0],
+    [28, 'Hemichordata', 24, 1, 0],
+    [29, 'Echinodermata', 24, 1, 0],
+    [30, 'Xenoturbellida', 24, 1, 0],
+    [31, 'Vetulicolia', 24, 1, 0],
+
+    [32, 'Actinobacteria', 3, 1, 0],
+    [33, 'Firmicutes', 3, 1, 0],
+    [34, 'Tenericutes', 3, 1, 0],
+    [35, 'Aquificae', 3, 1, 0],
+    [36, 'Deinococcus-Thermus', 3, 1, 0],
+    [37, 'Fibrobacteres-Chlorobi/Bacteroidetes', 3, 1, 0],
+    [38, 'Fusobacteria', 3, 1, 0],
+    [39, 'Gemmatimonadetes', 3, 1, 0],
+    [40, 'Nitrospirae', 3, 1, 0],
+    [41, 'Planctomycetes-Verrucomicrobia/Chlamydiae', 3, 1, 0],
+    [42, 'Proteobacteria', 3, 1, 0],
+    [43, 'Spirochaetes', 3, 1, 0],
+    [44, 'Synergistetes', 3, 1, 0],
+    [45, 'Acidobacteria', 3, 1, 0],
+    [46, 'Chloroflexi', 3, 1, 0],
+    [47, 'Chrysiogenetes', 3, 1, 0],
+    [48, 'Cyanobacteria', 3, 1, 0],
+    [49, 'Deferribacteres', 3, 1, 0],
+    [50, 'Dictyoglomi', 3, 1, 0],
+    [51, 'Thermodesulfobacteria', 3, 1, 0],
+    [52, 'Thermotogae', 3, 1, 0]
+  ]);
+
+  var options = {
+    maxFontSize: 14,
+    wordtree: {
+      format: 'explicit',
+      type: 'suffix'
+    }
+  };
+
+  var wordtree = new google.visualization.WordTree(
+    document.getElementById('wordtree_explicit_maxfontsize'));
+  wordtree.draw(nodeListData, options);
+}
+</script>
+</head>
+<body>
+<div id="wordtree_explicit_maxfontsize" style="width: 900px; height: 500px;"></div>
+</body>
+</html>
