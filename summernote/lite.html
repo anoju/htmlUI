@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<link rel="stylesheet" href="summernote-lite.0.8.18.css">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+}
+.textarea {
+  margin: 10px;
+}
+.textarea textarea {
+  width: 100%;
+}
+</style>
+</head>
+<body>
+<div class="textarea"><textarea id="content" rows="10"></textarea></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="summernote-lite.0.8.18.js"></script>
+<script src="summernote-ko-KR.0.8.18.js"></script>
+<script>
+function summernoteInit() {
+  $('#content').summernote({
+    // height: $('.edit-area').height() * 0.85, // 에디터 parent의 85% 비율
+    height: $('#content').height(),
+    focus: false, // 에디터 로딩후 포커스를 맞출지 여부
+    lang: "ko-KR", // 한글 설정
+    placeholder: '최대 2048자까지 쓸 수 있습니다', //placeholder 설정
+    toolbar: [
+      // [groupName, [list of button]]
+      ['fontname', ['fontname']],
+      ['fontsize', ['fontsize']],
+      ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+      ['color', ['forecolor', 'color']],
+      ['table', ['table']],
+      ['para', ['paragraph']],
+      ['height', ['height']],
+      ['insert', ['picture', 'link']],
+      ['view', ['help']]
+    ],
+    fontNames: ['sans-serif', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', '맑은 고딕', '궁서', '굴림체', '굴림', '돋음체', '바탕체'],
+    fontSizes: ['8', '9', '10', '11', '12', '14', '16', '18', '20', '22', '24', '28', '30', '36', '50', '72']
+  });
+}
+summernoteInit();
+</script>
+</body>
+</html>
