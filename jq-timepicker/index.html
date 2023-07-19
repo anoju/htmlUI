@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<link rel="stylesheet" href="./jquery.timepicker_1.3.5.min.css">
+<style>
+input.timepicker {
+  width: 100px;
+  height: 40px;
+  padding: 0 40px 0 10px;
+  text-align: center;
+  font-size: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns%23' xmlns='http://www.w3.org/2000/svg' xmlns:cc='http://web.resource.org/cc/' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:svg='http://www.w3.org/2000/svg' xmlns:inkscape='http://www.inkscape.org/namespaces/inkscape' xmlns:sodipodi='http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd' xmlns:ns1='http://sozi.baierouge.fr' id='Layer_1' enable-background='new 0 0 88.061 100' xml:space='preserve' viewBox='0 0 88.061 100' version='1.1' y='0px' x='0px'%3E%3Cpath d='m6.755 25.72c7.382-9.081 18.004-15.425 30.093-17.245l-5.514-6.871c-2.868-2.967-9.069-1.697-16.868 2.807-7.799 4.503-11.998 9.237-10.864 13.204l3.153 8.105z'/%3E%3Cpath d='m44.03 23.948c-1.658 0-3.002 1.344-3.002 3.002v26.018h-26.018c-1.658 0-3.002 1.344-3.002 3.002s1.344 3.002 3.002 3.002h29.02c1.658 0 3.002-1.344 3.002-3.002v-29.02c0-1.658-1.344-3.002-3.002-3.002z'/%3E%3Cpath d='m81.306 25.72c-7.382-9.081-18.004-15.425-30.093-17.245l5.514-6.871c2.868-2.967 9.069-1.697 16.868 2.807 7.799 4.503 11.998 9.237 10.864 13.204l-3.153 8.105z'/%3E%3Cpath d='m44.03 11.939c-24.278 0-44.03 19.752-44.03 44.03 0 24.28 19.752 44.031 44.03 44.031s44.03-19.752 44.03-44.031c0.001-24.278-19.751-44.03-44.03-44.03zm0 82.057c-20.968 0-38.026-17.059-38.026-38.026s17.058-38.027 38.026-38.027 38.026 17.059 38.026 38.026-17.058 38.027-38.026 38.027z'/%3E%3Cmetadata%3E%3Crdf:RDF%3E%3Ccc:Work%3E%3Cdc:format%3Eimage/svg+xml%3C/dc:format%3E%3Cdc:type rdf:resource='http://purl.org/dc/dcmitype/StillImage'/%3E%3Ccc:license rdf:resource='http://creativecommons.org/licenses/publicdomain/'/%3E%3Cdc:publisher%3E%3Ccc:Agent rdf:about='http://openclipart.org/'%3E%3Cdc:title%3EOpenclipart%3C/dc:title%3E%3C/cc:Agent%3E%3C/dc:publisher%3E%3Cdc:title%3EOrologio%3C/dc:title%3E%3Cdc:date%3E2011-12-27T11:21:58%3C/dc:date%3E%3Cdc:description/%3E%3Cdc:source%3Ehttps://openclipart.org/detail/166606/orologio-by-mrtossum%3C/dc:source%3E%3Cdc:creator%3E%3Ccc:Agent%3E%3Cdc:title%3EMrTossum%3C/dc:title%3E%3C/cc:Agent%3E%3C/dc:creator%3E%3Cdc:subject%3E%3Crdf:Bag%3E%3Crdf:li%3Etimepiece%3C/rdf:li%3E%3Crdf:li%3Eclock%3C/rdf:li%3E%3Crdf:li%3Etime%3C/rdf:li%3E%3Crdf:li%3Eschedule%3C/rdf:li%3E%3Crdf:li%3Eicon%3C/rdf:li%3E%3Crdf:li%3Etimer%3C/rdf:li%3E%3Crdf:li%3EGUI%3C/rdf:li%3E%3Crdf:li%3Eicon%3C/rdf:li%3E%3C/rdf:Bag%3E%3C/dc:subject%3E%3C/cc:Work%3E%3Ccc:License rdf:about='http://creativecommons.org/licenses/publicdomain/'%3E%3Ccc:permits rdf:resource='http://creativecommons.org/ns%23Reproduction'/%3E%3Ccc:permits rdf:resource='http://creativecommons.org/ns%23Distribution'/%3E%3Ccc:permits rdf:resource='http://creativecommons.org/ns%23DerivativeWorks'/%3E%3C/cc:License%3E%3C/rdf:RDF%3E%3C/metadata%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 22px auto;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="./jquery.timepicker_1.3.5_custom.min.js"></script>
+</head>
+<body>
+<input type="text" class="timepicker">
+<script>
+$(document).ready(function() {
+  $('input.timepicker').timepicker({
+    timeFormat: 'HH:mm',
+    interval: 30,
+    minTime: '00:00',
+    maxTime: '23:59',
+    // defaultTime: '11',
+    startTime: '00:00',
+    dynamic: false,
+    dropdown: true,
+    scrollbar: true
+  });
+});
+</script>
+</body>
+</html>
