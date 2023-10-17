@@ -5,9 +5,13 @@ function grabResize() {
   const wrap = document.querySelector('.wrap');
   wrap.addEventListener('mousedown', _start, false);
   wrap.addEventListener('mousemove', _move, false);
-  wrap.addEventListener('mouseup', _end, true);
-  wrap.addEventListener('touchstart', _start, false);
-  wrap.addEventListener('touchmove', _move, false);
+  wrap.addEventListener('mouseup', _end, false);
+  wrap.addEventListener('touchstart', _start, {
+    passive: true
+  });
+  wrap.addEventListener('touchmove', _move, {
+    passive: true
+  });
   wrap.addEventListener('touchend', _end, false);
 
   let grabing = false;
