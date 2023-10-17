@@ -1,6 +1,5 @@
 setGridSize();
 grabResize();
-// window.addEventListener('resize', setGridSize, false)
 
 function grabResize() {
   const wrap = document.querySelector('.wrap');
@@ -16,6 +15,9 @@ function grabResize() {
   let $startY = 0;
   let $prevVal = 0;
   let $nextVal = 0;
+  let $prevPer = 0;
+  let $nextPer = 0;
+  let $totalPer = 0;
   let $target;
   let prevEl;
   let nextEl;
@@ -32,13 +34,27 @@ function grabResize() {
       prevEl = $target.previousElementSibling;
       nextEl = $target.nextElementSibling;
       if ($target.classList.contains('col')) {
-        if (prevEl) $prevVal = prevEl.offsetWidth;
-        if (nextEl) $nextVal = nextEl.offsetWidth;
+        if (prevEl) {
+          $prevVal = prevEl.offsetWidth;
+          $prevPer = parseFloat(prevEl.style.width.replace('%', ''));
+        }
+        if (nextEl) {
+          $nextVal = nextEl.offsetWidth;
+          $nextPer = parseFloat(nextEl.style.width.replace('%', ''));
+        }
       }
       if ($target.classList.contains('row')) {
-        if (prevEl) $prevVal = prevEl.offsetHeight;
-        if (nextEl) $nextVal = nextEl.offsetHeight;
+        if (prevEl) {
+          $prevVal = prevEl.offsetHeight;
+          $prevPer = parseFloat(prevEl.style.height.replace('%', ''));
+        }
+        if (nextEl) {
+          $nextVal = nextEl.offsetHeight;
+          $nextPer = parseFloat(nextEl.style.height.replace('%', ''));
+        }
       }
+      $totalPer = $prevPer + $nextPer;
+      console.log($totalPer, $prevPer, $nextPer)
     }
   }
 
@@ -50,23 +66,32 @@ function grabResize() {
     const $moveY = $clientY - $startY;
     const $minWidth = 150;
     const $minHeight = 100;
+    const $maxWidth = (prevEl ? prevEl.offsetWidth : 0) + (nextEl ? nextEl.offsetWidth : 0) - $minWidth;
+    const $maxHeight = (prevEl ? prevEl.offsetHeight : 0) + (nextEl ? nextEl.offsetHeight : 0) - $minHeight;
+
     if ($target.classList.contains('col')) {
-      $prevW = Math.round(($prevVal + $moveX) / $wrapWidth() * 10000) / 100;
-      $nextW = Math.round(($nextVal - $moveX) / $wrapWidth() * 10000) / 100;
-      if ($prevVal + $moveX >= $minWidth && $nextVal - $moveX >= $minWidth) {
-        prevEl.style.width = $prevW + '%';
-        nextEl.style.width = $nextW + '%';
+      const $prevX = $prevVal + $moveX;
+      if (prevEl && $prevX >= $minWidth && $prevX <= $maxWidth) {
+        const getDistancePer = getDistancePercentage($prevX);
+        prevEl.style.width = getDistancePer + '%';
+        if (nextEl) nextEl.style.width = $totalPer - getDistancePer + '%';
       }
+      //const $nextX = $nextVal - $moveX;
+      // if (nextEl && $nextX >= $minWidth && $nextX <= $maxWidth) nextEl.style.width = getDistancePercentage($nextX) + '%';
     }
     if ($target.classList.contains('row')) {
-      $prevH = Math.round(($prevVal + $moveY) / $wrapHeight() * 10000) / 100;
-      $nextH = Math.round(($nextVal - $moveY) / $wrapHeight() * 10000) / 100;
-      if ($prevVal + $moveY >= $minHeight && $nextVal - $moveY >= $minHeight) {
-        prevEl.style.height = $prevH + '%';
-        nextEl.style.height = $nextH + '%';
+      const $prevY = $prevVal + $moveY;
+      if (prevEl && $prevY >= $minHeight && $prevY <= $maxHeight) {
+        const getDistancePer = getDistancePercentage($prevY, 'height')
+        prevEl.style.height = getDistancePer + '%';
+        if (nextEl) nextEl.style.height = $totalPer - getDistancePer + '%';
       }
+      // const $nextY = $nextVal - $moveY;
+      // if (nextEl && $nextY >= $minHeight && $nextY <= $maxHeight) nextEl.style.height = getDistancePercentage($nextY, 'height') + '%';
     }
   }
+
+
 
   function _end(e) {
     if (!grabing) return;
@@ -79,6 +104,11 @@ function grabResize() {
   }
 }
 
+function getDistancePercentage(distance, type) {
+  const $sum = type === 'height' ? grabWrap().height : grabWrap().width;
+  const $distance = Math.round(distance / $sum * 1000000) / 10000;
+  return $distance;
+}
 
 function getGridSize() {
   const $cols = document.querySelectorAll('.wrap-col');
@@ -105,8 +135,7 @@ function setGridSize() {
 
     const $cols = document.querySelectorAll('.wrap-col');
     $cols.forEach(function(colItem, i) {
-      const $w = Math.round(parseInt($colWidth[i]) / $wrapWidth() * 10000) / 100;
-      colItem.style.width = $w + '%';
+      colItem.style.width = getDistancePercentage(parseInt($colWidth[i])) + '%';
     });
   }
   const rowSize = localStorage.getItem('gridSize-row');
@@ -114,30 +143,29 @@ function setGridSize() {
     const $rowHeight = rowSize.split(',');
     const $rows = document.querySelectorAll('.wrap-row');
     $rows.forEach(function(rowItem, i) {
-      const $h = Math.round(parseInt($rowHeight[i]) / $wrapHeight() * 10000) / 100;
-      rowItem.style.height = $h + '%';
+      rowItem.style.height = getDistancePercentage(parseInt($rowHeight[i]), 'height') + '%';
     });
   }
 }
 
-function $wrapWidth() {
-  let wrapW = document.querySelector('.wrap').clientWidth;
+function grabWrap() {
+  let width = document.querySelector('.wrap').clientWidth;
   const colGrab = document.querySelectorAll('.wrap-grab.col');
   if (colGrab) {
     colGrab.forEach(function(item) {
-      wrapW -= item.offsetWidth
+      width -= item.offsetWidth;
     });
   }
-  return wrapW;
-}
 
-function $wrapHeight() {
-  let wrapH = document.querySelector('.wrap').clientHeight;
+  let height = document.querySelector('.wrap').clientHeight;
   const rowGrab = document.querySelectorAll('.wrap-grab.row');
   if (rowGrab) {
     rowGrab.forEach(function(item) {
-      wrapH -= item.offsetHeight
+      height -= item.offsetHeight;
     });
   }
-  return wrapH;
+  return {
+    'width': width,
+    'height': height
+  };
 }
