@@ -70,23 +70,27 @@ function grabResize() {
 
     if ($target.classList.contains('col')) {
       const $prevX = $prevVal + $moveX;
+      const $nextX = $nextVal - $moveX;
       if (prevEl && $prevX >= $minWidth && $prevX <= $maxWidth) {
         const getDistancePer = getDistancePercentage($prevX);
         prevEl.style.width = getDistancePer + '%';
         if (nextEl) nextEl.style.width = $totalPer - getDistancePer + '%';
+      } else if (nextEl && $nextX >= $minWidth && $nextX <= $maxWidth) {
+        const getDistancePer = getDistancePercentage($nextX);
+        nextEl.style.width = getDistancePer + '%';
       }
-      //const $nextX = $nextVal - $moveX;
-      // if (nextEl && $nextX >= $minWidth && $nextX <= $maxWidth) nextEl.style.width = getDistancePercentage($nextX) + '%';
     }
     if ($target.classList.contains('row')) {
       const $prevY = $prevVal + $moveY;
+      const $nextY = $nextVal - $moveY;
       if (prevEl && $prevY >= $minHeight && $prevY <= $maxHeight) {
         const getDistancePer = getDistancePercentage($prevY, 'height')
         prevEl.style.height = getDistancePer + '%';
         if (nextEl) nextEl.style.height = $totalPer - getDistancePer + '%';
+      } else if (nextEl && $nextY >= $minWidth && $nextY <= $maxWidth) {
+        const getDistancePer = getDistancePercentage($nextY, 'height');
+        nextEl.style.height = getDistancePer + '%';
       }
-      // const $nextY = $nextVal - $moveY;
-      // if (nextEl && $nextY >= $minHeight && $nextY <= $maxHeight) nextEl.style.height = getDistancePercentage($nextY, 'height') + '%';
     }
   }
 
@@ -113,14 +117,14 @@ function getGridSize() {
   const $cols = document.querySelectorAll('.wrap-col');
   const $colsWidth = [];
   $cols.forEach(function(colItem) {
-    const $width = colItem.offsetWidth;
+    const $width = parseFloat(colItem.style.width.replace('%', ''));
     $colsWidth.push($width);
   });
 
   const $rows = document.querySelectorAll('.wrap-row');
   const $rowsHeight = [];
   $rows.forEach(function(rowItem) {
-    const $height = rowItem.offsetHeight;
+    const $height = parseFloat(rowItem.style.height.replace('%', ''));
     $rowsHeight.push($height);
   });
   localStorage.setItem('gridSize-col', $colsWidth);
@@ -134,7 +138,7 @@ function setGridSize() {
 
     const $cols = document.querySelectorAll('.wrap-col');
     $cols.forEach(function(colItem, i) {
-      colItem.style.width = getDistancePercentage(parseInt($colWidth[i])) + '%';
+      colItem.style.width = $colWidth[i] + '%';
     });
   }
   const rowSize = localStorage.getItem('gridSize-row');
@@ -142,7 +146,7 @@ function setGridSize() {
     const $rowHeight = rowSize.split(',');
     const $rows = document.querySelectorAll('.wrap-row');
     $rows.forEach(function(rowItem, i) {
-      rowItem.style.height = getDistancePercentage(parseInt($rowHeight[i]), 'height') + '%';
+      rowItem.style.height = $rowHeight[i] + '%';
     });
   }
 }
