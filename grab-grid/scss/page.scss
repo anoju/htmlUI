@@ -73,3 +73,14 @@ body {
     height: 100%;
   }
 }
+.reset {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  padding: 10px;
+  border: 0 none;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border-radius: 5px;
+  text-transform: uppercase;
+}

@@ -25,7 +25,6 @@ function grabResize() {
   function _start(e) {
     $target = e.target;
     if ($target.classList.contains('wrap-grab')) {
-      grabing = true;
       const $clientX = e.targetTouches ? e.targetTouches[0].clientX : e.clientX;
       const $clientY = e.targetTouches ? e.targetTouches[0].clientY : e.clientY;
       $startX = $clientX;
@@ -37,23 +36,28 @@ function grabResize() {
         if (prevEl) {
           $prevVal = prevEl.offsetWidth;
           $prevPer = parseFloat(prevEl.style.width.replace('%', ''));
+          if (prevEl.dataset.reset === undefined) prevEl.dataset.reset = $prevPer;
         }
         if (nextEl) {
           $nextVal = nextEl.offsetWidth;
           $nextPer = parseFloat(nextEl.style.width.replace('%', ''));
+          if (nextEl.dataset.reset === undefined) nextEl.dataset.reset = $nextPer;
         }
       }
       if ($target.classList.contains('row')) {
         if (prevEl) {
           $prevVal = prevEl.offsetHeight;
           $prevPer = parseFloat(prevEl.style.height.replace('%', ''));
+          if (prevEl.dataset.reset === undefined) prevEl.dataset.reset = $prevPer;
         }
         if (nextEl) {
           $nextVal = nextEl.offsetHeight;
           $nextPer = parseFloat(nextEl.style.height.replace('%', ''));
+          if (nextEl.dataset.reset === undefined) nextEl.dataset.reset = $nextPer;
         }
       }
       $totalPer = $prevPer + $nextPer;
+      grabing = true;
     }
   }
 
@@ -93,8 +97,6 @@ function grabResize() {
       }
     }
   }
-
-
 
   function _end(e) {
     if (!grabing) return;
@@ -171,4 +173,21 @@ function grabWrap() {
     'width': width,
     'height': height
   };
+}
+
+document.querySelector('.reset').addEventListener('click', gridReset)
+
+function gridReset() {
+  localStorage.removeItem('gridSize-col');
+  localStorage.removeItem('gridSize-row');
+  const $cols = document.querySelectorAll('.wrap-col');
+  $cols.forEach(function(colItem) {
+    colItem.style.width = colItem.dataset.reset + '%';
+    delete colItem.dataset.reset;
+  });
+  const $rows = document.querySelectorAll('.wrap-row');
+  $rows.forEach(function(rowItem, i) {
+    rowItem.style.height = rowItem.dataset.reset + '%';
+    delete rowItem.dataset.reset;
+  });
 }
