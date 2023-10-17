@@ -54,7 +54,6 @@ function grabResize() {
         }
       }
       $totalPer = $prevPer + $nextPer;
-      console.log($totalPer, $prevPer, $nextPer)
     }
   }
 
