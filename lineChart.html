@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+.box {
+  width: 300px;
+  height: 300px;
+  border: 1px solid #000;
+  position: relative;
+}
+
+.point {
+  width: 7px;
+  height: 7px;
+  background-color: red;
+  position: absolute;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.line {
+  position: absolute;
+  background-color: blue;
+  height: 1px;
+  width: 0;
+}
+</style>
+</head>
+<body>
+<div class="box" id="box">
+  <!-- 초기 상태에서 이미 두 개의 포인트가 존재 -->
+  <div class="point" style="top: 30%; left: 30%;" id="point1"></div>
+  <div class="point" style="top: 70%; left: 70%;" id="point2"></div>
+</div>
+
+<script>
+// 연결 함수 호출
+connectPoints();
+
+function connectPoints() {
+  const box = document.getElementById('box');
+  const point1 = document.getElementById('point1');
+  const point2 = document.getElementById('point2');
+
+  const line = document.createElement('div');
+  line.className = 'line';
+
+  const startX = point1.offsetLeft + point1.offsetWidth / 2;
+  const startY = point1.offsetTop + point1.offsetHeight / 2;
+  const endX = point2.offsetLeft + point2.offsetWidth / 2;
+  const endY = point2.offsetTop + point2.offsetHeight / 2;
+
+  const angle = Math.atan2(endY - startY, endX - startX);
+  const length = Math.hypot(endX - startX, endY - startY);
+
+  // 중점 위치 계산
+  line.style.left = `${startX}px`;
+  line.style.top = `${startY}px`;
+  line.style.width = `${length}px`;
+  line.style.transformOrigin = '0% 0%'; // 회전 기준점을 좌측 상단으로 설정
+  line.style.transform = `rotate(${angle}rad)`;
+
+  box.appendChild(line);
+}
+</script>
+</body>
+</html>
