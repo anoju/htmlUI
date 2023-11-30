@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom Select with Focus</title>
+<style>
+/* Add your styles for the custom select and button here */
+select:focus,
+button:focus,
+input:focus {
+  background-color: red;
+}
+
+.custom-select select {
+  opacity: 0;
+  position: absolute;
+
+  /*
+  display: none;
+  visibility: hidden;
+  둘중 하나라도 쓰면 안됨
+  */
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+
+<!-- Your custom select box -->
+<div class="custom-select">
+  <!-- select는 숨겨짐 -->
+  <select id="select">
+    <option value="1">Option 1</option>
+    <option value="2">Option 2</option>
+    <option value="3">Option 3</option>
+  </select>
+  <button class="button">Select an option</button>
+  <ul>
+    <li onclick="selectOption(this)">Option 1</li>
+    <li onclick="selectOption(this)">Option 2</li>
+    <li onclick="selectOption(this)">Option 3</li>
+  </ul>
+</div>
+
+<button class="focus" onclick="focusEvt()">select 포커스넘기면 버튼에 자동으로 넘어가게</button>
+<br>
+<br>
+<input type="text" id="input" placeholder="id는 input">
+<script>
+function focusSelect() {
+  // Focus the select element
+  const selectElement = document.querySelectorAll('.custom-select select');
+  if (selectElement.length) {
+    selectElement.forEach(function(sel) {
+      sel.removeEventListener('focus', selectFocus);
+      sel.addEventListener('focus', selectFocus);
+    })
+  }
+}
+focusSelect();
+
+function selectFocus(e) {
+  const $target = e.target;
+  const $wrap = $target.closest('.custom-select');
+  // After the focus, move the focus to the button
+  const $btn = $wrap.querySelector('.button');
+  if ($btn) $btn.focus();
+}
+
+function focusEvt() {
+  // document.querySelector('#select').focus();
+  $('#select').focus();
+}
+</script>
+
+</body>
+</html>
