@@ -100,6 +100,10 @@
     &.today {
       background-color: #eee;
     }
+    &.selected {
+      background-color: BLUE;
+      color: #fff;
+    }
   }
   .hi-datepicker-list {
     > ul {
@@ -123,7 +127,11 @@
       font-size: 15px;
       font-weight: 500;
     }
+    &.today {
+      border: 1px solid #aaa;
+    }
     &.selected {
+      border-width: 0;
       background-color: BLUE;
       color: #fff;
     }

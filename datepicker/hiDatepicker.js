@@ -7,14 +7,13 @@ class hiDatepicker {
     this.setMonth = null;
     this.wrap = null;
 
-    this.options = {
-      preClassName: options.preClassName || 'hi',
-      // 추가적인 옵션들...
-    };
+
+    // 옵션들
     this.headerSuffix = options.headerSuffix || '.';
     this.format = options.format || '-';
     const preClassName = options.preClassName || 'hi';
 
+    // 클래스네임
     this.className = {
       target: preClassName + '-datepicker',
       wrap: preClassName + '-datepicker-wrap',
@@ -30,6 +29,7 @@ class hiDatepicker {
       list: preClassName + '-datepicker-list',
       listBtn: preClassName + '-datepicker-list-btn',
     }
+
     // 초기화 함수 호출
     this.init();
   }
@@ -51,7 +51,7 @@ class hiDatepicker {
       const $targetVal = $target.value.trim();
       if (!$targetVal) {
         _this.value = _this.todayTimeString();
-        // $target.value = _this.dateFormat(_this.todayTimeString(), _this.format);
+        $target.value = _this.dateFormat(_this.todayTimeString(), _this.format);
       } else {
         _this.value = _this.onlyNumber($target.value);
       }
@@ -99,7 +99,7 @@ class hiDatepicker {
     const $titleYear = $header.querySelector('.title-year');
     $titleYear.innerHTML = _this.setYear;
     const $titleMonth = $header.querySelector('.title-month');
-    $titleMonth.innerHTML = _this.setMonth;
+    $titleMonth.innerHTML = _this.changeStringDay(_this.setMonth);
   }
 
   headerBtnEvent($wrap) {
@@ -111,6 +111,7 @@ class hiDatepicker {
     });
   }
 
+  // click
   headerBtnClickEvent(e) {
     const _this = this;
     const $target = e.target;
@@ -136,9 +137,44 @@ class hiDatepicker {
       $year += 1;
     }
     $year = String($year);
-    $month = $month < 10 ? '0' + $month : String($month);
+    $month = _this.changeStringDay($month);
     if (_this.setYear !== $year) _this.setYear = $year;
     if (_this.setMonth !== $month) _this.setMonth = $month;
+
+    _this.update();
+  }
+
+  tableBtnClickEvent(e) {
+    const _this = this;
+    const $target = e.target;
+    _this.value = $target.dataset.fullDay;
+    _this.update();
+    _this.targetSetValue();
+  }
+
+  targetSetValue() {
+    const _this = this;
+    const $target = document.querySelector(_this.element);
+    if (!$target) return;
+    const $isInput = $target.tagName === 'INPUT';
+    if ($isInput) {
+      $target.value = _this.dateFormat(_this.value, _this.format);
+    }
+  }
+
+  listBtnClickEvent(e) {
+    const _this = this;
+    let $target = e.target;
+    if (!$target.classList.contains(_this.className.listBtn)) $target = $target.closest('.' + _this.className.listBtn);
+    if (!$target) return;
+    if ($target.classList.contains('year')) {
+      const $btnYear = $target.dataset.year;
+      _this.setYear = $btnYear;
+    }
+    if ($target.classList.contains('month')) {
+      const $btnMonth = $target.dataset.month;
+      _this.setMonth = $btnMonth;
+    }
 
     _this.update();
   }
@@ -149,11 +185,40 @@ class hiDatepicker {
     _this.makeBody();
   }
 
+  removeBodyBtnEvent() {
+    const _this = this;
+    const $wrap = _this.wrap;
+    const $tableBtns = $wrap.querySelectorAll('.' + _this.className.tableBtn)
+    $tableBtns.forEach(function($btn) {
+      $btn.removeEventListener('click', _this.tableBtnClickEvent.bind(_this));
+    });
+    const $listBtns = $wrap.querySelectorAll('.' + _this.className.listBtn)
+    $listBtns.forEach(function($btn) {
+      $btn.removeEventListener('click', _this.listBtnClickEvent.bind(_this));
+    });
+  }
+
+  addBodyBtnEvent() {
+    const _this = this;
+    const $wrap = _this.wrap;
+    const $tableBtns = $wrap.querySelectorAll('.' + _this.className.tableBtn)
+    $tableBtns.forEach(function($btn) {
+      $btn.addEventListener('click', _this.tableBtnClickEvent.bind(_this));
+    });
+    const $listBtns = $wrap.querySelectorAll('.' + _this.className.listBtn)
+    $listBtns.forEach(function($btn) {
+      $btn.addEventListener('click', _this.listBtnClickEvent.bind(_this));
+    });
+  }
+
   makeBody() {
     const _this = this;
     const $wrap = _this.wrap;
     let $body = $wrap.querySelector('.' + _this.className.body);
-    if ($body) $body.remove();
+    if ($body) {
+      _this.removeBodyBtnEvent();
+      $body.remove();
+    }
 
     $body = document.createElement('div');
     $body.classList.add(_this.className.body);
@@ -164,6 +229,7 @@ class hiDatepicker {
 
     $body.innerHTML = $html;
     $wrap.querySelector('.' + _this.className.inner).appendChild($body);
+    _this.addBodyBtnEvent();
   }
 
   makeDaysBody() {
@@ -177,13 +243,14 @@ class hiDatepicker {
     for (let i = 0; i < $endIdx; i += 1) {
       const $weekIdx = i % 7;
       const $day = i - $startIdx + 1;
-      const $allday = _this.setYear + _this.setMonth + ($day < 10 ? '0' + $day : String($day));
-      const $today = _this.todayTimeString() === $allday ? ' today' : '';
+      const $fullday = _this.setYear + _this.setMonth + _this.changeStringDay($day);
+      const $today = _this.todayTimeString() === $fullday ? ' today' : '';
+      const $selected = _this.value === $fullday ? ' selected' : '';
       if ($weekIdx === 0) $tbodyHtml += '<tr>';
       if (i < $startIdx || $lastIdx <= i) {
         $tbodyHtml += `<td data-week-idx="${$weekIdx}"></td>`;
       } else {
-        $tbodyHtml += `<td data-week-idx="${$weekIdx}"><button type="button" class="${_this.className.tableBtn}${$today}" data-day="${$allday}">${$day}</button></td>`;
+        $tbodyHtml += `<td data-week-idx="${$weekIdx}"><button type="button" class="${_this.className.tableBtn}${$today}${$selected}" data-day="${$day}" data-full-day="${$fullday}">${$day}</button></td>`;
       }
       if ($weekIdx === 6) $tbodyHtml += '</tr>';
     }
@@ -209,24 +276,28 @@ class hiDatepicker {
   makeMonthsBody() {
     const _this = this;
     let $btnHtml = '';
-    const $nowMonth = Number(_this.value.substr(4, 2));
+    // const $valMonth = Number(_this.value.substr(4, 2));
     for (let i = 1; i <= 12; i += 1) {
       const $month = i;
-      const $selected = $month === $nowMonth ? ' selected' : '';
-      $btnHtml += `<li><button type="button" class="${_this.className.listBtn} month${$selected}" data-month="${$month}"><strong>${$month}</strong>월</button></li>`;
+      const $fullmonth = _this.setYear + _this.changeStringDay($month)
+      const $today = Number(_this.todayTimeString().substr(4, 2)) === $month ? ' today' : '';
+      const $selected = $month === Number(_this.setMonth) ? ' selected' : '';
+      $btnHtml += `<li><button type="button" class="${_this.className.listBtn} month${$today}${$selected}" data-month="${$month}" data-full-month="${$fullmonth}"><strong>${$month}</strong>월</button></li>`;
     }
     const $html = `<div class="${_this.className.list} months"><ul>${$btnHtml}</ul></div>`;
     return $html;
   }
   makeYearsBody() {
     const _this = this;
-    const $startYear = Math.floor(_this.setYear / 10) * 10 + 1;
-    const $nowYeawr = Number(_this.value.substr(0, 4));
+    const _start = Math.floor(_this.setYear / 10) * 10
+    const $startYear = _this.setYear % 10 === 0 ? _start - 9 : _start + 1;
+    // const $valYear = Number(_this.value.substr(0, 4));
     let $btnHtml = '';
     for (let i = 0; i < 10; i += 1) {
       const $year = $startYear + i;
-      const $selected = $year === $nowYeawr ? ' selected' : '';
-      $btnHtml += `<li><button type="button" class="${_this.className.listBtn} year${$selected}" data-year="${$year}"><strong>${$year}</strong>년</button></li>`;
+      const $today = _this.todayTimeString().substr(0, 4) === $year ? ' today' : '';;
+      const $selected = $year === Number(_this.setYear) ? ' selected' : '';
+      $btnHtml += `<li><button type="button" class="${_this.className.listBtn} year${$today}${$selected}" data-year="${$year}"><strong>${$year}</strong>년</button></li>`;
     }
     const $html = `<div class="${_this.className.list} years"><ul>${$btnHtml}</ul></div>`;
     return $html;
@@ -282,6 +353,12 @@ class hiDatepicker {
       $dateAry.push($date.substr(6));
     }
     return $dateAry.join(mark);
+  }
+  changeStringDay(str) {
+    let rtnval;
+    if (typeof str === 'string') rtnval = str.length === 1 ? '0' + str : str;
+    else if (typeof str === 'number') rtnval = str < 10 ? '0' + str : String(str);
+    return rtnval;
   }
 }
 
