@@ -4,15 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Document</title>
+<link rel="stylesheet" href="./css/hiDatepicker.min.css">
 </head>
 <body>
-<input type="text" class="datepicker">
+<input type="text" class="datepicker" id="datepicker" value=" ">
 
-<div class="pub-datepicker" id="datepicker"></div>
-
-<script src="datepicker.js"></script>
+<script src="hiDatepicker.js"></script>
 <script>
-const $calendar = new uiCalendar('#datepicker');
+const $calendar = new hiDatepicker('#datepicker');
 </script>
 </body>
 </html>
