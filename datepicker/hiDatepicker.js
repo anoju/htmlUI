@@ -32,6 +32,8 @@ class hiDatepicker {
 
     // 초기화 함수 호출
     this.init();
+
+
   }
 
 
@@ -319,11 +321,13 @@ class hiDatepicker {
   }
 
   getLastDay(year, month) {
+    const $year = typeof year === 'string' ? Number(year) : year;
+    const $month = typeof month === 'string' ? Number(month) : month;
     let $day = 31
-    if (month === 4 || month === 6 || month === 9 || month === 11) {
+    if ($month === 4 || $month === 6 || $month === 9 || $month === 11) {
       $day = 30
-    } else if (month === 2) {
-      if (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) {
+    } else if ($month === 2) {
+      if ($year % 4 === 0 && ($year % 100 !== 0 || $year % 400 === 0)) {
         $day = 29
       } else {
         $day = 28
