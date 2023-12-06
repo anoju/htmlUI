@@ -281,8 +281,8 @@ class hiDatepicker {
     // const $valMonth = Number(_this.value.substr(4, 2));
     for (let i = 1; i <= 12; i += 1) {
       const $month = i;
-      const $fullmonth = _this.setYear + _this.changeStringDay($month)
-      const $today = Number(_this.todayTimeString().substr(4, 2)) === $month ? ' today' : '';
+      const $fullmonth = _this.setYear + _this.changeStringDay($month);
+      const $today = _this.todayTimeString().substr(0, 6) === $fullmonth ? ' today' : '';
       const $selected = $month === Number(_this.setMonth) ? ' selected' : '';
       $btnHtml += `<li><button type="button" class="${_this.className.listBtn} month${$today}${$selected}" data-month="${$month}" data-full-month="${$fullmonth}"><strong>${$month}</strong>월</button></li>`;
     }
