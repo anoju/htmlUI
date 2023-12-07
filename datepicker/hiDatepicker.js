@@ -85,6 +85,7 @@ class hiDatepicker {
 
   getStartYaer() {
     const _this = this
+    const _start = Math.floor(_this.setYear / 10) * 10;
     const rtnVal = _this.setYear % 10 === 0 ? _start - 9 : _start + 1;
     return rtnVal;
   }
@@ -133,7 +134,8 @@ class hiDatepicker {
   headerBtnClickEvent(e) {
     const _this = this;
     const $target = e.target;
-    let $year = parseInt(_this.setYear);
+    const $isYear = _this.showPanel === 'year';
+    let $year = $isYear ? parseInt(_this.setStartYear) : parseInt(_this.setYear);
     let $month = parseInt(_this.setMonth);
     if ($target.classList.contains('prev-month')) {
       $month -= 1;
@@ -149,15 +151,21 @@ class hiDatepicker {
       }
     }
 
-    const $yearNum = _this.showPanel === 'year' ? 10 : 1;
+    const $yeraNum = $isYear ? 10 : 1;
     if ($target.classList.contains('prev-year')) {
-      $year -= $yearNum;
+      $year -= $yeraNum;
     } else if ($target.classList.contains('next-year')) {
-      $year += $yearNum;
+      $year += $yeraNum;
     }
+    console.log($year);
     $year = String($year);
     $month = _this.changeStringDay($month);
-    if (_this.setYear !== $year) _this.setYear = $year;
+    if ($isYear) {
+      _this.setStartYear = $year;
+    } else if (_this.setYear !== $year) {
+      _this.setYear = $year;
+      _this.getStartYaer();
+    }
     if (_this.setMonth !== $month) _this.setMonth = $month;
 
     _this.update();
@@ -339,8 +347,8 @@ class hiDatepicker {
   makeMonthsBody() {
     const _this = this;
     let $btnHtml = '';
-    //const $valMonth = Number(_this.value.substr(4, 2)) || Number(_this.setYear);
-    const $valMonth = Number(_this.setYear);
+    //const $valMonth = Number(_this.value.substr(4, 2)) || Number(_this.setMonth);
+    const $valMonth = Number(_this.setMonth);
     for (let i = 1; i <= 12; i += 1) {
       const $month = i;
       const $fullmonth = _this.setYear + _this.changeStringDay($month);
@@ -353,8 +361,7 @@ class hiDatepicker {
   }
   makeYearsBody() {
     const _this = this;
-    const _start = Math.floor(_this.setYear / 10) * 10
-    const $startYear = _this.setYear % 10 === 0 ? _start - 9 : _start + 1;
+    const $startYear = Number(_this.setStartYear);
     // const $valYear = Number(_this.value.substr(0, 4)) || Number(_this.setYear);
     const $valYear = Number(_this.setYear);
     let $btnHtml = '';
