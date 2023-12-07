@@ -4,8 +4,11 @@ class hiDatepicker {
     this.element = element;
     this.value = null;
     this.setYear = null;
+    this.setStartYear = null;
     this.setMonth = null;
     this.wrap = null;
+    this.isLayer = null;
+    this.showPanel = 'days';
 
 
     // 옵션들
@@ -24,6 +27,7 @@ class hiDatepicker {
       titleBtn: preClassName + '-datepicker-title-btn',
       titleSuffix: preClassName + '-datepicker-title-suffix',
       body: preClassName + '-datepicker-body',
+      panelPre: preClassName + '-panel-',
       table: preClassName + '-datepicker-table',
       tableBtn: preClassName + '-datepicker-table-btn',
       list: preClassName + '-datepicker-list',
@@ -41,12 +45,12 @@ class hiDatepicker {
     const _this = this;
     const $target = document.querySelector(_this.element);
     if (!$target) return;
-    const $isInput = $target.tagName === 'INPUT';
-    let $wrap = $target.querySelector('.' + _this.className.wrap);
-    if ($wrap) $wrap.remove();
-    $wrap = document.createElement('div');
+    _this.isLayer = $target.tagName === 'INPUT';
+    // let $wrap = $target.querySelector('.' + _this.className.wrap);
+    // if ($wrap) $wrap.remove();
+    const $wrap = document.createElement('div');
     $wrap.classList.add(_this.className.wrap);
-    if ($isInput) {
+    if (_this.isLayer) {
       $wrap.classList.add(_this.className.layer);
       $target.classList.add(_this.className.target);
       $target.readOnly = true;
@@ -61,12 +65,13 @@ class hiDatepicker {
 
     if (!_this.value) _this.value = _this.todayTimeString();
     if (!_this.setYear) _this.setYear = _this.value.substr(0, 4);
+    if (!_this.setStartYear) _this.setStartYear = _this.getStartYaer();
     if (!_this.setMonth) _this.setMonth = _this.value.substr(4, 2);
 
     const $innerHtml = `<div class="${_this.className.inner}"></div>`;
     $wrap.innerHTML = $innerHtml;
 
-    if ($isInput) {
+    if (_this.isLayer) {
       document.body.appendChild($wrap);
     } else {
       $target.appendChild($wrap);
@@ -75,8 +80,13 @@ class hiDatepicker {
 
     _this.makeHeader();
     _this.makeBody();
-    _this.headerBtnEvent($wrap);
+    _this.headerBtnEvent();
+  }
 
+  getStartYaer() {
+    const _this = this
+    const rtnVal = _this.setYear % 10 === 0 ? _start - 9 : _start + 1;
+    return rtnVal;
   }
 
   makeHeader(_year, _month) {
@@ -104,12 +114,18 @@ class hiDatepicker {
     $titleMonth.innerHTML = _this.changeStringDay(_this.setMonth);
   }
 
-  headerBtnEvent($wrap) {
+  headerBtnEvent() {
     const _this = this;
-    const $btns = $wrap.querySelectorAll('.' + _this.className.headerBtn)
-    $btns.forEach(function($btn) {
+    const $wrap = _this.wrap;
+    const $headerBtns = $wrap.querySelectorAll('.' + _this.className.headerBtn);
+    $headerBtns.forEach(function($btn) {
       $btn.removeEventListener('click', _this.headerBtnClickEvent.bind(_this));
       $btn.addEventListener('click', _this.headerBtnClickEvent.bind(_this));
+    });
+    const $titleBtns = $wrap.querySelectorAll('.' + _this.className.titleBtn);
+    $titleBtns.forEach(function($btn) {
+      $btn.removeEventListener('click', _this.titleBtnClickEvent.bind(_this));
+      $btn.addEventListener('click', _this.titleBtnClickEvent.bind(_this));
     });
   }
 
@@ -133,10 +149,11 @@ class hiDatepicker {
       }
     }
 
+    const $yearNum = _this.showPanel === 'year' ? 10 : 1;
     if ($target.classList.contains('prev-year')) {
-      $year -= 1;
+      $year -= $yearNum;
     } else if ($target.classList.contains('next-year')) {
-      $year += 1;
+      $year += $yearNum;
     }
     $year = String($year);
     $month = _this.changeStringDay($month);
@@ -144,6 +161,17 @@ class hiDatepicker {
     if (_this.setMonth !== $month) _this.setMonth = $month;
 
     _this.update();
+  }
+
+  titleBtnClickEvent(e) {
+    const _this = this;
+    const $target = e.target;
+    if ($target.classList.contains('title-month')) {
+      _this.showPanel = 'month';
+    } else if ($target.classList.contains('title-year')) {
+      _this.showPanel = 'year';
+    }
+    _this.showPanelEvent();
   }
 
   tableBtnClickEvent(e) {
@@ -158,8 +186,7 @@ class hiDatepicker {
     const _this = this;
     const $target = document.querySelector(_this.element);
     if (!$target) return;
-    const $isInput = $target.tagName === 'INPUT';
-    if ($isInput) {
+    if (_this.isLayer) {
       $target.value = _this.dateFormat(_this.value, _this.format);
     }
   }
@@ -179,6 +206,8 @@ class hiDatepicker {
     }
 
     _this.update();
+    _this.showPanel = 'days';
+    _this.showPanelEvent();
   }
 
   update() {
@@ -232,6 +261,38 @@ class hiDatepicker {
     $body.innerHTML = $html;
     $wrap.querySelector('.' + _this.className.inner).appendChild($body);
     _this.addBodyBtnEvent();
+
+    _this.showPanelEvent();
+  }
+
+  showPanelEvent() {
+    const _this = this;
+    const $wrap = _this.wrap;
+    const $showPanel = _this.showPanel;
+    const $panel = $wrap.querySelector('.' + _this.className.panelPre + $showPanel);
+    const $siblings = _this.getSiblings($panel);
+    if ($siblings.length) {
+      $panel.style.display = 'block';
+      $siblings.forEach(function(sibling) {
+        sibling.style.display = 'none';
+      });
+    }
+
+    const $headerBtns = $wrap.querySelectorAll('.' + _this.className.headerBtn);
+    const $monthBtn = $wrap.querySelectorAll('.' + _this.className.headerBtn + '[class*="month"]');
+    if ($showPanel === 'month') {
+      $headerBtns.forEach(function($btn) {
+        $btn.disabled = true;
+      });
+    } else if ($showPanel === 'year') {
+      $monthBtn.forEach(function($btn) {
+        $btn.disabled = true;
+      });
+    } else {
+      $headerBtns.forEach(function($btn) {
+        $btn.disabled = false;
+      });
+    }
   }
 
   makeDaysBody() {
@@ -257,7 +318,7 @@ class hiDatepicker {
       if ($weekIdx === 6) $tbodyHtml += '</tr>';
     }
 
-    const $html = `<div class="${_this.className.table}">
+    const $html = `<div class="${_this.className.table} ${_this.className.panelPre}days">
       <table>
         <thead>
           <tr>
@@ -278,30 +339,32 @@ class hiDatepicker {
   makeMonthsBody() {
     const _this = this;
     let $btnHtml = '';
-    // const $valMonth = Number(_this.value.substr(4, 2));
+    //const $valMonth = Number(_this.value.substr(4, 2)) || Number(_this.setYear);
+    const $valMonth = Number(_this.setYear);
     for (let i = 1; i <= 12; i += 1) {
       const $month = i;
       const $fullmonth = _this.setYear + _this.changeStringDay($month);
       const $today = _this.todayTimeString().substr(0, 6) === $fullmonth ? ' today' : '';
-      const $selected = $month === Number(_this.setMonth) ? ' selected' : '';
+      const $selected = $month === $valMonth ? ' selected' : '';
       $btnHtml += `<li><button type="button" class="${_this.className.listBtn} month${$today}${$selected}" data-month="${$month}" data-full-month="${$fullmonth}"><strong>${$month}</strong>월</button></li>`;
     }
-    const $html = `<div class="${_this.className.list} months"><ul>${$btnHtml}</ul></div>`;
+    const $html = `<div class="${_this.className.list} ${_this.className.panelPre}month"><ul>${$btnHtml}</ul></div>`;
     return $html;
   }
   makeYearsBody() {
     const _this = this;
     const _start = Math.floor(_this.setYear / 10) * 10
     const $startYear = _this.setYear % 10 === 0 ? _start - 9 : _start + 1;
-    // const $valYear = Number(_this.value.substr(0, 4));
+    // const $valYear = Number(_this.value.substr(0, 4)) || Number(_this.setYear);
+    const $valYear = Number(_this.setYear);
     let $btnHtml = '';
     for (let i = 0; i < 10; i += 1) {
       const $year = $startYear + i;
       const $today = _this.todayTimeString().substr(0, 4) === $year ? ' today' : '';;
-      const $selected = $year === Number(_this.setYear) ? ' selected' : '';
+      const $selected = $year === $valYear ? ' selected' : '';
       $btnHtml += `<li><button type="button" class="${_this.className.listBtn} year${$today}${$selected}" data-year="${$year}"><strong>${$year}</strong>년</button></li>`;
     }
-    const $html = `<div class="${_this.className.list} years"><ul>${$btnHtml}</ul></div>`;
+    const $html = `<div class="${_this.className.list} ${_this.className.panelPre}year"><ul>${$btnHtml}</ul></div>`;
     return $html;
   }
 
@@ -358,11 +421,23 @@ class hiDatepicker {
     }
     return $dateAry.join(mark);
   }
+
   changeStringDay(str) {
     let rtnval;
     if (typeof str === 'string') rtnval = str.length === 1 ? '0' + str : str;
     else if (typeof str === 'number') rtnval = str < 10 ? '0' + str : String(str);
     return rtnval;
+  }
+
+  getSiblings(element) {
+    const rtnAry = [];
+    const siblings = Array.from(element.parentElement.children);
+    siblings.forEach(function(sibling) {
+      if (sibling !== element) {
+        rtnAry.push(sibling);
+      }
+    });
+    return rtnAry;
   }
 }
 
