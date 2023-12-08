@@ -101,8 +101,10 @@ class hiDatepicker {
   // update
   update() {
     const _this = this;
-    _this.makeHeader();
-    _this.makeBody();
+    setTimeout(function() {
+      _this.makeHeader();
+      _this.makeBody();
+    }, 1);
   }
 
 
@@ -217,9 +219,9 @@ class hiDatepicker {
 
   documentEvent(e) {
     const _this = this;
-    const $wrap = _this.$wrap;
+    const $wrap = _this.wrap;
     const $target = e.target;
-    const $layer = $target.closest('.' + _this.className.layer);
+    const $layer = $target.closest('.' + _this.className.wrap);
     if ($target === _this.element) return;
     if (!$layer || $layer !== $wrap) _this.layerHide();
   }
