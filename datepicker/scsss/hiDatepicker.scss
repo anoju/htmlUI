@@ -13,6 +13,16 @@ $selected-txt-color: #fff;
   min-width: 300px;
   max-width: 420px;
   color: $base-txt-color;
+  &.#{$pre}-datepicker-layer {
+    display: none;
+    position: absolute;
+    width: 320px;
+    z-index: -999;
+    &.#{$pre}-datepicker-show {
+      display: block;
+      z-index: 10;
+    }
+  }
   button:not(:disabled) {
     cursor: pointer;
   }

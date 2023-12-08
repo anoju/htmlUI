@@ -1,13 +1,14 @@
 // 옵션을 가지는 엘리먼트를 컨트롤하는 클래스 정의
 class hiDatepicker {
   constructor(element, options = {}) {
-    this.element = element;
+    this.element = typeof element === 'string' ? document.querySelector(element) : element;
     this.value = null;
     this.setYear = null;
     this.setStartYear = null;
     this.setMonth = null;
     this.wrap = null;
-    this.isLayer = null;
+    this.isLayer = false;
+    this.isLayerShow = false;
     this.showPanel = 'days';
 
 
@@ -20,6 +21,7 @@ class hiDatepicker {
     this.className = {
       target: preClassName + '-datepicker',
       wrap: preClassName + '-datepicker-wrap',
+      show: preClassName + '-datepicker-show',
       layer: preClassName + '-datepicker-layer',
       inner: preClassName + '-datepicker-inner',
       header: preClassName + '-datepicker-header',
@@ -43,78 +45,69 @@ class hiDatepicker {
 
   init() {
     const _this = this;
-    const $target = document.querySelector(_this.element);
+    const $target = _this.element;
     if (!$target) return;
     _this.isLayer = $target.tagName === 'INPUT';
     // let $wrap = $target.querySelector('.' + _this.className.wrap);
     // if ($wrap) $wrap.remove();
     const $wrap = document.createElement('div');
     $wrap.classList.add(_this.className.wrap);
-    if (_this.isLayer) {
-      $wrap.classList.add(_this.className.layer);
-      $target.classList.add(_this.className.target);
-      $target.readOnly = true;
-      const $targetVal = $target.value.trim();
-      if (!$targetVal) {
-        _this.value = _this.todayTimeString();
-        $target.value = _this.dateFormat(_this.todayTimeString(), _this.format);
-      } else {
-        _this.value = _this.onlyNumber($target.value);
-      }
-    }
-
-    if (!_this.value) _this.value = _this.todayTimeString();
-    if (!_this.setYear) _this.setYear = _this.value.substr(0, 4);
-    if (!_this.setStartYear) _this.setStartYear = _this.getStartYaer();
-    if (!_this.setMonth) _this.setMonth = _this.value.substr(4, 2);
-
     const $innerHtml = `<div class="${_this.className.inner}"></div>`;
     $wrap.innerHTML = $innerHtml;
+    _this.wrap = $wrap;
+
+    if (_this.isLayer) _this.targetInputInit();
+
+    const $setVal = _this.todayTimeString();
+    // if (!_this.value) _this.value = _this.todayTimeString();
+    if (!_this.setYear) _this.setYear = $setVal.substr(0, 4);
+    if (!_this.setStartYear) _this.setStartYear = _this.getStartYaer();
+    if (!_this.setMonth) _this.setMonth = $setVal.substr(4, 2);
 
     if (_this.isLayer) {
       document.body.appendChild($wrap);
     } else {
       $target.appendChild($wrap);
     }
-    _this.wrap = $wrap;
+
 
     _this.makeHeader();
     _this.makeBody();
     _this.headerBtnEvent();
   }
 
-  getStartYaer() {
-    const _this = this
-    const _start = Math.floor(_this.setYear / 10) * 10;
-    const rtnVal = _this.setYear % 10 === 0 ? _start - 9 : _start + 1;
-    return rtnVal;
-  }
-
-  makeHeader(_year, _month) {
+  targetInputInit() {
     const _this = this;
     const $wrap = _this.wrap;
-    let $header = $wrap.querySelector('.' + _this.className.header);
-    if (!$header) {
-      $header = document.createElement('div');
-      $header.classList.add(_this.className.header);
-      const $html = `<button type="button" class="${_this.className.headerBtn} prev-year">이전 년도</button>
-      <button type="button" class="${_this.className.headerBtn} prev-month">이전 달</button>
-      <div class="pub-datepicker-title">
-        <button type="button" class="${_this.className.titleBtn} title-year"></button>
-        <div class="${_this.className.titleSuffix}">${this.headerSuffix}</div>
-        <button type="button" class="${_this.className.titleBtn} title-month"></button>
-      </div>
-      <button type="button" class="${_this.className.headerBtn} next-month">다음 달</button>
-      <button type="button" class="${_this.className.headerBtn} next-year">다음 년도</button>`;
-      $header.innerHTML = $html;
-      $wrap.querySelector('.' + _this.className.inner).appendChild($header);
+    const $target = _this.element;
+    if ($target.classList.contains(_this.className.target)) return;
+    $wrap.classList.add(_this.className.layer);
+    $target.classList.add(_this.className.target);
+    $target.readOnly = true;
+    const $targetVal = $target.value.trim();
+    /*
+    if (!$targetVal) {
+      _this.value = _this.todayTimeString();
+      // $target.value = _this.dateFormat(_this.todayTimeString(), _this.format);
+    } else {
+      _this.value = _this.onlyNumber($target.value);
     }
-    const $titleYear = $header.querySelector('.title-year');
-    $titleYear.innerHTML = _this.setYear;
-    const $titleMonth = $header.querySelector('.title-month');
-    $titleMonth.innerHTML = _this.changeStringDay(_this.setMonth);
+    */
+    $target.addEventListener('focus', _this.targetInputEvent.bind(_this));
+    $target.addEventListener('click', _this.targetInputEvent.bind(_this));
+    document.addEventListener('click', _this.documentEvent.bind(_this))
   }
 
+  // update
+  update() {
+    const _this = this;
+    _this.makeHeader();
+    _this.makeBody();
+  }
+
+
+
+  // event
   headerBtnEvent() {
     const _this = this;
     const $wrap = _this.wrap;
@@ -127,113 +120,6 @@ class hiDatepicker {
     $titleBtns.forEach(function($btn) {
       $btn.removeEventListener('click', _this.titleBtnClickEvent.bind(_this));
       $btn.addEventListener('click', _this.titleBtnClickEvent.bind(_this));
-    });
-  }
-
-  // click
-  headerBtnClickEvent(e) {
-    const _this = this;
-    const $target = e.target;
-    const $isYear = _this.showPanel === 'year';
-    let $year = $isYear ? parseInt(_this.setStartYear) : parseInt(_this.setYear);
-    let $month = parseInt(_this.setMonth);
-    if ($target.classList.contains('prev-month')) {
-      $month -= 1;
-      if ($month < 1) {
-        $month = $month + 12;
-        $year -= 1;
-      }
-    } else if ($target.classList.contains('next-month')) {
-      $month += 1;
-      if ($month > 12) {
-        $month = $month - 12;
-        $year += 1;
-      }
-    }
-
-    const $yeraNum = $isYear ? 10 : 1;
-    if ($target.classList.contains('prev-year')) {
-      $year -= $yeraNum;
-    } else if ($target.classList.contains('next-year')) {
-      $year += $yeraNum;
-    }
-    console.log($year);
-    $year = String($year);
-    $month = _this.changeStringDay($month);
-    if ($isYear) {
-      _this.setStartYear = $year;
-    } else if (_this.setYear !== $year) {
-      _this.setYear = $year;
-      _this.getStartYaer();
-    }
-    if (_this.setMonth !== $month) _this.setMonth = $month;
-
-    _this.update();
-  }
-
-  titleBtnClickEvent(e) {
-    const _this = this;
-    const $target = e.target;
-    if ($target.classList.contains('title-month')) {
-      _this.showPanel = 'month';
-    } else if ($target.classList.contains('title-year')) {
-      _this.showPanel = 'year';
-    }
-    _this.showPanelEvent();
-  }
-
-  tableBtnClickEvent(e) {
-    const _this = this;
-    const $target = e.target;
-    _this.value = $target.dataset.fullDay;
-    _this.update();
-    _this.targetSetValue();
-  }
-
-  targetSetValue() {
-    const _this = this;
-    const $target = document.querySelector(_this.element);
-    if (!$target) return;
-    if (_this.isLayer) {
-      $target.value = _this.dateFormat(_this.value, _this.format);
-    }
-  }
-
-  listBtnClickEvent(e) {
-    const _this = this;
-    let $target = e.target;
-    if (!$target.classList.contains(_this.className.listBtn)) $target = $target.closest('.' + _this.className.listBtn);
-    if (!$target) return;
-    if ($target.classList.contains('year')) {
-      const $btnYear = $target.dataset.year;
-      _this.setYear = $btnYear;
-    }
-    if ($target.classList.contains('month')) {
-      const $btnMonth = $target.dataset.month;
-      _this.setMonth = $btnMonth;
-    }
-
-    _this.update();
-    _this.showPanel = 'days';
-    _this.showPanelEvent();
-  }
-
-  update() {
-    const _this = this;
-    _this.makeHeader();
-    _this.makeBody();
-  }
-
-  removeBodyBtnEvent() {
-    const _this = this;
-    const $wrap = _this.wrap;
-    const $tableBtns = $wrap.querySelectorAll('.' + _this.className.tableBtn)
-    $tableBtns.forEach(function($btn) {
-      $btn.removeEventListener('click', _this.tableBtnClickEvent.bind(_this));
-    });
-    const $listBtns = $wrap.querySelectorAll('.' + _this.className.listBtn)
-    $listBtns.forEach(function($btn) {
-      $btn.removeEventListener('click', _this.listBtnClickEvent.bind(_this));
     });
   }
 
@@ -250,27 +136,17 @@ class hiDatepicker {
     });
   }
 
-  makeBody() {
+  removeBodyBtnEvent() {
     const _this = this;
     const $wrap = _this.wrap;
-    let $body = $wrap.querySelector('.' + _this.className.body);
-    if ($body) {
-      _this.removeBodyBtnEvent();
-      $body.remove();
-    }
-
-    $body = document.createElement('div');
-    $body.classList.add(_this.className.body);
-    const _daysBody = _this.makeDaysBody();
-    const _monthsBody = _this.makeMonthsBody();
-    const _yearsBody = _this.makeYearsBody();
-    const $html = `${_daysBody}${_monthsBody}${_yearsBody}`;
-
-    $body.innerHTML = $html;
-    $wrap.querySelector('.' + _this.className.inner).appendChild($body);
-    _this.addBodyBtnEvent();
-
-    _this.showPanelEvent();
+    const $tableBtns = $wrap.querySelectorAll('.' + _this.className.tableBtn)
+    $tableBtns.forEach(function($btn) {
+      $btn.removeEventListener('click', _this.tableBtnClickEvent.bind(_this));
+    });
+    const $listBtns = $wrap.querySelectorAll('.' + _this.className.listBtn)
+    $listBtns.forEach(function($btn) {
+      $btn.removeEventListener('click', _this.listBtnClickEvent.bind(_this));
+    });
   }
 
   showPanelEvent() {
@@ -301,6 +177,179 @@ class hiDatepicker {
         $btn.disabled = false;
       });
     }
+  }
+
+  targetInputEvent(e) {
+    const _this = this;
+    _this.layerShow();
+    _this.isLayerShow = true;
+  }
+
+  layerShow() {
+    const _this = this;
+    const $wrap = _this.wrap;
+    $wrap.classList.add(_this.className.show);
+    _this.layerPosition();
+  }
+
+  layerPosition() {
+    const _this = this;
+    const $target = _this.element;
+    const $wrap = _this.wrap;
+    const $top = _this.getOffset($target).top + $target.offsetHeight;
+    let $left = _this.getOffset($target).left + ($target.offsetWidth / 2) - ($wrap.offsetWidth / 2);
+    if ($left > window.innerWidth - $wrap.offsetWidth) $left = window.innerWidth - $wrap.offsetWidth;
+    if ($left < 0) $left = 0;
+    $wrap.style.top = $top;
+    $wrap.style.left = $left;
+    // $wrap
+  }
+
+  layerHide() {
+    const _this = this;
+    if (!_this.isLayerShow) return;
+    const $wrap = _this.wrap;
+    $wrap.classList.remove(_this.className.show);
+    $wrap.style.top = '';
+    $wrap.style.left = '';
+    _this.isLayerShow = false;
+  }
+
+  documentEvent(e) {
+    const _this = this;
+    const $wrap = _this.$wrap;
+    const $target = e.target;
+    const $layer = $target.closest('.' + _this.className.layer);
+    if ($target === _this.element) return;
+    if (!$layer || $layer !== $wrap) _this.layerHide();
+  }
+
+  // click event
+  headerBtnClickEvent(e) {
+    const _this = this;
+    const $target = e.target;
+    const $isYear = _this.showPanel === 'year';
+    let $year = $isYear ? parseInt(_this.setStartYear) : parseInt(_this.setYear);
+    let $month = parseInt(_this.setMonth);
+    if ($target.classList.contains('prev-month')) {
+      $month -= 1;
+      if ($month < 1) {
+        $month = $month + 12;
+        $year -= 1;
+      }
+    } else if ($target.classList.contains('next-month')) {
+      $month += 1;
+      if ($month > 12) {
+        $month = $month - 12;
+        $year += 1;
+      }
+    }
+
+    const $yeraNum = $isYear ? 10 : 1;
+    if ($target.classList.contains('prev-year')) {
+      $year -= $yeraNum;
+    } else if ($target.classList.contains('next-year')) {
+      $year += $yeraNum;
+    }
+    $year = String($year);
+    $month = _this.changeStringDay($month);
+    if ($isYear) {
+      _this.setStartYear = $year;
+    } else if (_this.setYear !== $year) {
+      _this.setYear = $year;
+      _this.getStartYaer();
+    }
+    if (_this.setMonth !== $month) _this.setMonth = $month;
+
+    _this.update();
+  }
+
+  titleBtnClickEvent(e) {
+    const _this = this;
+    const $target = e.target;
+    if ($target.classList.contains('title-month')) {
+      _this.showPanel = 'month';
+    } else if ($target.classList.contains('title-year')) {
+      _this.showPanel = 'year';
+    }
+    _this.showPanelEvent();
+  }
+
+  tableBtnClickEvent(e) {
+    const _this = this;
+    const $target = e.target;
+    _this.value = $target.dataset.fullDay;
+    _this.update();
+    _this.targetSetValue();
+    if (_this.isLayer) _this.layerHide();
+  }
+
+  listBtnClickEvent(e) {
+    const _this = this;
+    let $target = e.target;
+    if (!$target.classList.contains(_this.className.listBtn)) $target = $target.closest('.' + _this.className.listBtn);
+    if (!$target) return;
+    if ($target.classList.contains('year')) {
+      const $btnYear = $target.dataset.year;
+      _this.setYear = $btnYear;
+    }
+    if ($target.classList.contains('month')) {
+      const $btnMonth = $target.dataset.month;
+      _this.setMonth = $btnMonth;
+    }
+
+    _this.update();
+    _this.showPanel = 'days';
+    _this.showPanelEvent();
+  }
+
+  // make
+  makeHeader(_year, _month) {
+    const _this = this;
+    const $wrap = _this.wrap;
+    let $header = $wrap.querySelector('.' + _this.className.header);
+    if (!$header) {
+      $header = document.createElement('div');
+      $header.classList.add(_this.className.header);
+      const $html = `<button type="button" class="${_this.className.headerBtn} prev-year">이전 년도</button>
+    <button type="button" class="${_this.className.headerBtn} prev-month">이전 달</button>
+    <div class="pub-datepicker-title">
+      <button type="button" class="${_this.className.titleBtn} title-year"></button>
+      <div class="${_this.className.titleSuffix}">${this.headerSuffix}</div>
+      <button type="button" class="${_this.className.titleBtn} title-month"></button>
+    </div>
+    <button type="button" class="${_this.className.headerBtn} next-month">다음 달</button>
+    <button type="button" class="${_this.className.headerBtn} next-year">다음 년도</button>`;
+      $header.innerHTML = $html;
+      $wrap.querySelector('.' + _this.className.inner).appendChild($header);
+    }
+    const $titleYear = $header.querySelector('.title-year');
+    $titleYear.innerHTML = _this.setYear;
+    const $titleMonth = $header.querySelector('.title-month');
+    $titleMonth.innerHTML = _this.changeStringDay(_this.setMonth);
+  }
+
+  makeBody() {
+    const _this = this;
+    const $wrap = _this.wrap;
+    let $body = $wrap.querySelector('.' + _this.className.body);
+    if ($body) {
+      _this.removeBodyBtnEvent();
+      $body.remove();
+    }
+
+    $body = document.createElement('div');
+    $body.classList.add(_this.className.body);
+    const _daysBody = _this.makeDaysBody();
+    const _monthsBody = _this.makeMonthsBody();
+    const _yearsBody = _this.makeYearsBody();
+    const $html = `${_daysBody}${_monthsBody}${_yearsBody}`;
+
+    $body.innerHTML = $html;
+    $wrap.querySelector('.' + _this.className.inner).appendChild($body);
+    _this.addBodyBtnEvent();
+
+    _this.showPanelEvent();
   }
 
   makeDaysBody() {
@@ -344,6 +393,7 @@ class hiDatepicker {
     </div>`;
     return $html;
   }
+
   makeMonthsBody() {
     const _this = this;
     let $btnHtml = '';
@@ -359,6 +409,7 @@ class hiDatepicker {
     const $html = `<div class="${_this.className.list} ${_this.className.panelPre}month"><ul>${$btnHtml}</ul></div>`;
     return $html;
   }
+
   makeYearsBody() {
     const _this = this;
     const $startYear = Number(_this.setStartYear);
@@ -375,19 +426,22 @@ class hiDatepicker {
     return $html;
   }
 
-  todayTimeString(addDay) {
-    const $today = new Date()
-    if (addDay) $today.setDate($today.getDate() + addDay)
-    return this.dateTimeString($today)
+  // set util 
+  targetSetValue() {
+    const _this = this;
+    const $target = _this.element;
+    if (!$target) return;
+    if (_this.isLayer) {
+      $target.value = _this.dateFormat(_this.value, _this.format);
+    }
   }
 
-  dateTimeString(date) {
-    const $year = date.getFullYear()
-    let $month = date.getMonth() + 1
-    let $day = date.getDate()
-    if ((`${$month}`).length === 1) $month = `0${$month}`
-    if ((`${$day}`).length === 1) $day = `0${$day}`
-    return (`${$year}${$month}${$day}`)
+  // get 
+  getStartYaer() {
+    const _this = this
+    const _start = Math.floor(_this.setYear / 10) * 10;
+    const rtnVal = _this.setYear % 10 === 0 ? _start - 9 : _start + 1;
+    return rtnVal;
   }
 
   getLastDay(year, month) {
@@ -406,10 +460,7 @@ class hiDatepicker {
     return $day
   }
 
-  onlyNumber(num) {
-    return num.toString().replace(/[^0-9]/g, '');
-  }
-
+  // etc
   dateFormat(str, mark) {
     const $str = typeof str === 'number' ? str.toString() : str;
     // const $str
@@ -436,6 +487,26 @@ class hiDatepicker {
     return rtnval;
   }
 
+  todayTimeString(addDay) {
+    const $today = new Date()
+    if (addDay) $today.setDate($today.getDate() + addDay)
+    return this.dateTimeString($today)
+  }
+
+  dateTimeString(date) {
+    const $year = date.getFullYear()
+    let $month = date.getMonth() + 1
+    let $day = date.getDate()
+    if ((`${$month}`).length === 1) $month = `0${$month}`
+    if ((`${$day}`).length === 1) $day = `0${$day}`
+    return (`${$year}${$month}${$day}`)
+  }
+
+  // util
+  onlyNumber(num) {
+    return num.toString().replace(/[^0-9]/g, '');
+  }
+
   getSiblings(element) {
     const rtnAry = [];
     const siblings = Array.from(element.parentElement.children);
@@ -445,6 +516,40 @@ class hiDatepicker {
       }
     });
     return rtnAry;
+  }
+
+  getOffset(element) {
+    let $el = element;
+    let $elX = 0;
+    let $elY = 0;
+    let isSticky = false;
+    while ($el && !Number.isNaN($el.offsetLeft) && !Number.isNaN($el.offsetTop)) {
+      let $style = window.getComputedStyle($el);
+      // const $matrix = new WebKitCSSMatrix($style.transform);
+      if ($style.position === 'sticky') {
+        isSticky = true;
+        $el.style.position = 'static';
+      }
+      $elX += $el.offsetLeft;
+      // $elX += $matrix.m41; //translateX
+      $elY += $el.offsetTop;
+      // $elY += $matrix.m42;  //translateY
+      if (isSticky) {
+        isSticky = false;
+        $el.style.position = '';
+        if ($el.getAttribute('style') === '') $el.removeAttribute('style');
+      }
+      $el = $el.offsetParent;
+      if ($el !== null) {
+        $style = window.getComputedStyle($el);
+        $elX += parseInt($style.borderLeftWidth);
+        $elY += parseInt($style.borderTopWidth);
+      }
+    }
+    return {
+      left: $elX,
+      top: $elY
+    };
   }
 }
 
