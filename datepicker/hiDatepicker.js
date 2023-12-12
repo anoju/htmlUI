@@ -15,13 +15,14 @@ class hiDatepicker {
 
     // 옵션들
     const preClassName = options.preClassName || 'hi';
+    this.mobile = options.mobile || null;
     this.headerSuffix = options.headerSuffix || '.';
     this.format = options.format || '-';
     this.minDate = this.getMinMax(options.min) || '00000000';
     this.maxDate = this.getMinMax(options.max) || '99999999';
-    this.holidays = this.getArrayDate(options.holidays);
-    this.disabledDays = this.getArrayDate(options.disabledDays);
-    this.disabledWeek = this.getArrayWeek(options.disabledWeek);
+    this.holidays = options.holidays ? this.getArrayDate(options.holidays) : [];
+    this.disabledDays = options.disabledDays ? this.getArrayDate(options.disabledDays) : [];
+    this.disabledWeek = options.disabledWeek ? this.getArrayWeek(options.disabledWeek) : [];
 
     // 클래스네임
     this.className = {
@@ -29,6 +30,8 @@ class hiDatepicker {
       wrap: preClassName + '-datepicker-wrap',
       show: preClassName + '-datepicker-show',
       layer: preClassName + '-datepicker-layer',
+      mobile: preClassName + '-datepicker-mobile',
+      dimm: preClassName + '-datepicker-dimm',
       inner: preClassName + '-datepicker-inner',
       header: preClassName + '-datepicker-header',
       headerBtn: preClassName + '-datepicker-header-btn',
@@ -107,7 +110,10 @@ class hiDatepicker {
     // if ($wrap) $wrap.remove();
     const $wrap = document.createElement('div');
     $wrap.classList.add(_this.className.wrap);
-    const $innerHtml = `<div class="${_this.className.inner}"></div>`;
+    if (this.mobile) $wrap.classList.add(_this.className.mobile);
+    let $innerHtml = ''
+    if (this.mobile) $innerHtml += `<div class="${_this.className.dimm}"></div>`;
+    $innerHtml += `<div class="${_this.className.inner}"></div>`;
     $wrap.innerHTML = $innerHtml;
     _this.wrap = $wrap;
 
@@ -136,8 +142,10 @@ class hiDatepicker {
     const $wrap = _this.wrap;
     const $target = _this.element;
     if ($target.classList.contains(_this.className.target)) return;
-    $wrap.classList.add(_this.className.layer);
+    if (!_this.mobile) $wrap.classList.add(_this.className.layer);
     $target.classList.add(_this.className.target);
+
+    const $dimm = $wrap.querySelector('.' + _this.className.dimm);
     $target.readOnly = true;
     const $targetVal = $target.value.trim();
     if (!$targetVal) {
@@ -149,6 +157,7 @@ class hiDatepicker {
     $target.addEventListener('focus', _this.targetInputEvent.bind(_this));
     $target.addEventListener('click', _this.targetInputEvent.bind(_this));
     document.addEventListener('click', _this.documentEvent.bind(_this))
+    $dimm.addEventListener('click', _this.layerHide.bind(_this));
   }
 
   targetInputUpdate() {
@@ -290,7 +299,7 @@ class hiDatepicker {
     const _this = this;
     const $wrap = _this.wrap;
     $wrap.classList.add(_this.className.show);
-    _this.layerPosition();
+    if (this.mobile) _this.layerPosition();
     _this.targetInputUpdate();
   }
 
@@ -304,7 +313,6 @@ class hiDatepicker {
     if ($left < 0) $left = 0;
     $wrap.style.top = $top;
     $wrap.style.left = $left;
-    // $wrap
   }
 
   layerHide() {
@@ -323,7 +331,7 @@ class hiDatepicker {
     const $target = e.target;
     const $layer = $target.closest('.' + _this.className.wrap);
     if ($target === _this.element) return;
-    if (!$layer || $layer !== $wrap) _this.layerHide();
+    if (!_this.mobile && (!$layer || $layer !== $wrap)) _this.layerHide();
   }
 
   // click event

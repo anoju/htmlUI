@@ -23,11 +23,12 @@ input.hi-datepicker {
 <script src="hiDatepicker.js"></script>
 <script>
 const $calendar = new hiDatepicker('#datepicker', {
+  mobile: true,
   min: 'today',
   max: '+5m',
   holidays: ['2023-12-25', '2024-01-01', '2024-02-09', '2024-02-10', '2024-02-11', '2024-02-12'],
-  disabledDays: ['2023-12-20', '2023-12-23', '2023-12-28', '2024-01-04'],
-  disabledWeek: ['0', '4']
+  // disabledDays: ['2023-12-20', '2023-12-23', '2023-12-28', '2024-01-04'],
+  // disabledWeek: ['0', '4']
 });
 </script>
 </body>
