@@ -568,7 +568,7 @@ class hiDatepicker {
       const $selected = $fullmonth === $valMonth ? ' selected' : '';
       $btnHtml += `<li><button type="button" class="${_this.className.listBtn} month${$today}${$selected}" data-month="${$month}" data-full-month="${$fullmonth}"${$disabled}><strong>${$month}</strong>월</button></li>`;
     }
-    const $html = `<div class="${_this.className.list} ${_this.className.panelPre}month"><ul>${$btnHtml}</ul></div>`;
+    const $html = `<div class="${_this.className.list} ${_this.className.panelPre}month"><p class="${_this.className.list}-tit"><strong>${$year}</strong></p><ul>${$btnHtml}</ul></div>`;
     return $html;
   }
 
