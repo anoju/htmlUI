@@ -192,9 +192,9 @@ $selected-txt-color: #fff;
     padding: 0;
     font-size: 12px;
     border-radius: 5px;
-    strong {
-      font-size: 15px;
-      font-weight: inherit;
+    font-size: 15px;
+    small {
+      font-size: 12px;
     }
     &.today {
       background-color: $today-color;

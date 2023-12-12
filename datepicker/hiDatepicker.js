@@ -560,15 +560,16 @@ class hiDatepicker {
     const $valMonth = _this.type === 'month' ? _this.value : _this.setYear + _this.setMonth;
     const $year = _this.setStartMonthYear || _this.setYear;
     for (let i = 1; i <= 12; i += 1) {
-      const $month = i;
-      const $fullmonth = $year + _this.changeStringDay($month);
+      const $month = _this.changeStringDay(i);
+      const $fullmonth = $year + $month;
       const $notDisabled = Number(_this.minDate.substr(0, 6)) <= Number($fullmonth) && Number($fullmonth) <= Number(_this.maxDate.substr(0, 6));
       const $disabled = !$notDisabled ? ' disabled' : '';
       const $today = _this.todayString().substr(0, 6) === $fullmonth ? ' today' : '';
       const $selected = $fullmonth === $valMonth ? ' selected' : '';
-      $btnHtml += `<li><button type="button" class="${_this.className.listBtn} month${$today}${$selected}" data-month="${$month}" data-full-month="${$fullmonth}"${$disabled}><strong>${$month}</strong>월</button></li>`;
+      $btnHtml += `<li><button type="button" class="${_this.className.listBtn} month${$today}${$selected}" data-month="${$month}" data-full-month="${$fullmonth}"${$disabled}><small>${$year}</small>${_this.headerSuffix}${$month}</button></li>`;
     }
-    const $html = `<div class="${_this.className.list} ${_this.className.panelPre}month"><p class="${_this.className.list}-tit"><strong>${$year}</strong></p><ul>${$btnHtml}</ul></div>`;
+    // const $html = `<div class="${_this.className.list} ${_this.className.panelPre}month"><p class="${_this.className.list}-tit"><strong>${$year}</strong></p><ul>${$btnHtml}</ul></div>`;
+    const $html = `<div class="${_this.className.list} ${_this.className.panelPre}month"><ul>${$btnHtml}</ul></div>`;
     return $html;
   }
 
@@ -584,7 +585,7 @@ class hiDatepicker {
       const $notDisabled = Number(_this.minDate.substr(0, 4)) <= $year && $year <= Number(_this.maxDate.substr(0, 4));
       const $disabled = !$notDisabled ? ' disabled' : '';
       const $selected = $year === $valYear ? ' selected' : '';
-      $btnHtml += `<li><button type="button" class="${_this.className.listBtn} year${$today}${$selected}" data-year="${$year}"${$disabled}><strong>${$year}</strong>년</button></li>`;
+      $btnHtml += `<li><button type="button" class="${_this.className.listBtn} year${$today}${$selected}" data-year="${$year}"${$disabled}>${$year}</button></li>`;
     }
     const $html = `<div class="${_this.className.list} ${_this.className.panelPre}year"><ul>${$btnHtml}</ul></div>`;
     return $html;
