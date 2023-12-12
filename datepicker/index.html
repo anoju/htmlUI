@@ -22,7 +22,10 @@ input.hi-datepicker {
 
 <script src="hiDatepicker.js"></script>
 <script>
-const $calendar = new hiDatepicker('#datepicker');
+const $calendar = new hiDatepicker('#datepicker', {
+  min: 'today',
+  max: '+5m'
+});
 </script>
 </body>
 </html>

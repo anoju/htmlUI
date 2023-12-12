@@ -15,6 +15,8 @@ class hiDatepicker {
     // 옵션들
     this.headerSuffix = options.headerSuffix || '.';
     this.format = options.format || '-';
+    this.minDate = this.getMinMax(options.min);
+    this.maxDate = this.getMinMax(options.max);
     const preClassName = options.preClassName || 'hi';
 
     // 클래스네임
@@ -38,8 +40,36 @@ class hiDatepicker {
 
     // 초기화 함수 호출
     this.init();
+  }
 
-
+  getMinMax(value) {
+    const _this = this;
+    let rtnVal;
+    let $origin = value ? value.trim() : null;
+    if ($origin === null) return null;
+    const $num = _this.onlyNumber(value);
+    if ($num.length === 8) {
+      rtnVal = $num;
+    } else {
+      const $originTxt = $origin.toLowerCase();
+      if ($originTxt === 'today') rtnVal = _this.todayString();
+      else {
+        const txtMatches = $originTxt.match(/[+-]?\d+[a-z]/g);
+        if (txtMatches) {
+          const variableMap = {};
+          for (const match of txtMatches) {
+            const variable = match.charAt(match.length - 1);
+            const number = parseInt(match);
+            variableMap[variable] = number;
+          }
+          const _d = variableMap['d'] || 0;
+          const _m = variableMap['m'] || 0;
+          const _y = variableMap['y'] || 0;
+          rtnVal = _this.todayString(_d, _m, _y);
+        }
+      }
+    }
+    return rtnVal
   }
 
 
@@ -58,8 +88,8 @@ class hiDatepicker {
 
     if (_this.isLayer) _this.targetInputInit();
 
-    const $setVal = _this.todayTimeString();
-    // if (!_this.value) _this.value = _this.todayTimeString();
+    const $setVal = _this.todayString();
+    // if (!_this.value) _this.value = _this.todayString();
     if (!_this.setYear) _this.setYear = $setVal.substr(0, 4);
     if (!_this.setStartYear) _this.setStartYear = _this.getStartYaer();
     if (!_this.setMonth) _this.setMonth = $setVal.substr(4, 2);
@@ -87,8 +117,8 @@ class hiDatepicker {
     const $targetVal = $target.value.trim();
     /*
     if (!$targetVal) {
-      _this.value = _this.todayTimeString();
-      // $target.value = _this.dateFormat(_this.todayTimeString(), _this.format);
+      _this.value = _this.todayString();
+      // $target.value = _this.dateFormat(_this.todayString(), _this.format);
     } else {
       _this.value = _this.onlyNumber($target.value);
     }
@@ -366,7 +396,7 @@ class hiDatepicker {
       const $weekIdx = i % 7;
       const $day = i - $startIdx + 1;
       const $fullday = _this.setYear + _this.setMonth + _this.changeStringDay($day);
-      const $today = _this.todayTimeString() === $fullday ? ' today' : '';
+      const $today = _this.todayString() === $fullday ? ' today' : '';
       const $selected = _this.value === $fullday ? ' selected' : '';
       if ($weekIdx === 0) $tbodyHtml += '<tr>';
       if (i < $startIdx || $lastIdx <= i) {
@@ -404,7 +434,7 @@ class hiDatepicker {
     for (let i = 1; i <= 12; i += 1) {
       const $month = i;
       const $fullmonth = _this.setYear + _this.changeStringDay($month);
-      const $today = _this.todayTimeString().substr(0, 6) === $fullmonth ? ' today' : '';
+      const $today = _this.todayString().substr(0, 6) === $fullmonth ? ' today' : '';
       const $selected = $month === $valMonth ? ' selected' : '';
       $btnHtml += `<li><button type="button" class="${_this.className.listBtn} month${$today}${$selected}" data-month="${$month}" data-full-month="${$fullmonth}"><strong>${$month}</strong>월</button></li>`;
     }
@@ -420,7 +450,7 @@ class hiDatepicker {
     let $btnHtml = '';
     for (let i = 0; i < 10; i += 1) {
       const $year = $startYear + i;
-      const $today = _this.todayTimeString().substr(0, 4) === $year ? ' today' : '';;
+      const $today = _this.todayString().substr(0, 4) === $year ? ' today' : '';;
       const $selected = $year === $valYear ? ' selected' : '';
       $btnHtml += `<li><button type="button" class="${_this.className.listBtn} year${$today}${$selected}" data-year="${$year}"><strong>${$year}</strong>년</button></li>`;
     }
@@ -489,13 +519,16 @@ class hiDatepicker {
     return rtnval;
   }
 
-  todayTimeString(addDay) {
-    const $today = new Date()
-    if (addDay) $today.setDate($today.getDate() + addDay)
-    return this.dateTimeString($today)
+  todayString(addDay, addMonth, addYear) {
+    // const $type = addType ? addType : 'day';
+    const $today = new Date();
+    if (!!addDay && addDay !== 0) $today.setDate($today.getDate() + addDay);
+    if (!!addMonth && addMonth !== 0) $today.setMonth($today.getMonth() + addMonth);
+    if (!!addYear && addYear !== 0) $today.setFullYear($today.getFullYear() + addYear);
+    return this.getDateString($today);
   }
 
-  dateTimeString(date) {
+  getDateString(date) {
     const $year = date.getFullYear()
     let $month = date.getMonth() + 1
     let $day = date.getDate()
@@ -506,6 +539,7 @@ class hiDatepicker {
 
   // util
   onlyNumber(num) {
+    if (num === undefined) return null;
     return num.toString().replace(/[^0-9]/g, '');
   }
 
