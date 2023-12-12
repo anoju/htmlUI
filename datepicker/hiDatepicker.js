@@ -14,12 +14,14 @@ class hiDatepicker {
 
 
     // 옵션들
+    const preClassName = options.preClassName || 'hi';
     this.headerSuffix = options.headerSuffix || '.';
     this.format = options.format || '-';
     this.minDate = this.getMinMax(options.min) || '00000000';
     this.maxDate = this.getMinMax(options.max) || '99999999';
     this.holidays = this.getArrayDate(options.holidays);
-    const preClassName = options.preClassName || 'hi';
+    this.disabledDays = this.getArrayDate(options.disabledDays);
+    this.disabledWeek = this.getArrayWeek(options.disabledWeek);
 
     // 클래스네임
     this.className = {
@@ -81,6 +83,17 @@ class hiDatepicker {
     if (!isArray) return null;
     array.forEach(function(item) {
       newArray.push(_this.onlyNumber(item));
+    });
+    return newArray;
+  }
+
+  getArrayWeek(array) {
+    const _this = this;
+    const newArray = [];
+    const isArray = Array.isArray(array);
+    if (!isArray) return null;
+    array.forEach(function(item) {
+      newArray.push(item.trim());
     });
     return newArray;
   }
@@ -464,18 +477,22 @@ class hiDatepicker {
     const $lastIdx = $startIdx + $lastDay;
     const $endIdx = ($lastIdx) % 7 === 0 ? $lastIdx : $lastIdx + (7 - $lastIdx % 7);
     const $holidays = _this.holidays;
+    const $disabledDays = _this.disabledDays;
+    const $disabledWeek = _this.disabledWeek;
 
     let $tbodyHtml = '';
     for (let i = 0; i < $endIdx; i += 1) {
       const $weekIdx = i % 7;
+      const $isDisabledWeek = $disabledWeek.includes(String($weekIdx))
       const $day = i - $startIdx + 1;
       const $fullday = _this.setYear + _this.setMonth + _this.changeStringDay($day);
       const $isHolidays = $holidays.includes($fullday);
       const holidayClass = $isHolidays ? ' class="holiday"' : '';
       const $today = _this.todayString() === $fullday ? ' today' : '';
       const $selected = _this.value === $fullday ? ' selected' : '';
+      const $isDisableddays = $disabledDays.includes($fullday);
       const $notDisabled = Number(_this.minDate) <= Number($fullday) && Number($fullday) <= Number(_this.maxDate);
-      const $disabled = !$notDisabled ? ' disabled' : '';
+      const $disabled = (!$notDisabled || $isDisableddays || $isDisabledWeek) ? ' disabled' : '';
       if ($weekIdx === 0) $tbodyHtml += '<tr>';
       if (i < $startIdx || $lastIdx <= i) {
         $tbodyHtml += `<td data-week-idx="${$weekIdx}"></td>`;
