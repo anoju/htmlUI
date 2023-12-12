@@ -10,19 +10,22 @@ class hiDatepicker {
     this.wrap = null;
     this.isLayer = false;
     this.isLayerShow = false;
-    this.showPanel = 'days';
+    this.showPanel = 'day';
 
 
     // 옵션들
     const preClassName = options.preClassName || 'hi';
     this.mobile = options.mobile || null;
+    this.type = options.type || 'day';
     this.headerSuffix = options.headerSuffix || '.';
+    this.headerSuffix2 = options.headerSuffix2 || '';
     this.format = options.format || '-';
     this.minDate = this.getMinMax(options.min) || '00000000';
     this.maxDate = this.getMinMax(options.max) || '99999999';
     this.holidays = options.holidays ? this.getArrayDate(options.holidays) : [];
     this.disabledDays = options.disabledDays ? this.getArrayDate(options.disabledDays) : [];
     this.disabledWeek = options.disabledWeek ? this.getArrayWeek(options.disabledWeek) : [];
+    this.showSetValue = options.showSetValue || false;
 
     // 클래스네임
     this.className = {
@@ -105,6 +108,7 @@ class hiDatepicker {
     const _this = this;
     const $target = _this.element;
     if (!$target) return;
+    if (_this.type !== 'day') _this.showPanel = _this.type;
     _this.isLayer = $target.tagName === 'INPUT';
     // let $wrap = $target.querySelector('.' + _this.className.wrap);
     // if ($wrap) $wrap.remove();
@@ -146,12 +150,7 @@ class hiDatepicker {
     $target.classList.add(_this.className.target);
     $target.readOnly = true;
     const $targetVal = $target.value.trim();
-    if (!$targetVal) {
-      _this.value = _this.todayString();
-      // $target.value = _this.dateFormat(_this.todayString(), _this.format);
-    } else {
-      _this.value = _this.onlyNumber($target.value);
-    }
+    if ($targetVal) _this.value = _this.onlyNumber($target.value);
     $target.addEventListener('focus', _this.targetInputEvent.bind(_this));
     $target.addEventListener('click', _this.targetInputEvent.bind(_this));
     document.addEventListener('click', _this.documentEvent.bind(_this))
@@ -299,7 +298,17 @@ class hiDatepicker {
   layerShow() {
     const _this = this;
     const $wrap = _this.wrap;
+    const $target = _this.element;
+    const $targetVal = $target.value.trim();
     $wrap.classList.add(_this.className.show);
+    if (_this.showSetValue && !_this.value) {
+      const $today = _this.todayString();
+      if (_this.type === 'year') _this.value = $today.substr(0, 4);
+      else if (_this.type === 'month') _this.value = $today.substr(0, 6);
+      else _this.value = $today;
+      $target.value = _this.dateFormat(_this.value, _this.format);
+    }
+
     if (this.mobile) _this.layerPosition();
     _this.targetInputUpdate();
   }
@@ -410,6 +419,8 @@ class hiDatepicker {
     let $target = e.target;
     if (!$target.classList.contains(_this.className.listBtn)) $target = $target.closest('.' + _this.className.listBtn);
     if (!$target) return;
+
+    let $value;
     if ($target.classList.contains('year')) {
       const $btnYear = $target.dataset.year;
       _this.setYear = $btnYear;
@@ -418,15 +429,25 @@ class hiDatepicker {
       const $maxMonth = Number(_this.maxDate.substr(0, 6));
       if ($fullMonth < $minMonth) _this.setMonth = _this.minDate.substr(4, 2);
       else if ($maxMonth < $fullMonth) _this.setMonth = _this.maxDate.substr(4, 2);
+
+      if (_this.type === 'year') $value = $btnYear;
     }
     if ($target.classList.contains('month')) {
       const $btnMonth = $target.dataset.month;
       _this.setMonth = $btnMonth;
+
+      if (_this.type === 'month') $value = $target.dataset.fullMonth;
+    }
+
+    if ($value) {
+      _this.value = $value;
+      _this.targetSetValue();
+      if (_this.isLayer) _this.layerHide();
     }
 
     _this.setStartMonthYear = null;
     _this.update();
-    _this.showPanel = 'days';
+    _this.showPanel = _this.type;
     _this.showPanelEvent();
   }
 
@@ -438,22 +459,25 @@ class hiDatepicker {
     if (!$header) {
       $header = document.createElement('div');
       $header.classList.add(_this.className.header);
+      let $btnHtml = '<button type="button" class="' + _this.className.titleBtn + ' title-year"></button>';
+      if (_this.type !== 'year') {
+        $btnHtml += '<div class="' + _this.className.titleSuffix + '">' + _this.headerSuffix + '</div>';
+        $btnHtml += '<button type="button" class="' + _this.className.titleBtn + ' title-month"></button>';
+      }
+      if (_this.headerSuffix2) $btnHtml += '<div class="' + _this.className.titleSuffix + '">' + _this.headerSuffix2 + '</div>';
+
       const $html = `<button type="button" class="${_this.className.headerBtn} prev-year">이전 년도</button>
-    <button type="button" class="${_this.className.headerBtn} prev-month">이전 달</button>
-    <div class="pub-datepicker-title">
-      <button type="button" class="${_this.className.titleBtn} title-year"></button>
-      <div class="${_this.className.titleSuffix}">${this.headerSuffix}</div>
-      <button type="button" class="${_this.className.titleBtn} title-month"></button>
-    </div>
-    <button type="button" class="${_this.className.headerBtn} next-month">다음 달</button>
-    <button type="button" class="${_this.className.headerBtn} next-year">다음 년도</button>`;
+      <button type="button" class="${_this.className.headerBtn} prev-month">이전 달</button>
+      <div class="pub-datepicker-title">${$btnHtml}</div>
+      <button type="button" class="${_this.className.headerBtn} next-month">다음 달</button>
+      <button type="button" class="${_this.className.headerBtn} next-year">다음 년도</button>`;
       $header.innerHTML = $html;
       $wrap.querySelector('.' + _this.className.inner).appendChild($header);
     }
     const $titleYear = $header.querySelector('.title-year');
-    $titleYear.innerHTML = _this.setYear;
+    if ($titleYear) $titleYear.innerHTML = _this.setYear;
     const $titleMonth = $header.querySelector('.title-month');
-    $titleMonth.innerHTML = _this.changeStringDay(_this.setMonth);
+    if ($titleMonth) $titleMonth.innerHTML = _this.changeStringDay(_this.setMonth);
   }
 
   makeBody() {
@@ -467,8 +491,8 @@ class hiDatepicker {
 
     $body = document.createElement('div');
     $body.classList.add(_this.className.body);
-    const _daysBody = _this.makeDaysBody();
-    const _monthsBody = _this.makeMonthsBody();
+    const _daysBody = _this.type === 'day' ? _this.makeDaysBody() : '';
+    const _monthsBody = _this.type !== 'year' ? _this.makeMonthsBody() : '';
     const _yearsBody = _this.makeYearsBody();
     const $html = `${_daysBody}${_monthsBody}${_yearsBody}`;
 
@@ -511,7 +535,7 @@ class hiDatepicker {
       if ($weekIdx === 6) $tbodyHtml += '</tr>';
     }
 
-    const $html = `<div class="${_this.className.table} ${_this.className.panelPre}days">
+    const $html = `<div class="${_this.className.table} ${_this.className.panelPre}day">
       <table>
         <thead>
           <tr>
@@ -533,8 +557,7 @@ class hiDatepicker {
   makeMonthsBody() {
     const _this = this;
     let $btnHtml = '';
-    //const $valMonth = Number(_this.value.substr(4, 2)) || Number(_this.setMonth);
-    const $valMonth = _this.setYear + _this.setMonth;
+    const $valMonth = _this.type === 'month' ? _this.value : _this.setYear + _this.setMonth;
     const $year = _this.setStartMonthYear || _this.setYear;
     for (let i = 1; i <= 12; i += 1) {
       const $month = i;
@@ -553,11 +576,11 @@ class hiDatepicker {
     const _this = this;
     const $startYear = Number(_this.setStartYear);
     // const $valYear = Number(_this.value.substr(0, 4)) || Number(_this.setYear);
-    const $valYear = Number(_this.setYear);
+    const $valYear = _this.type === 'year' ? Number(_this.value) : Number(_this.setYear);
     let $btnHtml = '';
     for (let i = 0; i < 10; i += 1) {
       const $year = $startYear + i;
-      const $today = _this.todayString().substr(0, 4) === $year ? ' today' : '';;
+      const $today = Number(_this.todayString().substr(0, 4)) === $year ? ' today' : '';;
       const $notDisabled = Number(_this.minDate.substr(0, 4)) <= $year && $year <= Number(_this.maxDate.substr(0, 4));
       const $disabled = !$notDisabled ? ' disabled' : '';
       const $selected = $year === $valYear ? ' selected' : '';
