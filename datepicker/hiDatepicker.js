@@ -299,7 +299,6 @@ class hiDatepicker {
     const _this = this;
     const $wrap = _this.wrap;
     const $target = _this.element;
-    const $targetVal = $target.value.trim();
     $wrap.classList.add(_this.className.show);
     if (_this.showSetValue && !_this.value) {
       const $today = _this.todayString();
@@ -308,21 +307,22 @@ class hiDatepicker {
       else _this.value = $today;
       $target.value = _this.dateFormat(_this.value, _this.format);
     }
-
-    if (this.mobile) _this.layerPosition();
+    if (!_this.mobile) _this.layerPosition();
     _this.targetInputUpdate();
   }
 
   layerPosition() {
+    console.log('layerPosition');
     const _this = this;
     const $target = _this.element;
+    console.log($target)
     const $wrap = _this.wrap;
     const $top = _this.getOffset($target).top + $target.offsetHeight;
     let $left = _this.getOffset($target).left + ($target.offsetWidth / 2) - ($wrap.offsetWidth / 2);
     if ($left > window.innerWidth - $wrap.offsetWidth) $left = window.innerWidth - $wrap.offsetWidth;
     if ($left < 0) $left = 0;
-    $wrap.style.top = $top;
-    $wrap.style.left = $left;
+    $wrap.style.top = $top + 'px';
+    $wrap.style.left = $left + 'px';
   }
 
   layerHide() {

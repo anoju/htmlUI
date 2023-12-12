@@ -8,18 +8,17 @@ $today-color: #ddd;
 $selected-color: blue;
 $selected-txt-color: #fff;
 
-.#{$pre}-datepicker-show {
-  z-index: 10;
-}
 .#{$pre}-datepicker-wrap {
+  position: relative;
+  z-index: 10;
   min-width: 300px;
   max-width: 420px;
   color: $base-txt-color;
+
   &.#{$pre}-datepicker-layer {
     display: none;
     position: absolute;
     width: 320px;
-    z-index: -999;
     &.#{$pre}-datepicker-show {
       display: block;
     }
