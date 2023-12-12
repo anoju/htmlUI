@@ -18,6 +18,7 @@ class hiDatepicker {
     this.format = options.format || '-';
     this.minDate = this.getMinMax(options.min) || '00000000';
     this.maxDate = this.getMinMax(options.max) || '99999999';
+    this.holidays = this.getArrayDate(options.holidays);
     const preClassName = options.preClassName || 'hi';
 
     // 클래스네임
@@ -73,6 +74,16 @@ class hiDatepicker {
     return rtnVal
   }
 
+  getArrayDate(array) {
+    const _this = this;
+    const newArray = [];
+    const isArray = Array.isArray(array);
+    if (!isArray) return null;
+    array.forEach(function(item) {
+      newArray.push(_this.onlyNumber(item));
+    });
+    return newArray;
+  }
 
   init() {
     const _this = this;
@@ -452,12 +463,15 @@ class hiDatepicker {
     const $startIdx = new Date(_this.setYear, (_this.setMonth - 1), 1, 0, 0, 0, 0).getDay();
     const $lastIdx = $startIdx + $lastDay;
     const $endIdx = ($lastIdx) % 7 === 0 ? $lastIdx : $lastIdx + (7 - $lastIdx % 7);
+    const $holidays = _this.holidays;
 
     let $tbodyHtml = '';
     for (let i = 0; i < $endIdx; i += 1) {
       const $weekIdx = i % 7;
       const $day = i - $startIdx + 1;
       const $fullday = _this.setYear + _this.setMonth + _this.changeStringDay($day);
+      const $isHolidays = $holidays.includes($fullday);
+      const holidayClass = $isHolidays ? ' class="holiday"' : '';
       const $today = _this.todayString() === $fullday ? ' today' : '';
       const $selected = _this.value === $fullday ? ' selected' : '';
       const $notDisabled = Number(_this.minDate) <= Number($fullday) && Number($fullday) <= Number(_this.maxDate);
@@ -466,7 +480,7 @@ class hiDatepicker {
       if (i < $startIdx || $lastIdx <= i) {
         $tbodyHtml += `<td data-week-idx="${$weekIdx}"></td>`;
       } else {
-        $tbodyHtml += `<td data-week-idx="${$weekIdx}"><button type="button" class="${_this.className.tableBtn}${$today}${$selected}" data-day="${$day}" data-full-day="${$fullday}"${$disabled}>${$day}</button></td>`;
+        $tbodyHtml += `<td data-week-idx="${$weekIdx}"${holidayClass}><button type="button" class="${_this.className.tableBtn}${$today}${$selected}" data-day="${$day}" data-full-day="${$fullday}"${$disabled}>${$day}</button></td>`;
       }
       if ($weekIdx === 6) $tbodyHtml += '</tr>';
     }

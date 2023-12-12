@@ -97,11 +97,12 @@ $selected-txt-color: #fff;
       padding: 2px;
       text-align: center;
       border: 1px solid $table-line-color;
-      &[data-week-idx="0"] {
-        color: $sunday-txt-color;
-      }
       &[data-week-idx="6"] {
         color: $saturday-txt-color;
+      }
+      &[data-week-idx="0"],
+      &.holiday {
+        color: $sunday-txt-color;
       }
     }
     th {
