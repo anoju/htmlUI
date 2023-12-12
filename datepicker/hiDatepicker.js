@@ -176,8 +176,9 @@ class hiDatepicker {
     const $headerBtns = $wrap.querySelectorAll('.' + _this.className.headerBtn);
     const $monthBtn = $wrap.querySelectorAll('.' + _this.className.headerBtn + '[class*="month"]');
     const $yearBtn = $wrap.querySelectorAll('.' + _this.className.headerBtn + '[class*="year"]');
-    const $year = Number(_this.setYear);
-    const $month = Number(_this.setYear + _this.setMonth);
+    const $year = Number(_this.setStartYear);
+    const $monthYear = Number(_this.setStartMonthYear || _this.setYear);
+    const $fullmonth = Number(_this.setYear + _this.setMonth);
     const $min = _this.minDate;
     const $minYear = Number($min.substr(0, 4));
     const $minMonth = Number($min.substr(0, 6));
@@ -189,17 +190,27 @@ class hiDatepicker {
       $yearBtn.forEach(function($btn) {
         $btn.disabled = true;
       });
+      $monthBtn.forEach(function($btn) {
+        $btn.disabled = false;
+        if ($minYear >= $monthYear && $btn.classList.contains('prev-month')) $btn.disabled = true;
+        if ($maxYear <= $monthYear && $btn.classList.contains('next-month')) $btn.disabled = true;
+      });
     } else if ($showPanel === 'year') {
+      $yearBtn.forEach(function($btn) {
+        $btn.disabled = false;
+        if ($minYear >= $year && $btn.classList.contains('prev-year')) $btn.disabled = true;
+        if ($maxYear <= ($year + 10) && $btn.classList.contains('next-year')) $btn.disabled = true;
+      });
       $monthBtn.forEach(function($btn) {
         $btn.disabled = true;
       });
     } else {
       $headerBtns.forEach(function($btn) {
         $btn.disabled = false;
-        if ($minMonth >= $month && $btn.classList.contains('prev-month')) $btn.disabled = true;
-        if ($maxMonth <= $month && $btn.classList.contains('next-month')) $btn.disabled = true;
-        if ($minMonth >= ($month - 100) && $btn.classList.contains('prev-year')) $btn.disabled = true;
-        if ($maxMonth <= ($month + 100) && $btn.classList.contains('next-year')) $btn.disabled = true;
+        if ($minMonth >= $fullmonth && $btn.classList.contains('prev-month')) $btn.disabled = true;
+        if ($maxMonth <= $fullmonth && $btn.classList.contains('next-month')) $btn.disabled = true;
+        if ($minMonth >= ($fullmonth - 100) && $btn.classList.contains('prev-year')) $btn.disabled = true;
+        if ($maxMonth <= ($fullmonth + 100) && $btn.classList.contains('next-year')) $btn.disabled = true;
       });
     }
   }
@@ -369,6 +380,11 @@ class hiDatepicker {
     if ($target.classList.contains('year')) {
       const $btnYear = $target.dataset.year;
       _this.setYear = $btnYear;
+      const $fullMonth = Number($btnYear + _this.setMonth);
+      const $minMonth = Number(_this.minDate.substr(0, 6));
+      const $maxMonth = Number(_this.maxDate.substr(0, 6));
+      if ($fullMonth < $minMonth) _this.setMonth = _this.minDate.substr(4, 2);
+      else if ($maxMonth < $fullMonth) _this.setMonth = _this.maxDate.substr(4, 2);
     }
     if ($target.classList.contains('month')) {
       const $btnMonth = $target.dataset.month;
