@@ -132,6 +132,9 @@ $selected-txt-color: #fff;
       color: $selected-txt-color;
       font-weight: bold;
     }
+    &:disabled {
+      opacity: 0.4;
+    }
   }
   .#{$pre}-datepicker-list {
     > ul {
@@ -164,6 +167,9 @@ $selected-txt-color: #fff;
       background-color: $selected-color;
       color: $selected-txt-color;
       font-weight: bold;
+    }
+    &:disabled {
+      opacity: 0.4;
     }
   }
 }
