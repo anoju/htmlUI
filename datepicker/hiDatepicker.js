@@ -144,8 +144,6 @@ class hiDatepicker {
     if ($target.classList.contains(_this.className.target)) return;
     if (!_this.mobile) $wrap.classList.add(_this.className.layer);
     $target.classList.add(_this.className.target);
-
-    const $dimm = $wrap.querySelector('.' + _this.className.dimm);
     $target.readOnly = true;
     const $targetVal = $target.value.trim();
     if (!$targetVal) {
@@ -157,7 +155,10 @@ class hiDatepicker {
     $target.addEventListener('focus', _this.targetInputEvent.bind(_this));
     $target.addEventListener('click', _this.targetInputEvent.bind(_this));
     document.addEventListener('click', _this.documentEvent.bind(_this))
-    $dimm.addEventListener('click', _this.layerHide.bind(_this));
+    if (_this.mobile) {
+      const $dimm = $wrap.querySelector('.' + _this.className.dimm);
+      if ($dimm) $dimm.addEventListener('click', _this.layerHide.bind(_this));
+    }
   }
 
   targetInputUpdate() {
