@@ -19,7 +19,7 @@
 </head>
 <body>
 <p><input type="text" class="datepicker" id="datepicker1" placeholder="default"></p>
-<p><input type="text" class="datepicker" id="datepicker2" placeholder="mobile"></p>
+<p><input type="text" class="datepicker" id="datepicker2" placeholder="mobile, yyyy.mm.dd"></p>
 <p><input type="text" class="datepicker" id="datepicker3" placeholder="monthpicker"></p>
 <p><input type="text" class="datepicker" id="datepicker4" placeholder="yearpicker"></p>
 <p><input type="text" class="datepicker" id="datepicker5" placeholder="min, max"></p>
@@ -36,7 +36,8 @@
 <script>
 const $calendar1 = new hiDatepicker('#datepicker1');
 const $calendar2 = new hiDatepicker('#datepicker2', {
-  mobile: true
+  mobile: true,
+  valueUnit: '.'
 });
 const $calendar3 = new hiDatepicker('#datepicker3', {
   type: 'month'

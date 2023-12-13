@@ -19,7 +19,7 @@ class hiDatepicker {
     this.type = options.type || 'day';
     this.headerSuffix = options.headerSuffix || '.';
     this.headerSuffix2 = options.headerSuffix2 || '';
-    this.format = options.format || '-';
+    this.valueUnit = options.valueUnit || '-';
     this.minDate = this.getMinMax(options.min) || '00000000';
     this.maxDate = this.getMinMax(options.max) || '99999999';
     this.holidays = options.holidays ? this.getArrayDate(options.holidays) : [];
@@ -119,7 +119,7 @@ class hiDatepicker {
     $wrap.classList.add(_this.className.wrap);
     if (this.mobile) $wrap.classList.add(_this.className.mobile);
     let $innerHtml = ''
-    if (this.mobile) $innerHtml += `<div class="${_this.className.dimm}"></div>`;
+    if (this.mobile) $innerHtml += `<div class="${_this.className.dimm}" role="button" aria-label="달력닫음"></div>`;
     $innerHtml += `<div class="${_this.className.inner}"></div>`;
     $wrap.innerHTML = $innerHtml;
     _this.wrap = $wrap;
@@ -308,7 +308,7 @@ class hiDatepicker {
       if (_this.type === 'year') _this.value = $today.substr(0, 4);
       else if (_this.type === 'month') _this.value = $today.substr(0, 6);
       else _this.value = $today;
-      $target.value = _this.dateFormat(_this.value, _this.format);
+      $target.value = _this.dateFormat(_this.value);
     }
     if (!_this.mobile) _this.layerPosition();
     _this.targetInputUpdate();
@@ -603,7 +603,7 @@ class hiDatepicker {
     const $target = _this.element;
     if (!$target) return;
     if (_this.isLayer) {
-      $target.value = _this.dateFormat(_this.value, _this.format);
+      $target.value = _this.dateFormat(_this.value);
     }
   }
 
@@ -632,12 +632,12 @@ class hiDatepicker {
   }
 
   // etc
-  dateFormat(str, mark) {
+  dateFormat(str) {
+    const _this = this;
     const $str = typeof str === 'number' ? str.toString() : str;
     // const $str
     const $date = $str.replace(/[^0-9]/g, '');
     const $dateAry = [];
-    if (!mark) mark = '-';
     if ($date.length < 5) {
       $dateAry.push($date);
     } else if ($date.length < 7) {
@@ -648,7 +648,7 @@ class hiDatepicker {
       $dateAry.push($date.substr(4, 2));
       $dateAry.push($date.substr(6));
     }
-    return $dateAry.join(mark);
+    return $dateAry.join(_this.valueUnit);
   }
 
   changeStringDay(str) {
