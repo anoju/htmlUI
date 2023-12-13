@@ -15,7 +15,7 @@ class hiDatepicker {
 
     // 옵션들
     const preClassName = options.preClassName || 'hi';
-    this.mobile = options.mobile || null;
+    this.mobile = options.mobile || false;
     this.type = options.type || 'day';
     this.headerSuffix = options.headerSuffix || '.';
     this.headerSuffix2 = options.headerSuffix2 || '';
@@ -26,6 +26,8 @@ class hiDatepicker {
     this.disabledDays = options.disabledDays ? this.getArrayDate(options.disabledDays) : [];
     this.disabledWeek = options.disabledWeek ? this.getArrayWeek(options.disabledWeek) : [];
     this.showSetValue = options.showSetValue || false;
+    this.readonly = options.readonly || true;
+    this.weekName = options.weekName || ['일', '월', '화', '수', '목', '금', '토'];
 
     // 클래스네임
     this.className = {
@@ -149,7 +151,7 @@ class hiDatepicker {
     if ($target.classList.contains(_this.className.target)) return;
     if (!_this.mobile) $wrap.classList.add(_this.className.layer);
     $target.classList.add(_this.className.target);
-    $target.readOnly = true;
+    if (_this.readonly) $target.readOnly = true;
     const $targetVal = $target.value.trim();
     if ($targetVal) _this.value = _this.onlyNumber($target.value);
     $target.addEventListener('focus', _this.targetInputEvent.bind(_this));
@@ -413,8 +415,8 @@ class hiDatepicker {
     _this.update();
     _this.targetSetValue();
     if (_this.isLayer) _this.layerHide();
-    if (typeof _this.dayClickCallback === 'function') {
-      _this.dayClickCallback(_this);
+    if (_this.type === 'day' && typeof _this.seletedClickCallback === 'function') {
+      _this.seletedClickCallback(_this);
     }
   }
 
@@ -453,6 +455,10 @@ class hiDatepicker {
     _this.update();
     _this.showPanel = _this.type;
     _this.showPanelEvent();
+
+    if (_this.type !== 'day' && typeof _this.seletedClickCallback === 'function') {
+      _this.seletedClickCallback(_this);
+    }
   }
 
   // make
@@ -539,19 +545,15 @@ class hiDatepicker {
       if ($weekIdx === 6) $tbodyHtml += '</tr>';
     }
 
+    let $theadHtml = '<tr>';
+    for (let i = 0; i < 7; i += 1) {
+      $theadHtml += '<th data-week-idx="' + i + '">' + _this.weekName[i] + '</th>';
+    }
+    $theadHtml += '</tr>';
+
     const $html = `<div class="${_this.className.table} ${_this.className.panelPre}day">
       <table>
-        <thead>
-          <tr>
-            <th data-week-idx="0">일</th>
-            <th data-week-idx="1">월</th>
-            <th data-week-idx="2">화</th>
-            <th data-week-idx="3">수</th>
-            <th data-week-idx="4">목</th>
-            <th data-week-idx="5">금</th>
-            <th data-week-idx="6">토</th>
-          </tr>
-        </thead>
+        <thead>${$theadHtml}</thead>
         <tbody>${$tbodyHtml}</tbody>
       </table>
     </div>`;
@@ -728,8 +730,8 @@ class hiDatepicker {
   dayClick() {
     console.log('aaaa')
   }
-  dayClick(callback) {
-    this.dayClickCallback = callback;
+  seletedClick(callback) {
+    this.seletedClickCallback = callback;
   }
 }
 
