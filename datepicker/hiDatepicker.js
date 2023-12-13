@@ -34,6 +34,7 @@ class hiDatepicker {
       show: preClassName + '-datepicker-show',
       layer: preClassName + '-datepicker-layer',
       mobile: preClassName + '-datepicker-mobile',
+      inline: preClassName + '-datepicker-inline',
       dimm: preClassName + '-datepicker-dimm',
       inner: preClassName + '-datepicker-inner',
       header: preClassName + '-datepicker-header',
@@ -132,9 +133,9 @@ class hiDatepicker {
     if (_this.isLayer) {
       document.body.appendChild($wrap);
     } else {
+      $wrap.classList.add(_this.className.inline);
       $target.appendChild($wrap);
     }
-
 
     _this.makeHeader();
     _this.makeBody();
@@ -412,6 +413,9 @@ class hiDatepicker {
     _this.update();
     _this.targetSetValue();
     if (_this.isLayer) _this.layerHide();
+    if (typeof _this.dayClickCallback === 'function') {
+      _this.dayClickCallback(_this);
+    }
   }
 
   listBtnClickEvent(e) {
@@ -719,6 +723,13 @@ class hiDatepicker {
       left: $elX,
       top: $elY
     };
+  }
+
+  dayClick() {
+    console.log('aaaa')
+  }
+  dayClick(callback) {
+    this.dayClickCallback = callback;
   }
 }
 

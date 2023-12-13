@@ -27,7 +27,10 @@
 <p><input type="text" class="datepicker" id="datepicker7" placeholder="disabledDays"></p>
 <p><input type="text" class="datepicker" id="datepicker8" placeholder="disabledWeek"></p>
 <p><input type="text" class="datepicker" id="datepicker9" placeholder="showSetValue"></p>
-<!-- <p><input type="text" class="datepicker" id="datepicker10" placeholder="disabledDays"></p> -->
+<br>
+<p>달력 집어넣기</p>
+<div id="datepicker10" style="max-width: 500px;"></div>
+<br>
 
 <script src="hiDatepicker.js"></script>
 <script>
@@ -62,15 +65,9 @@ const $calendar9 = new hiDatepicker('#datepicker9', {
   showSetValue: true,
 });
 
-const $calendar10 = new hiDatepicker('#datepicker10', {
-  // mobile: true,
-  // type: 'year', //'day', 'month', 'year'
-  // showSetValue: true,
-  min: 'today',
-  max: '+5m',
-  holidays: ['2023-12-25', '2024-01-01', '2024-02-09', '2024-02-10', '2024-02-11', '2024-02-12'],
-  // disabledDays: ['2023-12-20', '2023-12-23', '2023-12-28', '2024-01-04'],
-  // disabledWeek: ['0', '4']
+const $calendar10 = new hiDatepicker('#datepicker10');
+$calendar10.dayClick(function(e) {
+  console.log(e.value);
 });
 </script>
 </body>

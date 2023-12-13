@@ -12,7 +12,7 @@ $selected-txt-color: #fff;
   position: relative;
   z-index: 10;
   min-width: 300px;
-  max-width: 420px;
+  // max-width: 420px;
   color: $base-txt-color;
 
   &.#{$pre}-datepicker-layer {
@@ -149,7 +149,7 @@ $selected-txt-color: #fff;
     font-size: inherit;
     padding: 0;
     border-radius: 50%;
-    &:not(:disabled):hover {
+    &:hover {
       background-color: $list-btn-color;
     }
     &.today {
@@ -163,6 +163,7 @@ $selected-txt-color: #fff;
     }
     &:disabled {
       opacity: 0.4;
+      background: none;
     }
   }
   .#{$pre}-datepicker-list {
