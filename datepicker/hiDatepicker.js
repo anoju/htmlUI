@@ -727,23 +727,7 @@ class hiDatepicker {
     };
   }
 
-  dayClick() {
-    console.log('aaaa')
-  }
   seletedClick(callback) {
     this.seletedClickCallback = callback;
   }
 }
-
-// 사용 예시
-// const element = document.getElementById('yourElementId');
-// const controller = new CustomElementController(element, {
-//   option1: 'customOption1',
-//   option2: 'customOption2',
-// });
-
-// 클래스 메소드 호출
-// CustomElementController.staticMethod();
-
-// 옵션 업데이트
-// controller.updateOption1('newCustomOption1');
