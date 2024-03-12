@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../js_static/css/front.min.css" />
+  </head>
+  <body>
+    <div class="page">
+      <div class="page-body">
+        <div class="section">
+          <h1 class="tit-h1 mt-0">echart 진행상황</h1>
+          <div class="table mt-20">
+            <table>
+              <thead>
+                <tr>
+                  <th>내용</th>
+                  <th>링크</th>
+                  <th>진행상황</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td data-html="pie">pie 차트(안효주)</td>
+                  <td class="fz-12">type1 완료<br />type2 완료<br />type3 진행중</td>
+                </tr>
+                <tr>
+                  <td data-html="funnel">funnel 차트(안효주)</td>
+                  <td class="fz-12">type1 완료<br />type2 완료</td>
+                </tr>
+                <tr>
+                  <td data-html="bar">bar 차트(변상우)</td>
+                  <td class="fz-12">type1 진행중</td>
+                </tr>
+                <tr>
+                  <td data-html="barMultiple">multiple bar 차트(변상우)</td>
+                  <td class="fz-12">type1 진행중</td>
+                </tr>
+                <tr>
+                  <td data-html="monitoring">모니터링 차트 모음(변상우)</td>
+                  <td class="fz-12">type1 진행중<br />type2 진행중<br />type3 완료</td>
+                </tr>
+                <tr>
+                  <td data-html="relation2">관계도 차트(안효주)</td>
+                  <td class="fz-12">완료</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../js_static/js/jquery-3.6.0.min.js"></script>
+    <script>
+      function makeTd() {
+        const $td = $('table td[data-html]');
+        $td.each(function () {
+          const $this = $(this);
+          const $html = $this.data('html');
+          const $after = '<td><a href="./' + $html + '.html" target="_blank" class="fc-primary underline">' + $html + '.html</a></td>';
+          $this.after($after);
+        });
+      }
+      makeTd();
+    </script>
+  </body>
+</html>

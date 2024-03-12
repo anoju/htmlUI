@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>echart multiple bar</title>
+    <link rel="stylesheet" href="../js_static/css/front.min.css" />
+    <link rel="stylesheet" href="css/stylesheet.css" />
+    <link rel="stylesheet" href="lib/chart.css" />
+    <script src="lib/echarts.min.js"></script>
+  </head>
+  <body>
+    <!-- 이엑스 빌더에 적용할때 font-family는 'KBText' 에서 'KBText' 바꿔서 적용예정 -->
+    <div class="page">
+      <div class="page-body">
+        <div class="section">
+          <h1 class="gd__h1">barMultiple</h1>
+          <h2 class="gd__h2">type1 (진행중)</h2>
+
+          <div id="barMultiple-1" style="height: 500px"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      multipleBarChart1();
+
+      function multipleBarChart1() {
+        var shlContent = document.getElementById('barMultiple-1');
+        var shlCharts = echarts.init(shlContent);
+
+        var limit = 30;
+        var dummyXValue = function () {
+          var xValue = [];
+          for (var i = 1; i < limit; i++) {
+            xValue.push(i + '일');
+          }
+
+          return xValue;
+        };
+
+        var addSumValue = function (dataArray) {
+          var dumData = new Array(limit);
+          // console.log("dataArray", dataArray);
+
+          for (var i = 0; i < limit; i++) {
+            sumValue[i] = sumValue[i] || 0; // 처음 배열의 값이 할당되지 않았을 경우 0으로 바꿔줌.
+            sumValue[i] = sumValue[i] + dataArray[i];
+          }
+        };
+        var dataValue = [];
+        var sumValue = new Array(limit);
+
+        // x축 더미데이터 생성
+        var dummyData = function () {
+          var dataValue = [];
+          for (var i = 0; i < limit; i++) {
+            dataValue.push(Math.floor(Math.random() * 100));
+          }
+          addSumValue(dataValue);
+          return dataValue;
+        };
+        var chartName = '차트 이름';
+
+        var chartOption = {
+          grid: {
+            show: false,
+            left: 50
+          },
+          legend: {
+            bottom: '5%',
+            left: 'center',
+            //icon: 'circle',
+            selectedMode: false // 해당 기능 off
+          },
+          textStyle: {
+            color: '#555',
+            fontSize: 12,
+            fontWeight: 500,
+            fontFamily: 'KBText'
+          },
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross', // line, cross, shadow, none
+              crossStyle: {
+                color: '#999'
+              }
+            },
+            //formatter: '{b}<br /> {a}: {c}: {a}: {c}' // b는 시리즈 이름, a는 범례, c는
+            formatter: function (params, i) {
+              // console.log("썸", params[params.length-1].value);
+              var obj = `<div class='tooltip-title'>2023년 3월 ${params[0].axisValue} <span class="percent plus">(▲ 10% 증가)</span></div>`;
+              for (var i = 0; i < params.length; i++) {
+                var sum = params[params.length - 1].value;
+                var addCommaValue = params[i].value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                if (params.length - 1 === i) {
+                  continue;
+                }
+                var percent = ((params[i].value / sum) * 100).toFixed(1);
+
+                obj += `
+                        <div class='tooltip-remark' style='--color:${params[i].color}'>${params[i].seriesName} <span class="values">${addCommaValue}명 (${percent}%)</span></div>
+                      `;
+              }
+              return obj;
+            }
+          },
+          /*
+          dataZoom: {
+            type: 'inside' // inside, slider
+          },
+          */
+          xAxis: [
+            {
+              type: 'category',
+              data: dummyXValue(),
+              axisLabel: {
+                color: '#8c8c8c',
+                fontSize: 12,
+                fontFamily: 'KB금융 본문체'
+              },
+              axisTick: {
+                alignWithLabel: true
+              },
+              axisLine: {
+                lineStyle: {
+                  color: '#dddddd'
+                }
+              }
+            }
+          ],
+
+          yAxis: [
+            {
+              type: 'value',
+              name: '(명)',
+              axisLabel: {
+                formatter: '{value} K'
+              }
+            },
+            {
+              type: 'value',
+              min: 0,
+              max: 100,
+              interval: 50,
+              axisLabel: {
+                formatter: '{value} %'
+              }
+            }
+          ],
+
+          series: [
+            {
+              name: '합계',
+              type: 'line',
+              color: '#e36c74',
+              data: sumValue
+            },
+
+            {
+              name: '범례1',
+              type: 'bar',
+              barWidth: 10, // 하나의 범례만 값이 들어가도 다른 차트도 동일하게 적용됨
+              stack: chartName, // 같은 값이 들어가야 한 차트에 표기됨,누락되어도 표기 안됨
+              color: '#BC6EFF',
+              data: dummyData()
+            },
+            {
+              name: '범례2',
+              type: 'bar',
+              color: '#826AF9',
+              stack: chartName,
+              data: dummyData()
+            },
+            {
+              name: '범례3',
+              type: 'bar',
+              color: '#2D99FF',
+              stack: chartName,
+              data: dummyData()
+            },
+            {
+              name: '범례4',
+              type: 'bar',
+              color: '#5066F7',
+              stack: chartName,
+              data: dummyData()
+            },
+            {
+              name: '범례5',
+              type: 'bar',
+              color: '#2CD9C5',
+              stack: chartName,
+              data: dummyData()
+            },
+            {
+              name: '범례6',
+              type: 'bar',
+              color: '#30BC86',
+              stack: chartName,
+              data: dummyData()
+            },
+            {
+              name: '범례7',
+              type: 'bar',
+              color: '#FFC400',
+              stack: chartName,
+              data: dummyData(),
+              itemStyle: {
+                borderRadius: [2, 2, 0, 0] // [6,6,0,0] 주, 월 단위일 경우
+              }
+            }
+          ]
+        };
+
+        shlCharts.setOption(chartOption);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>echart bar</title>
+    <link rel="stylesheet" href="../js_static/css/front.min.css" />
+    <link rel="stylesheet" href="css/stylesheet.css" />
+    <link rel="stylesheet" href="lib/chart.css" />
+    <script src="lib/echarts.min.js"></script>
+  </head>
+  <body>
+    <!-- 이엑스 빌더에 적용할때 font-family는 'KBText' 에서 'KBText' 바꿔서 적용예정 -->
+    <div class="page">
+      <div class="page-body">
+        <div class="section">
+          <h1 class="gd__h1">bar</h1>
+          <h2 class="gd__h2">type1 (진행중)</h2>
+
+          <div id="bar1" style="width: 360px; height: 340px; background-color: #fafafa"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      barChart1();
+      function barChart1() {
+        var shlContent = document.getElementById('bar1');
+        var shlDonutECharts = echarts.init(shlContent);
+
+        var chartName = '고객실적';
+        var chartLabel = ['01.20', '01.21'];
+        var chartValue = [1500, 1000];
+        var chartColor = ['#dddddd', '#FEB23A'];
+        var chartData = function () {
+          var rtnAry = [];
+          for (var i = 0; i < chartValue.length; i += 1) {
+            var item = { value: chartValue[i] };
+            if (chartColor[i]) {
+              item.itemStyle = { color: chartColor[i] };
+            }
+            rtnAry.push(item);
+          }
+          return rtnAry;
+        };
+        var chartMarkPointLabel = function () {
+          var rtnTxt;
+          var val1 = chartValue[0];
+          var val2 = chartValue[1];
+          var ratio = Math.round((val2 / val1) * 100);
+          if (ratio < 100) rtnTxt = 100 - ratio + '% 감소';
+          else rtnTxt = ratio - 100 + '% 증가';
+          return rtnTxt;
+        };
+        var chartWidth = 280;
+        var chartHeight = 280;
+        var chartLeft = (shlContent.offsetWidth - chartWidth) / 2;
+        var chartTop = (shlContent.offsetHeight - chartHeight) / 2;
+        var setMarkPoint = {
+          width: 80,
+          type: function () {
+            chartValue[0] > chartValue[1] ? 'min' : 'max';
+          },
+          x: function () {
+            return chartLeft + (chartWidth / 4) * 3 + setMarkPoint.width / 2 - 14;
+          },
+          y: function () {
+            var rtnVal = '50%';
+            if (chartValue[0] > chartValue[1]) {
+              var val1 = chartValue[0];
+              var val2 = chartValue[1];
+              var ratioH = (chartHeight * val2) / val1;
+              rtnVal = chartHeight - ratioH / 2 + chartTop;
+            }
+            return rtnVal;
+          }
+        };
+
+        var chartOption = {
+          grid: {
+            show: false,
+            width: chartWidth,
+            height: chartHeight,
+            // left: 'center',
+            // top: 'center',
+            left: chartLeft,
+            top: chartTop
+          },
+          tooltip: {
+            trigger: 'item',
+            className: 'echart-tooltip2',
+            formatter: function (params) {
+              if (params.componentType === 'markPoint') return null;
+              var addCommaValue = params.data.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+              return `<div class='tooltip-remark' style='--color:${params.color}'>${params.name} <span class="values"> ${addCommaValue}</span></div>`;
+            },
+            extraCssText: "font-size: 11px;font-family:'KBText', sans-serif;line-height: 23px;padding: 15px;border-color: #EFEFEF;box-shadow: 0px 5px 12px rgba(51,51,51,0.15);"
+          },
+          yAxis: [
+            {
+              type: 'value',
+              show: false
+            }
+          ],
+          xAxis: {
+            type: 'category',
+            data: chartLabel,
+            axisLabel: {
+              color: '#555555',
+              fontSize: 12,
+              fontFamily: 'KBText'
+            },
+            axisTick: {
+              alignWithLabel: true
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#dddddd'
+              }
+            }
+          },
+          series: [
+            {
+              type: 'bar',
+              itemStyle: {
+                borderRadius: [10, 10, 0, 0]
+              },
+              barWidth: 45,
+              label: {
+                show: true,
+                position: 'top',
+                fontSize: 14,
+                fontWeight: 700,
+                fontFamily: 'KBText',
+                formatter: function (params) {
+                  var addCommaValue = params.data.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                  return addCommaValue;
+                }
+              },
+              markPoint: {
+                label: {
+                  formatter: chartMarkPointLabel(),
+                  backgroundColor: '#333333',
+                  color: '#fff',
+                  align: 'center',
+                  fontWeight: 500,
+                  fontFamily: 'KBText',
+                  fontSize: 14,
+                  liheHeight: 18,
+                  borderRadius: 5,
+                  padding: [8, 0, 8, 0],
+                  width: setMarkPoint.width
+                },
+                symbolSize: 30,
+                symbolRotate: -90,
+                data: [
+                  {
+                    type: setMarkPoint.type(),
+                    itemStyle: {
+                      color: '#333'
+                    },
+                    x: setMarkPoint.x(),
+                    y: setMarkPoint.y()
+                  }
+                ]
+              },
+              color: chartColor,
+              data: chartData()
+            }
+          ]
+        };
+
+        shlDonutECharts.setOption(chartOption);
+      }
+    </script>
+  </body>
+</html>

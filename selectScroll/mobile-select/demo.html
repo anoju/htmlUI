@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>mobile-select demo</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="wap-font-scale" content="no" />
+    <meta
+      name="viewport"
+      content="width=device-width, minimum-scale=1, maximum-scale=1,user-scalable=no"
+    />
+    <link rel="stylesheet" type="text/css" href="./style/demo.css"/>
+  </head>
+  <body>
+    <div class="contain">
+      <div class="fixWidth">
+        <div class="nav">
+          <h1>mobile-select demo</h1>
+        </div>
+        <div class="demo">
+          <div id="trigger1">단일항목선택</div>
+          <div id="trigger2">복수선택</div>
+          <div id="trigger3">다항 선택</div>
+          <div id="trigger4">지역선택-캐스케이드</div>
+          <div id="trigger5">차종선택-캐스케이드</div>
+        </div>
+      </div>
+    </div>
+
+    <link rel="stylesheet" type="text/css" href="./style/mobile-select.css" />
+          <script type="text/javascript" src="./mobile-select.iife.js"></script>
+          <script type="text/javascript">
+      
+      const weekdayArr = [
+        "일요일",
+        "월요일",
+        "화요일",
+        "수요일",
+        "목요일",
+        "금요일",
+        "토요일",
+      ];
+      const timeArr = [
+        "08:30",
+        "09:00",
+        "09:30",
+        "10:00",
+        "10:30",
+        "11:00",
+        "11:30",
+        "12:00",
+        "12:30",
+        "13:00",
+        "13:30",
+        "14:00",
+        "14:30",
+        "15:00",
+        "15:30",
+        "16:00",
+        "16:30",
+        "17:00",
+        "17:30",
+        "18:00",
+        "18:30",
+        "19:00",
+        "19:30",
+        "20:00",
+        "20:30",
+        "21:00",
+      ];
+      const numArr = ["1", "2", "3", "4", "5"];
+      const UplinkData = [
+        { id: "1", value: "람보르기니" },
+        {
+          id: "2",
+          value: "롤스로이스",
+          childs: [
+            {
+              id: "1",
+              value: "요영",
+            },
+            {
+              id: "2",
+              value: "환영",
+              childs: [
+                {
+                  id: "1",
+                  value: "표준판",
+                },
+                {
+                  id: "2",
+                  value: "연장판",
+                },
+                {
+                  id: "3",
+                  value: "정상의 여행",
+                },
+                {
+                  id: "4",
+                  value: "세상을 빛내다.",
+                },
+                {
+                  id: "5",
+                  value: "도회지 소장판",
+                },
+              ],
+            },
+            {
+              id: "3",
+              value: "고사특",
+              childs: [
+                {
+                  id: "1",
+                  value: "연장판",
+                },
+                {
+                  id: "2",
+                  value: "영원한 사랑",
+                },
+                {
+                  id: "3",
+                  value: "영지",
+                },
+                {
+                  id: "4",
+                  value: "알프스 전장판",
+                },
+              ],
+            },
+            {
+              id: "4",
+              value: "매영",
+              childs: [
+                {
+                  id: "1",
+                  value: "표준판",
+                },
+                {
+                  id: "2",
+                  value: "Black Badge",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: "3",
+          value: "벤틀리",
+          childs: [
+            {
+              id: "1",
+              value: "모상",
+              childs: [
+                {
+                  id: "1",
+                  value: "표준판",
+                },
+                {
+                  id: "2",
+                  value: "극치판",
+                },
+              ],
+            },
+            {
+              id: "2",
+              value: "유럽 대륙",
+              childs: [
+                {
+                  id: "1",
+                  value: "존귀판",
+                },
+                {
+                  id: "2",
+                  value: "오픈 스탠더드 에디션",
+                },
+                {
+                  id: "3",
+                  value: "오픈탑 존귀판",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: "4",
+          value: "페라리",
+          childs: [
+            {
+              id: "1",
+              value: "LaFerrari",
+            },
+            {
+              id: "2",
+              value: "페라리488",
+            },
+            {
+              id: "3",
+              value: "GTC4Lusso",
+            },
+          ],
+        },
+        {
+          id: "5",
+          value: "마세라티",
+          childs: [
+            {
+              id: "1",
+              value: "대통령",
+            },
+            {
+              id: "2",
+              value: "마세라티GT",
+            },
+            {
+              id: "3",
+              value: "Levante",
+            },
+          ],
+        },
+      ];
+
+      //------------------------------------------------ ----------
+       //파라미터에 대한 자세한 내용은 https://github.com/onlyhom/mobile-select 문서를 참조하십시오.
+
+      /**
+        * 매개변수 설명
+        * @param trigger (필수 매개변수) 트리거 객체의 id/class/tag 또는 HTMLElement 객체
+        * @param wheels(필수 매개변수) 데이터 소스, 표시할 데이터
+        * @param title 제어 제목
+        * @param initValue 기본값
+        * @param onChange 선택 성공 후 발동되는 콜백 함수로 indexArr(선택된 옵션 인덱스), data(선택된 데이터)를 반환
+        * @param ononTransitionEnd 각 제스처 슬라이드 후 트리거되는 콜백 함수는 indexArr(현재 선택된 옵션 인덱스), data(선택된 데이터)를 반환합니다.
+        * @param keyMap 데이터 필드 이름 매핑
+        */
+
+      /**
+        * 기능 설명(인스턴스화 후에만 사용 가능)
+        * @function setTitle() 매개변수 문자열 컨트롤의 제목을 설정합니다.
+        * @function updateWheel() 매개변수 sliderIndex, 지정된 휠을 다시 렌더링하기 위한 데이터(데이터를 먼저 인스턴스화한 다음 ajax를 통해 얻은 장면에서 사용할 수 있음)
+        * @function updateWheels() 매개변수 데이터는 모든 휠을 다시 렌더링하며 캐스케이드 데이터 형식만 사용할 수 있습니다(데이터를 먼저 인스턴스화한 다음 ajax를 통해 가져오는 시나리오에서 사용할 수 있음).
+        * @function locatePosition() 매개변수 sliderIndex, posIndex 위치 배열을 전달하여 바퀴의 위치를 ​​재배치합니다.
+        * @function show() 매개변수 매개변수 없음 팝업 창 구성 요소 호출
+        * @function getValue() 매개변수 매개변수 없음 컴포넌트가 선택한 값 가져오기
+        * @function destroy() 매개변수 없음 매개변수 파괴 구성 요소
+        */
+
+      const mobileSelect1 = new MobileSelect({
+        trigger: document.querySelector("#trigger1"),
+        title: "단일 선택",
+        wheels: [{ data: weekdayArr }],
+        position: [2], //初始化定位 打开时默认选中的哪个 如果不填默认为0
+        onTransitionEnd: function (data, indexArr, msInstance) {
+          //console.log(data);
+        },
+        onChange: function (data, indexArr, msInstance) {
+          console.log(data);
+        },
+      });
+
+      const mobileSelect2 = new MobileSelect({
+        trigger: "#trigger2",
+        title: "이중 선택",
+        wheels: [{ data: weekdayArr }, { data: timeArr }],
+        position: [1, 2],
+        colWidth: [2, 1],
+        onTransitionEnd: function (data, indexArr, msInstance) {
+          //console.log(data);
+        },
+        onChange: function (data, indexArr, msInstance) {
+          console.log(data);
+        },
+      });
+
+      const mobileSelect3 = new MobileSelect({
+        trigger: "#trigger3",
+        title: "다중 선택",
+        wheels: [
+          { data: numArr },
+          { data: numArr },
+          { data: numArr },
+          { data: numArr },
+          { data: numArr },
+        ],
+        position: [0, 1, 0, 1, 0],
+        onTransitionEnd: function (data, indexArr, msInstance) {
+          //console.log(data);
+        },
+        onChange: function (data, indexArr, msInstance) {
+          console.log(data);
+        },
+      });
+
+      const mobileSelect4 = new MobileSelect({
+        trigger: "#trigger4",
+        title: "캐스케이드 데이터",
+        wheels: [
+          {
+            data: [
+              {
+                id: "1",
+                value: "가까운",
+                childs: [
+                  { id: "1", value: "1000미터" },
+                  { id: "2", value: "2000미터" },
+                  { id: "3", value: "3000미터" },
+                  { id: "4", value: "5000미터" },
+                  { id: "5", value: "10000미터" },
+                ],
+              },
+              { id: "2", value: "업타운" },
+              { id: "3", value: "시내" },
+              { id: "4", value: "강간 지구" },
+              { id: "5", value: "공수 지구" },
+              { id: "6", value: "서호 지구" },
+            ],
+          },
+        ],
+        connector: "-",
+        initValue: "인근 - 3000미터",
+        onTransitionEnd: function (data, indexArr, msInstance) {
+          //console.log(data);
+        },
+        onChange: function (data, indexArr, msInstance) {
+          console.log(data);
+        },
+      });
+
+      const mobileSelect5 = new MobileSelect({
+        trigger: "#trigger5",
+        title: "캐스케이드 데이터",
+        wheels: [{ data: UplinkData }],
+        initValue: "롤스로이스 팬텀 스탠다드 에디션",
+        // scrollSpeed: 2,
+        onTransitionEnd: function (data, indexArr, msInstance) {
+          //console.log(data);
+        },
+        onChange: function (data, indexArr, msInstance) {
+          console.log(data);
+        },
+      });
+    </script>
+  </body>
+</html>

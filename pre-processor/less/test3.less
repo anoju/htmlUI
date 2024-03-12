@@ -1,0 +1,21 @@
+// out: "../css/test3.min.css"
+@main-color: #d00;
+.pad(@x, @y) {
+  padding: @y @x;
+}
+
+nav {
+  ul {
+    display: flex;
+  }
+  each(range(3), {
+    li:nth-child(@{value}) {
+      margin-left: (@value * 5px);
+    }
+  });
+  a {
+    display: block;
+    .pad(5px, 10px);
+    color: @main-color;
+  }
+}

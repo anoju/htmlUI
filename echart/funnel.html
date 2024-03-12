@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>echart funnel</title>
+    <link rel="stylesheet" href="../js_static/css/front.min.css" />
+    <link rel="stylesheet" href="css/stylesheet.css" />
+    <link rel="stylesheet" href="lib/chart.css" />
+    <script src="lib/echarts.min.js"></script>
+    <style>
+      .section > div {
+        background-color: #fafafa;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 이엑스 빌더에 적용할때 font-family는 'KBText' 에서 'KB금융 본문체' 바꿔서 적용예정 -->
+    <div class="page">
+      <div class="page-body">
+        <div class="section">
+          <h1 class="gd__h1">funnel</h1>
+          <h2 class="gd__h2">type1 (완료)</h2>
+
+          <div id="funnel1" style="width: 912px; height: 643px"></div>
+
+          <hr class="hr-line mg-50y" />
+          <h2 class="gd__h2">type2 (완료: type1과 데이타만 다름)</h2>
+
+          <div id="funnel2" style="width: 912px; height: 643px"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      funnelChart1();
+      function funnelChart1() {
+        var shlContent = document.getElementById('funnel1');
+        var shlDonutECharts = echarts.init(shlContent);
+
+        var chartName = '차트 이름';
+        var chartColor = ['#BC6EFF', '#826AF9', '#2D99FF', '#5066F7', '#2CD9C5', '#30BC86', '#FFC400', '#FE943A', '#F46271'];
+        var chartData = [
+          { name: '범례1', value: 7 },
+          { name: '범례2', value: 6 },
+          { name: '범례3', value: 5 },
+          { name: '범례4', value: 4 },
+          { name: '범례5', value: 3 },
+          { name: '범례6', value: 2 },
+          { name: '범례7', value: 1 }
+        ];
+
+        var chartOption = {
+          legend: {
+            bottom: 0,
+            itemGap: 15,
+            itemWidth: 14,
+            icon: 'circle',
+            textStyle: {
+              color: '#555',
+              fontSize: 13,
+              fontWeight: 500,
+              fontFamily: 'KBText'
+            },
+            selectedMode: false // 해당 차트에서 selectedMode 사용시 버그 있음, 그래서 해당 기능 off
+          },
+          series: [
+            {
+              name: chartName,
+              type: 'funnel',
+              top: 0,
+              left: 'center',
+              width: 640,
+              height: 552,
+              minSize: 2,
+              // sort: 'descending',
+
+              label: {
+                show: true,
+                color: '#555',
+                fontSize: 13,
+                fontFamily: 'KBText',
+                formatter: function (params) {
+                  return '  {a|' + params.name + '} {b|(' + params.percent + '%)}';
+                },
+                rich: {
+                  a: {
+                    fontWeight: 700,
+                    fontSize: 11,
+                    lineHeight: 14,
+                    fontFamily: 'KBText',
+                    color: '#555'
+                  },
+                  b: {
+                    align: 'right',
+                    fontSize: 11,
+                    lineHeight: 14,
+                    fontFamily: 'KBText',
+                    color: '#555'
+                  }
+                }
+              },
+              labelLayout: {
+                align: 'right',
+                x: '100%'
+              },
+              labelLine: {
+                lineStyle: {
+                  color: '#bbb'
+                }
+              },
+              color: chartColor,
+              data: chartData
+            }
+          ]
+        };
+
+        shlDonutECharts.setOption(chartOption);
+      }
+
+      funnelChart2();
+      function funnelChart2() {
+        var shlContent = document.getElementById('funnel2');
+        var shlDonutECharts = echarts.init(shlContent);
+
+        var chartName = '차트 이름';
+        var chartColor = ['#BC6EFF', '#826AF9', '#2D99FF', '#5066F7', '#2CD9C5', '#30BC86', '#FFC400', '#FE943A', '#F46271'];
+        var chartData = [
+          { name: '범례1', value: 10 },
+          { name: '범례2', value: 9 },
+          { name: '범례3', value: 6 },
+          { name: '범례4', value: 4 },
+          { name: '범례5', value: 2 },
+          { name: '범례6', value: 0.5 },
+          { name: '범례7', value: 0.01 }
+        ];
+
+        var chartOption = {
+          legend: {
+            bottom: 0,
+            itemGap: 15,
+            itemWidth: 14,
+            icon: 'circle',
+            textStyle: {
+              color: '#555',
+              fontSize: 13,
+              fontWeight: 500,
+              fontFamily: 'KBText'
+            },
+            selectedMode: false // 해당 차트에서 selectedMode 사용시 버그 있음, 그래서 해당 기능 off
+          },
+          series: [
+            {
+              name: chartName,
+              type: 'funnel',
+              top: 0,
+              left: 'center',
+              width: 640,
+              height: 552,
+              minSize: 2,
+              // sort: 'descending',
+
+              label: {
+                show: true,
+                color: '#555',
+                fontSize: 13,
+                fontFamily: 'KBText',
+                formatter: function (params) {
+                  return '  {a|' + params.name + '} {b|(' + params.percent + '%)}';
+                },
+                rich: {
+                  a: {
+                    fontWeight: 700,
+                    fontSize: 11,
+                    lineHeight: 14,
+                    fontFamily: 'KBText',
+                    color: '#555'
+                  },
+                  b: {
+                    align: 'right',
+                    fontSize: 11,
+                    lineHeight: 14,
+                    fontFamily: 'KBText',
+                    color: '#555'
+                  }
+                }
+              },
+              labelLayout: {
+                align: 'right',
+                x: '100%'
+              },
+              labelLine: {
+                lineStyle: {
+                  color: '#bbb'
+                }
+              },
+              color: chartColor,
+              data: chartData
+            }
+          ]
+        };
+
+        shlDonutECharts.setOption(chartOption);
+      }
+    </script>
+  </body>
+</html>

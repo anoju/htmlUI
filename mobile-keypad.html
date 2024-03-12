@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mobile-keypad</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+}
+.wrap {
+  height: 300vh;
+  background: linear-gradient(to bottom, #f1f1f1 0%, #aaa 100%);
+}
+.is-keyboard-active .wrap {
+  background: linear-gradient(to bottom, rgba(255, 0, 0, 0.2) 0%, rgba(255, 0, 0, 0.8) 100%);
+}
+.input {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+.input input {
+  width: 100%;
+  border: 1px solid #ddd;
+  height: 42px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="input"><input type="text" placeholder="input 입니다."></div>
+</div>
+
+<script>
+let windowHeight = window.innerHeight;
+
+function resizeHandler() {
+  windowHeight = window.innerHeight;
+}
+
+function viewportHandler(event) {
+  const viewport = event.target;
+  const viewportHeight = viewport.height;
+  const htmlElement = document.querySelector('html');
+
+  if (windowHeight > viewportHeight) {
+    // console.log('키패드 올리고');
+    htmlElement.classList.add('is-keyboard-active');
+  } else {
+    // console.log('키패드 내리고');
+    htmlElement.classList.remove('is-keyboard-active');
+  }
+}
+
+window.addEventListener('resize', resizeHandler);
+window.visualViewport.addEventListener('resize', viewportHandler);
+</script>
+</body>
+</html>

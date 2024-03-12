@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom Element Controller</title>
+</head>
+<body>
+
+<div id="yourElementId">This is your element</div>
+
+<script>
+class CustomElementController {
+  constructor(elementId, options = {}) {
+    this.element = document.getElementById(elementId);
+    this.options = {
+      option1: options.option1 || 'defaultOption1',
+      option2: options.option2 || 'defaultOption2',
+      // 추가적인 옵션들...
+    };
+
+    // 초기화 함수 호출
+    this.init();
+  }
+
+  // 엘리먼트 초기화 함수
+  init() {
+    // 여기에 초기화 코드 작성
+    // 예: 이벤트 리스너 추가, 초기 스타일 설정 등
+  }
+
+  // 다양한 기능을 수행하는 메소드들 추가
+  performAction() {
+    // 예: 특정 동작 수행
+  }
+
+  updateOption1(newOption1) {
+    this.options.option1 = newOption1;
+    // 필요한 업데이트 로직 추가
+  }
+
+  updateOption2(newOption2) {
+    this.options.option2 = newOption2;
+    // 필요한 업데이트 로직 추가
+  }
+
+  // 추가적인 메소드들...
+
+  // 클래스 메소드로도 접근 가능
+  static staticMethod() {
+    // 클래스 레벨의 동작 수행
+  }
+}
+
+// 사용 예시
+const controller = new CustomElementController('yourElementId', {
+  option1: 'customOption1',
+  option2: 'customOption2',
+});
+
+// 클래스 메소드 호출
+CustomElementController.staticMethod();
+
+// 옵션 업데이트
+controller.updateOption1('newCustomOption1');
+</script>
+
+</body>
+</html>

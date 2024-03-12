@@ -1,0 +1,88 @@
+$scroll-selector-bg: #000;
+$scroll-selector-color: #FF69A0;
+:root {
+  --scroll-selector-item-height: 32px;
+  --scroll-selector-outside: 2;
+}
+.scroll-selector-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  height: 200px;
+  padding: 20px 25px;
+  background: $scroll-selector-bg;
+  box-sizing: border-box;
+  &:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 24px;
+    right: 24px;
+    height: var(--scroll-selector-item-height);
+    border: 1px solid $scroll-selector-color;
+    transform: translateY(-50%);
+    border-radius: 8px;
+    box-sizing: border-box;
+    //z-index: 1;
+    pointer-events: none;
+  }
+  > div {
+    width: 100%;
+  }
+  > .year {
+    width: 66px;
+  }
+  > .month,
+  > .day {
+    width: 55px;
+  }
+}
+.scroll-selector {
+  position: relative;
+  height: 100%;
+  text-align: center;
+  overflow: hidden;
+  font-size: 16px;
+  font-weight: 300;
+  color: #666;
+  &:before,
+  &:after {
+    position: absolute;
+    z-index: 1;
+    display: block;
+    content: '';
+    width: 100%;
+    // height: calc(50% - calc(var(--scroll-selector-item-height) / 2));
+    height: calc(var(--scroll-selector-item-height) * var(--scroll-selector-outside));
+    pointer-events: none;
+  }
+  &:before {
+    top: 0;
+    background: linear-gradient(0deg, rgba($scroll-selector-bg, 0) 0%, rgba($scroll-selector-bg, .1) 60%, rgba($scroll-selector-bg, .8) 90%, rgba($scroll-selector-bg, .9) 100%);
+  }
+  &:after {
+    bottom: 0;
+    background: linear-gradient(180deg, rgba($scroll-selector-bg, 0) 0%, rgba($scroll-selector-bg, .1) 60%, rgba($scroll-selector-bg, .8) 90%, rgba($scroll-selector-bg, .9) 100%);
+  }
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+  li {
+    list-style: none;
+  }
+  .select-options-list {
+    line-height: var(--scroll-selector-item-height);
+  }
+  .select-highlight {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    overflow: hidden;
+    color: $scroll-selector-color;
+    height: var(--scroll-selector-item-height);
+    line-height: var(--scroll-selector-item-height);
+    pointer-events: none;
+  }
+}

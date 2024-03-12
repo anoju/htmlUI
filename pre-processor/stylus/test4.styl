@@ -1,0 +1,13 @@
+main-color = #d00
+pad(y, x)
+  padding: y x
+nav
+  ul
+    display: flex
+  for i in 1..3
+    li:nth-child({i})
+      margin-left: (5px * i)
+  a
+    display: block
+    pad(5px, 10px)
+    color: main-color

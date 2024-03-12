@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<style>
+.element {
+  width: 100px;
+  height: 100px;
+  background: #000;
+}
+</style>
+</head>
+<body>
+<div class="element"></div>
+<script>
+const element = document.querySelector(".element");
+let startX;
+let currentX;
+let translateX = 0;
+let velocity = 0;
+let timer;
+
+element.addEventListener("touchstart", (event) => {
+  startX = event.touches[0].clientX;
+});
+
+element.addEventListener("touchmove", (event) => {
+  event.preventDefault();
+  currentX = event.touches[0].clientX;
+  translateX = currentX - startX;
+  velocity = translateX / (Date.now() - timer);
+  element.style.transform = `translateX(${translateX}px)`;
+});
+
+element.addEventListener("touchend", (event) => {
+  timer = Date.now();
+  translateX += velocity * 100;
+  element.style.transition = "transform 0.3s";
+  element.style.transform = `translateX(${translateX}px)`;
+});
+</script>
+</body>
+</html>

@@ -399,7 +399,7 @@ function snowCanvas() {
   var width = window.innerWidth;
   var height = window.innerHeight;
   var i = 0;
-  //var active = false;
+  var active = false;
 
   function onResize() {
     // width = document.body.clientWidth;
@@ -412,11 +412,8 @@ function snowCanvas() {
     ctx.shadowColor = "rgba(0,0,0,0.4)";
     ctx.shadowBlur = 2;
 
-    // var wasActive = active;
-    // active = width > 600;
-
-    // if (!wasActive && active)
-    requestAnimFrame(update);
+    if (!active) requestAnimFrame(update);
+    active = true;
   }
 
   var Snowflake = function() {

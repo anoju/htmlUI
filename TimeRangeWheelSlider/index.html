@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+<div class="graph-left"></div>
+<div id="knobcontainer"></div>
+<div class="graph-right"></div>
+<div class="graph-center"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+<script src="./plugins.min.js"></script>
+<script>
+$("#knobcontainer").timerangewheel({
+  indicatorWidth: 12,
+  handleRadius: 15,
+  handleStrokeWidth: 1,
+  accentColor: '#fed766',
+  handleIconColor: "#8a9097",
+  handleStrokeColor: "#8a9097",
+  handleFillColorStart: "#374149",
+  handleFillColorEnd: "#374149",
+  tickColor: "#8a9097",
+  indicatorBackgroundColor: "#8a9097",
+  data: {
+    "start": "19:10",
+    "end": "02:00"
+  },
+  onChange: function(timeObj) {
+    $(".graph-left").html("Start: " + timeObj.start);
+    $(".graph-right").html("End: " + timeObj.end);
+    $(".graph-center").html("Duration: " + timeObj.duration);
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+@charset "utf-8";
+
+* {
+  margin:0px; padding:0px;
+}
+body {
+  font-size:14px;
+  font-family: 'Noto Sans KR', sans-serif;
+  -webkit-text-size-adjust: none;
+  background-color: #f1f1f1;
+  color: #555;
+  padding: 80px 20px;
+  font-weight: 300;
+}
+div, p {
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: 36px;
+  margin: 0 auto 50px;
+  text-align: center;
+}
+
+.chart-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card-box {
+  width: 360px;
+  max-width: 100%;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 0px 10px 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.card-box.size-m {
+  width: 740px;
+}
+
+
+.card-title {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0px 16px;
+  font-size: 18px;
+  
+  /* border-bottom: 1px solid #eee; */
+}
+
+.card-content {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  position: relative;
+}
+.card-content.bg-gray {
+  background: #fafafa;
+  padding-top: 20px;
+}
+
+.card-content .chart {
+  height: 340px;
+  margin-bottom: 20px;
+  /* background: #fafafa; */
+}
+
+/* 가로 비율대로 세로 높이가 늘어나는 박스 */
+.card-content.responsive-height  {
+  padding-top: 80%;
+}
+
+.card-content.responsive-height .chart {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+}
+
+.card-content .chart-summary {
+ font-size: 18px;
+ font-weight: 400;
+ text-align: center;
+ color: #888;
+}
+
+.card-content .pie-chart-summary {
+  font-size: 18px;
+  font-weight: 400;
+  text-align: center;
+  color: #888;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -95px);
+ }
+
+.card-content .chart-summary span,
+.card-content .pie-chart-summary span {
+  color: #f46271;
+ }
+
+.card-description {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 16px 16px 20px;
+  font-size: 14px;
+  color: #888;
+  /* border-top: 1px solid #eee;  */
+  background: #fafafa;
+  border-radius: 8px;
+  margin-top: auto;
+}
+
+
+/* 멀티차트 툴팁 */
+.tooltip-remark {
+  position: relative;
+  display: flex;
+  padding: 3px 0px 3px 14px;
+  font-size: 11px;
+  font-family: 'Noto Sans KR', sans-serif;
+  white-space: normal;
+  width: 100%;
+  line-height: 1.5;
+}
+
+.tooltip-remark::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background: var(--color);
+  margin-right: 4px;
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-40%);
+}
+
+.tooltip-remark .values {
+  text-align: right;
+  margin-left: auto;
+  padding-left: 10px;
+  white-space: nowarp;
+}
+
+/* 툴팁박스 디자인 커스텀 */
+.tooltip-custom-black:not(:empty) {
+  background: #333 !important;
+}
+
+.tooltip-custom-black:not(:empty)::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background: #333;
+  border-radius: 3px;
+  border: 1px solid #333;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: rotate(45deg) translateY(61%);
+}
+
+.tooltip-custom-black span {
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.tooltip-custom-black span.label {
+ margin-right: 10px;
+}
+
+.tooltip-custom-black span.value {
+  color: #fff !important;
+}
+
+
+/* SVG 하프 차트 */
+.chart-half {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.gra-bar {
+  stroke-dasharray: 450px;
+  stroke-dashoffset: -450px;
+}
+
+.gra-bar.ani {
+  /*라인 총 길이 450 286*3.14 = 898.04*/
+  stroke-dasharray: 450px;
+  animation: gra-bar-ani calc(var(--v)* 0.01s) ease-out 0.3s forwards;
+}
+
+@keyframes gra-bar-ani {
+  0% {
+    stroke-dashoffset: -450px;
+  }
+  100% {
+    stroke-dashoffset: calc((450px - (4.5px * (var(--v)))) * -1);
+  }
+}
+
+
+@media all and (max-width: 820px) {
+  .card-box {
+    width: 100%;
+    
+  }
+  
+  .card-box.size-m {
+    width: 100%;
+  }
+}
+
+@media all and (max-width: 500px) {
+  body {
+
+    padding: 50px 0px;
+  }
+
+  .card-box {
+    width: 100%; 
+    background: #fff;
+    border: 0px;
+    border-bottom: 10px solid #fafafa;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0px;
+    display: block;
+  }
+
+}

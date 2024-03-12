@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/custom.css" />
+  <script language="javascript" src="assets/echarts.min.js"></script>  
+  <script language="javascript" src="assets/custom.js"></script>
+</head>
+<body>
+<div class="body-container">
+  <h1>EChart 커스텀</h1>
+  <div class="chart-container">
+    
+    <div class="card-box">
+      <h2 class="card-title">Bar1</h2>
+      <div class="card-content" >
+        <div class="chart" id="barV-1" style="height: 300px"></div>
+        <div class="card-description">기본유형</div>
+      </div>
+    </div>
+
+    <div class="card-box">
+      <h2 class="card-title">Bar2</h2>
+      <div class="card-content" >
+        <div class="chart" id="barV-2" style="height: 300px"></div>
+        <div class="card-description">label 데이터 커스텀</div>
+      </div>
+    </div>
+
+    <div class="card-box">
+      <h2 class="card-title">Multi Bar</h2>
+      <div class="card-content" >
+        <div class="chart" id="multiBarV-1" style="height: 300px"></div>
+        <div class="card-description">label은 하나만 + label 커스텀, <br/>tooltip 데이터 커스텀(value에 % 추가)</div>
+      </div>
+    </div>
+
+    <div class="card-box">
+      <h2 class="card-title">Horizontal Bar</h2>
+      <div class="card-content bg-gray" >
+        <div class="chart-summary">목표량의 <span>78%</span>를 달성했어요!</div>
+        <div class="chart" id="barH-1" style="height: 50px"></div>
+        <div class="card-description">디스크립션</div>
+      </div>
+    </div>
+
+    <div class="card-box">
+      <h2 class="card-title">Horizontal Bar - Multi</h2>
+      <div class="card-content bg-gray" >
+        <div class="chart-summary">기본형 멀티 바</div>
+        <div class="chart" id="multiBarH-1" style="height: 50px"></div>
+
+        <div class="chart-summary">Custom Tooltip (Value)</div>
+        <div class="chart" id="multiBarH-2" style="height: 50px"></div>
+
+        <div class="chart-summary">Custom Tooltip (%)</div>
+        <div class="chart" id="multiBarH-3" style="height: 50px"></div>
+
+        <div class="card-description">tooltip 박스 커스텀,<br />total 값을 구한 뒤 percent 계산</div>
+      </div>
+    </div>
+
+    <div class="card-box">
+      <h2 class="card-title">파이차트</h2>
+      <div class="card-content" >
+        <div class="pie-chart-summary">총 접속 건수는<br /><span>11</span>건 입니다.</div>
+        <div class="chart" id="pie-1" style="height: 300px"></div>
+        <div class="card-description">디스크립션</div>
+      </div>
+    </div>
+
+    <div class="card-box">
+      <h2 class="card-title">커스텀 차트(Echart 아님) - SVG</h2>
+      <div class="card-content" >
+        <div class="pie-chart-summary" style="margin-top: -10px;">미세먼지<br /><span style="font-size: 30px">위험</span></div>
+        <div class="chart" id="svg-1" style="height: 300px">
+          <svg width="280" height="152" viewBox="0 0 280 152" fill="none" xmlns="http://www.w3.org/2000/svg" class="chart-half">
+            <path d="M274 146C274 68.6801 214.006 6 140 6C65.9938 6 6 68.6801 6 146" stroke="#eaeaea" stroke-width="12" stroke-linecap="round"/>
+            <path class="gra-bar" id="graBar" d="M274 146C274 68.6801 214.006 6 140 6C65.9938 6 6 68.6801 6 146" stroke="url(#line-graient)" stroke-width="12" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="line-graient" y1="0.959" x2="0.985" y2="0.968" gradientUnits="objectBoundingBox" >
+                <stop stop-color="#2d99ff"/>
+                <stop offset="0.177" stop-color="#2d99ff"/>
+                <stop offset="0.355" stop-color="#ffbb39"/>
+                <stop offset="0.5" stop-color="#ffbb39"/>
+                <stop offset="0.695" stop-color="#ffbb39"/>
+                <stop offset="0.862" stop-color="#f46271"/>
+                <stop offset="1" stop-color="#f46271"/>
+              </linearGradient>
+            </defs>
+            </svg>
+        </div>
+        <div class="card-description">SVG 구현</div>
+      </div>
+    </div>
+
+    <div class="card-box">
+      <h2 class="card-title">Line 블록형</h2>
+      <div class="card-content" >
+        <div class="chart" id="line-1" style="height: 300px"></div>
+        <div class="card-description">디스크립션</div>
+      </div>
+    </div>
+
+    <div class="card-box size-m">
+      <h2 class="card-title">파이차트 - Label 고정</h2>
+      <div class="card-content" >
+        <div class="chart" id="pie-2" style="height: 500px"></div>
+        <div class="card-description">파이차트에서는 value 에 percent 기본 지원.<br />
+        label에 rich 적용</div>
+      </div>
+    </div>
+
+    <div class="card-box size-m">
+      <h2 class="card-title">Funnel</h2>
+      <div class="card-content" >
+        <div class="chart" id="funnel-1" style="height: 500px"></div>
+        <div class="card-description">디스크립션</div>
+      </div>
+    </div>
+
+    <div class="card-box size-m">
+      <h2 class="card-title">Bar + Line (증감률 추세선)</h2>
+      <div class="card-content" >
+        <div class="chart" id="line-2" style="height: 500px"></div>
+        <div class="card-description">디스크립션</div>
+      </div>
+    </div>
+
+    <div class="card-box size-m">
+      <h2 class="card-title">Multi Bar  + Line (증감률 추세선)</h2>
+      <div class="card-content" >
+        <div class="chart" id="line-3" style="height: 500px"></div>
+        <div class="card-description">각각의 막대(100%)에서 범례가 차지한 비율 표시</div>
+      </div>
+    </div>
+
+   
+  </div>
+</div>
+</body>
+</html>

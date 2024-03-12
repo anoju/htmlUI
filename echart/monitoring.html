@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>echart monitoring</title>
+    <link rel="stylesheet" href="../js_static/css/front.min.css" />
+    <link rel="stylesheet" href="css/stylesheet.css" />
+    <link rel="stylesheet" href="lib/chart.css" />
+    <script src="lib/echarts.min.js"></script>
+    <style>
+      .section > div {
+        background-color: #fafafa;
+      }
+      /* 문구 스타일 */
+      .tit_text {
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #222222;
+        font-weight: 700;
+      }
+      .tit_text strong {
+        color: #ff919c;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 이엑스 빌더에 적용할때 font-family는 'KBText' 에서 'KB금융 본문체' 바꿔서 적용예정 -->
+    <div class="page">
+      <div class="page-body">
+        <div class="section">
+          <h1 class="gd__h1">monitoring</h1>
+          <h2 class="gd__h2">type1 ()</h2>
+
+          <div style="position: relative">
+            <div id="monitoringChart1" style="height: 300px"></div>
+            <p class="tit_text">
+              주로 <br />
+              <strong>OOOO</strong>을 통해<br />
+              안내장을 받았어요
+            </p>
+          </div>
+          <hr class="hr-line mg-50y" />
+          <h2 class="gd__h2">type2 ()</h2>
+          <div style="position: relative">
+            <div id="monitoringChart2" style="height: 300px"></div>
+            <p class="tit_text">
+              주로 <br />
+              <strong>OOOO</strong>관련<br />
+              상담을 받았어요
+            </p>
+          </div>
+          <hr class="hr-line mg-50y" />
+          <h2 class="gd__h2">type3 ()</h2>
+          <div style="position: relative">
+            <p class="">[전체] 최근 접속내역 추이</p>
+            <div id="monitoringChart3" style="height: 300px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      monitoringChart1();
+      monitoringChart2();
+      monitoringChart3();
+
+      function monitoringChart1() {
+        var shlContent = document.getElementById('monitoringChart1');
+        var shlDonutECharts = echarts.init(shlContent);
+
+        var chartName = '안내장 발송 이력(최근 3개월)';
+        var chartColor = ['#f36271', '#ff919c', '#f5b8be', '#fe943a'];
+        var chartData = [
+          { name: 'SMS', value: 0 },
+          { name: '알림톡', value: 9 },
+          { name: 'EMS', value: 1 },
+          { name: 'DM', value: 0 }
+        ];
+
+        var chartOption = {
+          grid: {
+            show: false,
+            height: 180,
+            width: 300
+          },
+          legend: {
+            bottom: 0,
+            itemGap: 15,
+            itemWidth: 14,
+            icon: 'circle',
+            selectedMode: false, // 해당 기능 off
+            textStyle: {
+              color: '#555',
+              fontSize: 13,
+              fontWeight: 500,
+              fontFamily: 'KBText'
+            }
+          },
+          tooltip: {
+            trigger: 'item',
+            className: 'echart-tooltip2',
+            formatter: function (params) {
+              var addCommaValue = params.data.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+              return `<div class='tooltip-title'>${params.seriesName}</div><div class='tooltip-remark' style='--color:${params.color}'>${params.name} <span class="values">${addCommaValue}건(${params.percent}%)</span></div>`;
+            },
+            extraCssText: "font-size: 11px;font-family:'KBText', sans-serif;line-height: 23px;padding: 15px;border-color: #EFEFEF;box-shadow: 0px 5px 12px rgba(51,51,51,0.15);"
+          },
+          series: [
+            {
+              name: chartName,
+              type: 'pie',
+              radius: ['62%', '70%'],
+              clockwise: false,
+              animation: false, // 다른 범례값이 0이면 색상값이 비춰보여서 false
+              label: {
+                show: false
+              },
+              color: '#fff',
+              color: chartColor,
+              data: chartData
+            }
+          ]
+        };
+
+        shlDonutECharts.setOption(chartOption);
+      }
+      function monitoringChart2() {
+        var shlContent = document.getElementById('monitoringChart2');
+        var shlDonutECharts = echarts.init(shlContent);
+
+        var chartName = '상담 내역(최근 3개월)';
+
+        var chartColor = ['#BC6EFF', '#826AF9', '#2D99FF', '#5066F7', '#2CD9C5', '#30BC86', '#FFC400', '#FE943A', '#F46271'];
+        var chartData = [
+          { name: '상품관리', value: 1 },
+          { name: '계약관리', value: 3 },
+          { name: '보험계약대출', value: 4 },
+          { name: '연금지급', value: 0 },
+          { name: '기타지급', value: 0 },
+          { name: '사고보험금', value: 2 },
+          { name: '해지', value: 0 },
+          { name: '중도인출', value: 0 },
+          { name: '기타', value: 0 }
+        ];
+
+        var chartOption = {
+          grid: {
+            show: false,
+            height: 180,
+            width: 300
+          },
+          legend: {
+            bottom: 0,
+            itemGap: 15,
+            itemWidth: 14,
+            icon: 'circle',
+            selectedMode: false, // 해당 기능 off
+            textStyle: {
+              color: '#555',
+              fontSize: 13,
+              fontWeight: 500,
+              fontFamily: 'KBText'
+            }
+          },
+          tooltip: {
+            trigger: 'item',
+            className: 'echart-tooltip2',
+            formatter: function (params) {
+              var addCommaValue = params.data.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+              return `<div class='tooltip-title'>${params.seriesName}</div><div class='tooltip-remark' style='--color:${params.color}'>${params.name} <span class="values">${addCommaValue}건(${params.percent}%)</span></div>`;
+            },
+            extraCssText: "font-size: 11px;font-family:'KBText', sans-serif;line-height: 23px;padding: 15px;border-color: #EFEFEF;box-shadow: 0px 5px 12px rgba(51,51,51,0.15);"
+          },
+          series: [
+            {
+              name: chartName,
+              type: 'pie',
+              radius: ['62%', '70%'],
+              clockwise: true,
+              animation: false, // 다른 범례값이 0이면 색상 깜빡이는 현상이 있음 false
+              label: {
+                show: false
+              },
+              color: chartColor,
+              data: chartData
+            }
+          ]
+        };
+
+        shlDonutECharts.setOption(chartOption);
+      }
+
+      function monitoringChart3() {
+        var shlContent = document.getElementById('monitoringChart3');
+        var shlDonutECharts = echarts.init(shlContent);
+
+        var chartName = '최근 접속내역 추이';
+        var chartLabel = ['22.08', '22.09', '22.10', '22.11', '22.12', '23.01'];
+        var chartValue = [5, 0, 15, 0, 2, 1];
+        var chartColor = ['#2d99ff'];
+        var chartData = function () {
+          var rtnAry = [];
+          for (var i = 0; i < chartValue.length; i++) {
+            var item = { value: chartValue[i] };
+            if (chartColor[i]) {
+              item.itemStyle = {};
+              item.itemStyle.color = chartColor;
+            }
+
+            rtnAry.push(item);
+          }
+          console.log(rtnAry);
+          return rtnAry;
+        };
+
+        var chartOption = {
+          grid: {
+            show: false,
+            height: 180,
+            width: 300,
+            left: 20,
+            top: 50
+          },
+          tooltip: {
+            trigger: 'item',
+            className: 'echart-tooltip2',
+            formatter: function (params) {
+              if (params.componentType === 'markPoint') return null;
+              var addCommaValue = params.data.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+              return `<div class='tooltip-remark' style='--color:${params.color}'>${params.name} <span class="values"> ${addCommaValue}</span></div>`;
+            },
+            extraCssText: "font-size: 11px;font-family:'KBText', sans-serif;line-height: 23px;padding: 15px;border-color: #EFEFEF;box-shadow: 0px 5px 12px rgba(51,51,51,0.15);"
+          },
+          yAxis: [
+            {
+              type: 'value',
+              show: false
+            }
+          ],
+          xAxis: {
+            type: 'category',
+            data: chartLabel,
+            axisLabel: {
+              color: '#555555',
+              fontSize: 12,
+              fontFamily: 'KBText'
+            },
+            axisTick: {
+              alignWithLabel: true
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#dddddd'
+              }
+            }
+          },
+          series: [
+            {
+              type: 'bar',
+              itemStyle: {
+                borderRadius: [5, 5, 0, 0]
+              },
+              barWidth: 20,
+              label: {
+                show: true,
+                position: 'top',
+                fontSize: 14,
+                fontWeight: 700,
+                fontFamily: 'KBText',
+                formatter: function (params) {
+                  var addCommaValue = params.data.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '건';
+                  return addCommaValue;
+                }
+              },
+
+              color: chartColor,
+              data: chartData()
+            }
+          ]
+        };
+
+        shlDonutECharts.setOption(chartOption);
+      }
+    </script>
+  </body>
+</html>

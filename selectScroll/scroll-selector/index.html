@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>scroll-selector</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="./css/scroll-selector.min.css" />
+</head>
+<body>
+<div class="contents">
+  <form action="" id="joinForm">
+    <div class="joinus_form">
+      <div class="form_row">
+        <span class="stit">생일을 입력하세요</span>
+        <div class="input_wrap">
+          <input type="search" class="clear" placeholder="0000-00-00" value="" id="input_birthday" name="birthday" readonly="readonly" />
+          <!-- 					<button class="btn_clear" onClick="clearInput(this); return false;"></button> -->
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn_progress">다음</button>
+  </form>
+</div>
+
+<div class="selectboxD">
+  <div class="scroll-selector-wrap">
+    <div class="year" id="birthYear"></div>
+    <div class="month" id="birthMonth"></div>
+    <div class="day" id="birthDate"></div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="scroll-selector.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+  // 생년월일 선택을 위한 wheel-selector init
+  fn_initDateSelector();
+
+  // 다음 버튼 클릭시
+  $('.btn_progress').on('click', function() {
+    // 한번 더 validation Check
+    if (yearSelector) {
+      yearSelector.destroy();
+      yearSelector = null;
+    } else if (monthSelector) {
+      monthSelector.destroy();
+      monthSelector = null;
+    } else if (dateSelector) {
+      dateSelector.destroy();
+      dateSelector = null;
+    } else {
+      fn_initDateSelector();
+    }
+  });
+});
+
+var yearSelector;
+var monthSelector;
+var dateSelector;
+
+function fn_initDateSelector() {
+  var now = new Date();
+
+  yearSelector = new scrollSelector({
+    el: '#birthYear',
+    option: fn_getDateOption('year'),
+    value: now.getFullYear(),
+    // sensitivity: 5, // 숫자가 낮을수록 돌렸을때 팽그르르 돌며, 초기 select 할때도 느려진다. 기본값은 0.8
+    onChange: (selected) => {
+      fn_dateChanged('year');
+    }
+  });
+  // 			yearSelector.select(now.getFullYear());
+
+  monthSelector = new scrollSelector({
+    el: '#birthMonth',
+    loop: true,
+    option: fn_getDateOption('month'),
+    value: now.getMonth() + 1,
+    sensitivity: 5, // 숫자가 낮을수록 돌렸을때 팽그르르 돌며, 초기 select 할때도 느려진다. 기본값은 0.8
+    onChange: (selected) => {
+      fn_dateChanged('month');
+    }
+  });
+
+  dateSelector = new scrollSelector({
+    el: '#birthDate',
+    option: fn_getDateOption('date'),
+    value: now.getDate(),
+    sensitivity: 5, // 숫자가 낮을수록 돌렸을때 팽그르르 돌며, 초기 select 할때도 느려진다. 기본값은 0.8
+    onChange: (selected) => {
+      fn_dateChanged('date');
+    }
+  });
+}
+
+// 날짜 변경시 처리(type : year/month/date)
+function fn_dateChanged(type) {
+  if (type == 'year' || type == 'month') {
+    // 연도나 월이 변경 되면 선택된 연/월로 일자 Option 재조회
+    var newDateOption = fn_getDateOption('date');
+    // 일자 목록보다 선택된 날짜가 크면
+    if (dateSelector.value > newDateOption.length) {
+      // 목록의 마지막 날짜로 설정
+      dateSelector.select(newDateOption.length);
+    }
+    // 일자 Selector Option 갱신
+    dateSelector.updateOption(newDateOption);
+  }
+
+  var dateStr = yearSelector.value;
+  dateStr += '-' + (monthSelector.value < 10 ? '0' + monthSelector.value : monthSelector.value);
+  dateStr += '-' + (dateSelector.value < 10 ? '0' + dateSelector.value : dateSelector.value);
+
+  $('#joinForm [name=birthday]').val(dateStr);
+  $('#joinForm [name=birthday]').trigger('input');
+}
+
+// 연/월/일 option 조회
+function fn_getDateOption(type) {
+  var now = new Date();
+  var dataOption = []; // 목록
+
+  if (type == 'year') {
+    var fromYear = now.getFullYear() - 100; // 연도 시작
+    // fromYear부터 현재 연도까지 표시
+    for (var i = fromYear; i <= now.getFullYear(); i++) {
+      dataOption.push({
+        value: i,
+        text: i + '년'
+      });
+    }
+  } else if (type == 'month') {
+    // 1~12월
+    for (var i = 1; i <= 12; i++) {
+      dataOption.push({
+        value: i,
+        text: i + '월'
+      });
+    }
+  } else if (type == 'date') {
+    // 선택된 연/월에 따른 날짜 목록
+    var date = [];
+    var dateCnt = new Date(yearSelector.value, monthSelector.value, 0).getDate();
+    for (var i = 1; i <= dateCnt; i++) {
+      dataOption.push({
+        value: i,
+        text: i + '일'
+      });
+    }
+  }
+
+  return dataOption;
+}
+</script>
+</body>
+</html>

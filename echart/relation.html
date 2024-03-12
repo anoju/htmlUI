@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>echart graph</title>
+    <link rel="stylesheet" href="../js_static/css/front.min.css" />
+    <link rel="stylesheet" href="css/stylesheet.css" />
+    <link rel="stylesheet" href="lib/chart.css" />
+    <script src="lib/echarts.min.js"></script>
+    <style>
+      .section > div {
+        background-color: #fafafa;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 이엑스 빌더에 적용할때 font-family는 'KBText' 에서 'KB금융 본문체' 바꿔서 적용예정 -->
+    <div class="page">
+      <div class="page-body">
+        <div class="section">
+          <h1 class="gd__h1">graph</h1>
+          <h2 class="gd__h2">type1 ()</h2>
+
+          <div id="relation1" style="height: 686px"></div>
+
+          <hr class="hr-line mg-50y" />
+          <h2 class="gd__h2">type2 (json 받아오는 형태)</h2>
+
+          <div id="relation2" style="height: 686px"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      relation1();
+      relation2();
+
+      function relation1() {
+        var shlContent = document.getElementById('relation1');
+        var shlRelationECharts = echarts.init(shlContent);
+
+        var itemStyles = {
+          root: {
+            size: 140,
+            color: '#e1820c'
+          }, // 본인
+          depth1: {
+            size: 100,
+            color: ['rgba(255, 196, 0, 0.9)', 'rgba(87, 131, 253, 0.9)', 'rgba(54, 213, 152, 0.9)']
+          }, // 노랑계열, 블루계열, 그린
+          depth2: {
+            size: 80,
+            color: ['rgba(255, 217, 91, 0.9)', 'rgba(87, 131, 253, 0.7)', 'rgba(54, 213, 152, 0.7)']
+          }, // 노랑계열, 블루계열, 그린
+          leaf: {
+            size: 60,
+            color: ['#fff1c3', '#fff1c3', '#fff1c3'],
+            borderColor: ['#dddddd', '#dddddd', '#dddddd']
+          }
+        };
+
+        var graphData = {
+          nodes: [
+            {
+              name: '홍길동',
+              value: {
+                type: 'person',
+                tag: '고객',
+                old: 41,
+                sex: '남'
+              },
+              category: '본인'
+            },
+            {
+              name: '가족',
+              value: {
+                type: 'category',
+                total: 10
+              },
+              category: '가족'
+            },
+            {
+              name: '0촌',
+              value: {
+                type: 'category',
+                total: 10
+              },
+              category: '가족-sub'
+            },
+            {
+              name: '박말순',
+              value: {
+                type: 'person',
+                tag: '배우자1',
+                old: 41,
+                sex: '여'
+              },
+              category: '가족-leaf'
+            },
+            {
+              name: '김나나',
+              value: {
+                type: 'person',
+                tag: '배우자2',
+                old: 39,
+                sex: '여'
+              },
+              category: '가족-leaf'
+            },
+            {
+              name: '이영희',
+              value: {
+                type: 'person',
+                tag: '배우자3',
+                old: 40,
+                sex: '여'
+              },
+              category: '가족-leaf'
+            },
+            {
+              name: '1촌',
+              value: {
+                type: 'category',
+                total: 5
+              },
+              category: '가족-sub'
+            },
+            {
+              name: '홍경래',
+              value: {
+                type: 'person',
+                tag: '자녀',
+                old: 16,
+                sex: '남'
+              },
+              category: '가족-leaf'
+            },
+            {
+              name: '홍진영',
+              value: {
+                type: 'person',
+                tag: '자녀',
+                old: 12,
+                sex: '여'
+              },
+              category: '가족-leaf'
+            },
+            {
+              name: '홍아빠',
+              value: {
+                type: 'person',
+                tag: '부모',
+                old: 72,
+                sex: '남'
+              },
+              category: '가족-leaf'
+            },
+            {
+              name: '김엄마',
+              value: {
+                type: 'person',
+                tag: '부모',
+                old: 69,
+                sex: '여'
+              },
+              category: '가족-leaf'
+            },
+            {
+              name: '2촌',
+              value: {
+                type: 'category',
+                total: null
+              },
+              category: '가족-sub'
+            },
+            {
+              name: '예외',
+              value: {
+                type: 'category',
+                total: null
+              },
+              category: '가족-sub'
+            },
+            {
+              name: '설계사',
+              value: {
+                type: 'category',
+                total: 5
+              },
+              category: '설계사'
+            },
+            {
+              name: '설계사1',
+              value: {
+                type: 'person',
+                tag: null,
+                old: 46,
+                sex: '여'
+              },
+              category: '설계사-sub'
+            },
+            {
+              name: '설계사2',
+              value: {
+                type: 'person',
+                tag: null,
+                old: 42,
+                sex: '여'
+              },
+              category: '설계사-sub'
+            },
+            {
+              name: '계약',
+              value: {
+                type: 'category',
+                total: 5
+              },
+              category: '계약'
+            },
+            {
+              name: '해지',
+              value: {
+                type: 'category',
+                total: 2
+              },
+              category: '계약-sub'
+            },
+            {
+              name: '만기',
+              value: {
+                type: 'category',
+                total: null
+              },
+              category: '계약-sub'
+            },
+            {
+              name: '유지',
+              value: {
+                type: 'category',
+                total: null
+              },
+              category: '계약-sub'
+            }
+          ],
+          links: [
+            {
+              source: '홍길동', // to
+              target: '가족' // from
+            },
+            {
+              source: '가족',
+              target: '0촌'
+            },
+            {
+              source: '0촌',
+              target: '박말순'
+            },
+            {
+              source: '0촌',
+              target: '김나나'
+            },
+            {
+              source: '0촌',
+              target: '이영희'
+            },
+            {
+              source: '가족',
+              target: '1촌'
+            },
+            {
+              source: '1촌',
+              target: '홍경래'
+            },
+            {
+              source: '1촌',
+              target: '홍진영'
+            },
+            {
+              source: '1촌',
+              target: '홍아빠'
+            },
+            {
+              source: '1촌',
+              target: '김엄마'
+            },
+
+            {
+              source: '가족',
+              target: '2촌'
+            },
+            {
+              source: '가족',
+              target: '예외'
+            },
+            {
+              source: '홍길동',
+              target: '설계사'
+            },
+            {
+              source: '설계사',
+              target: '설계사1'
+            },
+            {
+              source: '설계사',
+              target: '설계사2'
+            },
+            {
+              source: '홍길동',
+              target: '계약'
+            },
+            {
+              source: '계약',
+              target: '해지'
+            },
+            {
+              source: '계약',
+              target: '만기'
+            },
+            {
+              source: '계약',
+              target: '유지'
+            }
+          ],
+          categories: [
+            {
+              name: '본인', // 0
+              itemStyle: {
+                color: itemStyles.root.color
+              },
+              symbolSize: itemStyles.root.size
+            },
+            {
+              name: '가족', // 1
+              itemStyle: {
+                color: itemStyles.depth1.color[0]
+              },
+              symbolSize: itemStyles.depth1.size
+            },
+            {
+              name: '가족-sub', // 1
+              itemStyle: {
+                color: itemStyles.depth2.color[0]
+              },
+              symbolSize: itemStyles.depth2.size
+            },
+            {
+              name: '가족-leaf', // 1
+              itemStyle: {
+                color: itemStyles.leaf.color,
+                borderColor: itemStyles.leaf.borderColor[0]
+              },
+              symbolSize: itemStyles.leaf.size
+            },
+            {
+              name: '설계사', // 1-0
+              itemStyle: {
+                color: itemStyles.depth1.color[1]
+              },
+              symbolSize: itemStyles.depth1.size
+            },
+            {
+              name: '설계사-sub', // 1-0
+              itemStyle: {
+                color: itemStyles.depth2.color[1]
+              },
+              symbolSize: itemStyles.depth2.size
+            },
+            {
+              name: '설계사-leaf', // 1-0
+              itemStyle: {
+                color: itemStyles.leaf.color[1]
+              },
+              symbolSize: itemStyles.leaf.size
+            },
+            {
+              name: '계약', // 1-1
+              itemStyle: {
+                color: itemStyles.depth1.color[2]
+              },
+              symbolSize: itemStyles.depth1.size
+            },
+            {
+              name: '계약-sub', // 1-1
+              itemStyle: {
+                color: itemStyles.depth2.color[2]
+              },
+              symbolSize: itemStyles.depth2.size
+            },
+            {
+              name: '계약-leaf', // 1-1
+              itemStyle: {
+                color: itemStyles.leaf.color[1]
+              },
+              symbolSize: itemStyles.leaf.size
+            }
+          ]
+        };
+
+        var setItem = function () {
+          graphData.nodes.forEach(function (item, index) {
+            item.label = {
+              //	fontSize: fontSizes[index],
+              formatter: function (params) {
+                // console.log("포매섵", params);
+
+                if (params.data.value.type === 'category' && params.data.value.total) {
+                  // 카테고리 일 경우 카테고리명 노출 + tatal 값이 있는 경우 노출
+                  var obj = '';
+                  obj = `${params.name}\n(${params.data.value.total})`;
+
+                  return obj;
+                } else if (params.data.value.type === 'person') {
+                  var obj = '';
+                  console.log('여기1', obj);
+                  if (params.data.value.tag) {
+                    obj += `${params.data.value.tag}\n`;
+                    console.log('여기2', obj);
+                  }
+                  obj += `${params.name}`;
+                  console.log('여기3', obj);
+                  if (!!params.data.value.old) {
+                    obj += `\n${params.data.value.old}`;
+                    console.log('여기4', obj);
+                  }
+                  if (!!params.data.value.sex) {
+                    obj += `${params.data.value.sex}`;
+                    console.log('여기5', obj);
+                  }
+                  console.log('obj 끝', obj);
+                  return obj;
+                } else {
+                  return params.name;
+                }
+              }
+            };
+          });
+        };
+
+        var chartOption = {
+          title: {
+            text: '관계도 테스트',
+            subtext: 'Default layout',
+            top: 'bottom',
+            left: 'right'
+          },
+          animationDuration: 500,
+          animationEasingUpdate: 'quinticInOut',
+          tooltip: {},
+          legend: {
+            show: true,
+            data: ['본인', '가족', '설계사', '계약']
+          },
+          series: [
+            {
+              type: 'graph',
+              layout: 'force',
+              roam: true, // 마우스 scale, move
+              draggable: false,
+              symbol: 'circle',
+              symbolSize: function (value, params) {
+                // console.log("params", params);
+                var category = params.data.category;
+                switch (category) {
+                  case '본인':
+                    return itemStyles.root.size;
+                  case '가족':
+                  case '설계사':
+                  case '계약':
+                    return itemStyles.depth1.size;
+                  default:
+                    return itemStyles.depth2.size;
+                }
+              },
+              focusNodeAdjacency: true,
+              force: {
+                repulsion: 250,
+                layoutAnimation: true,
+                edgeLength: 80
+              },
+              emphasis: {
+                focus: 'adjacency', // 마우스 오버시 opacity 적용됨.
+                lineStyle: {
+                  width: 2
+                }
+              },
+              categories: graphData.categories,
+              label: {
+                show: true,
+                fontFamily: 'PingFangSC-Regular'
+                //	formatter: '{b}, {c}' // a: series 이름, b: name, c: value
+                //				color: "#ㄹㄹㄹ",
+              },
+              lineStyle: {
+                width: 1,
+                type: 'solid', // solid, dashed, dotted
+                // dashOffset: 10, //선이 dashed일 경우
+                color: '#555555',
+                curveness: 0.2
+              },
+              data: graphData.nodes,
+              links: graphData.links
+            }
+          ]
+        };
+        shlRelationECharts.setOption(chartOption);
+      }
+
+      function relation2() {
+        var shlContent = document.getElementById('relation2');
+        var shlRelationECharts = echarts.init(shlContent);
+
+        shlRelationECharts.showLoading();
+        fetch('lib/dummy.json')
+          .then((response) => response.json())
+          .then((graph) => {
+            console.log(graph);
+            shlRelationECharts.hideLoading();
+            graph.nodes.forEach(function (node) {
+              node.label = {
+                show: node.symbolSize > 30
+              };
+            });
+            var chartOption = {
+              title: {
+                text: 'Les Miserables',
+                subtext: 'Default layout',
+                top: 'bottom',
+                left: 'right'
+              },
+              tooltip: {},
+              legend: [
+                {
+                  // selectedMode: 'single',
+                  data: graph.categories.map(function (a) {
+                    return a.name;
+                  })
+                }
+              ],
+              animationDuration: 1500,
+              animationEasingUpdate: 'quinticInOut',
+              series: [
+                {
+                  name: 'Les Miserables',
+                  type: 'graph',
+                  layout: 'none',
+                  data: graph.nodes,
+                  links: graph.links,
+                  categories: graph.categories,
+                  roam: true,
+                  label: {
+                    position: 'right',
+                    formatter: '{b}'
+                  },
+                  lineStyle: {
+                    color: 'source',
+                    curveness: 0
+                  },
+                  emphasis: {
+                    focus: 'adjacency',
+                    lineStyle: {
+                      width: 10
+                    }
+                  }
+                }
+              ]
+            };
+            shlRelationECharts.setOption(chartOption);
+          })
+          .catch((error) => console.error(error));
+      }
+    </script>
+  </body>
+</html>

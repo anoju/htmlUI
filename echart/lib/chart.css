@@ -1,0 +1,97 @@
+
+    
+/***********************************
+	커스텀 차트 html
+	less 에서 css 변수가 읽히지 않아 css 파일로 별도 분리
+************************************/
+ .gra-bar {
+   /* 라인 총 길이 450px :  286 *3.14 = 898.04*/ 
+   stroke-dasharray: 450px;
+   animation: gra-bar-ani 0.7s linear forwards;
+ }
+
+ @keyframes gra-bar-ani {
+	0%  {
+     stroke-dashoffset: -450px;
+   }
+   100% {
+     /* stroke-dashoffset: -300px; */
+     stroke-dashoffset: calc((450px - (4.5px * (var(--v)))) * -1);
+   }
+ }
+ 
+ 
+ /* 막대 프로그래스 */
+.bar-chart .bar {
+    stroke-dasharray: 280;
+    stroke-dashoffset: 280;
+    animation: bar-ani 1s ease-out forwards;
+}
+
+@keyframes bar-ani {
+  from {
+    stroke-dashoffset: 280;
+    /* stroke-dashoffset: calc(-4.5px * var(--v)); */
+  }
+  to {
+    /* stroke-dashoffset: -300px; */
+    /* stroke-dashoffset: 150; */
+    stroke-dashoffset: calc(280px - (2.8px * (var(--v))));
+  }
+}
+
+/***********************************
+	툴팁 커스텀
+************************************/
+.echart-tooltip {
+}
+
+.tooltip-title {
+	margin-bottom: 5px;
+	font-size: 11px;
+	font-family: 'KB금융 본문체', sans-serif;
+}
+
+.percent {
+	margin-left: 5px;
+}
+.percent.plus {
+	color: red;
+}
+
+.percent.minus {
+	color: blue;
+}
+
+.tooltip-remark {
+	position: relative;
+	display: flex;
+	padding-left: 14px;
+	font-size: 11px;
+	font-family: 'KB금융 본문체', sans-serif;
+		
+}
+
+.tooltip-remark::before {
+		content: '';
+		width: 10px;
+		height: 10px;
+		background: var(--color);
+	    margin-right: 4px;
+	    border-radius: 10px;
+	    position: absolute;
+	    left: 0;
+	    top: 6px;
+}
+
+.tooltip-remark .values {
+	text-align: right;
+	margin-left: auto;
+}
+
+/* s: 안효주 추가 */
+.echart-tooltip2 .tooltip-title{font-weight:700;color:#333;}
+.echart-tooltip2 .tooltip-remark{color:#555;}
+.echart-tooltip2 .tooltip-remark+.tooltip-remark{margin-top:3px;}
+.echart-tooltip2 .values{padding-left:8px;font-weight:500;}
+/* e: 안효주 추가 */

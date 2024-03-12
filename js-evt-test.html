@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+</head>
+<body>
+<button class="btn">버튼</button>
+<button class="btn">버튼</button>
+<button class="btn">버튼</button>
+<br>
+<br>
+<br>
+<div class="select-wrap">
+  <div class="select">
+    <select>
+      <option value="">선택</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+    </select>
+  </div>
+</div>
+<script>
+// 이벤트 중첩 안되게
+function myFunction() {
+  const btns = document.querySelectorAll('.btn')
+  btns.forEach(function(btn) {
+    // function myClickHandler() {
+    //   console.log('click')
+    // }
+
+    // function 안에  function 있는건 removeEventListener 작동안함
+    btn.removeEventListener('click', myClickHandler);
+    btn.addEventListener('click', myClickHandler);
+  });
+}
+
+function myClickHandler() {
+  console.log('click')
+}
+
+myFunction();
+myFunction();
+myFunction();
+
+
+// 스크립트로 셀렉트 만들어주기
+function makeSelect() {
+  const wrap = document.querySelector('.select-wrap');
+  const selectEl = document.createElement('div')
+  selectEl.className = 'select';
+  selectEl.innerHTML = `<select>
+    <option value="">선택</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+  </select>`;
+  wrap.appendChild(selectEl);
+}
+makeSelect();
+makeSelect();
+
+//document change 이벤트 전역에 적용하는법
+document.addEventListener('change', function(event) {
+  const target = event.target;
+  // console.log(target, target.tagName === 'SELECT', target.closest('.select'));
+  if (target && target.tagName === 'SELECT' && target.closest('.select')) {
+    console.log(target.value);
+  }
+});
+</script>
+</body>
+</html>

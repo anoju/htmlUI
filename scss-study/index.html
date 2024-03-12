@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>scss-study</title>
+    <link rel="stylesheet" href="./css/taran.min.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <ul class="list">
+        <li>리스트</li>
+        <li>리스트</li>
+        <li>리스트</li>
+        <li>리스트</li>
+      </ul>
+      <ol class="list">
+        <li>리스트</li>
+        <li>리스트</li>
+        <li>리스트</li>
+        <li>리스트</li>
+      </ol>
+
+      <span class="emoji-women-holding-hands"></span>
+
+      <button class="button primary">버튼</button>
+      <a href="#" class="button success">success</a>
+      <button class="button info">info</button>
+      <button class="button warning">warning</button>
+      <br />
+      <div class="btn-wrap">
+        <button class="button primary">버튼</button>
+      </div>
+
+      <h1 class="tit-h1">제목111</h1>
+      <h2 class="tit-h2">제목222</h2>
+      <h3 class="tit-h3">제목333</h3>
+
+      <div class="item-box">
+        <div class="item">아이템1</div>
+        <p class="item">아이템2</p>
+      </div>
+
+      <button class="btn-primary">메인버튼</button>
+      <button class="btn-secondary">서브버튼</button>
+
+      <br />
+      <!-- <button class="primary-btn2">버튼1</button>
+      <button class="secondary-btn2">버튼2</button> -->
+      <div class="img-item w-150">
+        <div class="img-box"><img src="../../js_static/images/thumb-temp.jpg" alt="" /></div>
+        <p>이미지입니다.</p>
+      </div>
+      <div class="img-item">
+        <div class="img-box"><img src="../../js_static/images/thumb-temp5-2.jpg" alt="" /></div>
+        <p>이미지입니다.</p>
+      </div>
+
+      <p class="ellipsis fz-24 fw-900">가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하</p>
+      <p class="ellipsis-1">가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하</p>
+      <p class="ellipsis-2">가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하</p>
+      <p class="ellipsis-3">가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하</p>
+      <br />
+      <button class="btn3 primary">버튼3 primary</button>
+      <a href="#" class="btn3 secondary">버튼3 secondary</a>
+      <button class="btn3 taran">버튼3 taran</button>
+      <br />
+      <div class="fade-box fade-10"></div>
+      <br />
+      <br />
+      <div class="font-box">가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하가나다라마바사아자차카타파하</div>
+
+      <div class="logo"></div>
+    </div>
+    <script>
+      // const colors = {
+      //   success: '#28a745',
+      //   info: '#17a2b8',
+      //   warning: '#ffc107'
+      // };
+      // console.log(colors.warning);
+
+      const fadeMax = 10;
+      const fadeMin = 1;
+      const fadeSpeed = 100;
+      let fadeStep = fadeMax;
+      let fadeIng = false;
+      let isfadeIn = false;
+      function fadeToggle(e) {
+        const el = e.target;
+        if (fadeIng || !el) return;
+        fadeIng = true;
+        if (fadeStep === fadeMax) {
+          isfadeIn = false;
+        } else {
+          isfadeIn = true;
+        }
+        const fadeTimer = setInterval(function () {
+          el.classList.remove('fade-' + fadeStep);
+          if (isfadeIn) {
+            fadeStep += 1;
+          } else {
+            fadeStep -= 1;
+          }
+          el.classList.add('fade-' + fadeStep);
+          if (fadeStep === fadeMax || fadeStep === fadeMin) {
+            clearInterval(fadeTimer);
+            fadeIng = false;
+          }
+        }, fadeSpeed);
+      }
+      document.querySelector('.fade-box').addEventListener('click', fadeToggle);
+    </script>
+  </body>
+</html>
