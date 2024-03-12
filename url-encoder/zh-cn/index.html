@@ -1,0 +1,164 @@
+<html>
+  <head>
+    <title>用于 SVG 的 URL-encoder</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <h1>用于 SVG 的 URL-encoder</h1>
+
+        <ul class="langs">
+          <li class="langs__item">
+            <a href="../">En</a>
+          </li>
+          <li class="langs__item">
+            <a href="../pt">Br</a>
+          </li>
+          <li class="langs__item">
+            <a href="../ru">Рус</a>
+          </li>
+          <li class="langs__item">
+            <a>简中</a>
+          </li>
+          <li class="langs__item">
+            <a href="../zh-tw">繁中</a>
+          </li>
+          <li class="langs__item">
+            <a href="../tr">Tr</a>
+          </li>
+        </ul>
+      </header>
+
+      <main>
+        <div class="panel">
+
+          <div class="options">
+              引号 :
+              <label class="options__label">
+                <input
+                  type="radio"
+                  value="single"
+                  name="quotes"
+                  class="options__input visuallyhidden"
+                >
+                <span class="options__text">单引号</span>
+              </label>
+
+              <span class="options__middle-word">/</span>
+
+              <label class="options__label">
+                <input
+                  type="radio"
+                  value="double"
+                  name="quotes"
+                  class="options__input visuallyhidden"
+                  checked
+                >
+                <span class="options__text">双引号</span>
+              </label>
+          </div>
+
+
+          <dl class="about">
+            <dt class="expander">关于此工具</dt>
+
+            <dd class="expanded hidden">
+              <p>不进行编码的话，我们可以以 <code>data URI</code> 形式在 CSS 中直接使用 SVG，但这仅在基于 Webkit 的浏览器中有效；如果用 <code>encodeURIComponent()</code> 对 SVG 编码，就可在全部地方都生效。</p><p>SVG 必须有 <strong>xmlns</strong> 属性，例如：<code>xmlns='http: //www.w3.org/2000/svg'</code>。如果不存在则会自动添加。</p><p>编码后的 SVG 可在 <code>background</code>，<code>border-image</code> 或 <code>mask</code>中使用（<a href='https://codepen.io/yoksel/full/WNrLpYW'>实例演示</a>）。</p>
+            </dd>
+          </dl>
+        </div>
+
+        <div class="containers">
+          <div class="container container--left container container--init">
+              <h4>插入 SVG :</h4>
+
+              <button class="button-example">示例</button>
+
+              <textarea
+                name="init"
+                id="init"
+                spellcheck="false"
+                ></textarea>
+          </div>
+
+          <div class="container container--right container container--result">
+            <h4>编码后 :</h4>
+
+            <button
+              id="copy-result-button"
+              title="Copy encoded results to clipboard"
+              class="copy-button">复制</button>
+
+            <textarea
+              name="result"
+              id="result"
+              spellcheck="false"
+            ></textarea>
+
+            <div class="tip">您可将编码后的 SVG 粘贴到此处以解码</div>
+          </div>
+        </div>
+
+        <div class="containers">
+          <div class="container container--left container container--result-css">
+            <h4>在 CSS 里使用 :</h4>
+
+            <button
+              id="copy-css-result-button" title="Copy CSS results to clipboard" class="copy-button">复制</button>
+
+            <textarea
+              name="result-css"
+              id="result-css"
+              spellcheck="false"
+            ></textarea>
+          </div>
+
+          <div class="container container--right container container--demo">
+            <h4>预览 :</h4>
+
+            <div class="contrast-buttons">背景 :
+              <button
+                type="button"
+                class="contrast-button contrast-button--white"
+                data-color="white"
+                title="白色">
+                <span class="visuallyhidden">白色</span>
+              </button>
+
+              <button
+                type="button"
+                class="contrast-button contrast-button--silver"
+                data-color="silver"
+                title="银色">
+                <span class="visuallyhidden">银色</span>
+              </button>
+
+              <button
+                type="button"
+                class="contrast-button contrast-button--black"
+                data-color="black"
+                title="黑色">
+                <span class="visuallyhidden">黑色</span>
+              </button>
+            </div>
+
+            <div class="demo-wrapper">
+              <div id="demo" class="demo"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <a href="https://github.com/yoksel/url-encoder/">查看项目于  GitHub</a>
+        <a href="https://twitter.com/yoksel_en">@yoksel_en</a>
+      </footer>
+
+    </div>
+    <div id="dropzone" class="dropzone"></div>
+    <script src="../assets/js/script.js"></script>
+
+    <!-- Yandex.Metrika counter --> <script type="text/javascript" > (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter49839931 = new Ya.Metrika2({ id:49839931, clickmap:true, trackLinks:true, accurateTrackBounce:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = "https://mc.yandex.ru/metrika/tag.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks2"); </script> <noscript><div><img src="https://mc.yandex.ru/watch/49839931" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
+  </body>
+</html>
