@@ -1,0 +1,172 @@
+// 커스텀 셀렉트
+.select select,
+.custom-select-btn,
+.custom-select-option {
+  position: relative;
+  width: 100%;
+  height: 3.2rem;
+  padding: 0.6rem 1.1rem;
+  line-height: 1.8rem;
+  border: 0.1rem solid var(--line-color-ccc);
+  white-space: nowrap;
+  text-align: left;
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.select {
+  position: relative;
+  min-width: 15rem;
+  select {
+    appearance: none;
+    color: var(--base-txt-color);
+    padding-right: 2.4rem;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M7 10L11.7879 14.7879C11.905 14.905 12.095 14.905 12.2121 14.7879L17 10' stroke='%23999999' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right center / 2.4rem auto;
+    &:hover:not(:disabled) {
+      border-color: var(--primary-blue-color);
+    }
+    &:focus {
+      border-color: var(--gray_02-darkBlue);
+    }
+    &:disabled {
+      background-color: var(--background-color);
+    }
+  }
+}
+
+.custom-select {
+  text-align: left;
+  /* disabled가 아닌 추가로 요청한 readOnlyCase */
+  &.readOnlyCase {
+    select {
+      background-color: var(--background-color);
+      color: var(--gray_999);
+    }
+    position: relative;
+    &::after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 100%;
+      background-color: transparent;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+  select {
+    &.init {
+      // display: none;
+      // visibility: hidden;
+      position: absolute;
+      width: 0;
+      height: 0;
+      opacity: 0;
+      padding: 0;
+      border-width: 0;
+      z-index: -999;
+      overflow: hidden;
+    }
+  }
+  &.type-2 {
+    select,
+    .custom-select-btn {
+      border: 0;
+      padding-top: 0.4rem;
+      padding-bottom: 0.4rem;
+      line-height: 2.4rem;
+      font-size: 1.6rem;
+      font-weight: 700;
+      &::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M18 9L12 15L6 9' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      }
+    }
+    .custom-select-option {
+      font-weight: 300;
+      font-size: 1.4rem;
+      border: 0;
+      &:hover {
+        background: rgba(46, 116, 242, 0.05);
+      }
+      &.selected {
+        font-weight: 700;
+        background: none;
+      }
+    }
+  }
+  &.fixed {
+    .custom-select-options {
+      position: fixed;
+    }
+  }
+}
+
+.custom-select-btn {
+  display: block;
+  min-width: 10rem;
+  border-radius: 0.3rem;
+  padding-right: 2.4rem;
+  background-color: #fff;
+  &:hover:not(:disabled) {
+    border-color: var(--primary-blue-color);
+  }
+  &:focus,
+  select:focus ~ & {
+    border-color: var(--gray_02-darkBlue);
+  }
+  &:disabled {
+    background-color: var(--background-color);
+    color: var(--gray_999);
+  }
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    right: 0;
+    transition: 0.3s transform;
+    top: 50%;
+    width: 2.4rem;
+    height: 2.4rem;
+    transform: translateY(-50%) rotate3d(1, 0, 0, 0deg);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M7 10L11.7879 14.7879C11.905 14.905 12.095 14.905 12.2121 14.7879L17 10' stroke='%23999999' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center center;
+  }
+  &.open {
+    &::after {
+      transform: translateY(-50%) rotate3d(1, 0, 0, 180deg);
+    }
+    ~ .custom-select-options {
+      display: block;
+    }
+  }
+}
+
+.custom-select-option {
+  display: block;
+  &:hover:not(:disabled),
+  &.selected {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  &:disabled {
+    color: #999; //컬러 미정의
+  }
+  + .custom-select-option {
+    border-top-width: 0;
+  }
+}
+
+.custom-select-options {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: auto;
+  min-width: 100%;
+  max-height: 32rem;
+  margin-top: 0.3rem;
+  background-color: #fff;
+  border-radius: 0.3rem;
+  overflow-y: auto;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  z-index: 89;
+}
