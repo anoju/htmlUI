@@ -5,6 +5,8 @@ const uiSelect = {
     disabled: 'disabled',
     btn: 'custom-select-btn',
     btnActive: 'open',
+    optgroup: 'custom-select-optgroup',
+    optgroupLabel: 'custom-select-optgroup-lbl',
     options: 'custom-select-options',
     option: 'custom-select-option',
     optionSelected: 'selected'
@@ -79,12 +81,34 @@ const uiSelect = {
       options = Html;
     }
     let optionsHtml = '';
+    /*
     const selOptions = selElmnt.options;
     if (selOptions.length) {
       Array.from(selOptions).forEach(function (option, i) {
         const selected = i === seletedIndex ? ' ' + uiSelect.class.optionSelected : '';
         const disabled = option.disabled ? ' disabled' : '';
         optionsHtml += '<button type="button" class="' + uiSelect.class.option + selected + '" data-value="' + option.value + '" data-index="' + i + '"' + disabled + '>' + option.textContent + '</button>';
+      });
+    }*/
+    function makeOption(el, idx){
+      const selected = idx === seletedIndex ? ' ' + uiSelect.class.optionSelected : '';
+      const disabled = el.disabled ? ' disabled' : '';
+      return '<button type="button" class="' + uiSelect.class.option + selected + '" data-value="' + el.value + '" data-index="' + idx + '"' + disabled + '>' + el.textContent + '</button>'
+    }
+    const selChild = selElmnt.children;
+    if (selChild.length) {
+      Array.from(selChild).forEach(function (child, i) {
+        if (child.tagName.toLowerCase() === 'optgroup') {
+          optionsHtml += '<div class="' + uiSelect.class.optgroup + '">';
+          optionsHtml += '<div class="' + uiSelect.class.optgroupLabel + '">' + child.label + '</div>';
+          Array.from(child.children).forEach(function (option, j) {
+            const optionIndex = Array.from(selElmnt.options).indexOf(option);
+            optionsHtml +=makeOption(option, optionIndex);
+          });
+          optionsHtml += '</div>';
+        } else if (child.tagName.toLowerCase() === 'option') {
+          optionsHtml +=makeOption(child, i);
+        }
       });
     }
     options.innerHTML = optionsHtml;
@@ -142,7 +166,7 @@ const uiSelect = {
         const $select = $target.closest('.' + uiSelect.class.wrap);
         uiSelect.options($select);
         uiSelect.position();
-      } else {
+      } else if (!$target.classList.contains(uiSelect.class.optgroupLabel)){
         uiSelect.close();
       }
 

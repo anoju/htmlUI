@@ -1,7 +1,8 @@
 // 커스텀 셀렉트
 .select select,
 .custom-select-btn,
-.custom-select-option {
+.custom-select-option,
+.custom-select-optgroup-lbl {
   position: relative;
   width: 100%;
   height: 3.2rem;
@@ -154,6 +155,21 @@
     border-top-width: 0;
   }
 }
+.custom-select-optgroup{
+  position: relative;
+  &:not(:first-child){
+    margin-top: -1px;
+  }
+  .custom-select-option {
+    padding-left: 2.2rem;
+  }
+}
+.custom-select-optgroup-lbl{
+  font-weight: bold;
+  color: #666;
+  border-bottom-width: 0;
+}
+
 
 .custom-select-options {
   display: none;
