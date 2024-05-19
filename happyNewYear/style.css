@@ -1,0 +1,1555 @@
+html,body{margin:0;padding:0;height:100%;font-family: 'Nanum Myeongjo', serif;}
+.world_wrap {
+    background: #fff;
+    height:30vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  div {
+    transform-style: preserve-3d;
+  }
+  
+  .world {
+    perspective: 600px;
+  }
+  
+  .sun {
+    position: absolute;
+    top: calc(50% + 40px);
+    left: calc(50% - 50px);
+    width: 100px;
+    height: 55px;
+    border-radius: 100px 100px 0 0;
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.3) 0%, white 100%);
+    z-index: 999;
+    filter: blur(4px) contrast(2);
+  }
+  
+  .bg {
+    position: absolute;
+    top: calc(50% - 150px);
+    left: calc(50% - 400px);
+    width: 800px;
+    height: 300px;
+    background: yellow;
+    filter: blur(5px) contrast(100);
+  }
+  
+  .wave {
+    position: absolute;
+    top: calc(50% + 87px);
+    left: calc(50% - 60px);
+    width: 120px;
+    height: 12px;
+    background: #fff;
+    border-radius: 100%;
+  }
+  .wave:not(:first-child) {
+    -webkit-animation: wave 2000ms infinite linear;
+            animation: wave 2000ms infinite linear;
+  }
+  .wave:nth-child(2) {
+    -webkit-animation-delay: -500ms;
+            animation-delay: -500ms;
+  }
+  .wave:nth-child(3) {
+    -webkit-animation-delay: -1000ms;
+            animation-delay: -1000ms;
+  }
+  .wave:nth-child(4) {
+    -webkit-animation-delay: -1500ms;
+            animation-delay: -1500ms;
+  }
+  .wave:nth-child(5) {
+    -webkit-animation-delay: -1500ms;
+            animation-delay: -1500ms;
+  }
+  .wave:nth-child(6) {
+    -webkit-animation-delay: -2000ms;
+            animation-delay: -2000ms;
+  }
+  
+  @-webkit-keyframes wave {
+    0% {
+      transform: translateY(0) sclae(1) rotateZ(0);
+    }
+    50% {
+      transform: translateY(40px) scale(0.5) rotateZ(5deg);
+    }
+    100% {
+      transform: translateY(30px) scale(0) rotateZ(-40deg);
+    }
+  }
+  
+  @keyframes wave {
+    0% {
+      transform: translateY(0) sclae(1) rotateZ(0);
+    }
+    50% {
+      transform: translateY(40px) scale(0.5) rotateZ(5deg);
+    }
+    100% {
+      transform: translateY(30px) scale(0) rotateZ(-40deg);
+    }
+  }
+  .sea {
+    position: absolute;
+    top: calc(50% + 80px);
+    left: calc(50% - 400px);
+    width: 800px;
+    height: 70px;
+    background: rgba(0, 0, 255, 0.5);
+    background: radial-gradient(ellipse at top, white 0%, rgba(255, 215, 0, 0.1) 10%, chocolate 100%);
+  }
+  
+  .sky {
+    position: absolute;
+    top: calc(50% - 150px);
+    left: calc(50% - 400px);
+    width: 800px;
+    height: 240px;
+    background: rgba(0, 0, 255, 0.5);
+    background: radial-gradient(ellipse at bottom, yellow 0%, khaki 15%, orange 100%);
+  }
+  
+  .horizon {
+    position: absolute;
+    top: 50%;
+    width: 800px;
+    height: 200px;
+    border-radius: 100%;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 70%);
+    filter: blur(10px);
+  }
+  
+  .sunset {
+    position: relative;
+    width: 800px;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 7px;
+  }
+  
+  .line {
+    position: absolute;
+    top: calc(50%);
+    left: calc(50% - 7px);
+    width: 14px;
+    height: calc(300px * 0.5);
+    background: white;
+  }
+  .line.-left {
+    transform: translateZ(300px) translateX(-70px) translateY(-50%);
+  }
+  .line.-right {
+    transform: translateZ(300px) translateX(70px) translateY(-50%);
+  }
+  
+  .birdposition {
+    position: absolute;
+    top: calc(50% + 60px);
+    left: calc(50% - 40px);
+  }
+  .birdposition:nth-of-type(0) {
+    transform: translate(236px, -12px) rotateZ(-19deg);
+  }
+  .birdposition:nth-of-type(0) .bird {
+    -webkit-animation-duration: 8138ms;
+            animation-duration: 8138ms;
+    -webkit-animation-delay: -4657ms;
+            animation-delay: -4657ms;
+  }
+  .birdposition:nth-of-type(0) .bird .wing {
+    -webkit-animation-delay: -3210ms;
+            animation-delay: -3210ms;
+  }
+  .birdposition:nth-of-type(1) {
+    transform: translate(127px, -86px) rotateZ(-11deg);
+  }
+  .birdposition:nth-of-type(1) .bird {
+    -webkit-animation-duration: 14971ms;
+            animation-duration: 14971ms;
+    -webkit-animation-delay: -18271ms;
+            animation-delay: -18271ms;
+  }
+  .birdposition:nth-of-type(1) .bird .wing {
+    -webkit-animation-delay: -13934ms;
+            animation-delay: -13934ms;
+  }
+  .birdposition:nth-of-type(2) {
+    transform: translate(188px, -5px) rotateZ(14deg);
+  }
+  .birdposition:nth-of-type(2) .bird {
+    -webkit-animation-duration: 13429ms;
+            animation-duration: 13429ms;
+    -webkit-animation-delay: -12006ms;
+            animation-delay: -12006ms;
+  }
+  .birdposition:nth-of-type(2) .bird .wing {
+    -webkit-animation-delay: -12903ms;
+            animation-delay: -12903ms;
+  }
+  .birdposition:nth-of-type(3) {
+    transform: translate(-115px, -140px) rotateZ(3deg);
+  }
+  .birdposition:nth-of-type(3) .bird {
+    -webkit-animation-duration: 11016ms;
+            animation-duration: 11016ms;
+    -webkit-animation-delay: -13350ms;
+            animation-delay: -13350ms;
+  }
+  .birdposition:nth-of-type(3) .bird .wing {
+    -webkit-animation-delay: -19045ms;
+            animation-delay: -19045ms;
+  }
+  .birdposition:nth-of-type(4) {
+    transform: translate(13px, -113px) rotateZ(7deg);
+  }
+  .birdposition:nth-of-type(4) .bird {
+    -webkit-animation-duration: 12510ms;
+            animation-duration: 12510ms;
+    -webkit-animation-delay: -9378ms;
+            animation-delay: -9378ms;
+  }
+  .birdposition:nth-of-type(4) .bird .wing {
+    -webkit-animation-delay: -10947ms;
+            animation-delay: -10947ms;
+  }
+  .birdposition:nth-of-type(5) {
+    transform: translate(281px, -54px) rotateZ(12deg);
+  }
+  .birdposition:nth-of-type(5) .bird {
+    -webkit-animation-duration: 7395ms;
+            animation-duration: 7395ms;
+    -webkit-animation-delay: -11699ms;
+            animation-delay: -11699ms;
+  }
+  .birdposition:nth-of-type(5) .bird .wing {
+    -webkit-animation-delay: -6004ms;
+            animation-delay: -6004ms;
+  }
+  .birdposition:nth-of-type(6) {
+    transform: translate(120px, -119px) rotateZ(-15deg);
+  }
+  .birdposition:nth-of-type(6) .bird {
+    -webkit-animation-duration: 8106ms;
+            animation-duration: 8106ms;
+    -webkit-animation-delay: -10506ms;
+            animation-delay: -10506ms;
+  }
+  .birdposition:nth-of-type(6) .bird .wing {
+    -webkit-animation-delay: -464ms;
+            animation-delay: -464ms;
+  }
+  .birdposition:nth-of-type(7) {
+    transform: translate(-74px, 50px) rotateZ(-19deg);
+  }
+  .birdposition:nth-of-type(7) .bird {
+    -webkit-animation-duration: 12286ms;
+            animation-duration: 12286ms;
+    -webkit-animation-delay: -9734ms;
+            animation-delay: -9734ms;
+  }
+  .birdposition:nth-of-type(7) .bird .wing {
+    -webkit-animation-delay: -18002ms;
+            animation-delay: -18002ms;
+  }
+  .birdposition:nth-of-type(8) {
+    transform: translate(-115px, -98px) rotateZ(-9deg);
+  }
+  .birdposition:nth-of-type(8) .bird {
+    -webkit-animation-duration: 9406ms;
+            animation-duration: 9406ms;
+    -webkit-animation-delay: -14104ms;
+            animation-delay: -14104ms;
+  }
+  .birdposition:nth-of-type(8) .bird .wing {
+    -webkit-animation-delay: -9730ms;
+            animation-delay: -9730ms;
+  }
+  .birdposition:nth-of-type(9) {
+    transform: translate(-274px, 22px) rotateZ(-18deg);
+  }
+  .birdposition:nth-of-type(9) .bird {
+    -webkit-animation-duration: 11238ms;
+            animation-duration: 11238ms;
+    -webkit-animation-delay: -15104ms;
+            animation-delay: -15104ms;
+  }
+  .birdposition:nth-of-type(9) .bird .wing {
+    -webkit-animation-delay: -8398ms;
+            animation-delay: -8398ms;
+  }
+  .birdposition:nth-of-type(10) {
+    transform: translate(-185px, 49px) rotateZ(-16deg);
+  }
+  .birdposition:nth-of-type(10) .bird {
+    -webkit-animation-duration: 12073ms;
+            animation-duration: 12073ms;
+    -webkit-animation-delay: -19261ms;
+            animation-delay: -19261ms;
+  }
+  .birdposition:nth-of-type(10) .bird .wing {
+    -webkit-animation-delay: -15511ms;
+            animation-delay: -15511ms;
+  }
+  .birdposition:nth-of-type(11) {
+    transform: translate(6px, -88px) rotateZ(17deg);
+  }
+  .birdposition:nth-of-type(11) .bird {
+    -webkit-animation-duration: 10338ms;
+            animation-duration: 10338ms;
+    -webkit-animation-delay: -3541ms;
+            animation-delay: -3541ms;
+  }
+  .birdposition:nth-of-type(11) .bird .wing {
+    -webkit-animation-delay: -13886ms;
+            animation-delay: -13886ms;
+  }
+  .birdposition:nth-of-type(12) {
+    transform: translate(-217px, 27px) rotateZ(18deg);
+  }
+  .birdposition:nth-of-type(12) .bird {
+    -webkit-animation-duration: 7041ms;
+            animation-duration: 7041ms;
+    -webkit-animation-delay: -12488ms;
+            animation-delay: -12488ms;
+  }
+  .birdposition:nth-of-type(12) .bird .wing {
+    -webkit-animation-delay: -10513ms;
+            animation-delay: -10513ms;
+  }
+  .birdposition:nth-of-type(13) {
+    transform: translate(289px, -136px) rotateZ(2deg);
+  }
+  .birdposition:nth-of-type(13) .bird {
+    -webkit-animation-duration: 14205ms;
+            animation-duration: 14205ms;
+    -webkit-animation-delay: -10971ms;
+            animation-delay: -10971ms;
+  }
+  .birdposition:nth-of-type(13) .bird .wing {
+    -webkit-animation-delay: -11260ms;
+            animation-delay: -11260ms;
+  }
+  .birdposition:nth-of-type(14) {
+    transform: translate(6px, -8px) rotateZ(12deg);
+  }
+  .birdposition:nth-of-type(14) .bird {
+    -webkit-animation-duration: 14855ms;
+            animation-duration: 14855ms;
+    -webkit-animation-delay: -5123ms;
+            animation-delay: -5123ms;
+  }
+  .birdposition:nth-of-type(14) .bird .wing {
+    -webkit-animation-delay: -11091ms;
+            animation-delay: -11091ms;
+  }
+  .birdposition:nth-of-type(15) {
+    transform: translate(80px, -19px) rotateZ(3deg);
+  }
+  .birdposition:nth-of-type(15) .bird {
+    -webkit-animation-duration: 9548ms;
+            animation-duration: 9548ms;
+    -webkit-animation-delay: -10847ms;
+            animation-delay: -10847ms;
+  }
+  .birdposition:nth-of-type(15) .bird .wing {
+    -webkit-animation-delay: -16375ms;
+            animation-delay: -16375ms;
+  }
+  .birdposition:nth-of-type(16) {
+    transform: translate(-258px, -74px) rotateZ(-14deg);
+  }
+  .birdposition:nth-of-type(16) .bird {
+    -webkit-animation-duration: 6709ms;
+            animation-duration: 6709ms;
+    -webkit-animation-delay: -15639ms;
+            animation-delay: -15639ms;
+  }
+  .birdposition:nth-of-type(16) .bird .wing {
+    -webkit-animation-delay: -15083ms;
+            animation-delay: -15083ms;
+  }
+  .birdposition:nth-of-type(17) {
+    transform: translate(-185px, 27px) rotateZ(9deg);
+  }
+  .birdposition:nth-of-type(17) .bird {
+    -webkit-animation-duration: 13386ms;
+            animation-duration: 13386ms;
+    -webkit-animation-delay: -9253ms;
+            animation-delay: -9253ms;
+  }
+  .birdposition:nth-of-type(17) .bird .wing {
+    -webkit-animation-delay: -6511ms;
+            animation-delay: -6511ms;
+  }
+  .birdposition:nth-of-type(18) {
+    transform: translate(-168px, -47px) rotateZ(12deg);
+  }
+  .birdposition:nth-of-type(18) .bird {
+    -webkit-animation-duration: 5676ms;
+            animation-duration: 5676ms;
+    -webkit-animation-delay: -18314ms;
+            animation-delay: -18314ms;
+  }
+  .birdposition:nth-of-type(18) .bird .wing {
+    -webkit-animation-delay: -3578ms;
+            animation-delay: -3578ms;
+  }
+  .birdposition:nth-of-type(19) {
+    transform: translate(-262px, -119px) rotateZ(8deg);
+  }
+  .birdposition:nth-of-type(19) .bird {
+    -webkit-animation-duration: 11639ms;
+            animation-duration: 11639ms;
+    -webkit-animation-delay: -4989ms;
+            animation-delay: -4989ms;
+  }
+  .birdposition:nth-of-type(19) .bird .wing {
+    -webkit-animation-delay: -8556ms;
+            animation-delay: -8556ms;
+  }
+  .birdposition:nth-of-type(20) {
+    transform: translate(117px, -121px) rotateZ(17deg);
+  }
+  .birdposition:nth-of-type(20) .bird {
+    -webkit-animation-duration: 8675ms;
+            animation-duration: 8675ms;
+    -webkit-animation-delay: -10469ms;
+            animation-delay: -10469ms;
+  }
+  .birdposition:nth-of-type(20) .bird .wing {
+    -webkit-animation-delay: -10247ms;
+            animation-delay: -10247ms;
+  }
+  .birdposition:nth-of-type(21) {
+    transform: translate(197px, -56px) rotateZ(-8deg);
+  }
+  .birdposition:nth-of-type(21) .bird {
+    -webkit-animation-duration: 11616ms;
+            animation-duration: 11616ms;
+    -webkit-animation-delay: -2406ms;
+            animation-delay: -2406ms;
+  }
+  .birdposition:nth-of-type(21) .bird .wing {
+    -webkit-animation-delay: -15557ms;
+            animation-delay: -15557ms;
+  }
+  .birdposition:nth-of-type(22) {
+    transform: translate(-89px, 19px) rotateZ(0deg);
+  }
+  .birdposition:nth-of-type(22) .bird {
+    -webkit-animation-duration: 14996ms;
+            animation-duration: 14996ms;
+    -webkit-animation-delay: -18399ms;
+            animation-delay: -18399ms;
+  }
+  .birdposition:nth-of-type(22) .bird .wing {
+    -webkit-animation-delay: -8849ms;
+            animation-delay: -8849ms;
+  }
+  .birdposition:nth-of-type(23) {
+    transform: translate(-105px, -63px) rotateZ(8deg);
+  }
+  .birdposition:nth-of-type(23) .bird {
+    -webkit-animation-duration: 6080ms;
+            animation-duration: 6080ms;
+    -webkit-animation-delay: -3634ms;
+            animation-delay: -3634ms;
+  }
+  .birdposition:nth-of-type(23) .bird .wing {
+    -webkit-animation-delay: -14707ms;
+            animation-delay: -14707ms;
+  }
+  .birdposition:nth-of-type(24) {
+    transform: translate(26px, -15px) rotateZ(13deg);
+  }
+  .birdposition:nth-of-type(24) .bird {
+    -webkit-animation-duration: 7652ms;
+            animation-duration: 7652ms;
+    -webkit-animation-delay: -18745ms;
+            animation-delay: -18745ms;
+  }
+  .birdposition:nth-of-type(24) .bird .wing {
+    -webkit-animation-delay: -6729ms;
+            animation-delay: -6729ms;
+  }
+  .birdposition:nth-of-type(25) {
+    transform: translate(-175px, -4px) rotateZ(20deg);
+  }
+  .birdposition:nth-of-type(25) .bird {
+    -webkit-animation-duration: 11131ms;
+            animation-duration: 11131ms;
+    -webkit-animation-delay: -7122ms;
+            animation-delay: -7122ms;
+  }
+  .birdposition:nth-of-type(25) .bird .wing {
+    -webkit-animation-delay: -14261ms;
+            animation-delay: -14261ms;
+  }
+  .birdposition:nth-of-type(26) {
+    transform: translate(140px, -85px) rotateZ(-5deg);
+  }
+  .birdposition:nth-of-type(26) .bird {
+    -webkit-animation-duration: 8339ms;
+            animation-duration: 8339ms;
+    -webkit-animation-delay: -7ms;
+            animation-delay: -7ms;
+  }
+  .birdposition:nth-of-type(26) .bird .wing {
+    -webkit-animation-delay: -16927ms;
+            animation-delay: -16927ms;
+  }
+  .birdposition:nth-of-type(27) {
+    transform: translate(-273px, -116px) rotateZ(7deg);
+  }
+  .birdposition:nth-of-type(27) .bird {
+    -webkit-animation-duration: 13760ms;
+            animation-duration: 13760ms;
+    -webkit-animation-delay: -12724ms;
+            animation-delay: -12724ms;
+  }
+  .birdposition:nth-of-type(27) .bird .wing {
+    -webkit-animation-delay: -15095ms;
+            animation-delay: -15095ms;
+  }
+  .birdposition:nth-of-type(28) {
+    transform: translate(-41px, -69px) rotateZ(19deg);
+  }
+  .birdposition:nth-of-type(28) .bird {
+    -webkit-animation-duration: 11970ms;
+            animation-duration: 11970ms;
+    -webkit-animation-delay: -13471ms;
+            animation-delay: -13471ms;
+  }
+  .birdposition:nth-of-type(28) .bird .wing {
+    -webkit-animation-delay: -2200ms;
+            animation-delay: -2200ms;
+  }
+  .birdposition:nth-of-type(29) {
+    transform: translate(111px, -17px) rotateZ(5deg);
+  }
+  .birdposition:nth-of-type(29) .bird {
+    -webkit-animation-duration: 9139ms;
+            animation-duration: 9139ms;
+    -webkit-animation-delay: -19790ms;
+            animation-delay: -19790ms;
+  }
+  .birdposition:nth-of-type(29) .bird .wing {
+    -webkit-animation-delay: -7788ms;
+            animation-delay: -7788ms;
+  }
+  .birdposition:nth-of-type(30) {
+    transform: translate(-230px, 26px) rotateZ(15deg);
+  }
+  .birdposition:nth-of-type(30) .bird {
+    -webkit-animation-duration: 6614ms;
+            animation-duration: 6614ms;
+    -webkit-animation-delay: -3283ms;
+            animation-delay: -3283ms;
+  }
+  .birdposition:nth-of-type(30) .bird .wing {
+    -webkit-animation-delay: -1264ms;
+            animation-delay: -1264ms;
+  }
+  .birdposition:nth-of-type(31) {
+    transform: translate(-99px, -80px) rotateZ(-5deg);
+  }
+  .birdposition:nth-of-type(31) .bird {
+    -webkit-animation-duration: 8820ms;
+            animation-duration: 8820ms;
+    -webkit-animation-delay: -3423ms;
+            animation-delay: -3423ms;
+  }
+  .birdposition:nth-of-type(31) .bird .wing {
+    -webkit-animation-delay: -11732ms;
+            animation-delay: -11732ms;
+  }
+  .birdposition:nth-of-type(32) {
+    transform: translate(-47px, 47px) rotateZ(-3deg);
+  }
+  .birdposition:nth-of-type(32) .bird {
+    -webkit-animation-duration: 9403ms;
+            animation-duration: 9403ms;
+    -webkit-animation-delay: -18304ms;
+            animation-delay: -18304ms;
+  }
+  .birdposition:nth-of-type(32) .bird .wing {
+    -webkit-animation-delay: -13165ms;
+            animation-delay: -13165ms;
+  }
+  .birdposition:nth-of-type(33) {
+    transform: translate(93px, -116px) rotateZ(-9deg);
+  }
+  .birdposition:nth-of-type(33) .bird {
+    -webkit-animation-duration: 10700ms;
+            animation-duration: 10700ms;
+    -webkit-animation-delay: -10392ms;
+            animation-delay: -10392ms;
+  }
+  .birdposition:nth-of-type(33) .bird .wing {
+    -webkit-animation-delay: -13213ms;
+            animation-delay: -13213ms;
+  }
+  .birdposition:nth-of-type(34) {
+    transform: translate(-184px, -72px) rotateZ(20deg);
+  }
+  .birdposition:nth-of-type(34) .bird {
+    -webkit-animation-duration: 5983ms;
+            animation-duration: 5983ms;
+    -webkit-animation-delay: -685ms;
+            animation-delay: -685ms;
+  }
+  .birdposition:nth-of-type(34) .bird .wing {
+    -webkit-animation-delay: -10918ms;
+            animation-delay: -10918ms;
+  }
+  .birdposition:nth-of-type(35) {
+    transform: translate(-98px, -128px) rotateZ(-1deg);
+  }
+  .birdposition:nth-of-type(35) .bird {
+    -webkit-animation-duration: 9449ms;
+            animation-duration: 9449ms;
+    -webkit-animation-delay: -19694ms;
+            animation-delay: -19694ms;
+  }
+  .birdposition:nth-of-type(35) .bird .wing {
+    -webkit-animation-delay: -7255ms;
+            animation-delay: -7255ms;
+  }
+  .birdposition:nth-of-type(36) {
+    transform: translate(51px, 4px) rotateZ(0deg);
+  }
+  .birdposition:nth-of-type(36) .bird {
+    -webkit-animation-duration: 5919ms;
+            animation-duration: 5919ms;
+    -webkit-animation-delay: -18470ms;
+            animation-delay: -18470ms;
+  }
+  .birdposition:nth-of-type(36) .bird .wing {
+    -webkit-animation-delay: -10846ms;
+            animation-delay: -10846ms;
+  }
+  .birdposition:nth-of-type(37) {
+    transform: translate(-8px, -114px) rotateZ(9deg);
+  }
+  .birdposition:nth-of-type(37) .bird {
+    -webkit-animation-duration: 12346ms;
+            animation-duration: 12346ms;
+    -webkit-animation-delay: -15579ms;
+            animation-delay: -15579ms;
+  }
+  .birdposition:nth-of-type(37) .bird .wing {
+    -webkit-animation-delay: -19142ms;
+            animation-delay: -19142ms;
+  }
+  .birdposition:nth-of-type(38) {
+    transform: translate(-76px, -38px) rotateZ(-13deg);
+  }
+  .birdposition:nth-of-type(38) .bird {
+    -webkit-animation-duration: 7171ms;
+            animation-duration: 7171ms;
+    -webkit-animation-delay: -16124ms;
+            animation-delay: -16124ms;
+  }
+  .birdposition:nth-of-type(38) .bird .wing {
+    -webkit-animation-delay: -14614ms;
+            animation-delay: -14614ms;
+  }
+  .birdposition:nth-of-type(39) {
+    transform: translate(6px, -104px) rotateZ(9deg);
+  }
+  .birdposition:nth-of-type(39) .bird {
+    -webkit-animation-duration: 8540ms;
+            animation-duration: 8540ms;
+    -webkit-animation-delay: -10456ms;
+            animation-delay: -10456ms;
+  }
+  .birdposition:nth-of-type(39) .bird .wing {
+    -webkit-animation-delay: -19559ms;
+            animation-delay: -19559ms;
+  }
+  .birdposition:nth-of-type(40) {
+    transform: translate(-261px, -63px) rotateZ(5deg);
+  }
+  .birdposition:nth-of-type(40) .bird {
+    -webkit-animation-duration: 11045ms;
+            animation-duration: 11045ms;
+    -webkit-animation-delay: -5968ms;
+            animation-delay: -5968ms;
+  }
+  .birdposition:nth-of-type(40) .bird .wing {
+    -webkit-animation-delay: -7856ms;
+            animation-delay: -7856ms;
+  }
+  .birdposition:nth-of-type(41) {
+    transform: translate(291px, -91px) rotateZ(13deg);
+  }
+  .birdposition:nth-of-type(41) .bird {
+    -webkit-animation-duration: 14616ms;
+            animation-duration: 14616ms;
+    -webkit-animation-delay: -13504ms;
+            animation-delay: -13504ms;
+  }
+  .birdposition:nth-of-type(41) .bird .wing {
+    -webkit-animation-delay: -18877ms;
+            animation-delay: -18877ms;
+  }
+  .birdposition:nth-of-type(42) {
+    transform: translate(262px, -144px) rotateZ(-19deg);
+  }
+  .birdposition:nth-of-type(42) .bird {
+    -webkit-animation-duration: 5286ms;
+            animation-duration: 5286ms;
+    -webkit-animation-delay: -1819ms;
+            animation-delay: -1819ms;
+  }
+  .birdposition:nth-of-type(42) .bird .wing {
+    -webkit-animation-delay: -14155ms;
+            animation-delay: -14155ms;
+  }
+  .birdposition:nth-of-type(43) {
+    transform: translate(-57px, -9px) rotateZ(2deg);
+  }
+  .birdposition:nth-of-type(43) .bird {
+    -webkit-animation-duration: 10473ms;
+            animation-duration: 10473ms;
+    -webkit-animation-delay: -19722ms;
+            animation-delay: -19722ms;
+  }
+  .birdposition:nth-of-type(43) .bird .wing {
+    -webkit-animation-delay: -11338ms;
+            animation-delay: -11338ms;
+  }
+  .birdposition:nth-of-type(44) {
+    transform: translate(-51px, -33px) rotateZ(-7deg);
+  }
+  .birdposition:nth-of-type(44) .bird {
+    -webkit-animation-duration: 10834ms;
+            animation-duration: 10834ms;
+    -webkit-animation-delay: -13545ms;
+            animation-delay: -13545ms;
+  }
+  .birdposition:nth-of-type(44) .bird .wing {
+    -webkit-animation-delay: -9105ms;
+            animation-delay: -9105ms;
+  }
+  .birdposition:nth-of-type(45) {
+    transform: translate(-184px, -77px) rotateZ(-15deg);
+  }
+  .birdposition:nth-of-type(45) .bird {
+    -webkit-animation-duration: 12951ms;
+            animation-duration: 12951ms;
+    -webkit-animation-delay: -11995ms;
+            animation-delay: -11995ms;
+  }
+  .birdposition:nth-of-type(45) .bird .wing {
+    -webkit-animation-delay: -11489ms;
+            animation-delay: -11489ms;
+  }
+  .birdposition:nth-of-type(46) {
+    transform: translate(218px, -121px) rotateZ(-9deg);
+  }
+  .birdposition:nth-of-type(46) .bird {
+    -webkit-animation-duration: 13352ms;
+            animation-duration: 13352ms;
+    -webkit-animation-delay: -19963ms;
+            animation-delay: -19963ms;
+  }
+  .birdposition:nth-of-type(46) .bird .wing {
+    -webkit-animation-delay: -4941ms;
+            animation-delay: -4941ms;
+  }
+  .birdposition:nth-of-type(47) {
+    transform: translate(-207px, 33px) rotateZ(8deg);
+  }
+  .birdposition:nth-of-type(47) .bird {
+    -webkit-animation-duration: 10323ms;
+            animation-duration: 10323ms;
+    -webkit-animation-delay: -7251ms;
+            animation-delay: -7251ms;
+  }
+  .birdposition:nth-of-type(47) .bird .wing {
+    -webkit-animation-delay: -19628ms;
+            animation-delay: -19628ms;
+  }
+  .birdposition:nth-of-type(48) {
+    transform: translate(51px, -28px) rotateZ(-9deg);
+  }
+  .birdposition:nth-of-type(48) .bird {
+    -webkit-animation-duration: 8398ms;
+            animation-duration: 8398ms;
+    -webkit-animation-delay: -3300ms;
+            animation-delay: -3300ms;
+  }
+  .birdposition:nth-of-type(48) .bird .wing {
+    -webkit-animation-delay: -4486ms;
+            animation-delay: -4486ms;
+  }
+  .birdposition:nth-of-type(49) {
+    transform: translate(-172px, 20px) rotateZ(11deg);
+  }
+  .birdposition:nth-of-type(49) .bird {
+    -webkit-animation-duration: 10906ms;
+            animation-duration: 10906ms;
+    -webkit-animation-delay: -10755ms;
+            animation-delay: -10755ms;
+  }
+  .birdposition:nth-of-type(49) .bird .wing {
+    -webkit-animation-delay: -3302ms;
+            animation-delay: -3302ms;
+  }
+  .birdposition:nth-of-type(50) {
+    transform: translate(45px, -66px) rotateZ(-3deg);
+  }
+  .birdposition:nth-of-type(50) .bird {
+    -webkit-animation-duration: 10713ms;
+            animation-duration: 10713ms;
+    -webkit-animation-delay: -5963ms;
+            animation-delay: -5963ms;
+  }
+  .birdposition:nth-of-type(50) .bird .wing {
+    -webkit-animation-delay: -869ms;
+            animation-delay: -869ms;
+  }
+  .birdposition:nth-of-type(51) {
+    transform: translate(-230px, -132px) rotateZ(7deg);
+  }
+  .birdposition:nth-of-type(51) .bird {
+    -webkit-animation-duration: 5744ms;
+            animation-duration: 5744ms;
+    -webkit-animation-delay: -2733ms;
+            animation-delay: -2733ms;
+  }
+  .birdposition:nth-of-type(51) .bird .wing {
+    -webkit-animation-delay: -12683ms;
+            animation-delay: -12683ms;
+  }
+  .birdposition:nth-of-type(52) {
+    transform: translate(-295px, -120px) rotateZ(-1deg);
+  }
+  .birdposition:nth-of-type(52) .bird {
+    -webkit-animation-duration: 12113ms;
+            animation-duration: 12113ms;
+    -webkit-animation-delay: -1035ms;
+            animation-delay: -1035ms;
+  }
+  .birdposition:nth-of-type(52) .bird .wing {
+    -webkit-animation-delay: -15042ms;
+            animation-delay: -15042ms;
+  }
+  .birdposition:nth-of-type(53) {
+    transform: translate(-15px, -42px) rotateZ(-18deg);
+  }
+  .birdposition:nth-of-type(53) .bird {
+    -webkit-animation-duration: 14703ms;
+            animation-duration: 14703ms;
+    -webkit-animation-delay: -12830ms;
+            animation-delay: -12830ms;
+  }
+  .birdposition:nth-of-type(53) .bird .wing {
+    -webkit-animation-delay: -2022ms;
+            animation-delay: -2022ms;
+  }
+  .birdposition:nth-of-type(54) {
+    transform: translate(-6px, -88px) rotateZ(-17deg);
+  }
+  .birdposition:nth-of-type(54) .bird {
+    -webkit-animation-duration: 5113ms;
+            animation-duration: 5113ms;
+    -webkit-animation-delay: -16023ms;
+            animation-delay: -16023ms;
+  }
+  .birdposition:nth-of-type(54) .bird .wing {
+    -webkit-animation-delay: -7472ms;
+            animation-delay: -7472ms;
+  }
+  .birdposition:nth-of-type(55) {
+    transform: translate(-261px, -76px) rotateZ(-1deg);
+  }
+  .birdposition:nth-of-type(55) .bird {
+    -webkit-animation-duration: 8424ms;
+            animation-duration: 8424ms;
+    -webkit-animation-delay: -19210ms;
+            animation-delay: -19210ms;
+  }
+  .birdposition:nth-of-type(55) .bird .wing {
+    -webkit-animation-delay: -7951ms;
+            animation-delay: -7951ms;
+  }
+  .birdposition:nth-of-type(56) {
+    transform: translate(153px, -124px) rotateZ(-2deg);
+  }
+  .birdposition:nth-of-type(56) .bird {
+    -webkit-animation-duration: 9194ms;
+            animation-duration: 9194ms;
+    -webkit-animation-delay: -15225ms;
+            animation-delay: -15225ms;
+  }
+  .birdposition:nth-of-type(56) .bird .wing {
+    -webkit-animation-delay: -19954ms;
+            animation-delay: -19954ms;
+  }
+  .birdposition:nth-of-type(57) {
+    transform: translate(-119px, -50px) rotateZ(13deg);
+  }
+  .birdposition:nth-of-type(57) .bird {
+    -webkit-animation-duration: 7750ms;
+            animation-duration: 7750ms;
+    -webkit-animation-delay: -8486ms;
+            animation-delay: -8486ms;
+  }
+  .birdposition:nth-of-type(57) .bird .wing {
+    -webkit-animation-delay: -6820ms;
+            animation-delay: -6820ms;
+  }
+  .birdposition:nth-of-type(58) {
+    transform: translate(43px, 13px) rotateZ(8deg);
+  }
+  .birdposition:nth-of-type(58) .bird {
+    -webkit-animation-duration: 12432ms;
+            animation-duration: 12432ms;
+    -webkit-animation-delay: -1285ms;
+            animation-delay: -1285ms;
+  }
+  .birdposition:nth-of-type(58) .bird .wing {
+    -webkit-animation-delay: -14904ms;
+            animation-delay: -14904ms;
+  }
+  .birdposition:nth-of-type(59) {
+    transform: translate(-25px, 22px) rotateZ(-14deg);
+  }
+  .birdposition:nth-of-type(59) .bird {
+    -webkit-animation-duration: 9398ms;
+            animation-duration: 9398ms;
+    -webkit-animation-delay: -10156ms;
+            animation-delay: -10156ms;
+  }
+  .birdposition:nth-of-type(59) .bird .wing {
+    -webkit-animation-delay: -9830ms;
+            animation-delay: -9830ms;
+  }
+  .birdposition:nth-of-type(60) {
+    transform: translate(180px, -55px) rotateZ(11deg);
+  }
+  .birdposition:nth-of-type(60) .bird {
+    -webkit-animation-duration: 7013ms;
+            animation-duration: 7013ms;
+    -webkit-animation-delay: -5170ms;
+            animation-delay: -5170ms;
+  }
+  .birdposition:nth-of-type(60) .bird .wing {
+    -webkit-animation-delay: -12967ms;
+            animation-delay: -12967ms;
+  }
+  .birdposition:nth-of-type(61) {
+    transform: translate(-218px, -41px) rotateZ(8deg);
+  }
+  .birdposition:nth-of-type(61) .bird {
+    -webkit-animation-duration: 13804ms;
+            animation-duration: 13804ms;
+    -webkit-animation-delay: -18811ms;
+            animation-delay: -18811ms;
+  }
+  .birdposition:nth-of-type(61) .bird .wing {
+    -webkit-animation-delay: -19133ms;
+            animation-delay: -19133ms;
+  }
+  .birdposition:nth-of-type(62) {
+    transform: translate(-232px, -88px) rotateZ(6deg);
+  }
+  .birdposition:nth-of-type(62) .bird {
+    -webkit-animation-duration: 7959ms;
+            animation-duration: 7959ms;
+    -webkit-animation-delay: -9546ms;
+            animation-delay: -9546ms;
+  }
+  .birdposition:nth-of-type(62) .bird .wing {
+    -webkit-animation-delay: -4672ms;
+            animation-delay: -4672ms;
+  }
+  .birdposition:nth-of-type(63) {
+    transform: translate(-90px, -77px) rotateZ(-18deg);
+  }
+  .birdposition:nth-of-type(63) .bird {
+    -webkit-animation-duration: 8024ms;
+            animation-duration: 8024ms;
+    -webkit-animation-delay: -12184ms;
+            animation-delay: -12184ms;
+  }
+  .birdposition:nth-of-type(63) .bird .wing {
+    -webkit-animation-delay: -15036ms;
+            animation-delay: -15036ms;
+  }
+  .birdposition:nth-of-type(64) {
+    transform: translate(-251px, 31px) rotateZ(19deg);
+  }
+  .birdposition:nth-of-type(64) .bird {
+    -webkit-animation-duration: 6662ms;
+            animation-duration: 6662ms;
+    -webkit-animation-delay: -19976ms;
+            animation-delay: -19976ms;
+  }
+  .birdposition:nth-of-type(64) .bird .wing {
+    -webkit-animation-delay: -17ms;
+            animation-delay: -17ms;
+  }
+  .birdposition:nth-of-type(65) {
+    transform: translate(-233px, -41px) rotateZ(-14deg);
+  }
+  .birdposition:nth-of-type(65) .bird {
+    -webkit-animation-duration: 8388ms;
+            animation-duration: 8388ms;
+    -webkit-animation-delay: -11830ms;
+            animation-delay: -11830ms;
+  }
+  .birdposition:nth-of-type(65) .bird .wing {
+    -webkit-animation-delay: -678ms;
+            animation-delay: -678ms;
+  }
+  .birdposition:nth-of-type(66) {
+    transform: translate(-235px, 23px) rotateZ(17deg);
+  }
+  .birdposition:nth-of-type(66) .bird {
+    -webkit-animation-duration: 7676ms;
+            animation-duration: 7676ms;
+    -webkit-animation-delay: -7898ms;
+            animation-delay: -7898ms;
+  }
+  .birdposition:nth-of-type(66) .bird .wing {
+    -webkit-animation-delay: -13900ms;
+            animation-delay: -13900ms;
+  }
+  .birdposition:nth-of-type(67) {
+    transform: translate(211px, -39px) rotateZ(-11deg);
+  }
+  .birdposition:nth-of-type(67) .bird {
+    -webkit-animation-duration: 13086ms;
+            animation-duration: 13086ms;
+    -webkit-animation-delay: -16360ms;
+            animation-delay: -16360ms;
+  }
+  .birdposition:nth-of-type(67) .bird .wing {
+    -webkit-animation-delay: -9012ms;
+            animation-delay: -9012ms;
+  }
+  .birdposition:nth-of-type(68) {
+    transform: translate(25px, -84px) rotateZ(-2deg);
+  }
+  .birdposition:nth-of-type(68) .bird {
+    -webkit-animation-duration: 8166ms;
+            animation-duration: 8166ms;
+    -webkit-animation-delay: -7921ms;
+            animation-delay: -7921ms;
+  }
+  .birdposition:nth-of-type(68) .bird .wing {
+    -webkit-animation-delay: -13805ms;
+            animation-delay: -13805ms;
+  }
+  .birdposition:nth-of-type(69) {
+    transform: translate(-216px, 44px) rotateZ(-15deg);
+  }
+  .birdposition:nth-of-type(69) .bird {
+    -webkit-animation-duration: 11589ms;
+            animation-duration: 11589ms;
+    -webkit-animation-delay: -679ms;
+            animation-delay: -679ms;
+  }
+  .birdposition:nth-of-type(69) .bird .wing {
+    -webkit-animation-delay: -17297ms;
+            animation-delay: -17297ms;
+  }
+  .birdposition:nth-of-type(70) {
+    transform: translate(232px, -111px) rotateZ(15deg);
+  }
+  .birdposition:nth-of-type(70) .bird {
+    -webkit-animation-duration: 13951ms;
+            animation-duration: 13951ms;
+    -webkit-animation-delay: -13463ms;
+            animation-delay: -13463ms;
+  }
+  .birdposition:nth-of-type(70) .bird .wing {
+    -webkit-animation-delay: -10823ms;
+            animation-delay: -10823ms;
+  }
+  .birdposition:nth-of-type(71) {
+    transform: translate(147px, -122px) rotateZ(-17deg);
+  }
+  .birdposition:nth-of-type(71) .bird {
+    -webkit-animation-duration: 6519ms;
+            animation-duration: 6519ms;
+    -webkit-animation-delay: -4783ms;
+            animation-delay: -4783ms;
+  }
+  .birdposition:nth-of-type(71) .bird .wing {
+    -webkit-animation-delay: -13425ms;
+            animation-delay: -13425ms;
+  }
+  .birdposition:nth-of-type(72) {
+    transform: translate(-47px, -28px) rotateZ(20deg);
+  }
+  .birdposition:nth-of-type(72) .bird {
+    -webkit-animation-duration: 14524ms;
+            animation-duration: 14524ms;
+    -webkit-animation-delay: -6360ms;
+            animation-delay: -6360ms;
+  }
+  .birdposition:nth-of-type(72) .bird .wing {
+    -webkit-animation-delay: -7175ms;
+            animation-delay: -7175ms;
+  }
+  .birdposition:nth-of-type(73) {
+    transform: translate(-119px, -142px) rotateZ(-6deg);
+  }
+  .birdposition:nth-of-type(73) .bird {
+    -webkit-animation-duration: 6046ms;
+            animation-duration: 6046ms;
+    -webkit-animation-delay: -2933ms;
+            animation-delay: -2933ms;
+  }
+  .birdposition:nth-of-type(73) .bird .wing {
+    -webkit-animation-delay: -4695ms;
+            animation-delay: -4695ms;
+  }
+  .birdposition:nth-of-type(74) {
+    transform: translate(23px, 28px) rotateZ(-12deg);
+  }
+  .birdposition:nth-of-type(74) .bird {
+    -webkit-animation-duration: 8765ms;
+            animation-duration: 8765ms;
+    -webkit-animation-delay: -13624ms;
+            animation-delay: -13624ms;
+  }
+  .birdposition:nth-of-type(74) .bird .wing {
+    -webkit-animation-delay: -13073ms;
+            animation-delay: -13073ms;
+  }
+  .birdposition:nth-of-type(75) {
+    transform: translate(128px, 12px) rotateZ(10deg);
+  }
+  .birdposition:nth-of-type(75) .bird {
+    -webkit-animation-duration: 6237ms;
+            animation-duration: 6237ms;
+    -webkit-animation-delay: -11691ms;
+            animation-delay: -11691ms;
+  }
+  .birdposition:nth-of-type(75) .bird .wing {
+    -webkit-animation-delay: -16883ms;
+            animation-delay: -16883ms;
+  }
+  .birdposition:nth-of-type(76) {
+    transform: translate(-299px, -11px) rotateZ(16deg);
+  }
+  .birdposition:nth-of-type(76) .bird {
+    -webkit-animation-duration: 13563ms;
+            animation-duration: 13563ms;
+    -webkit-animation-delay: -10606ms;
+            animation-delay: -10606ms;
+  }
+  .birdposition:nth-of-type(76) .bird .wing {
+    -webkit-animation-delay: -4902ms;
+            animation-delay: -4902ms;
+  }
+  .birdposition:nth-of-type(77) {
+    transform: translate(-225px, -40px) rotateZ(-7deg);
+  }
+  .birdposition:nth-of-type(77) .bird {
+    -webkit-animation-duration: 8522ms;
+            animation-duration: 8522ms;
+    -webkit-animation-delay: -7643ms;
+            animation-delay: -7643ms;
+  }
+  .birdposition:nth-of-type(77) .bird .wing {
+    -webkit-animation-delay: -9318ms;
+            animation-delay: -9318ms;
+  }
+  .birdposition:nth-of-type(78) {
+    transform: translate(184px, -20px) rotateZ(10deg);
+  }
+  .birdposition:nth-of-type(78) .bird {
+    -webkit-animation-duration: 12543ms;
+            animation-duration: 12543ms;
+    -webkit-animation-delay: -10802ms;
+            animation-delay: -10802ms;
+  }
+  .birdposition:nth-of-type(78) .bird .wing {
+    -webkit-animation-delay: -14432ms;
+            animation-delay: -14432ms;
+  }
+  .birdposition:nth-of-type(79) {
+    transform: translate(-286px, -31px) rotateZ(-4deg);
+  }
+  .birdposition:nth-of-type(79) .bird {
+    -webkit-animation-duration: 5189ms;
+            animation-duration: 5189ms;
+    -webkit-animation-delay: -7386ms;
+            animation-delay: -7386ms;
+  }
+  .birdposition:nth-of-type(79) .bird .wing {
+    -webkit-animation-delay: -9501ms;
+            animation-delay: -9501ms;
+  }
+  .birdposition:nth-of-type(80) {
+    transform: translate(-214px, 35px) rotateZ(-6deg);
+  }
+  .birdposition:nth-of-type(80) .bird {
+    -webkit-animation-duration: 7320ms;
+            animation-duration: 7320ms;
+    -webkit-animation-delay: -19999ms;
+            animation-delay: -19999ms;
+  }
+  .birdposition:nth-of-type(80) .bird .wing {
+    -webkit-animation-delay: -98ms;
+            animation-delay: -98ms;
+  }
+  .birdposition:nth-of-type(81) {
+    transform: translate(271px, 1px) rotateZ(-12deg);
+  }
+  .birdposition:nth-of-type(81) .bird {
+    -webkit-animation-duration: 9820ms;
+            animation-duration: 9820ms;
+    -webkit-animation-delay: -7514ms;
+            animation-delay: -7514ms;
+  }
+  .birdposition:nth-of-type(81) .bird .wing {
+    -webkit-animation-delay: -18749ms;
+            animation-delay: -18749ms;
+  }
+  .birdposition:nth-of-type(82) {
+    transform: translate(111px, 31px) rotateZ(-4deg);
+  }
+  .birdposition:nth-of-type(82) .bird {
+    -webkit-animation-duration: 9784ms;
+            animation-duration: 9784ms;
+    -webkit-animation-delay: -18725ms;
+            animation-delay: -18725ms;
+  }
+  .birdposition:nth-of-type(82) .bird .wing {
+    -webkit-animation-delay: -1660ms;
+            animation-delay: -1660ms;
+  }
+  .birdposition:nth-of-type(83) {
+    transform: translate(197px, -24px) rotateZ(2deg);
+  }
+  .birdposition:nth-of-type(83) .bird {
+    -webkit-animation-duration: 7452ms;
+            animation-duration: 7452ms;
+    -webkit-animation-delay: -14985ms;
+            animation-delay: -14985ms;
+  }
+  .birdposition:nth-of-type(83) .bird .wing {
+    -webkit-animation-delay: -9081ms;
+            animation-delay: -9081ms;
+  }
+  .birdposition:nth-of-type(84) {
+    transform: translate(253px, -87px) rotateZ(11deg);
+  }
+  .birdposition:nth-of-type(84) .bird {
+    -webkit-animation-duration: 5982ms;
+            animation-duration: 5982ms;
+    -webkit-animation-delay: -17015ms;
+            animation-delay: -17015ms;
+  }
+  .birdposition:nth-of-type(84) .bird .wing {
+    -webkit-animation-delay: -4271ms;
+            animation-delay: -4271ms;
+  }
+  .birdposition:nth-of-type(85) {
+    transform: translate(160px, -102px) rotateZ(-5deg);
+  }
+  .birdposition:nth-of-type(85) .bird {
+    -webkit-animation-duration: 5506ms;
+            animation-duration: 5506ms;
+    -webkit-animation-delay: -16201ms;
+            animation-delay: -16201ms;
+  }
+  .birdposition:nth-of-type(85) .bird .wing {
+    -webkit-animation-delay: -2273ms;
+            animation-delay: -2273ms;
+  }
+  .birdposition:nth-of-type(86) {
+    transform: translate(176px, -7px) rotateZ(-16deg);
+  }
+  .birdposition:nth-of-type(86) .bird {
+    -webkit-animation-duration: 6673ms;
+            animation-duration: 6673ms;
+    -webkit-animation-delay: -17029ms;
+            animation-delay: -17029ms;
+  }
+  .birdposition:nth-of-type(86) .bird .wing {
+    -webkit-animation-delay: -11589ms;
+            animation-delay: -11589ms;
+  }
+  .birdposition:nth-of-type(87) {
+    transform: translate(177px, 35px) rotateZ(-4deg);
+  }
+  .birdposition:nth-of-type(87) .bird {
+    -webkit-animation-duration: 13301ms;
+            animation-duration: 13301ms;
+    -webkit-animation-delay: -6298ms;
+            animation-delay: -6298ms;
+  }
+  .birdposition:nth-of-type(87) .bird .wing {
+    -webkit-animation-delay: -6899ms;
+            animation-delay: -6899ms;
+  }
+  .birdposition:nth-of-type(88) {
+    transform: translate(-94px, -115px) rotateZ(5deg);
+  }
+  .birdposition:nth-of-type(88) .bird {
+    -webkit-animation-duration: 14385ms;
+            animation-duration: 14385ms;
+    -webkit-animation-delay: -9355ms;
+            animation-delay: -9355ms;
+  }
+  .birdposition:nth-of-type(88) .bird .wing {
+    -webkit-animation-delay: -19964ms;
+            animation-delay: -19964ms;
+  }
+  .birdposition:nth-of-type(89) {
+    transform: translate(4px, -85px) rotateZ(5deg);
+  }
+  .birdposition:nth-of-type(89) .bird {
+    -webkit-animation-duration: 14696ms;
+            animation-duration: 14696ms;
+    -webkit-animation-delay: -4809ms;
+            animation-delay: -4809ms;
+  }
+  .birdposition:nth-of-type(89) .bird .wing {
+    -webkit-animation-delay: -9520ms;
+            animation-delay: -9520ms;
+  }
+  .birdposition:nth-of-type(90) {
+    transform: translate(74px, -116px) rotateZ(18deg);
+  }
+  .birdposition:nth-of-type(90) .bird {
+    -webkit-animation-duration: 13901ms;
+            animation-duration: 13901ms;
+    -webkit-animation-delay: -16469ms;
+            animation-delay: -16469ms;
+  }
+  .birdposition:nth-of-type(90) .bird .wing {
+    -webkit-animation-delay: -17051ms;
+            animation-delay: -17051ms;
+  }
+  .birdposition:nth-of-type(91) {
+    transform: translate(-216px, -65px) rotateZ(-7deg);
+  }
+  .birdposition:nth-of-type(91) .bird {
+    -webkit-animation-duration: 7280ms;
+            animation-duration: 7280ms;
+    -webkit-animation-delay: -3617ms;
+            animation-delay: -3617ms;
+  }
+  .birdposition:nth-of-type(91) .bird .wing {
+    -webkit-animation-delay: -1579ms;
+            animation-delay: -1579ms;
+  }
+  .birdposition:nth-of-type(92) {
+    transform: translate(117px, 22px) rotateZ(16deg);
+  }
+  .birdposition:nth-of-type(92) .bird {
+    -webkit-animation-duration: 12065ms;
+            animation-duration: 12065ms;
+    -webkit-animation-delay: -4588ms;
+            animation-delay: -4588ms;
+  }
+  .birdposition:nth-of-type(92) .bird .wing {
+    -webkit-animation-delay: -5829ms;
+            animation-delay: -5829ms;
+  }
+  .birdposition:nth-of-type(93) {
+    transform: translate(80px, -58px) rotateZ(16deg);
+  }
+  .birdposition:nth-of-type(93) .bird {
+    -webkit-animation-duration: 12604ms;
+            animation-duration: 12604ms;
+    -webkit-animation-delay: -2878ms;
+            animation-delay: -2878ms;
+  }
+  .birdposition:nth-of-type(93) .bird .wing {
+    -webkit-animation-delay: -5269ms;
+            animation-delay: -5269ms;
+  }
+  .birdposition:nth-of-type(94) {
+    transform: translate(-42px, 22px) rotateZ(12deg);
+  }
+  .birdposition:nth-of-type(94) .bird {
+    -webkit-animation-duration: 13756ms;
+            animation-duration: 13756ms;
+    -webkit-animation-delay: -16508ms;
+            animation-delay: -16508ms;
+  }
+  .birdposition:nth-of-type(94) .bird .wing {
+    -webkit-animation-delay: -12585ms;
+            animation-delay: -12585ms;
+  }
+  .birdposition:nth-of-type(95) {
+    transform: translate(-266px, -73px) rotateZ(-12deg);
+  }
+  .birdposition:nth-of-type(95) .bird {
+    -webkit-animation-duration: 13335ms;
+            animation-duration: 13335ms;
+    -webkit-animation-delay: -9657ms;
+            animation-delay: -9657ms;
+  }
+  .birdposition:nth-of-type(95) .bird .wing {
+    -webkit-animation-delay: -10576ms;
+            animation-delay: -10576ms;
+  }
+  .birdposition:nth-of-type(96) {
+    transform: translate(-57px, 43px) rotateZ(-7deg);
+  }
+  .birdposition:nth-of-type(96) .bird {
+    -webkit-animation-duration: 12681ms;
+            animation-duration: 12681ms;
+    -webkit-animation-delay: -14870ms;
+            animation-delay: -14870ms;
+  }
+  .birdposition:nth-of-type(96) .bird .wing {
+    -webkit-animation-delay: -8356ms;
+            animation-delay: -8356ms;
+  }
+  .birdposition:nth-of-type(97) {
+    transform: translate(196px, -27px) rotateZ(17deg);
+  }
+  .birdposition:nth-of-type(97) .bird {
+    -webkit-animation-duration: 14669ms;
+            animation-duration: 14669ms;
+    -webkit-animation-delay: -17457ms;
+            animation-delay: -17457ms;
+  }
+  .birdposition:nth-of-type(97) .bird .wing {
+    -webkit-animation-delay: -12520ms;
+            animation-delay: -12520ms;
+  }
+  .birdposition:nth-of-type(98) {
+    transform: translate(-54px, -61px) rotateZ(-1deg);
+  }
+  .birdposition:nth-of-type(98) .bird {
+    -webkit-animation-duration: 5066ms;
+            animation-duration: 5066ms;
+    -webkit-animation-delay: -17459ms;
+            animation-delay: -17459ms;
+  }
+  .birdposition:nth-of-type(98) .bird .wing {
+    -webkit-animation-delay: -19350ms;
+            animation-delay: -19350ms;
+  }
+  .birdposition:nth-of-type(99) {
+    transform: translate(108px, -120px) rotateZ(8deg);
+  }
+  .birdposition:nth-of-type(99) .bird {
+    -webkit-animation-duration: 9564ms;
+            animation-duration: 9564ms;
+    -webkit-animation-delay: -13704ms;
+            animation-delay: -13704ms;
+  }
+  .birdposition:nth-of-type(99) .bird .wing {
+    -webkit-animation-delay: -6246ms;
+            animation-delay: -6246ms;
+  }
+  .birdposition:nth-of-type(100) {
+    transform: translate(-276px, 6px) rotateZ(8deg);
+  }
+  .birdposition:nth-of-type(100) .bird {
+    -webkit-animation-duration: 11319ms;
+            animation-duration: 11319ms;
+    -webkit-animation-delay: -3519ms;
+            animation-delay: -3519ms;
+  }
+  .birdposition:nth-of-type(100) .bird .wing {
+    -webkit-animation-delay: -10801ms;
+            animation-delay: -10801ms;
+  }
+  
+  .bird {
+    position: absolute;
+    width: 80px;
+    -webkit-animation: fly 8s linear infinite;
+            animation: fly 8s linear infinite;
+  }
+  .bird .wing {
+    position: absolute;
+    width: 50%;
+    height: 20px;
+    border-width: 0;
+    border-color: transparent;
+    border-top: 4px solid black;
+    border-radius: 100%;
+  }
+  .bird .wing.-left {
+    transform-origin: 100% 50%;
+    -webkit-animation: wingLeft 0.8s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+            animation: wingLeft 0.8s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+  }
+  .bird .wing.-right {
+    right: 0;
+    transform-origin: 0 50%;
+    -webkit-animation: wingRight 0.8s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+            animation: wingRight 0.8s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite alternate;
+  }
+  
+  @-webkit-keyframes fly {
+    0% {
+      opacity: 0;
+      transform: translateZ(500px);
+    }
+    20% {
+      opacity: 1;
+      transform: translateZ(400px);
+    }
+    100% {
+      transform: translateZ(0px) scale(0);
+    }
+  }
+  
+  @keyframes fly {
+    0% {
+      opacity: 0;
+      transform: translateZ(500px);
+    }
+    20% {
+      opacity: 1;
+      transform: translateZ(400px);
+    }
+    100% {
+      transform: translateZ(0px) scale(0);
+    }
+  }
+  @-webkit-keyframes wingLeft {
+    0% {
+      transform: rotateZ(30deg);
+    }
+    100% {
+      transform: rotateZ(-20deg);
+    }
+  }
+  @keyframes wingLeft {
+    0% {
+      transform: rotateZ(30deg);
+    }
+    100% {
+      transform: rotateZ(-20deg);
+    }
+  }
+  @-webkit-keyframes wingRight {
+    0% {
+      transform: rotateZ(-30deg);
+    }
+    100% {
+      transform: rotateZ(20deg);
+    }
+  }
+  @keyframes wingRight {
+    0% {
+      transform: rotateZ(-30deg);
+    }
+    100% {
+      transform: rotateZ(20deg);
+    }
+  }
