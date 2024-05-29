@@ -50,6 +50,9 @@
       </tr>
     </tbody>
   </table>
+  <button type="button" class="add-tr">add tr</button>
+  <br>
+  <br>
   <br>
   <table style="width: 300px;" class="data-table">
     <colgroup>
@@ -131,6 +134,18 @@
   
       tables.forEach(setupObserver);
     });
+
+    const addBtn = document.querySelector('.add-tr');
+    const addTrEvt = function(e){
+      const target = e.target;
+      const table = target.previousElementSibling;
+      const tbody = table.querySelector('tbody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="ellipsis2">긴 텍스트 내용이 들어갑니다. 긴 텍스트 내용이 들어갑니다.</td>
+        <td class="ellipsis2">짧은 텍스트</td>`;
+      tbody.appendChild(tr);
+    }
+    addBtn.addEventListener('click', addTrEvt)
   </script>
   
 </body>
