@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+  table{
+    table-layout:fixed;
+    border-collapse:collapse;
+  }
+  table td{
+    border: 1px solid #ccc;
+  }
+  .ellipsis, .ellipsis2 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  a.ellipsis{
+    display:inline-block;
+    max-width:100%;
+  }
+  .tooltip {
+    position: absolute;
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 3px;
+    display: none;
+    z-index: 1000;
+  }
+
+  </style>
+</head>
+<body>
+  <table style="width: 300px;" class="data-table">
+    <colgroup>
+      <col style="width: 150px;">
+      <col style="width: 150px;">
+    </colgroup>
+    <tbody>
+      <tr>
+        <td class="ellipsis2">긴 텍스트 내용이 들어갑니다. 긴 텍스트 내용이 들어갑니다.</td>
+        <td class="ellipsis2">짧은 텍스트</td>
+      </tr>
+      <tr>
+        <td><a href="#" class="ellipsis">긴 텍스트 내용이 들어갑니다. 긴 텍스트 내용이 들어갑니다.</a></td>
+        <td><a href="#" class="ellipsis">짧은 텍스트</a></td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+  <table style="width: 300px;" class="data-table">
+    <colgroup>
+      <col style="width: 150px;">
+      <col style="width: 150px;">
+    </colgroup>
+    <tbody>
+      <tr>
+        <td class="ellipsis2">긴 텍스트 내용이 들어갑니다. 긴 텍스트 내용이 들어갑니다.</td>
+        <td class="ellipsis2">짧은 텍스트</td>
+      </tr>
+      <tr>
+        <td><a href="#" class="ellipsis">긴 텍스트 내용이 들어갑니다. 긴 텍스트 내용이 들어갑니다.</a></td>
+        <td><a href="#" class="ellipsis">짧은 텍스트</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const tables = document.querySelectorAll('.data-table');
+  
+      const addEllipsisListeners = (td) => {
+        if (td.offsetWidth < td.scrollWidth) {
+          td.setAttribute('tabindex', '0');
+  
+          const showTooltip = (event) => {
+            if (td.offsetWidth < td.scrollWidth) {
+              const tooltip = document.createElement('div');
+              tooltip.className = 'tooltip';
+              tooltip.innerText = td.innerText;
+              document.body.appendChild(tooltip);
+  
+              const rect = td.getBoundingClientRect();
+              tooltip.style.left = `${rect.left}px`;
+              tooltip.style.top = `${rect.bottom + window.scrollY}px`;
+              tooltip.style.display = 'block';
+  
+              const hideTooltip = () => tooltip.remove();
+              td.addEventListener('mouseout', hideTooltip, { once: true });
+              td.addEventListener('blur', hideTooltip, { once: true });
+            }
+          };
+  
+          td.addEventListener('mouseover', showTooltip);
+          td.addEventListener('focus', showTooltip);
+        }
+      };
+  
+      const processNewRows = (rows) => {
+        rows.forEach(row => {
+          const tds = row.querySelectorAll('.ellipsis, .ellipsis2');
+          tds.forEach(addEllipsisListeners);
+        });
+      };
+  
+      const setupObserver = (table) => {
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+              mutation.addedNodes.forEach((node) => {
+                if (node.nodeName === 'TR') {
+                  processNewRows([node]);
+                } else if (node.nodeName === 'TBODY' || node.nodeName === 'TABLE') {
+                  const rows = node.querySelectorAll('tr');
+                  processNewRows(rows);
+                }
+              });
+            }
+          });
+        });
+  
+        observer.observe(table, { childList: true, subtree: true });
+  
+        // 초기 로드 시에도 기존 행들에 대해 처리
+        const initialRows = table.querySelectorAll('tr');
+        processNewRows(initialRows);
+      };
+  
+      tables.forEach(setupObserver);
+    });
+  </script>
+  
+</body>
+</html>
