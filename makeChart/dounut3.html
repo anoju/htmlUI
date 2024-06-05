@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Donut Chart</title>
+    <style>
+      /* styles.css */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+canvas {
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+    </style>
+</head>
+<body>
+    <canvas id="donutChart" width="400" height="200"></canvas>
+    <script>
+// script.js
+const canvas = document.getElementById('donutChart');
+const ctx = canvas.getContext('2d');
+
+const value = 75; // 입력된 값 (0에서 100 사이)
+const thickness = 16; // 도넛 차트의 두께
+const bgColor = '#d3d3d3'; // 배경 색상
+const fillColor = '#FF6384'; // 채울 색상
+
+const centerX = canvas.width / 2;
+const centerY = canvas.height / 2;
+const outerRadius = Math.min(centerX, centerY) * 0.9;
+const innerRadius = outerRadius - thickness;
+
+function drawDonutSlice(start, end, color) {
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, outerRadius, start, end);
+    ctx.arc(centerX, centerY, innerRadius, end, start, true);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // 시작 부분 라운드 처리
+    if (start === -Math.PI / 2) {
+        ctx.beginPath();
+        ctx.arc(centerX + outerRadius * Math.cos(start), centerY + outerRadius * Math.sin(start), thickness / 2, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+    // 끝 부분 라운드 처리
+    if (end !== start) {
+        ctx.beginPath();
+        ctx.arc(centerX + outerRadius * Math.cos(end), centerY + outerRadius * Math.sin(end), thickness / 2, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+}
+
+function drawBackground() {
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, outerRadius, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY, innerRadius, 2 * Math.PI, 0, true);
+    ctx.closePath();
+    ctx.fillStyle = bgColor;
+    ctx.fill();
+}
+
+function animateDonutChart() {
+    const duration = 2000; // 전체 애니메이션 시간 (밀리초)
+    const fps = 60; // 초당 프레임 수
+    const totalFrames = (duration / 1000) * fps;
+    let currentFrame = 0;
+
+    function animate() {
+        currentFrame++;
+        const progress = currentFrame / totalFrames;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBackground();
+
+        const endAngle = (value / 100) * 2 * Math.PI * progress - Math.PI / 2;
+        drawDonutSlice(-Math.PI / 2, endAngle, fillColor);
+
+        if (currentFrame < totalFrames) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+animateDonutChart();
+
+    </script>
+</body>
+</html>

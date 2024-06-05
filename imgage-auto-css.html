@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Continuous Scrolling Gallery</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    overflow: hidden; /* To prevent scrollbars */
+  }
+  .gallery-wrapper {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    width: 100vw; /* Ensure the gallery takes the full width of the viewport */
+  }
+  .gallery {
+    display: inline-block;
+    animation: scroll 20s linear infinite;
+  }
+  .gallery img {
+    height: 200px;
+    margin-right: 10px;
+  }
+  .gallery:hover{
+    animation-play-state: paused;
+  }
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="gallery-wrapper">
+  <div class="gallery">
+    <img src="https://placehold.co/600x400?text=1" alt="Image 1">
+    <img src="https://placehold.co/600x400?text=2" alt="Image 2">
+    <img src="https://placehold.co/600x400?text=3" alt="Image 3">
+    <img src="https://placehold.co/600x400?text=4" alt="Image 4">
+    <!-- Add more images as needed -->
+    <img src="https://placehold.co/600x400?text=1" alt="Image 1">
+    <img src="https://placehold.co/600x400?text=2" alt="Image 2">
+    <img src="https://placehold.co/600x400?text=3" alt="Image 3">
+    <img src="https://placehold.co/600x400?text=4" alt="Image 4">
+  </div>
+</div>
+
+</body>
+</html>

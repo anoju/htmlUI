@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Donut Chart</title>
+    <style>
+      /* styles.css */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+canvas {
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+
+    </style>
+</head>
+<body>
+    <canvas id="donutChart" width="400" height="200"></canvas>
+    <script>
+// script.js
+const canvas = document.getElementById('donutChart');
+const ctx = canvas.getContext('2d');
+
+const data = {
+    labels: ['A', 'B', 'C', 'D'],
+    datasets: [{
+        data: [50, 10, 25, 15],
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+    }]
+};
+
+const totalValue = data.datasets[0].data.reduce((a, b) => a + b, 0);
+const centerX = canvas.width / 2;
+const centerY = canvas.height;
+const outerRadius = Math.min(centerX, centerY);
+const innerRadius = outerRadius - 48; // 두께를 48픽셀로 설정
+
+function drawDonutSlice(start, end, color) {
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, outerRadius, start, end);
+    ctx.arc(centerX, centerY, innerRadius, end, start, true);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+}
+
+function animateDonutChart() {
+    const duration = 1000; // 전체 애니메이션 시간 (밀리초)
+    const fps = 60; // 초당 프레임 수
+    const totalFrames = (duration / 1000) * fps;
+    let currentFrame = 0;
+
+    function animate() {
+        currentFrame++;
+        const progress = currentFrame / totalFrames;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let startAngle = Math.PI; // 왼쪽에서 시작
+
+        data.datasets[0].data.forEach((value, index) => {
+            const sliceAngle = (value / totalValue) * Math.PI; // 반쪽짜리 도넛이므로 각도를 절반으로 나눔
+            const endAngle = startAngle + sliceAngle * Math.min(progress, 1);
+
+            drawDonutSlice(startAngle, endAngle, data.datasets[0].backgroundColor[index]);
+            startAngle += sliceAngle * Math.min(progress, 1);
+        });
+
+        if (currentFrame < totalFrames) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+animateDonutChart();
+
+    </script>
+</body>
+</html>
