@@ -50,7 +50,7 @@ function drawDonutSlice(start, end, color) {
     // 시작 부분 라운드 처리
     if (start === -Math.PI / 2) {
         ctx.beginPath();
-        ctx.arc(centerX + outerRadius * Math.cos(start), centerY + outerRadius * Math.sin(start), thickness / 2, 0, 2 * Math.PI);
+        ctx.arc(centerX + outerRadius * Math.cos(start), centerY + outerRadius * Math.sin(start) + thickness / 2, thickness / 2, 0, 2 * Math.PI);
         ctx.fillStyle = color;
         ctx.fill();
     }
@@ -58,7 +58,7 @@ function drawDonutSlice(start, end, color) {
     // 끝 부분 라운드 처리
     if (end !== start) {
         ctx.beginPath();
-        ctx.arc(centerX + outerRadius * Math.cos(end), centerY + outerRadius * Math.sin(end), thickness / 2, 0, 2 * Math.PI);
+        ctx.arc(centerX + outerRadius * Math.cos(end), centerY + outerRadius * Math.sin(end) + thickness / 2, thickness / 2, 0, 2 * Math.PI);
         ctx.fillStyle = color;
         ctx.fill();
     }
