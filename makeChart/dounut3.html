@@ -29,7 +29,7 @@ canvas {
 const canvas = document.getElementById('donutChart');
 const ctx = canvas.getContext('2d');
 
-const value = 75; // 입력된 값 (0에서 100 사이)
+const value = 100; // 입력된 값 (0에서 100 사이)
 const thickness = 16; // 도넛 차트의 두께
 const bgColor = '#d3d3d3'; // 배경 색상
 const fillColor = '#FF6384'; // 채울 색상
@@ -64,6 +64,13 @@ function drawDonutSlice(start, end, color) {
     ctx.arc(endX, endY, thickness / 2, 0, 2 * Math.PI);
     ctx.fillStyle = color;
     ctx.fill();
+
+    // 끝 부분의 라운드 안에 절반 크기의 #fff인 라운드 추가
+    ctx.beginPath();
+    ctx.arc(endX, endY, thickness / 4, 0, 2 * Math.PI);
+    ctx.fillStyle = "#fff";
+    ctx.fill();
+
 }
 
 function drawBackground() {
