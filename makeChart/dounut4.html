@@ -57,10 +57,10 @@ function animateChart(canvas, value, thickness, fillColor, bgColor) {
     const ctx = canvas.getContext('2d');
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const outerRadius = Math.min(centerX, centerY) * 0.9;
+    const outerRadius = Math.min(centerX, centerY);
     const innerRadius = outerRadius - thickness;
 
-    const duration = 2000; // 전체 애니메이션 시간 (밀리초)
+    const duration = 1000; // 전체 애니메이션 시간 (밀리초)
     const fps = 60; // 초당 프레임 수
     const totalFrames = (duration / 1000) * fps;
     let currentFrame = 0;
@@ -102,7 +102,7 @@ document.querySelectorAll('.chart-container canvas').forEach(canvas => {
     const ctx = canvas.getContext('2d');
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const outerRadius = Math.min(centerX, centerY) * 0.9;
+    const outerRadius = Math.min(centerX, centerY);
     const innerRadius = outerRadius - thickness;
     drawChartBackground(ctx, centerX, centerY, outerRadius, innerRadius, bgColor);
 });
