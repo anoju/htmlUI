@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Donut Chart</title>
+    <style>
+        .chart-container {
+            position: relative;
+            display: inline-block;
+            margin-right: 20px;
+        }
+        canvas {
+            display: block;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <canvas id="donutChart1" width="200" height="200" data-value="75" data-thickness="20" data-fill="red" data-bg="#ddd"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="donutChart2" width="200" height="200" data-value="100" data-thickness="16" data-fill="blue" data-bg="#eee"></canvas>
+    </div>
+    <script>
+// script.js
+
+// 함수: 도넛 차트 그리기
+function drawDonutChart(ctx, value, thickness, fillColor, centerX, centerY, outerRadius, innerRadius) {
+    function drawDonutSlice(start, end, color) {
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, outerRadius, start, end);
+        ctx.arc(centerX, centerY, innerRadius, end, start, true);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+    const endAngle = (value / 100) * 2 * Math.PI - Math.PI / 2;
+    drawDonutSlice(-Math.PI / 2, endAngle, fillColor);
+}
+
+// 함수: 차트의 배경 그리기
+function drawChartBackground(ctx, centerX, centerY, outerRadius, innerRadius, bgColor) {
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, outerRadius, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY, innerRadius, 2 * Math.PI, 0, true);
+    ctx.closePath();
+    ctx.fillStyle = bgColor;
+    ctx.fill();
+}
+
+// 함수: 애니메이션 실행
+function animateChart(canvas, value, thickness, fillColor, bgColor) {
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const outerRadius = Math.min(centerX, centerY) * 0.9;
+    const innerRadius = outerRadius - thickness;
+
+    const duration = 2000; // 전체 애니메이션 시간 (밀리초)
+    const fps = 60; // 초당 프레임 수
+    const totalFrames = (duration / 1000) * fps;
+    let currentFrame = 0;
+
+    function animate() {
+        currentFrame++;
+        const progress = currentFrame / totalFrames;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawChartBackground(ctx, centerX, centerY, outerRadius, innerRadius, bgColor);
+
+        // 클릭 시에만 영역 채우는 애니메이션 실행
+        if (progress <= 1) {
+            const filledValue = progress * value;
+            drawDonutChart(ctx, filledValue, thickness, fillColor, centerX, centerY, outerRadius, innerRadius);
+        }
+
+        if (currentFrame < totalFrames) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+// 각 캔버스에 대해 애니메이션 이벤트 핸들러 등록
+document.querySelectorAll('.chart-container canvas').forEach(canvas => {
+    const value = parseInt(canvas.dataset.value); // 차트의 값
+    const thickness = parseInt(canvas.dataset.thickness); // 도넛 차트의 두께
+    const fillColor = canvas.dataset.fill; // 영역을 채울 색상
+    const bgColor = canvas.dataset.bg; // 배경 색상
+
+    // 클릭 이벤트 리스너 등록
+    canvas.addEventListener('click', () => {
+        animateChart(canvas, value, thickness, fillColor, bgColor);
+    });
+
+    // 차트의 배경 미리 그리기
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const outerRadius = Math.min(centerX, centerY) * 0.9;
+    const innerRadius = outerRadius - thickness;
+    drawChartBackground(ctx, centerX, centerY, outerRadius, innerRadius, bgColor);
+});
+    </script>
+</body>
+</html>
