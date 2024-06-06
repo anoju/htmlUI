@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Donut Chart</title>
+    <title>Multiple Animated Donut Charts</title>
     <style>
       /* styles.css */
 body {
@@ -13,21 +13,24 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f4f4f4;
+    flex-wrap: wrap;
 }
 
 canvas {
     border: 1px solid #ccc;
+    margin: 10px;
 }
 
     </style>
 </head>
 <body>
-    <canvas id="donutChart" width="400" height="400"></canvas>
+    <canvas class="donutChart" width="200" height="200"></canvas>
+    <canvas class="donutChart" width="200" height="200"></canvas>
+    <canvas class="donutChart" width="200" height="200"></canvas>
+    <canvas class="donutChart" width="200" height="200"></canvas>
     <script>
 // script.js
-const canvas = document.getElementById('donutChart');
-const ctx = canvas.getContext('2d');
-
+const canvases = document.querySelectorAll('.donutChart');
 const data = {
     labels: ['A', 'B', 'C', 'D'],
     datasets: [{
@@ -37,13 +40,8 @@ const data = {
 };
 
 const totalValue = data.datasets[0].data.reduce((a, b) => a + b, 0);
-const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
-const radius = Math.min(centerX, centerY);
-const innerRadius = radius * 0.5;
 
-function drawBackground() {
-    // Fill the background for the donut area
+function drawBackground(ctx, centerX, centerY, radius, innerRadius) {
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
     ctx.arc(centerX, centerY, innerRadius, 2 * Math.PI, 0, true);
@@ -52,7 +50,7 @@ function drawBackground() {
     ctx.fill();
 }
 
-function drawDonutSlice(start, end, color) {
+function drawDonutSlice(ctx, centerX, centerY, radius, innerRadius, start, end, color) {
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, start, end);
     ctx.arc(centerX, centerY, innerRadius, end, start, true);
@@ -61,7 +59,7 @@ function drawDonutSlice(start, end, color) {
     ctx.fill();
 }
 
-function animateDonutChart() {
+function animateDonutChart(ctx, centerX, centerY, radius, innerRadius) {
     const duration = 1000; // total duration of the animation in milliseconds
     const fps = 60; // frames per second
     const totalFrames = (duration / 1000) * fps;
@@ -71,10 +69,10 @@ function animateDonutChart() {
         currentFrame++;
         const progress = currentFrame / totalFrames;
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
         // Draw the background once at the start
-        drawBackground();
+        drawBackground(ctx, centerX, centerY, radius, innerRadius);
 
         let startAngle = -Math.PI / 2;
 
@@ -82,7 +80,7 @@ function animateDonutChart() {
             const sliceAngle = (value / totalValue) * 2 * Math.PI;
             const endAngle = startAngle + sliceAngle * Math.min(progress, 1);
 
-            drawDonutSlice(startAngle, endAngle, data.datasets[0].backgroundColor[index]);
+            drawDonutSlice(ctx, centerX, centerY, radius, innerRadius, startAngle, endAngle, data.datasets[0].backgroundColor[index]);
             startAngle += sliceAngle * Math.min(progress, 1);
         });
 
@@ -94,8 +92,21 @@ function animateDonutChart() {
     requestAnimationFrame(animate);
 }
 
-animateDonutChart();
+canvases.forEach(canvas => {
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY);
+    const innerRadius = radius * 0.5;
 
+    // Pre-draw the background
+    drawBackground(ctx, centerX, centerY, radius, innerRadius);
+
+    // Add click event listener to start animation
+    canvas.addEventListener('click', () => {
+        animateDonutChart(ctx, centerX, centerY, radius, innerRadius);
+    });
+});
     </script>
 </body>
 </html>
