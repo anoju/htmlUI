@@ -46,16 +46,7 @@ function drawDonutSlice(start, end, color) {
     ctx.closePath();
     ctx.fillStyle = color;
     ctx.fill();
-
-    // 시작 부분 라운드 처리 (안쪽)
-    const startX = centerX + (innerRadius + thickness / 2) * Math.cos(start);
-    const startY = centerY + (innerRadius + thickness / 2) * Math.sin(start);
-
-    ctx.beginPath();
-    ctx.arc(startX, startY, thickness / 2, 0, 2 * Math.PI);
-    ctx.fillStyle = color;
-    ctx.fill();
-
+    
     // 끝 부분 라운드 처리 (바깥쪽)
     const endX = centerX + (innerRadius + thickness / 2) * Math.cos(end);
     const endY = centerY + (innerRadius + thickness / 2) * Math.sin(end);
@@ -69,6 +60,15 @@ function drawDonutSlice(start, end, color) {
     ctx.beginPath();
     ctx.arc(endX, endY, thickness / 4, 0, 2 * Math.PI);
     ctx.fillStyle = "#fff";
+    ctx.fill();
+
+    // 시작 부분 라운드 처리 (안쪽)
+    const startX = centerX + (innerRadius + thickness / 2) * Math.cos(start);
+    const startY = centerY + (innerRadius + thickness / 2) * Math.sin(start);
+
+    ctx.beginPath();
+    ctx.arc(startX, startY, thickness / 2, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
     ctx.fill();
 
 }
