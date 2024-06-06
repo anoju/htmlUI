@@ -17,7 +17,6 @@ body {
 
 canvas {
     border: 1px solid #ccc;
-    background-color: #fff;
 }
 
     </style>
@@ -32,7 +31,7 @@ const ctx = canvas.getContext('2d');
 const data = {
     labels: ['A', 'B', 'C', 'D'],
     datasets: [{
-        data: [30, 20, 25, 25],
+        data: [75, 20, 5, 3],
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
     }]
 };
@@ -40,8 +39,18 @@ const data = {
 const totalValue = data.datasets[0].data.reduce((a, b) => a + b, 0);
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
-const radius = Math.min(centerX, centerY) * 0.9;
+const radius = Math.min(centerX, centerY);
 const innerRadius = radius * 0.5;
+
+function drawBackground() {
+    // Fill the background for the donut area
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY, innerRadius, 2 * Math.PI, 0, true);
+    ctx.closePath();
+    ctx.fillStyle = '#eee'; // Background color
+    ctx.fill();
+}
 
 function drawDonutSlice(start, end, color) {
     ctx.beginPath();
@@ -63,6 +72,9 @@ function animateDonutChart() {
         const progress = currentFrame / totalFrames;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the background once at the start
+        drawBackground();
 
         let startAngle = -Math.PI / 2;
 
