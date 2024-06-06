@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Donut Chart</title>
+    <title>Multiple Animated Donut Charts</title>
     <style>
       /* styles.css */
 body {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
     height: 100vh;
     margin: 0;
     background-color: #f4f4f4;
@@ -18,17 +19,19 @@ body {
 canvas {
     border: 1px solid #ccc;
     background-color: #fff;
+    margin: 10px;
 }
 
     </style>
 </head>
 <body>
-    <canvas id="donutChart" width="400" height="200"></canvas>
+    <canvas class="donutChart" width="200" height="100"></canvas>
+    <canvas class="donutChart" width="200" height="100"></canvas>
+    <canvas class="donutChart" width="200" height="100"></canvas>
+    <canvas class="donutChart" width="200" height="100"></canvas>
     <script>
 // script.js
-const canvas = document.getElementById('donutChart');
-const ctx = canvas.getContext('2d');
-
+const canvases = document.querySelectorAll('.donutChart');
 const data = {
     labels: ['A', 'B', 'C', 'D'],
     datasets: [{
@@ -38,12 +41,17 @@ const data = {
 };
 
 const totalValue = data.datasets[0].data.reduce((a, b) => a + b, 0);
-const centerX = canvas.width / 2;
-const centerY = canvas.height;
-const outerRadius = Math.min(centerX, centerY);
-const innerRadius = outerRadius - 48; // 두께를 48픽셀로 설정
 
-function drawDonutSlice(start, end, color) {
+function drawBackground(ctx, centerX, centerY, outerRadius, innerRadius) {
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, outerRadius, Math.PI, 2 * Math.PI);
+    ctx.arc(centerX, centerY, innerRadius, 2 * Math.PI, Math.PI, true);
+    ctx.closePath();
+    ctx.fillStyle = '#eee'; // 배경 색상
+    ctx.fill();
+}
+
+function drawDonutSlice(ctx, centerX, centerY, outerRadius, innerRadius, start, end, color) {
     ctx.beginPath();
     ctx.arc(centerX, centerY, outerRadius, start, end);
     ctx.arc(centerX, centerY, innerRadius, end, start, true);
@@ -52,7 +60,7 @@ function drawDonutSlice(start, end, color) {
     ctx.fill();
 }
 
-function animateDonutChart() {
+function animateDonutChart(ctx, centerX, centerY, outerRadius, innerRadius) {
     const duration = 1000; // 전체 애니메이션 시간 (밀리초)
     const fps = 60; // 초당 프레임 수
     const totalFrames = (duration / 1000) * fps;
@@ -62,7 +70,10 @@ function animateDonutChart() {
         currentFrame++;
         const progress = currentFrame / totalFrames;
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+        // Draw the background once at the start
+        drawBackground(ctx, centerX, centerY, outerRadius, innerRadius);
 
         let startAngle = Math.PI; // 왼쪽에서 시작
 
@@ -70,7 +81,7 @@ function animateDonutChart() {
             const sliceAngle = (value / totalValue) * Math.PI; // 반쪽짜리 도넛이므로 각도를 절반으로 나눔
             const endAngle = startAngle + sliceAngle * Math.min(progress, 1);
 
-            drawDonutSlice(startAngle, endAngle, data.datasets[0].backgroundColor[index]);
+            drawDonutSlice(ctx, centerX, centerY, outerRadius, innerRadius, startAngle, endAngle, data.datasets[0].backgroundColor[index]);
             startAngle += sliceAngle * Math.min(progress, 1);
         });
 
@@ -82,8 +93,21 @@ function animateDonutChart() {
     requestAnimationFrame(animate);
 }
 
-animateDonutChart();
+canvases.forEach(canvas => {
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height;
+    const outerRadius = Math.min(centerX, centerY);
+    const innerRadius = outerRadius - 48; // 두께를 48픽셀로 설정
 
+    // Pre-draw the background
+    drawBackground(ctx, centerX, centerY, outerRadius, innerRadius);
+
+    // Add click event listener to start animation
+    canvas.addEventListener('click', () => {
+        animateDonutChart(ctx, centerX, centerY, outerRadius, innerRadius);
+    });
+});
     </script>
 </body>
 </html>
