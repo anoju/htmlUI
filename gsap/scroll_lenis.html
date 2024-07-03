@@ -409,7 +409,7 @@ header .icon {
   <script src="https://assets.codepen.io/16327/gsap-latest-beta.min.js?v=3.12.0a"></script>
   <script src="https://unpkg.com/gsap@3/dist/ScrollToPlugin.min.js"></script>
   <script src="https://assets.codepen.io/16327/ScrollTrigger.min.js?v=3.12.0a"></script>
-  <script src="https://assets.codepen.io/16327/ScrollSmoother.min.js?v=3.12.0a"></script>
+  <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1/bundled/lenis.min.js"></script>
   <script>
 console.clear();
 
@@ -433,13 +433,16 @@ gsap.from('#crftd path', {
   },
 });
 
-ScrollSmoother.create({
-  smooth: 2,
-  effects: true,
-});
-
-ScrollTrigger.refresh();
-
-  </script>
+//Lenis
+const lenis = new Lenis();
+// lenis.on('scroll', (e) => {
+//     console.log(e)
+// });
+function raf(time) {
+    lenis.raf(time)
+    requestAnimationFrame(raf)
+}
+requestAnimationFrame(raf);
+</script>
 </body>
 </html>
