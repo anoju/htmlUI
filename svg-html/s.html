@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+:root{
+  --svg-duration: 3s;
+  --svg-ease: cubic-bezier(0.47, 0, 0.745, 0.715);
+}
+.svg-elem{
+  animation: animate-svg-show var(--svg-duration) linear infinite;
+}
+.svg-elem-1 {
+  animation: animate-svg-stroke-1 var(--svg-duration) var(--svg-ease) infinite,
+            animate-svg-fill-1 var(--svg-duration) var(--svg-ease) infinite;
+}
+.svg-elem-2 {
+  animation: animate-svg-stroke-2 var(--svg-duration) var(--svg-ease) infinite,
+            animate-svg-fill-2 var(--svg-duration) var(--svg-ease) infinite;
+}
+
+@keyframes animate-svg-show {
+  0%, 95%{
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes animate-svg-stroke-1 {
+  0% {
+    stroke-dashoffset: 106.55330657958984px;
+    stroke-dasharray: 106.55330657958984px;
+  }
+  50%, 100% {
+    stroke-dashoffset: 0;
+    stroke-dasharray: 106.55330657958984px;
+  }
+}
+
+@keyframes animate-svg-fill-1 {
+  0%, 40% {
+    fill: transparent;
+  }
+  75%, 100% {
+    fill: rgb(238, 42, 35);
+  }
+}
+
+@keyframes animate-svg-stroke-2 {
+  0%, 6% {
+    stroke-dashoffset: 150.21888732910156px;
+    stroke-dasharray: 150.21888732910156px;
+  }
+  56%, 100% {
+    stroke-dashoffset: 0;
+    stroke-dasharray: 150.21888732910156px;
+  }
+}
+
+@keyframes animate-svg-fill-2 {
+  0%, 45% {
+    fill: transparent;
+  }
+  80%, 100% {
+    fill: rgb(35, 62, 134);
+  }
+}
+
+
+
+  </style>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" width="37" height="41" viewBox="0 0 37 41" fill="none" class="svg-elem">
+    <path d="M34.8067 11.3375C24.936 6.41126 14.3916 7.75925 10.1666 11.1292C5.45164 14.8913 5.35367 21.1166 8.78271 24.168C-0.904341 20.8715 -0.977821 12.2321 1.66744 8.06561C5.966 1.25214 20.6497 -1.98304 34.8067 3.48245V11.3253V11.3375Z" fill="#EE2A23" stroke="#EE2A23" stroke-width="1" class="svg-elem-1"></path>
+    <path id="animatedPath" d="M0.00223682 26.8272C1.74125 28.2365 5.75813 30.0746 10.2649 31.0182C17.9925 32.6358 26.9815 32.1211 27.0305 25.6753V20.5774H20.8092V26.141C16.7801 26.4963 13.2041 24.4376 12.9714 20.5652C12.8367 18.1878 14.0613 16.2761 15.9351 15.1855C19.1804 13.3228 25.022 13.4821 29.5778 15.9207C39.0934 21.0431 38.3586 33.0647 29.9819 37.7704C19.7927 43.5055 3.68846 39.4003 -0.0100098 37.7704V26.8149L0.00223682 26.8272Z" fill="#233E86" stroke="#233E86" stroke-width="1" class="svg-elem-2"></path>
+  </svg>
+  
+</body>
+</html>
