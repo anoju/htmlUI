@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Signika+Negative:300,400&display=swap');
+
+body { 
+  font-family: "Signika Negative", sans-serif; 
+  font-weight: 300;
+  margin: 0;
+  padding: 0 20px;
+}
+
+:root {
+  --dark: #1d1d1d;
+  --grey-dark: #414141;
+  --light: #fff;
+  --mid: #ededed;
+  --grey: #989898;
+  --gray: #989898;
+  --green: #28a92b;
+  --green-dark: #4e9815;
+  --green-light: #6fb936;
+  --blue: #2c7ad2;
+  --purple: #8d3dae;
+  --red: #c82736;
+  --orange: #e77614;
+  accent-color: var(--green);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: #111;
+  font-family: 'Signika Negative', sans-serif, Arial;
+  overscroll-behavior: none;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#smooth-content {
+  color: white;
+}
+
+#smooth-content .home {
+  overflow: visible;
+  width: 100%;
+  /* set a height because the contents are position: absolute, thus natively there's no height */
+  height: 4000px;
+
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.07) 2px,
+      transparent 2px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 2px, transparent 2px),
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+  background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+}
+
+.home .header {
+  padding-top: 100px;
+}
+
+.home .header h1 {
+  margin-bottom: 1rem;
+}
+
+button {
+  position: relative;
+}
+
+#crftd {
+  position: absolute;
+  top: 1800px;
+}
+
+.box {
+  width: 100px;
+  height: 100px;
+  background-color: #28a92b;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  line-height: 100px;
+  font-size: 50px;
+  text-align: center;
+  will-change: transform;
+}
+
+.box.active {
+  background-color: red;
+}
+
+.box-a {
+  top: 200px;
+  background-color: #8d3dae;
+}
+
+.box-b {
+  top: 600px;
+}
+
+.box-c {
+  top: 1000px;
+  background-color: #e26c16;
+}
+
+.box-d {
+  top: 1400px;
+  background-color: lightblue;
+}
+
+.line {
+  visibility: hidden;
+  width: 2px;
+  height: 4000px;
+  position: absolute;
+  left: 400px;
+  top: 0px;
+  background-color: #777;
+}
+
+header .name {
+  color: white;
+}
+
+.title {
+  text-align: center;
+  color: white;
+  font-weight: 400;
+  font-size: 40px;
+}
+
+footer {
+  position: fixed;
+  right: 0px;
+  bottom: 0px;
+  padding: 6px 10px 10px 12px;
+  border-top-left-radius: 26px;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.end {
+  position: absolute;
+  /*   bottom: 0; */
+  top: 2400px;
+  transform: translateY(-100%);
+  font-size: 30px;
+  color: white;
+}
+
+/* button:not('.box') { breaking for some reason in codepen? */
+button {
+  display: inline-block;
+  outline: none;
+  border: none;
+  padding: 8px 14px;
+  background: var(--light);
+  background-image: linear-gradient(
+    to bottom,
+    hsl(0deg 0% 100%),
+    hsl(0deg 0% 94%)
+  );
+  -webkit-box-shadow: 0px 1px 0px #414141;
+  -moz-box-shadow: 0px 1px 0px #414141;
+  box-shadow: 0px 1px 0px #414141;
+  color: var(--dark);
+  text-decoration: none;
+  -webkit-border-radius: 4;
+  -moz-border-radius: 4;
+  border-radius: 4px;
+  padding: 12px 25px;
+  font-family: 'Signika Negative', sans-serif;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 18px;
+}
+
+.light button {
+  color: var(--light);
+  background-image: linear-gradient(to bottom, #575757, #414141);
+}
+
+button:hover {
+  background: var(--green-light);
+  background-image: linear-gradient(to bottom, #57a818, #4d9916);
+  -webkit-box-shadow: 0px 1px 0px fefefe;
+  -moz-box-shadow: 0px 1px 0px fefefe;
+  box-shadow: 0px 1px 0px fefefe;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+header {
+  width: 100%;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+header ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+header ul li {
+  display: inline-block;
+}
+
+header ul a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 0.5rem 1rem;
+}
+
+header .icon {
+  padding-left: 1rem;
+}
+
+/* IMAGES */
+.container {
+  max-width: 2500px;
+  margin: 0 auto;
+}
+
+.spacer {
+  height: 100vh;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-column-gap: 1rem;
+  grid-row-gap: 33.3vh;
+  width: 100vw;
+  margin: 0 auto;
+}
+
+.image-grid .image_cont {
+  position: relative;
+  overflow: hidden;
+  height: 80vh;
+  max-height: 500px;
+}
+
+.image-grid img {
+  position: absolute;
+  width: 100%;
+  height: 160%;
+  object-fit: cover;
+  bottom: 0;
+}
+
+.image-grid .image_cont:nth-child(1) {
+  grid-column: 1/-1;
+  grid-row: 1;
+  height: 95vh;
+}
+
+.image-grid .image_cont:nth-child(2) {
+  grid-column: 2 / span 8;
+  grid-row: 2;
+  height: 60vh;
+}
+
+.image-grid .image_cont:nth-child(3) {
+  grid-column: 4 / span 8;
+  grid-row: 3;
+  height: 60vh;
+}
+
+.image-grid .image_cont:nth-child(3) img {
+  object-position: right;
+}
+
+.image-grid .image_cont:nth-child(4) {
+  grid-column: 1/-1;
+  grid-row: 4;
+  height: 60vh;
+}
+
+.image-grid .image_cont:nth-child(5) {
+  grid-column: 4 / span 8;
+  grid-row: 5;
+  height: 80vh;
+}
+
+.image-grid .image_cont:nth-child(6) {
+  grid-column: 2 / span 8;
+  grid-row: 6;
+  height: 80vh;
+}
+
+@media screen and (min-width: 1000px) {
+  .image-grid .image_cont {
+    max-height: unset;
+  }
+
+  .image-grid .image_cont:nth-child(2) {
+    grid-column: 2 / span 4;
+  }
+
+  .image-grid .image_cont:nth-child(3) {
+    grid-column: 8 / span 4;
+  }
+
+  .image-grid .image_cont:nth-child(5) {
+    grid-column: 8 / span 4;
+  }
+
+  .image-grid .image_cont:nth-child(6) {
+    grid-column: 2 / span 4;
+  }
+}
+
+.overlay {
+  position: fixed;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-column-gap: 1rem;
+  grid-row-gap: 10rem;
+  width: 100vw;
+  margin: 0 auto;
+  z-index: -1;
+}
+
+.overlay div {
+  opacity: 0.2;
+  border-left: 0.5px white solid;
+  border-right: 0.5px white solid;
+}
+
+  </style>
+</head>
+<body>
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main class="home" ref={container}>
+        <div class="header">
+          <h1 class="title">ScrollSmoother NextJS App Folder</h1>
+          <p>
+            Simple example for setting up GSAP ScrollSmoother in a NextJS App
+            using the the experimental{' '}
+            <strong>
+              <i>App</i>
+            </strong>{' '}
+            folder
+          </p>
+        </div>
+        <div class="box box-a">a</div>
+        <div class="box box-b">b</div>
+        <div class="box box-c reveal">c</div>
+        <div class="box box-d reveal">d</div>
+        <svg xmlns="http://www.w3.org/2000/svg" id="crftd" viewBox="0 0 1080 358.4">
+          <path id="c" d="M0 229.2C0 157.3 52.1 100 127.3 100c57.8 0 106.2 32.4 120.3 92.1L195 204.8c-6.6-31.9-32.9-52.1-66.2-52.1-42.7 0-71.9 33.4-71.9 76.6 0 44.2 30.1 76.6 72.3 76.6 33.4 0 59.7-19.7 66.2-51.7l52.6 12.7c-14.1 59.7-62.5 91.6-120.3 91.6C51.2 358.4 0 301.1 0 229.2z" class="st0" fill="#f2f2f2" />
+          <path id="r" d="M290.3 106.2h55v36.2h3.8c9.4-20.7 33.4-42.3 64.8-42.3h18.3v55.4h-24.4c-40.4 0-62 28.7-62 75.2v121.7h-55.4V106.2z" class="st0" fill="#f2f2f2" />
+          <path id="f" d="M547.3 106.2v-32c0-17.4 7-25.8 24.4-25.8h40.4V0h-41.3c-47.4 0-78.9 21.6-78.9 73.8v32.4h-43.2V155h43.2v197.3h55.4V155h16.1l48.9-48.9h-65z" class="st0" fill="#f2f2f2" />
+          <path id="t" d="M677.4 278.6V155h-65.1v-48.9h68.4v-69h52.6v69.1h69.5V155h-69.5v123.1c0 17.4 7 24.9 24 24.9H800v49.3h-43.2c-47.9 0-79.4-21.6-79.4-73.7z" class="st0" fill="#f2f2f2" />
+          <path id="d" d="M1024.6 0v137.6h-4.2c-10.8-14.1-31.9-37.6-75.6-37.6-66.3.1-113.8 56-113.8 129.2 0 74.7 50.7 129.2 117 129.2 42.7 0 62.9-22.5 73.3-35.2h4.2v29.1h54.5V0h-55.4zm-67.7 306.8c-38.5 0-70-30.5-70-77 0-45.6 30.1-77.5 69.5-77.5 38.1 0 69.5 28.7 69.5 77.5.1 41.7-27.2 77-69 77z" class="st0" fill="#f2f2f2" />
+        </svg>
+        <div class="line"></div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://assets.codepen.io/16327/gsap-latest-beta.min.js?v=3.12.0a"></script>
+  <script src="https://unpkg.com/gsap@3/dist/ScrollToPlugin.min.js"></script>
+  <script src="https://assets.codepen.io/16327/ScrollTrigger.min.js?v=3.12.0a"></script>
+  <script src="https://assets.codepen.io/16327/ScrollSmoother.min.js?v=3.12.0a"></script>
+  <script>
+console.clear();
+
+// scroll down and notice how the big letters don't start in their from() state until the tween begins (in 3.11.5 and earlier). Only if you initiate ScrollSmoother AFTER creating the from() tween.
+
+// ScrollSmoother.create({
+//   smooth: 2,
+//   effects: true,
+// });
+
+gsap.from('#crftd path', {
+  yPercent: 100,
+  stagger: 0.06,
+  scrollTrigger: {
+    trigger: '#crftd',
+    start: 'top bottom',
+    end: 'top top',
+    scrub: true,
+    markers: true,
+   // immediateRender: false,
+  },
+});
+
+ScrollSmoother.create({
+  smooth: 2,
+  effects: true,
+});
+
+ScrollTrigger.refresh();
+
+  </script>
+</body>
+</html>

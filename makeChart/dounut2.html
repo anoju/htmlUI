@@ -53,10 +53,19 @@ function drawBackground(ctx, centerX, centerY, outerRadius, innerRadius) {
 
 function drawDonutSlice(ctx, centerX, centerY, outerRadius, innerRadius, start, end, color) {
     ctx.beginPath();
-    ctx.arc(centerX, centerY, outerRadius, start, end);
+    ctx.arc(centerX, centerY, outerRadius - 2, start, end); // Slightly smaller radius
     ctx.arc(centerX, centerY, innerRadius, end, start, true);
     ctx.closePath();
     ctx.fillStyle = color;
+    ctx.fill();
+}
+
+function drawSeparationLine(ctx, centerX, centerY, outerRadius, innerRadius, angle) {
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, outerRadius, angle - 0.01, angle + 0.01, false); // 2-pixel thick separation line
+    ctx.arc(centerX, centerY, innerRadius, angle + 0.01, angle - 0.01, true);
+    ctx.closePath();
+    ctx.fillStyle = '#fff'; // Separation line color
     ctx.fill();
 }
 
@@ -82,7 +91,11 @@ function animateDonutChart(ctx, centerX, centerY, outerRadius, innerRadius) {
             const endAngle = startAngle + sliceAngle * Math.min(progress, 1);
 
             drawDonutSlice(ctx, centerX, centerY, outerRadius, innerRadius, startAngle, endAngle, data.datasets[0].backgroundColor[index]);
-            startAngle += sliceAngle * Math.min(progress, 1);
+            if (index < data.datasets[0].data.length - 1) { // Draw separation line only if not the last segment
+                drawSeparationLine(ctx, centerX, centerY, outerRadius, innerRadius, endAngle); // Draw separation line at the end of each segment
+            }
+
+            startAngle = endAngle; // Move startAngle to the end of the current slice
         });
 
         if (currentFrame < totalFrames) {
