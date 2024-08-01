@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, target-densitydpi=160, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <title>Document</title>
+    <style>
+        * {box-sizing:border-box;}
+        html, body {width:100%; margin:0; padding:0;}
+        a, button {border:0; padding:0;}
+        p {margin:0;}
+        .popup_wrap {display:none; position:fixed; top:0; left:0; width:100%; height:100%; }
+        .popup_wrap {background-color:rgba(0,0,0,0); transition-duration:.2s;}
+        .popup_wrap.show {display:block; z-index:130;}
+        .popup_wrap.show.is-animate {background-color:rgba(0,0,0,0.7); transition-property:background-color; transition-duration:.2s;}
+        .popup_inner {position:absolute; top:50%; left:50%; width:360px; transform:translate(-50%,-50%); background:#fff; overflow:hidden; border-radius:12px; z-index:100;}
+        .popup_wrap .popup_inner {transform:translate(-50%,-50%) scale(0.85); opacity:0; transition: .2s ease-in-out;}
+        .popup_wrap.show.is-animate .popup_inner {transform:translate(-50%,-50%) scale(1); opacity:1;}
+        .popup_cont {padding:30px 26px; background:#fff; text-align:center; letter-spacing:-0.025em;}
+        .popup_cont:has(> .popup_img) {padding:40px 26px;}
+        .popup_cont .popup_img {margin-bottom:14px;}
+        .popup_cont .popup_img img {width:100%; height:100%; object-fit:cover;}
+        .popup_cont .popup_tit {margin-bottom:10px; font-size:20px; line-height:26px; color:#000; letter-spacing:-0.025em;}
+        .popup_cont:has(> .popup_img) .popup_tit {margin-bottom:14px;}
+        .popup_cont .popup_txt {font-size:16px; color:#000; line-height:24px; letter-spacing:-0.025em;}
+        .popup_cont .popup_subTxt {display:block; font-size:13px; color:#666; line-height:20px; letter-spacing:-0.025em;}
+        .popup_cont .dlTit {display:block; font-weight:bold; font-size:13px; color:#000; line-height:20px;}
+        .popup_cont .dlTit ~ .dlTit {margin-top:10px;}
+        .popup_btnWrap {display:flex;}
+        .popup_btnWrap a,
+        .popup_btnWrap button {flex:1; display:inline-block; height:46px; font-weight:bold; font-size:14px; line-height:48px; text-align:center; color:#fff; letter-spacing:-0.025em;}
+        .popup_btnWrap .btn_cancel {background:#aaa;}
+        .popup_btnWrap .btn_confirm {background:#FF6500;}
+
+        @media screen and (max-width: 320px) {
+            .popup_inner {min-width:280px;}
+            .popup_cont {padding:30px 21px;}
+        }
+        section {display:flex; gap:30px;}
+        section button,
+        section a {flex:1; height:40px;}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <section>
+            <!-- 기본 유형 팝업(하단팝업) -->
+            <button type="button" data-popbtn="test1">컨펌창</button>
+            <!-- Onclick 유형 팝업(하단팝업) -->
+            <button type="button" onclick="UI.Alert.show('test2')">컨펌창</button>
+            <!-- Alert 유형 팝업(동적생성) -->
+            <button data-poptext="이것은 Alert 팝업입니다." data-poptype="alert" data-popid="test3">Alert 팝업</button>
+            <!-- Confirm 유형 팝업(동적생성) -->
+            <button data-poptext="이것은 Confirm 팝업입니다." data-poptype="confirm" data-popid="test4">Confirm 팝업</button>
+            <a href="">11</a>
+            <button>22</button>
+        </section>
+
+        <div class="popup_wrap" id="test1">
+            <div class="popup_inner">
+                <div class="popup_cont">
+                    <p class="popup_tit">test1</p>
+                    <p class="popup_txt">teset1</p>
+                </div>
+                <div class="popup_btnWrap">
+                    <button type="button" class="btn_cancel btn_close">부정</button>
+                    <button type="button" class="btn_confirm">긍정</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="popup_wrap" id="test2">
+            <div class="popup_inner">
+                <div class="popup_cont">
+                    <p class="popup_tit">test2</p>
+                    <p class="popup_txt">test2</p>
+                </div>
+                <div class="popup_btnWrap">
+                    <button type="button" class="btn_cancel btn_close">부정</button>
+                    <button type="button" class="btn_confirm">긍정</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var UI = UI || {};
+        UI.Alert = {
+            init() {
+                document.body.addEventListener('click', this.handleClick.bind(this));
+            },
+
+            handleClick(e) {
+                const target = e.target.closest('button, a');
+                // const popupId = 'popup_' + Math.random().toString(36).substr(2, 9);
+                if (!target) return;
+
+                e.preventDefault();
+
+                const dataPopbtn = target.getAttribute('data-popbtn');
+                const dataPoptext = target.getAttribute('data-poptext');
+                const dataPoptype = target.getAttribute('data-poptype') || 'alert';
+                const dataPopId = target.getAttribute('data-popid') || '';
+                const onclickAttr = target.getAttribute('onclick');
+
+                if (dataPopbtn) {
+                    this.show(dataPopbtn);
+                } else if (dataPoptext) {
+                    this.showPoptext(dataPoptext, dataPoptype, dataPopId);
+                } else if (onclickAttr) {
+                    const match = onclickAttr.match(/UI\.Alert\.show\('([^']+)'\)/);
+                    if (match) {
+                        this.show(match[1]);
+                    }
+                } else if (target.closest('.popup_btnWrap')) {
+                    const popupW = target.closest('.popup_wrap');
+                    const popId = popupW.id;
+
+                    if (target.classList.contains('btn_close') || target.classList.contains('btn_confirm')) {
+                        console.log(target.classList.contains('btn_close') ? '팝업 닫기' : '팝업 확인');
+                        this.hide(popId, () => {
+                            if (popupW.hasAttribute('data-dynamic')) {
+                                popupW.remove();
+                            }
+                        });
+                    }
+                }
+            },
+
+            show(id) {
+                const el = document.getElementById(id);
+                if (!el) return console.error(`Popup with id "${id}" not found`);
+
+                document.body.style.overflow = 'hidden';
+                el.classList.add('show');
+                requestAnimationFrame(() => el.classList.add('is-animate'));
+            },
+
+            hide(id, callback) {
+                const el = document.getElementById(id);
+                if (!el) return console.error(`Popup with id "${id}" not found`);
+
+                document.body.style.overflow = '';
+                el.classList.remove('is-animate');
+                el.addEventListener('transitionend', () => {
+                    el.classList.remove('show');
+                    if (callback) {
+                        if (typeof callback === 'function') {
+                            callback();
+                        } else if (typeof callback === 'string' && window[callback]) {
+                            window[callback]();
+                        }
+                    }
+                }, { once: true });
+            },
+
+            showPoptext(text, type = 'alert', btnId = '') {
+                const popupId = btnId;
+                let btnWrapContent = '';
+
+                if (type === 'alert') {
+                    btnWrapContent = `
+                        <a href="#none" class="btn_confirm" ${btnId ? `id="${btnId}"` : ''}>확인</a>
+                    `;
+                } else if (type === 'confirm') {
+                    const [cancelBtnId, confirmBtnId] = btnId.split(',');
+                    btnWrapContent = `
+                        <a href="#none" class="btn_cancel btn_close" ${cancelBtnId ? `id="${cancelBtnId}"` : ''}>취소</a>
+                        <a href="#none" class="btn_confirm" ${confirmBtnId ? `id="${confirmBtnId}"` : ''}>확인</a>
+                    `;
+                }
+
+                const template = `
+                    <div class="popup_wrap" data-popup="${type}" id="${popupId}" data-dynamic="true">
+                        <div class="popup_inner">
+                            <div class="popup_cont">
+                                <p class="popup_txt">${text}</p>
+                            </div>
+                            <div class="popup_btnWrap">
+                                ${btnWrapContent}
+                            </div>
+                        </div>
+                    </div>`;
+                document.body.insertAdjacentHTML('beforeend', template);
+                this.show(popupId);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            UI.Alert.init();
+        });
+
+    </script>
+</body>
+</html>
