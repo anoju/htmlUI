@@ -62,10 +62,9 @@
         var UI = UI || {};
         UI = {
             alert(msg, okTxt){
-                console.log('alert')
                 const _this = this;
                 return new Promise((resolve, reject) => {
-                    _this.alertEvent('alert',msg, okTxt).then(()=>{
+                    _this.alertEvent('alert', msg, okTxt).then(()=>{
                         resolve();
                     },()=>{
                         reject();
@@ -73,10 +72,9 @@
                 });
             },
             confirm(msg, okTxt, cancelTxt){
-                console.log('confirm')
                 const _this = this;
                 const promise = new Promise((resolve, reject) => {
-                    _this.alertEvent('confirm',msg, okTxt, cancelTxt).then(()=>{
+                    _this.alertEvent('confirm', msg, okTxt, cancelTxt).then(()=>{
                         resolve();
                     },()=>{
                         reject();
@@ -107,14 +105,13 @@
             },
             alertIdx: 0,
             alertEvent(type = 'alert', msg, okTxt = '확인', cancelTxt = '취소'){
-                console.log('type', type)
                 const _this = this;
                 const promise =  new Promise((resolve, reject) => {
                     const popId = 'popAlert' + _this.alertIdx;
                     _this.alertIdx += 1;
                     const html = _this.alertMake(type, popId, okTxt, cancelTxt);
                     document.body.insertAdjacentHTML('beforeend', html);
-                    const $popup = document.querySelector(`#${popId}`)
+                    const $popup = document.querySelector(`#${popId}`);
                     $popup.querySelector('.popup_txt').innerHTML = msg;
                     _this.alertShow(`#${popId}`);
 
@@ -122,15 +119,17 @@
                     function confirmEvt(){
                         resolve();
                         _this.alertHide(`#${popId}`);
+                        $confirm.removeEventListener('click', confirmEvt);
                     }
-                    if($confirm) $confirm.addEventListener('click', confirmEvt, { once: true });
+                    if($confirm) $confirm.addEventListener('click', confirmEvt);
 
                     const $cancel = $popup.querySelector('.btn_cancel');
                     function cancelEvt(){
                         reject();
                         _this.alertHide(`#${popId}`);
+                        $cancel.removeEventListener('click', cancelEvt);
                     }
-                    if($cancel) $cancel.addEventListener('click', cancelEvt, { once: true });
+                    if($cancel) $cancel.addEventListener('click', cancelEvt);
                 });
                 return promise;
             },
