@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+<div class="bg-img-slide">
+  <div class="inner">
+    <div class="item"><div class="box1"></div></div>
+    <div class="item"><div class="box2"><div class="child1"></div></div></div>
+  </div>
+</div>
+  <script>
+    // function getFirstChild(target){
+    //   let currentEl = typeof target === 'string' ? document.querySelector(target) : target;
+    //   while(currentEl && currentEl.children.length){
+    //     currentEl = currentEl.children[0];
+    //   }
+    //   return currentEl;
+    // }
+
+    function getLowestVisibleChild(parentSelector) {
+  const parent = document.querySelector(parentSelector);
+  if (!parent) return null;
+
+  function isVisible(element) {
+    return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
+  }
+
+  function findLowestVisibleChild(element) {
+    if (!isVisible(element)) return null;
+
+    for (let i = element.children.length - 1; i >= 0; i--) {
+      const child = element.children[i];
+      const lowestChild = findLowestVisibleChild(child);
+      if (lowestChild) return lowestChild;
+    }
+
+    return element;
+  }
+
+  return findLowestVisibleChild(parent);
+}
+
+// Usage
+const lowestVisibleChild = getLowestVisibleChild('.bg-img-slide');
+console.log(lowestVisibleChild);
+
+  </script>
+</body>
+</html>
