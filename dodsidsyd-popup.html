@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, target-densitydpi=160, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <title>Document</title>
+    <style>
+        * {box-sizing:border-box;}
+        html, body {width:100%; margin:0; padding:0;}
+        a, button {border:0; padding:0;}
+        p {margin:0;}
+        .popup_wrap {display:none; position:fixed; top:0; left:0; width:100%; height:100%; }
+        .popup_wrap {background-color:rgba(0,0,0,0); transition-duration:.2s;}
+        .popup_wrap.show {display:block; z-index:130;}
+        .popup_wrap.show.is-animate {background-color:rgba(0,0,0,0.7); transition-property:background-color; transition-duration:.2s;}
+        .popup_inner {position:absolute; top:50%; left:50%; width:360px; transform:translate(-50%,-50%); background:#fff; overflow:hidden; border-radius:12px; z-index:100;}
+        .popup_wrap .popup_inner {transform:translate(-50%,-50%) scale(0.85); opacity:0; transition: .2s ease-in-out;}
+        .popup_wrap.show.is-animate .popup_inner {transform:translate(-50%,-50%) scale(1); opacity:1;}
+        .popup_cont {padding:30px 26px; background:#fff; text-align:center; letter-spacing:-0.025em;}
+        .popup_cont:has(> .popup_img) {padding:40px 26px;}
+        .popup_cont .popup_img {margin-bottom:14px;}
+        .popup_cont .popup_img img {width:100%; height:100%; object-fit:cover;}
+        .popup_cont .popup_tit {margin-bottom:10px; font-size:20px; line-height:26px; color:#000; letter-spacing:-0.025em;}
+        .popup_cont:has(> .popup_img) .popup_tit {margin-bottom:14px;}
+        .popup_cont .popup_txt {font-size:16px; color:#000; line-height:24px; letter-spacing:-0.025em;}
+        .popup_cont .popup_subTxt {display:block; font-size:13px; color:#666; line-height:20px; letter-spacing:-0.025em;}
+        .popup_cont .dlTit {display:block; font-weight:bold; font-size:13px; color:#000; line-height:20px;}
+        .popup_cont .dlTit ~ .dlTit {margin-top:10px;}
+        .popup_btnWrap {display:flex;}
+        .popup_btnWrap a,
+        .popup_btnWrap button {flex:1; display:inline-block; height:46px; font-weight:bold; font-size:14px; line-height:48px; text-align:center; color:#fff; letter-spacing:-0.025em;}
+        .popup_btnWrap .btn_cancel {background:#aaa;}
+        .popup_btnWrap .btn_confirm {background:#FF6500;}
+
+        @media screen and (max-width: 320px) {
+            .popup_inner {min-width:280px;}
+            .popup_cont {padding:30px 21px;}
+        }
+        section {display:flex; gap:30px;}
+        section + section{margin-top:30px;}
+        section button,
+        section a {flex:1; height:40px;}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <h1>alert</h1>
+        <section>
+            <button type="button" onclick="showAlert()">기본 Alert</button>
+            <button type="button" onclick="showAlert2()">버튼변경</button>
+        </section>
+        <h1>confirm</h1>
+        <section>
+            <button type="button" onclick="showConfirm()">기본 confirm</button>
+            <button type="button" onclick="showConfirm2()">버튼변경</button>
+        </section>
+    </div>
+    <script>
+        
+        var UI = UI || {};
+        UI = {
+            alert(msg, okTxt){
+                const _this = this;
+                return new Promise((resolve, reject) => {
+                    _this.alertEvent('alert', msg, okTxt).then(()=>{
+                        resolve();
+                    },()=>{
+                        reject();
+                    });
+                });
+            },
+            confirm(msg, okTxt, cancelTxt){
+                const _this = this;
+                const promise = new Promise((resolve, reject) => {
+                    _this.alertEvent('confirm', msg, okTxt, cancelTxt).then(()=>{
+                        resolve();
+                    },()=>{
+                        reject();
+                    });
+                });
+                return promise;
+            },
+
+            alertShow(target) {
+                const el = typeof target === 'string' ? document.querySelector(target) : target;
+                if (!el) return console.error(`Popup not found`);
+
+                document.body.style.overflow = 'hidden';
+                el.classList.add('show');
+                requestAnimationFrame(() => el.classList.add('is-animate'));
+            },
+
+            alertHide(target) {
+                const el = typeof target === 'string' ? document.querySelector(target) : target;
+                if (!el) return console.error(`Popup not found`);
+
+                document.body.style.overflow = '';
+                el.classList.remove('is-animate');
+                el.addEventListener('transitionend', () => {
+                    el.classList.remove('show');
+                    el.remove();
+                }, { once: true });
+            },
+            alertIdx: 0,
+            alertEvent(type = 'alert', msg, okTxt = '확인', cancelTxt = '취소'){
+                const _this = this;
+                const promise =  new Promise((resolve, reject) => {
+                    const popId = 'popAlert' + _this.alertIdx;
+                    _this.alertIdx += 1;
+                    const html = _this.alertMake(type, popId, okTxt, cancelTxt);
+                    document.body.insertAdjacentHTML('beforeend', html);
+                    const $popup = document.querySelector(`#${popId}`);
+                    $popup.querySelector('.popup_txt').innerHTML = msg;
+                    _this.alertShow(`#${popId}`);
+
+                    const $confirm = $popup.querySelector('.btn_confirm');
+                    function confirmEvt(){
+                        resolve();
+                        _this.alertHide(`#${popId}`);
+                        $confirm.removeEventListener('click', confirmEvt);
+                    }
+                    if($confirm) $confirm.addEventListener('click', confirmEvt);
+
+                    const $cancel = $popup.querySelector('.btn_cancel');
+                    function cancelEvt(){
+                        reject();
+                        _this.alertHide(`#${popId}`);
+                        $cancel.removeEventListener('click', cancelEvt);
+                    }
+                    if($cancel) $cancel.addEventListener('click', cancelEvt);
+                });
+                return promise;
+            },
+            alertMake(type, popId, okTxt, cancelTxt) {
+                let btnHtml = '';
+                if (type === 'confirm') btnHtml += `<button type="button" class="btn_cancel">${cancelTxt}</button>`;
+                btnHtml += `<button type="button" class="btn_confirm">${okTxt}</button>`;
+
+                const html = `
+                    <div id="${popId}" class="popup_wrap" data-popup="${type}" data-dynamic="true">
+                        <div class="popup_inner">
+                            <div class="popup_cont">
+                                <p class="popup_txt"></p>
+                            </div>
+                            <div class="popup_btnWrap">
+                                ${btnHtml}
+                            </div>
+                        </div>
+                    </div>`;
+
+                return html;
+            }
+        };
+
+        function showAlert(){
+            UI.alert('알럿입니다.').then(()=>{
+                console.log('확인 클릭!!');
+            });
+        }
+        function showAlert2(){
+            UI.alert('알럿입니다.222', 'OK').then(()=>{
+                console.log('OK 클릭!!');
+            });
+        }
+
+        function showConfirm(){
+            UI.confirm('컨펌입니다.').then(()=>{
+                console.log('확인 클릭!!');
+            },()=>{
+                console.log('취소 클릭!!');
+            });
+        }
+        function showConfirm2(){
+            UI.confirm('컨펌입니다.222', 'OK', 'CANCEL').then(()=>{
+                console.log('OK 클릭!!');
+            },()=>{
+                console.log('CANCEL 클릭!!');
+            });
+        }
+    </script>
+</body>
+</html>
