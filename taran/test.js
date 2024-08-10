@@ -1,16 +1,5 @@
-// 도메인 이동
-//function changDomain(oldName, newName) {
-//  const href = window.location.href;
-//  if (href.indexOf(oldName) > -1) {
-//    const newHref = href.replace(oldName, newName);
-//    window.location.href = newHref;
-//  }
-//}
-// changDomain('taranux.co', 'hiuxc.co');
-
 // 메뉴링크 주소변경
 function changeHrefDomain(oldName, newName) {
-  // const elementsWithHref = document.querySelectorAll('[href]');
   const elementsWithHref = document.querySelectorAll('a[href]');
 
   elementsWithHref.forEach(function(element) {
@@ -125,20 +114,6 @@ const $addDate = function(day, month, year) {
       });
     }
   });
-
-  // if($(window).width() < 960){
-  //     $('.position_box').click(function(){
-  //         if($('.position_box').parent('.mobile-menu-button').hasClass('close')){
-  //             $('.logo-image.mobile-logo.logo-dark').css('display','none');
-  //             $('#logo-container-mobile').css('background-color','transparent');
-  //         }else{
-  //             $('.logo-image.mobile-logo.logo-dark').css('display','block');
-  //             $('#logo-container-mobile').css('background-color','#1b1d1f');
-  //         }
-  //     })
-  // }
-
-
 
   $(window).load(function() {
 
@@ -290,23 +265,6 @@ const $addDate = function(day, month, year) {
     /*contact*/
     $('#contents_wrap .uncont').find('.btn-container').wrapAll('<div id="button_wrap"></div>');
 
-    /*homepage_test_menu_background_color_control*/
-    // if($('body').hasClass('taran_homepage')){
-    //     $('.lines-button .position_box .lines').css('background','#fff');
-    //     $('.lines-button .position_box .lines_before').css('background','#fff');
-    //     $('.lines-button .position_box .lines_after').css('background','#fff');
-
-    //     $(this).find('.lines').css('background','#fff');
-    //     $(this).find('.lines_before').css('background','#fff');
-    //     $(this).find('.lines_after').css('background','#fff');
-
-    //     $('.lines-button .position_box').hover(function(){
-    //         $(this).find('.lines').css('background','rgba(133, 78, 255, 0.5)');
-    //         $(this).find('.lines_before').css('background','rgba(133, 78, 255, 0.5)');
-    //         $(this).find('.lines_after').css('background','rgba(133, 78, 255, 0.5)');
-    //     })
-
-    // }
     /*homepage_menu_background_color_control*/
     if ($(window).width() > 1400) {
       if (!$('body').hasClass('taran_homepage')) {
