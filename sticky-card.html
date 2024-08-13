@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>sticky card</title>
+  <style>
+    *{margin:0;padding:0;}
+    .sec{display:flex;height:100lvh;align-items:center;justify-content:center;}
+    .sec1{background-color:#F5F5DC;}
+    .sec2{background-color:#E2725B;}
+    .sec3{background-color:#FFFDD0;}
+    /* .sec4{background-color:#808000;}
+    .sec5{background-color:#98FF98;}
+    .sec6{background-color:#B38B6D;} */
+    .sec7{background-color:#B38B6D;}
+    .sec-wrap .sec{position:sticky;top:0;}
+    .card{width:100px;height:150px;border:1px solid #000;background-color:#fff;border-radius:8px;}
+    .card2{transform:translateY(10px);}
+    .card3{transform:translateY(20px);}
+    .card4{transform:translateY(30px);}
+  </style>
+</head>
+<body>
+  <div class="sec sec1"></div>
+  <div class="sec sec2"></div>
+  <div class="sec-wrap">
+    <div class="sec sec3"><div class="card card1"></div></div>
+    <div class="sec sec4"><div class="card card2"></div></div>
+    <div class="sec sec5"><div class="card card3"></div></div>
+    <div class="sec sec6"><div class="card card4"></div></div>
+  </div>
+  <div class="sec sec7"></div>
+</body>
+</html>
