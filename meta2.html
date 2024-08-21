@@ -5,9 +5,13 @@
   <meta name="meat description 동적여부 확인중" content="width=device-width, initial-scale=1.0">
   <title>meat description 22</title>
   <meta name="description" content="디스크립션 초기상태">
+  <meta property="og:description" content="디스크립션 초기상태 22">
   <script>
     const $desc = document.querySelector('meta[name="description"]');
     $desc.content = '디스크립션 스크립트로 변경변경!!'
+
+    const $desc2 = document.querySelector('meta[property="og:description"]');
+    $desc2.content = '디스크립션 스크립트로 변경변경!! 22'
   </script>
 </head>
 <body>
