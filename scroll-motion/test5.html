@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>안정화된 애니메이션과 클래스 토글 기능</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+      .section {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2em;
+        color: white;
+      }
+      .section:nth-child(odd) {
+        background-color: #3498db;
+      }
+      .section:nth-child(even) {
+        background-color: #e74c3c;
+      }
+      .animate-me {
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+      .animate-on {
+        transition: all 0.5s ease;
+      }
+      .animate-on.on {
+        transform: scale(1.1);
+        color: yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="section">
+      <h1 class="animate-me">스크롤을 내려보세요</h1>
+    </div>
+    <div class="section">
+      <p class="animate-on">이 요소는 완전히 보이면 'on' 클래스가 추가됩니다.</p>
+    </div>
+    <div class="section">
+      <p class="animate-me">각 섹션은 개별적으로 애니메이션됩니다.</p>
+    </div>
+    <div class="section">
+      <p class="animate-on">이것도 'on' 클래스가 추가되는 요소입니다.</p>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const animateElements = document.querySelectorAll('.animate-me');
+        const animateOnElements = document.querySelectorAll('.animate-on');
+
+        function updateElementStyle(element) {
+          const rect = element.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          const windowCenter = windowHeight / 2;
+          const elementCenter = rect.top + rect.height / 2;
+
+          let progress = 1 - (elementCenter - windowCenter) / (windowHeight / 2);
+          progress = Math.max(0, Math.min(1, progress));
+
+          const translateY = 50 - progress * 50;
+          const scale = 0.8 + progress * 0.2;
+          const opacity = progress;
+
+          element.style.transform = `translateY(${translateY}px) scale(${scale})`;
+          element.style.opacity = opacity;
+        }
+
+        function resetElementStyle(element) {
+          element.style.transform = 'translateY(50px) scale(0.8)';
+          element.style.opacity = '0';
+        }
+
+        const animateMeObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.dataset.visible = 'true';
+                updateElementStyle(entry.target);
+              } else {
+                entry.target.dataset.visible = 'false';
+                resetElementStyle(entry.target);
+              }
+            });
+          },
+          { threshold: 0 }
+        );
+
+        const animateOnObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                if (!entry.target.classList.contains('on')) {
+                  entry.target.classList.add('on');
+                }
+              } else {
+                entry.target.classList.remove('on');
+              }
+            });
+          },
+          {
+            threshold: [0, 0.5, 1],
+            rootMargin: '-10% 0px'
+          }
+        );
+
+        animateElements.forEach((element) => {
+          animateMeObserver.observe(element);
+          resetElementStyle(element);
+        });
+
+        animateOnElements.forEach((element) => {
+          animateOnObserver.observe(element);
+        });
+
+        function updateVisibleElements() {
+          animateElements.forEach((element) => {
+            if (element.dataset.visible === 'true') {
+              updateElementStyle(element);
+            }
+          });
+        }
+
+        window.addEventListener('scroll', updateVisibleElements);
+        window.addEventListener('resize', updateVisibleElements);
+      });
+    </script>
+  </body>
+</html>
