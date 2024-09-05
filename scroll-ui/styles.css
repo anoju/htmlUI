@@ -89,3 +89,10 @@ body {
 .fade-in img {
   opacity: 0;
 }
+
+@media (max-width: 500px) {
+  .feature{flex-direction:column;}
+  .feature-content{display:flex;justify-content:center;flex-direction:column;width:100%;text-align:center;}
+  .feature-content > *{width:100%;}
+  .feature-image{width:100%;}
+}
