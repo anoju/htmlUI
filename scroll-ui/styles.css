@@ -68,10 +68,10 @@ body {
   margin-bottom: 1rem;
 }
 
-.feature-1 { background-color: #f2f2f2; }
-.feature-2 { background-color: #e6e6e6; }
-.feature-3 { background-color: #d9d9d9; }
-.feature-4 { background-color: #cccccc; }
+.feature-1 { background-color: #FFF3E0; } /* 부드러운 주황색 */
+.feature-2 { background-color: #E8F5E9; } /* 연한 녹색 */
+.feature-3 { background-color: #E3F2FD; } /* 하늘색 */
+.feature-4 { background-color: #F3E5F5; } /* 연한 보라색 */
 
 /* 애니메이션 효과 */
 .scale-up img {
