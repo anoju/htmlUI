@@ -56,6 +56,9 @@
         // find(): 배열에서 주어진 조건을 만족하는 첫 번째 요소를 반환합니다. 조건이 맞는 요소가 없으면 undefined 를 반환합니다.
         let foundFruit = fruits.find(fruit => fruit.startsWith('g'));
         log("First fruit starting with 'g': " + foundFruit);
+
+        // includes: 해당 값이 있는지만 반환(true, false)
+        log("'바나나'가 있나요? " + fruits.includes('banana'));
         
         // entries(): 배열의 모든 요소를 **키-값(key-value pair)**으로 반환합니다. 키는 인덱스이고, 값은 해당 인덱스에 있는 요소입니다.
         let fruitEntries = fruits.entries();
