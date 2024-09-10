@@ -1,21 +1,33 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const features = document.querySelectorAll('.feature-container');
-  let ticking = false;
-  const scrollThreshold = 10;
-  let lastScrollPosition = 0;
+const scrollAni = {
+  ticking: false,
+  features: null,
+  onScroll: function(){
+    if (!scrollAni.ticking) {
+      window.requestAnimationFrame(() => {
+        scrollAni.features.forEach(scrollAni.ani);
+        scrollAni.ticking = false;
+      });
+      scrollAni.ticking = true;
+    }
+  },
+  ani:function(el){
+    const elContent = el.querySelector('.feature');
+    const aniEls = elContent.querySelectorAll('[data-scroll-ani]');
+    const scrollParent = getScrollParent(el);
+    const isWindowScroll = scrollParent === document.documentElement;
 
-  function animateFeature(feature) {
-    const featureContent = feature.querySelector('.feature');
-    const aniEls = featureContent.querySelectorAll('[data-scroll-ani]');
-    const featureTop = feature.offsetTop;
-    const featureHeight = feature.offsetHeight;
-    const scrollPosition = window.scrollY;
-    const windowHeight = window.innerHeight;
+    const elRect = el.getBoundingClientRect();
+    const scrollParentRect = scrollParent.getBoundingClientRect();
+
+    const elTop = isWindowScroll ? el.offsetTop : elRect.top - scrollParentRect.top;
+    const elHeight = el.offsetHeight;
+    const scrollPosition = isWindowScroll ? window.scrollY : scrollParent.scrollTop;
+    const viewportHeight = isWindowScroll ? window.innerHeight : scrollParent.clientHeight;
 
     // 스크롤 진행률 계산 (0 ~ 1)
-    let progress = (scrollPosition - featureTop + windowHeight) / (featureHeight);
-
-    // 5% ~ 95% 범위로 조정
+    let progress = (scrollPosition - elTop + viewportHeight) / elHeight;
+    
+    // 10% ~ 80% 범위로 조정
     progress = Math.max(0, Math.min(1, (progress - 0.1) / 0.8));
 
     if (progress >= 0 && progress <= 1) {
@@ -50,20 +62,57 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
+  },
+  scrollParentAry: [],
+  addEvent: function(){
+    scrollAni.features.forEach(feature => {
+      const scrollParent = getScrollParent(feature);
+      if(scrollParent !== document.documentElement && !scrollAni.scrollParentAry.includes(scrollParent)){
+        scrollAni.scrollParentAry.push(scrollParent);
+        scrollParent.addEventListener('scroll', scrollAni.onScroll);
+      }
+    });
+  },
+  init: function(){
+    scrollAni.features = document.querySelectorAll('.feature-container');
+
+    window.addEventListener('scroll', scrollAni.onScroll);
+    scrollAni.onScroll(); // 초기 로드 시 애니메이션 적용
+  }
+}
+
+
+
+function getScrollParent(element) {
+  if (!element) return document.documentElement;
+  
+  const isScrollable = (el) => {
+    const hasScrollableContent = el.scrollHeight > el.clientHeight;
+    const overflowYStyle = window.getComputedStyle(el).overflowY;
+    const isOverflowHidden = overflowYStyle.indexOf('hidden') === -1;
+    
+    return hasScrollableContent && isOverflowHidden;
+  };
+
+  if (isScrollable(element)) {
+    return element;
   }
 
-  function animateOnScroll() {
-    const currentScrollPosition = window.scrollY;
-    if (!ticking && Math.abs(currentScrollPosition - lastScrollPosition) > scrollThreshold) {
-      window.requestAnimationFrame(() => {
-        features.forEach(animateFeature);
-        ticking = false;
-        lastScrollPosition = currentScrollPosition;
-      });
-      ticking = true;
-    }
-  }
+  return getScrollParent(element.parentElement);
+};
 
-  window.addEventListener('scroll', animateOnScroll);
-  animateOnScroll(); // 초기 로드 시 애니메이션 적용
+function popupOpen(el){
+  const $el = typeof el ==='string' ? document.querySelector(el) : el;
+  $el.classList.add('open');
+  scrollAni.addEvent();
+  document.documentElement.classList.add('pop-open');
+};
+function popupClose(el){
+  const $el = typeof el ==='string' ? document.querySelector(el) : el;
+  document.documentElement.classList.remove('pop-open');
+  $el.classList.remove('open');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  scrollAni.init();  
 });
