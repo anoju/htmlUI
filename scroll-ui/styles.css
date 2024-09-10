@@ -136,3 +136,6 @@ html.pop-open{
 .popup.open{display:flex;}
 .popup .page{background:#fff;max-height:100%;max-width:100%;width:1000px;}
 .popup .page-body{overflow-y:auto;height:100%;}
+.popup .intro,
+.popup .feature{height:50vh;}
+.popup .feature-container {height:200vh;}

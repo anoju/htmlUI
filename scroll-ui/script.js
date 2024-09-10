@@ -105,6 +105,7 @@ function popupOpen(el){
   const $el = typeof el ==='string' ? document.querySelector(el) : el;
   $el.classList.add('open');
   scrollAni.addEvent();
+  scrollAni.onScroll();
   document.documentElement.classList.add('pop-open');
 };
 function popupClose(el){
