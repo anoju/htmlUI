@@ -27,11 +27,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const scale = 0.5 + (progress * 0.5);
             item.style.transform = `scale(${scale})`;
         } 
+        if (dataAry.includes('slide-top')) {
+          const translateY = -100 + (progress * 100);
+          item.style.transform = `translateY(${translateY}%)`;
+        } else if (dataAry.includes('slide-bottom')) {
+          const translateY = 100 - (progress * 100);
+          item.style.transform = `translateY(${translateY}%)`;
+        } 
         if (dataAry.includes('slide-left')) {
             const translateX = -100 + (progress * 100);
             item.style.transform = `translateX(${translateX}%)`;
-        } 
-        if (dataAry.includes('slide-right')) {
+        } else if (dataAry.includes('slide-right')) {
             const translateX = 100 - (progress * 100);
             item.style.transform = `translateX(${translateX}%)`;
         } 
