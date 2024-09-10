@@ -10,57 +10,73 @@ const scrollAni = {
       scrollAni.ticking = true;
     }
   },
-  ani:function(el){
+  ani: function(el) {
     const elContent = el.querySelector('.feature');
     const aniEls = elContent.querySelectorAll('[data-scroll-ani]');
     const scrollParent = getScrollParent(el);
     const isWindowScroll = scrollParent === document.documentElement;
-
+  
     const elRect = el.getBoundingClientRect();
     const scrollParentRect = scrollParent.getBoundingClientRect();
-
-    const elTop = isWindowScroll ? el.offsetTop : elRect.top - scrollParentRect.top;
+  
+    const elTop = isWindowScroll ? el.offsetTop : elRect.top - scrollParentRect.top + scrollParent.scrollTop;
     const elHeight = el.offsetHeight;
     const scrollPosition = isWindowScroll ? window.scrollY : scrollParent.scrollTop;
     const viewportHeight = isWindowScroll ? window.innerHeight : scrollParent.clientHeight;
-
+  
+    if(elHeight === 0) return;
     // 스크롤 진행률 계산 (0 ~ 1)
-    let progress = (scrollPosition - elTop + viewportHeight) / elHeight;
-    
+    // let progress = isWindowScroll ? (scrollPosition - elTop + viewportHeight) / elHeight : (scrollPosition + viewportHeight - elTop) / (elHeight + viewportHeight);
+    let progress = (scrollPosition + viewportHeight - elTop) / elHeight;
+
+    if(progress < 0 || progress > 1) return;
     // 10% ~ 80% 범위로 조정
     progress = Math.max(0, Math.min(1, (progress - 0.1) / 0.8));
-
+  
     if (progress >= 0 && progress <= 1) {
       aniEls.forEach(function(item) {
         const data = item.dataset.scrollAni;
         if (!data) return;
         const dataAry = data.split(' ');
-
+  
+        let transform = '';
+        let opacity = 1;
+  
         if (dataAry.includes('scale-up')) {
           const scale = 0.5 + (progress * 0.5);
-          item.style.transform = `scale(${scale})`;
+          transform += `scale(${scale}) `;
         }
-
+  
         if (dataAry.includes('slide-top')) {
           const translateY = -100 + (progress * 100);
-          item.style.transform = `translateY(${translateY}%)`;
+          transform += `translateY(${translateY}%) `;
         } else if (dataAry.includes('slide-bottom')) {
           const translateY = 100 - (progress * 100);
-          item.style.transform = `translateY(${translateY}%)`;
+          transform += `translateY(${translateY}%) `;
         }
-
+  
         if (dataAry.includes('slide-left')) {
           const translateX = -100 + (progress * 100);
-          item.style.transform = `translateX(${translateX}%)`;
+          transform += `translateX(${translateX}%) `;
         } else if (dataAry.includes('slide-right')) {
           const translateX = 100 - (progress * 100);
-          item.style.transform = `translateX(${translateX}%)`;
+          transform += `translateX(${translateX}%) `;
         }
-
+  
         if (dataAry.includes('fade-in')) {
-          item.style.opacity = progress;
+          opacity = progress;
         }
+  
+        item.style.transform = transform.trim();
+        item.style.opacity = opacity;
       });
+      setTimeout(function(){
+        if(!elContent.classList.contains('_ing')) elContent.classList.add('_ing');
+      },0);
+    }else{
+      setTimeout(function(){
+        if(elContent.classList.contains('_ing')) elContent.classList.remove('_ing');
+      },0);
     }
   },
   scrollParentAry: [],

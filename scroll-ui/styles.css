@@ -73,6 +73,12 @@ html.pop-open{
   top: 0;
   overflow: hidden;
 }
+.feature [data-scroll-ani]{
+  will-change: transform, opacity;
+}
+.feature._ing [data-scroll-ani]{
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
 
 .feature-content {
   flex: 1;
@@ -94,8 +100,6 @@ html.pop-open{
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-  will-change: transform, opacity;
 }
 
 .feature h2 {
