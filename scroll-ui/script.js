@@ -19,28 +19,32 @@ document.addEventListener('DOMContentLoaded', () => {
     progress = Math.max(0, Math.min(1, (progress - 0.1) / 0.8));
 
     if (progress >= 0 && progress <= 1) {
-      aniEls.forEach(function(item){
+      aniEls.forEach(function(item) {
         const data = item.dataset.scrollAni;
-        if(!data) return;
+        if (!data) return;
         const dataAry = data.split(' ');
+
         if (dataAry.includes('scale-up')) {
-            const scale = 0.5 + (progress * 0.5);
-            item.style.transform = `scale(${scale})`;
-        } 
+          const scale = 0.5 + (progress * 0.5);
+          item.style.transform = `scale(${scale})`;
+        }
+
         if (dataAry.includes('slide-top')) {
           const translateY = -100 + (progress * 100);
           item.style.transform = `translateY(${translateY}%)`;
         } else if (dataAry.includes('slide-bottom')) {
           const translateY = 100 - (progress * 100);
           item.style.transform = `translateY(${translateY}%)`;
-        } 
+        }
+
         if (dataAry.includes('slide-left')) {
-            const translateX = -100 + (progress * 100);
-            item.style.transform = `translateX(${translateX}%)`;
+          const translateX = -100 + (progress * 100);
+          item.style.transform = `translateX(${translateX}%)`;
         } else if (dataAry.includes('slide-right')) {
-            const translateX = 100 - (progress * 100);
-            item.style.transform = `translateX(${translateX}%)`;
-        } 
+          const translateX = 100 - (progress * 100);
+          item.style.transform = `translateX(${translateX}%)`;
+        }
+
         if (dataAry.includes('fade-in')) {
           item.style.opacity = progress;
         }
@@ -50,14 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function animateOnScroll() {
     const currentScrollPosition = window.scrollY;
-
     if (!ticking && Math.abs(currentScrollPosition - lastScrollPosition) > scrollThreshold) {
       window.requestAnimationFrame(() => {
         features.forEach(animateFeature);
         ticking = false;
         lastScrollPosition = currentScrollPosition;
       });
-
       ticking = true;
     }
   }
