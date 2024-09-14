@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>순수 JS 스크롤 애니메이션</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+      .section {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2em;
+        color: white;
+      }
+      .section:nth-child(odd) {
+        background-color: #3498db;
+      }
+      .section:nth-child(even) {
+        background-color: #e74c3c;
+      }
+      .animate-me {
+        opacity: 0;
+        transform: translateY(50px) scale(0.8);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+      .animate-me.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="section">
+      <h1 class="animate-me">스크롤을 내려보세요</h1>
+    </div>
+    <div class="section">
+      <p class="animate-me">이 텍스트는 스크롤에 따라 점진적으로 변합니다.</p>
+    </div>
+    <div class="section">
+      <p class="animate-me">각 섹션은 개별적으로 애니메이션됩니다.</p>
+    </div>
+    <div class="section">
+      <p class="animate-me">순수 자바스크립트의 힘을 느껴보세요!</p>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const animateElements = document.querySelectorAll('.animate-me');
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                updateElementStyle(entry.target, entry.intersectionRatio);
+              } else {
+                entry.target.classList.remove('visible');
+              }
+            });
+          },
+          {
+            threshold: new Array(101).fill(0).map((_, i) => i / 100)
+          }
+        );
+
+        function updateElementStyle(element, ratio) {
+          const translateY = 50 - ratio * 50;
+          const scale = 0.8 + ratio * 0.2;
+          const opacity = ratio;
+
+          element.style.transform = `translateY(${translateY}px) scale(${scale})`;
+          element.style.opacity = opacity;
+        }
+
+        animateElements.forEach((element) => {
+          observer.observe(element);
+        });
+      });
+    </script>
+  </body>
+</html>
