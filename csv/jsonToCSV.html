@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export JSON to CSV</title>
+</head>
+<body>
+    <h1>Export JSON to CSV</h1>
+    <button id="downloadBtn">Download CSV</button>
+
+    <script>
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            // JSON 데이터
+            var jsonData = [
+                { "Name": "John", "Age": 25, "Country": "USA" },
+                { "Name": "Jane", "Age": 28, "Country": "Canada" },
+                { "Name": "Bob", "Age": 32, "Country": "UK" }
+            ];
+
+            // JSON 데이터를 CSV로 변환하는 함수
+            function jsonToCSV(jsonData) {
+                var csv = [];
+                var headers = Object.keys(jsonData[0]); // 헤더 생성
+                csv.push(headers.join(',')); // 헤더를 CSV의 첫 줄에 추가
+
+                jsonData.forEach(function(row) {
+                    var values = headers.map(function(header) {
+                        return '"' + row[header] + '"'; // CSV 형식에 맞게 따옴표 처리
+                    });
+                    csv.push(values.join(',')); // CSV 줄 생성
+                });
+
+                return csv.join('\n'); // CSV 문자열 반환
+            }
+
+            var csvData = jsonToCSV(jsonData);
+
+            // CSV 파일로 다운로드
+            var blob = new Blob([csvData], { type: 'text/csv' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'json_data.csv';
+            link.click();
+        });
+    </script>
+</body>
+</html>
