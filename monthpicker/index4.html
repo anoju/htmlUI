@@ -132,7 +132,7 @@
     </div>
     <div class="monthpicker-container">
       <input type="text" class="monthpicker">
-      <button type="button" class="setDataMin">data-min: 2025-05 클릭시 세팅</button>
+      <button type="button" class="setDataMin">클릭시 옵션 업데이트</button>
     </div>
   </div>
 
@@ -329,12 +329,12 @@ function createMonthPicker(inputElement, options = {}) {
       dropdown.style.top = `${rect.bottom + window.scrollY}px`;
       dropdown.style.left = `${rect.left + window.scrollX}px`;
     }
-    setupFocus(true);
-    setupDropdownEvents();
+    setFocus(true);
+    setDropdownEvents();
     dropdown.focus();
   }
 
-  function setupFocus(isShow){
+  function setFocus(isShow){
     const wrap = document.querySelector('.wrap');
     if(!wrap) return;
     if(isShow){
@@ -346,7 +346,7 @@ function createMonthPicker(inputElement, options = {}) {
     }
   }
   
-  function setupDropdownEvents() {
+  function setDropdownEvents() {
     const prevYearBtn = dropdown.querySelector('.prev-year');
     const nextYearBtn = dropdown.querySelector('.next-year');
     const closeBtn = dropdown.querySelector('.close-btn');
@@ -382,21 +382,48 @@ function createMonthPicker(inputElement, options = {}) {
       dropdown = null;
       if(isFocus)calendarButton.focus();
     }
-    setupFocus(false);
+    setFocus(false);
   }
   
   calendarButton.addEventListener('click', toggleDropdown);
   
   // 초기화
   if(pickerOptions.first) updateValue(); //선택해야만 value 세팅
+
+  // 업데이트
+  function updateOptions(newOptions = {}) {
+    if (newOptions.minDate) {
+      pickerOptions.minDate = parseDateString(newOptions.minDate);
+      inputElement.setAttribute('data-min', newOptions.minDate);
+    }
+    if (newOptions.maxDate) {
+      pickerOptions.maxDate = parseDateString(newOptions.maxDate);
+      inputElement.setAttribute('data-max', newOptions.maxDate);
+    }
+    if (newOptions.mobile !== undefined) {
+      pickerOptions.mobile = newOptions.mobile;
+    }
+
+    // 현재 날짜와 선택된 날짜가 새로운 범위 내에 있는지 확인하고 조정
+    if (currentDate < pickerOptions.minDate) {
+      currentDate = new Date(pickerOptions.minDate);
+    } else if (currentDate > pickerOptions.maxDate) {
+      currentDate = new Date(pickerOptions.maxDate);
+    }
+
+    if (selectedDate && (selectedDate < pickerOptions.minDate || selectedDate > pickerOptions.maxDate)) {
+      selectedDate = new Date(currentDate);
+      updateValue();
+    }
+
+    updateYearButtons();
+    createMonthButtons();
+    updateTitle();
+  }
   
   // 인스턴스 객체 생성
   const instance = {
-    update: function(newOptions) {
-      Object.assign(pickerOptions, newOptions);
-      updateYearButtons();
-      createMonthButtons();
-    },
+    update: updateOptions,
     getValue: function() {
       return {
         year: selectedDate.getFullYear(),
@@ -432,9 +459,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   //테스트용
   document.querySelector('.setDataMin').addEventListener('click', (e) => {
-    const target = e.target;
-    const input = target.parentElement.querySelector('input');
-    input.dataset.min = '2025-05';
+    const  picker = monthPickers[3];
+    picker.update({
+      minDate: '2025-02',
+      maxDate: '2025-11',
+      mobile: true
+    });
   });
 });
 </script>
