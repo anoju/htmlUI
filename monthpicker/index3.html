@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .month-picker-container {
+      position: relative;
+      width: 200px;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 4px;
+    }
+    
+    .month-picker-input {
+      flex-grow: 1;
+      padding: 8px;
+      cursor: default;
+    }
+    
+    .month-picker-button {
+      padding: 8px;
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .month-picker-button:hover {
+      background: #e0e0e0;
+    }
+    
+    .month-picker-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: none;
+      z-index: 1000;
+      margin-top: 4px;
+    }
+    
+    .year-selector {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .year-selector button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px 10px;
+    }
+    
+    .year-selector button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .months-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+      padding: 10px;
+    }
+    
+    .month-btn {
+      padding: 5px;
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+    
+    .month-btn:hover:not(:disabled) {
+      background-color: #f0f0f0;
+    }
+    
+    .month-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .selected {
+      background-color: #e6f0ff;
+    }
+  </style>
+</head>
+<body>
+  <!-- 예제 입력 필드들 -->
+  <div class="month-picker-container">
+    <input type="text" class="month-picker-input" data-min="2022-03" data-max="2024-10">
+  </div>
+  <div class="month-picker-container">
+    <input type="text" class="month-picker-input" data-min="2023-06" readonly>
+  </div>
+  <div class="month-picker-container">
+    <input type="text" class="month-picker-input" data-max="2025-03" readonly>
+  </div>
+  <div class="month-picker-container">
+    <input type="text" class="month-picker-input" readonly>
+  </div>
+
+  <script>
+    function createMonthPicker(inputElement, options = {}) {
+      const months = ["1월", "2월", "3월", "4월", "5월", "6월", 
+                      "7월", "8월", "9월", "10월", "11월", "12월"];
+      let currentDate = new Date();
+      let selectedDate = new Date();
+      
+      const container = inputElement.parentElement;
+      
+      // 달력 버튼 생성
+      const calendarButton = document.createElement('button');
+      calendarButton.className = 'month-picker-button';
+      calendarButton.innerHTML = '📅';
+      container.appendChild(calendarButton);
+      
+      const dropdown = createDropdownElement();
+      const yearDisplay = dropdown.querySelector('.year-display');
+      const prevYearBtn = dropdown.querySelector('.prev-year');
+      const nextYearBtn = dropdown.querySelector('.next-year');
+      const monthsGrid = dropdown.querySelector('.months-grid');
+      
+      function parseDateString(dateString) {
+        const [year, month] = dateString.split('-').map(Number);
+        return new Date(year, month - 1);
+      }
+      
+      function parseOptions() {
+        const dataMin = inputElement.getAttribute('data-min');
+        const dataMax = inputElement.getAttribute('data-max');
+        
+        return {
+          minDate: dataMin ? parseDateString(dataMin) : options.minDate,
+          maxDate: dataMax ? parseDateString(dataMax) : options.maxDate
+        };
+      }
+      
+      const pickerOptions = parseOptions();
+
+      function createDropdownElement() {
+        const dropdownElement = document.createElement('div');
+        dropdownElement.className = 'month-picker-dropdown';
+        
+        const yearSelector = document.createElement('div');
+        yearSelector.className = 'year-selector';
+        
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'prev-year';
+        prevBtn.textContent = '<';
+        
+        const yearSpan = document.createElement('span');
+        yearSpan.className = 'year-display';
+        
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'next-year';
+        nextBtn.textContent = '>';
+        
+        const monthsDiv = document.createElement('div');
+        monthsDiv.className = 'months-grid';
+        
+        yearSelector.appendChild(prevBtn);
+        yearSelector.appendChild(yearSpan);
+        yearSelector.appendChild(nextBtn);
+        
+        dropdownElement.appendChild(yearSelector);
+        dropdownElement.appendChild(monthsDiv);
+        
+        container.appendChild(dropdownElement);
+        
+        return dropdownElement;
+      }
+      
+      function updateDisplay() {
+        const year = currentDate.getFullYear();
+        const month = months[selectedDate.getMonth()];
+        const selectedYear = selectedDate.getFullYear();
+        inputElement.value = `${selectedYear}년 ${month}`;
+        yearDisplay.textContent = `${year}년`;
+      }
+      
+      function isDateInRange(year, month) {
+        const date = new Date(year, month);
+        const isAfterMin = !pickerOptions.minDate || date >= pickerOptions.minDate;
+        const isBeforeMax = !pickerOptions.maxDate || date <= pickerOptions.maxDate;
+        return isAfterMin && isBeforeMax;
+      }
+      
+      function updateYearButtons() {
+        const currentYear = currentDate.getFullYear();
+        
+        if (pickerOptions.minDate) {
+          prevYearBtn.disabled = currentYear <= pickerOptions.minDate.getFullYear();
+        }
+        
+        if (pickerOptions.maxDate) {
+          nextYearBtn.disabled = currentYear >= pickerOptions.maxDate.getFullYear();
+        }
+      }
+      
+      function createMonthButtons() {
+        monthsGrid.innerHTML = '';
+        const currentYear = currentDate.getFullYear();
+        
+        months.forEach((month, index) => {
+          const btn = document.createElement('button');
+          btn.className = 'month-btn';
+          btn.textContent = month;
+          
+          if (currentYear === selectedDate.getFullYear() && 
+              index === selectedDate.getMonth()) {
+            btn.classList.add('selected');
+          }
+          
+          if (!isDateInRange(currentYear, index)) {
+            btn.disabled = true;
+          }
+          
+          btn.addEventListener('click', () => selectMonth(index));
+          monthsGrid.appendChild(btn);
+        });
+      }
+      
+      function selectMonth(monthIndex) {
+        const newDate = new Date(currentDate.getFullYear(), monthIndex);
+        
+        if (isDateInRange(newDate.getFullYear(), newDate.getMonth())) {
+          selectedDate = newDate;
+          updateDisplay();
+          createMonthButtons();
+          dropdown.style.display = 'none';
+          
+          const event = new CustomEvent('monthSelect', {
+            detail: {
+              year: selectedDate.getFullYear(),
+              month: selectedDate.getMonth() + 1
+            }
+          });
+          inputElement.dispatchEvent(event);
+        }
+      }
+      
+      function toggleDropdown(e) {
+        e.stopPropagation();
+        const isVisible = dropdown.style.display === 'block';
+        
+        // 모든 드롭다운 닫기
+        document.querySelectorAll('.month-picker-dropdown').forEach(d => {
+          d.style.display = 'none';
+        });
+        
+        if (!isVisible) {
+          dropdown.style.display = 'block';
+        }
+      }
+      
+      // input 대신 버튼에 이벤트 리스너 설정
+      calendarButton.addEventListener('click', toggleDropdown);
+      
+      prevYearBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        currentDate.setFullYear(currentDate.getFullYear() - 1);
+        updateDisplay();
+        createMonthButtons();
+        updateYearButtons();
+      });
+      
+      nextYearBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        currentDate.setFullYear(currentDate.getFullYear() + 1);
+        updateDisplay();
+        createMonthButtons();
+        updateYearButtons();
+      });
+      
+      // 초기화
+      updateDisplay();
+      createMonthButtons();
+      updateYearButtons();
+      
+      // 공개 메서드
+      return {
+        update: function(newOptions) {
+          Object.assign(pickerOptions, newOptions);
+          updateYearButtons();
+          createMonthButtons();
+        },
+        getValue: function() {
+          return {
+            year: selectedDate.getFullYear(),
+            month: selectedDate.getMonth() + 1
+          };
+        }
+      };
+    }
+
+    // 전역 클릭 이벤트 리스너
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.month-picker-container')) {
+        document.querySelectorAll('.month-picker-dropdown').forEach(dropdown => {
+          dropdown.style.display = 'none';
+        });
+      }
+    });
+
+    // 모든 month picker 입력 필드 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.month-picker-input').forEach(input => {
+        createMonthPicker(input);
+      });
+    });
+  </script>
+</body>
+</html>
