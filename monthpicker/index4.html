@@ -173,8 +173,9 @@ const monthPickers = [];
 function createMonthPicker(inputElement, options = {}) {
   const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
   let currentDate = new Date();
+  const todayDate = new Date();
   let selectedDate = null;
-  
+  let dropdown = null;
   const container = inputElement.parentElement;
   
   // 달력 버튼 생성
@@ -187,7 +188,6 @@ function createMonthPicker(inputElement, options = {}) {
   //container.appendChild(calendarButton);
   container.insertBefore(calendarButton, inputElement.nextSibling);
   
-  let dropdown = null;
   
   function parseDateString(dateString) {
     const [year, month] = dateString.split('-').map(Number);
@@ -228,8 +228,7 @@ function createMonthPicker(inputElement, options = {}) {
     const dropdownElement = document.createElement('div');
     if(pickerOptions.mobile) dropdownElement.className = 'month-picker-wrap fixed';
     else dropdownElement.className = 'month-picker-wrap base';
-    dropdownElement.setAttribute('tabindex', '-1');
-  
+    
     const $html = `<div class="month-picker-inr">
       <div class="year-selector">
         <button type="button" class="prev-year"><span class="blind">이전년도</span></button>
@@ -241,9 +240,7 @@ function createMonthPicker(inputElement, options = {}) {
     <div>`;
     
     dropdownElement.innerHTML = $html;
-
     document.body.appendChild(dropdownElement);
-    
     dropdown = dropdownElement;
     return dropdownElement;
   }
@@ -271,23 +268,15 @@ function createMonthPicker(inputElement, options = {}) {
   
   function updateYearButtons() {
     if (!dropdown) return;
-    
     const currentYear = currentDate.getFullYear();
     const prevYearBtn = dropdown.querySelector('.prev-year');
     const nextYearBtn = dropdown.querySelector('.next-year');
-    
-    if (pickerOptions.minDate) {
-      prevYearBtn.disabled = currentYear <= pickerOptions.minDate.getFullYear();
-    }
-    
-    if (pickerOptions.maxDate) {
-      nextYearBtn.disabled = currentYear >= pickerOptions.maxDate.getFullYear();
-    }
+    if (pickerOptions.minDate) prevYearBtn.disabled = currentYear <= pickerOptions.minDate.getFullYear();
+    if (pickerOptions.maxDate) nextYearBtn.disabled = currentYear >= pickerOptions.maxDate.getFullYear();
   }
   
   function createMonthButtons() {
     if (!dropdown) return;
-    
     const monthsGrid = dropdown.querySelector('.months-grid');
     monthsGrid.innerHTML = '';
     const currentYear = currentDate.getFullYear();
@@ -297,12 +286,15 @@ function createMonthPicker(inputElement, options = {}) {
       btn.type = 'button';
       btn.className = 'month-btn';
       btn.innerHTML = month + '<span class="blind">'+currentYear+'</span>';
-            
+      
+      if (currentYear === todayDate.getFullYear() && index === todayDate.getMonth()) {
+        btn.classList.add('today');
+        btn.title = '이번달';
+      }
       if (selectedDate && currentYear === selectedDate.getFullYear() && index === selectedDate.getMonth()) {
         btn.classList.add('selected');
         btn.title = '선택됨';
       }
-      
       if (!isDateInRange(currentYear, index)) {
         btn.disabled = true;
       }
@@ -318,29 +310,17 @@ function createMonthPicker(inputElement, options = {}) {
   
   function selectMonth(monthIndex) {
     const newDate = new Date(currentDate.getFullYear(), monthIndex);
-    
     if (isDateInRange(newDate.getFullYear(), newDate.getMonth())) {
       selectedDate = newDate;
       updateValue();
       removeDropdown(true);
-      
-      const event = new CustomEvent('monthSelect', {
-        detail: {
-          year: selectedDate.getFullYear(),
-          month: selectedDate.getMonth() + 1
-        }
-      });
-      inputElement.dispatchEvent(event);
     }
   }
   
   function toggleDropdown(e) {
     e.stopPropagation();
-    if (dropdown) {
-      removeDropdown();
-    } else {
-      createAndShowDropdown();
-    }
+    if (dropdown) removeDropdown();
+    else createAndShowDropdown();
   }
 
   function createAndShowDropdown() {
@@ -358,11 +338,14 @@ function createMonthPicker(inputElement, options = {}) {
     if(!pickerOptions.mobile){
       const rect = container.getBoundingClientRect();
       dropdown.style.position = 'absolute';
-      dropdown.style.top = `${rect.bottom + window.scrollY}px`;
       dropdown.style.left = `${rect.left + window.scrollX}px`;
+      let setTop = dropdown;
+      if(setTop + dropdown.offsetHeight > window.innerHeight + window.scrollY) setTop = setTop - dropdown.offsetHeight - inputElement.offsetHeight;
+      dropdown.style.top = `${setTop}px`;
     }
     setFocus(true);
     setDropdownEvents();
+    dropdown.setAttribute('tabindex', '-1');
     dropdown.focus();
   }
 
@@ -386,7 +369,6 @@ function createMonthPicker(inputElement, options = {}) {
     prevYearBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       currentDate.setFullYear(currentDate.getFullYear() - 1);
-      // updateValue(); //선택해야만 value 세팅
       updateTitle();
       createMonthButtons();
       updateYearButtons();
@@ -396,7 +378,6 @@ function createMonthPicker(inputElement, options = {}) {
     nextYearBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       currentDate.setFullYear(currentDate.getFullYear() + 1);
-      // updateValue(); //선택해야만 value 세팅
       updateTitle();
       createMonthButtons();
       updateYearButtons();
@@ -409,12 +390,11 @@ function createMonthPicker(inputElement, options = {}) {
   }
   
   function removeDropdown(isFocus) {
-    if (dropdown) {
-      document.body.removeChild(dropdown);
-      dropdown = null;
-      if(isFocus)calendarButton.focus();
-    }
+    if (!dropdown) return;
     setFocus(false);
+    document.body.removeChild(dropdown);
+    dropdown = null;
+    if(isFocus)calendarButton.focus();
   }
   
   calendarButton.addEventListener('click', toggleDropdown);
