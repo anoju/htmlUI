@@ -6,7 +6,7 @@
     button{
       cursor: pointer;
     }
-    
+
     .month-picker-container {
       position: relative;
       width: 200px;
@@ -124,7 +124,7 @@
       <input type="text" class="month-picker-input" data-min="2023-06" data-mobile placeholder="모바일용">
     </div>
     <div class="month-picker-container">
-      <input type="text" class="month-picker-input" data-max="2025-03">
+      <input type="text" class="month-picker-input" data-max="2025-03" data-first placeholder="초기값 세팅">
     </div>
     <div class="month-picker-container">
       <input type="text" class="month-picker-input">
@@ -136,7 +136,7 @@ const monthPickers = [];
 function createMonthPicker(inputElement, options = {}) {
   const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
   let currentDate = new Date();
-  let selectedDate = new Date();
+  let selectedDate = null;
   
   const container = inputElement.parentElement;
   
@@ -158,15 +158,20 @@ function createMonthPicker(inputElement, options = {}) {
     const dataMax = inputElement.getAttribute('data-max');
     let mobile = inputElement.getAttribute('data-mobile');
     if(mobile === '') mobile = true;
+    let first = inputElement.getAttribute('data-first');
+    if(first === '') first = true;
 
     return {
       minDate: dataMin ? parseDateString(dataMin) : options.minDate,
       maxDate: dataMax ? parseDateString(dataMax) : options.maxDate,
-      mobile: mobile ? mobile : options.mobile
+      mobile: mobile ? mobile : options.mobile,
+      first: first ? first : options.first,
     };
   }
   
   const pickerOptions = parseOptions();
+  console.log(pickerOptions.first)
+  if(pickerOptions.first) selectedDate = new Date();
 
   function createDropdownElement() {
     const dropdownElement = document.createElement('div');
@@ -217,6 +222,7 @@ function createMonthPicker(inputElement, options = {}) {
   }
   
   function updateValue() {
+    if(!selectedDate) return;
     let month = selectedDate.getMonth() + 1;
     if(month < 10) month = '0'+month;
     const selectedYear = selectedDate.getFullYear();
@@ -265,7 +271,7 @@ function createMonthPicker(inputElement, options = {}) {
       btn.className = 'month-btn';
       btn.textContent = month;
       
-      if (currentYear === selectedDate.getFullYear() && index === selectedDate.getMonth()) {
+      if (selectedDate && currentYear === selectedDate.getFullYear() && index === selectedDate.getMonth()) {
         btn.classList.add('selected');
       }
       
@@ -307,7 +313,7 @@ function createMonthPicker(inputElement, options = {}) {
 
   function createAndShowDropdown() {
     dropdown = createDropdownElement();
-    // updateValue();
+    if(pickerOptions.first) updateValue();
     updateTitle();
     createMonthButtons();
     updateYearButtons();
@@ -377,7 +383,7 @@ function createMonthPicker(inputElement, options = {}) {
   calendarButton.addEventListener('click', toggleDropdown);
   
   // 초기화
-  // updateValue(); //선택해야만 value 세팅
+  if(pickerOptions.first) updateValue(); //선택해야만 value 세팅
   
   // 인스턴스 객체 생성
   const instance = {
