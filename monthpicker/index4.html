@@ -159,8 +159,8 @@
       <span>모바일용, 최소 2023-06</span>
     </div>
     <div class="monthpicker-container">
-      <input type="text" class="monthpicker" data-max="2025-03" data-first placeholder="초기값 세팅">
-      <span>초기값 세팅, 최소 2025-03</span>
+      <input type="text" class="monthpicker" data-max="2025-03" data-first>
+      <span>초기값(현재 월) 세팅, 최소 2025-03</span>
     </div>
     <div class="monthpicker-container">
       <input type="text" class="monthpicker">
@@ -215,7 +215,7 @@ function createMonthPicker(inputElement, options = {}) {
     if (inputValue) {
       selectedDate = parseDateString(inputValue);
       currentDate = new Date(selectedDate);
-    } else {
+    } else if(pickerOptions.first && selectedDate === null) {
       selectedDate = new Date();
     }
   }
