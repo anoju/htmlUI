@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>monthpicker4</title>
   <style>
+    button{
+      cursor: pointer;
+    }
+    
     .month-picker-container {
       position: relative;
       width: 200px;
@@ -13,7 +18,6 @@
     .month-picker-input {
       flex-grow: 1;
       padding: 8px;
-      cursor: default;
     }
     
     .month-picker-button {
@@ -21,33 +25,42 @@
       background: #f0f0f0;
       border: 1px solid #ccc;
       border-radius: 4px;
-      cursor: pointer;
     }
     
     .month-picker-button:hover {
       background: #e0e0e0;
     }
-    
 
-
-    .month-picker-dropdown {
+    .month-picker-dropdown.base {
       position: absolute;
       top: 100%;
       left: 0;
-      /* width: 100%; */
-      width: 300px;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       z-index: 1000;
       margin-top: 4px;
     }
+    .month-picker-dropdown.fixed{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.6);
+      display:flex;
+      align-items: center;
+      justify-content: center;
+    }
     .month-picker-inr{
+      width: 300px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .month-picker-dropdown .month-picker-inr{
       position:relative;
     }
     
-    .year-selector {
+    .month-picker-dropdown .year-selector {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -59,7 +72,6 @@
     .month-picker-dropdown button {
       background: none;
       border: none;
-      cursor: pointer;
       padding: 5px 10px;
     }
     
@@ -67,33 +79,35 @@
       opacity: 0.5;
     }
     
-    .months-grid {
+    .month-picker-dropdown .months-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 5px;
       padding: 10px;
     }
     
-    .month-btn {
+    .month-picker-dropdown .month-btn {
       padding: 5px;
       border: none;
       background: none;
-      cursor: pointer;
     }
     
-    .month-btn:hover:not(:disabled) {
+    .month-picker-dropdown .month-btn:hover:not(:disabled) {
       background-color: #f0f0f0;
     }
     
-    .month-btn:disabled {
+    .month-picker-dropdown .month-btn:disabled {
       opacity: 0.5;
-      cursor: not-allowed;
     }
     
-    .selected {
-      background-color: #e6f0ff;
+    .month-picker-dropdown .selected{
+      font-weight:bold;
     }
-    .close-btn{
+    .month-picker-dropdown .selected:not(:hover) {
+      background-color: #428dfc;
+      color:#fff;
+    }
+    .month-picker-dropdown .close-btn{
       position:absolute;
       top:10px;
       right: 10px;
@@ -101,23 +115,24 @@
   </style>
 </head>
 <body>
-  <!-- 예제 입력 필드들 -->
-  <div class="month-picker-container">
-    <input type="text" class="month-picker-input" data-min="2022-03" data-max="2024-10">
-  </div>
-  <div class="month-picker-container">
-    <input type="text" class="month-picker-input" data-min="2023-06" readonly>
-  </div>
-  <div class="month-picker-container">
-    <input type="text" class="month-picker-input" data-max="2025-03" readonly>
-  </div>
-  <div class="month-picker-container">
-    <input type="text" class="month-picker-input" readonly>
+  <div class="wrap">
+    <!-- 예제 입력 필드들 -->
+    <div class="month-picker-container">
+      <input type="text" class="month-picker-input" data-min="2022-03" data-max="2024-10">
+    </div>
+    <div class="month-picker-container">
+      <input type="text" class="month-picker-input" data-min="2023-06" data-mobile placeholder="모바일용">
+    </div>
+    <div class="month-picker-container">
+      <input type="text" class="month-picker-input" data-max="2025-03">
+    </div>
+    <div class="month-picker-container">
+      <input type="text" class="month-picker-input">
+    </div>
   </div>
 
   <script>
 const monthPickers = [];
-const isMonthPickerMobile = false;
 function createMonthPicker(inputElement, options = {}) {
   const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
   let currentDate = new Date();
@@ -141,10 +156,13 @@ function createMonthPicker(inputElement, options = {}) {
   function parseOptions() {
     const dataMin = inputElement.getAttribute('data-min');
     const dataMax = inputElement.getAttribute('data-max');
-    
+    let mobile = inputElement.getAttribute('data-mobile');
+    if(mobile === '') mobile = true;
+
     return {
       minDate: dataMin ? parseDateString(dataMin) : options.minDate,
-      maxDate: dataMax ? parseDateString(dataMax) : options.maxDate
+      maxDate: dataMax ? parseDateString(dataMax) : options.maxDate,
+      mobile: mobile ? mobile : options.mobile
     };
   }
   
@@ -152,7 +170,8 @@ function createMonthPicker(inputElement, options = {}) {
 
   function createDropdownElement() {
     const dropdownElement = document.createElement('div');
-    dropdownElement.className = 'month-picker-dropdown';
+    if(pickerOptions.mobile) dropdownElement.className = 'month-picker-dropdown fixed';
+    else dropdownElement.className = 'month-picker-dropdown base';
     dropdownElement.setAttribute('tabindex', '-1');
 
     const dropdownElementInr = document.createElement('div');
@@ -197,11 +216,14 @@ function createMonthPicker(inputElement, options = {}) {
     return dropdownElement;
   }
   
-  function updateDisplay() {
-    const year = currentDate.getFullYear();
-    const month = months[selectedDate.getMonth()];
+  function updateValue() {
+    let month = selectedDate.getMonth() + 1;
+    if(month < 10) month = '0'+month;
     const selectedYear = selectedDate.getFullYear();
-    inputElement.value = `${selectedYear}년 ${month}`;
+    inputElement.value = `${selectedYear}-${month}`;
+  }
+  function updateTitle(){
+    const year = currentDate.getFullYear();
     if (dropdown) {
       dropdown.querySelector('.year-display').textContent = `${year}년`;
     }
@@ -243,8 +265,7 @@ function createMonthPicker(inputElement, options = {}) {
       btn.className = 'month-btn';
       btn.textContent = month;
       
-      if (currentYear === selectedDate.getFullYear() && 
-          index === selectedDate.getMonth()) {
+      if (currentYear === selectedDate.getFullYear() && index === selectedDate.getMonth()) {
         btn.classList.add('selected');
       }
       
@@ -262,7 +283,7 @@ function createMonthPicker(inputElement, options = {}) {
     
     if (isDateInRange(newDate.getFullYear(), newDate.getMonth())) {
       selectedDate = newDate;
-      updateDisplay();
+      updateValue();
       removeDropdown(true);
       
       const event = new CustomEvent('monthSelect', {
@@ -286,24 +307,32 @@ function createMonthPicker(inputElement, options = {}) {
 
   function createAndShowDropdown() {
     dropdown = createDropdownElement();
-    updateDisplay();
+    // updateValue();
+    updateTitle();
     createMonthButtons();
     updateYearButtons();
     
-    if(!isMonthPickerMobile){
+    if(!pickerOptions.mobile){
       const rect = container.getBoundingClientRect();
       dropdown.style.position = 'absolute';
       dropdown.style.top = `${rect.bottom + window.scrollY}px`;
       dropdown.style.left = `${rect.left + window.scrollX}px`;
-      setupFocus();
     }
-    
+    setupFocus(true);
     setupDropdownEvents();
     dropdown.focus();
   }
 
-  function setupFocus(){
-    //pc 일때만 포커스제어 이벤트 추가필ㅇ요
+  function setupFocus(isShow){
+    const wrap = document.querySelector('.wrap');
+    if(!wrap) return;
+    if(isShow){
+      if(pickerOptions.mobile) wrap.ariaHidden = true;
+      else wrap.inert = true;
+    }else{
+      if(pickerOptions.mobile) wrap.ariaHidden = null;
+      else wrap.inert = false;
+    }
   }
   
   function setupDropdownEvents() {
@@ -314,17 +343,21 @@ function createMonthPicker(inputElement, options = {}) {
     prevYearBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       currentDate.setFullYear(currentDate.getFullYear() - 1);
-      updateDisplay();
+      // updateValue(); //선택해야만 value 세팅
+      updateTitle();
       createMonthButtons();
       updateYearButtons();
+      dropdown.querySelector('.prev-year').focus();
     });
     
     nextYearBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       currentDate.setFullYear(currentDate.getFullYear() + 1);
-      updateDisplay();
+      // updateValue(); //선택해야만 value 세팅
+      updateTitle();
       createMonthButtons();
       updateYearButtons();
+      dropdown.querySelector('.next-year').focus();
     });
 
     closeBtn.addEventListener('click', function(){
@@ -338,12 +371,13 @@ function createMonthPicker(inputElement, options = {}) {
       dropdown = null;
       if(isFocus)calendarButton.focus();
     }
+    setupFocus(false);
   }
   
   calendarButton.addEventListener('click', toggleDropdown);
   
   // 초기화
-  updateDisplay();
+  // updateValue(); //선택해야만 value 세팅
   
   // 인스턴스 객체 생성
   const instance = {
@@ -372,10 +406,7 @@ function createMonthPicker(inputElement, options = {}) {
 // 전역 클릭 이벤트 리스너를 한 번만 추가
 document.addEventListener('click', function(e) {
   monthPickers.forEach(picker => {
-    console.log(picker.getDropdown())
-    if (!e.target.closest('.month-picker-container') && 
-        !e.target.closest('.month-picker-dropdown') &&
-        picker.getDropdown()) {
+    if (!e.target.closest('.month-picker-container') && !e.target.closest('.month-picker-inr') && picker.getDropdown()) {
       picker.removeDropdown();
     }
   });
