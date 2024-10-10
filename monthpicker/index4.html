@@ -210,8 +210,19 @@ function createMonthPicker(inputElement, options = {}) {
     };
   }
   
+  function initializeSelectedDate() {
+    const inputValue = inputElement.value;
+    if (inputValue) {
+      selectedDate = parseDateString(inputValue);
+      currentDate = new Date(selectedDate);
+    } else {
+      selectedDate = new Date();
+    }
+  }
+  
   const pickerOptions = parseOptions();
-  if(pickerOptions.first && selectedDate === null) selectedDate = new Date();
+  // if(pickerOptions.first && selectedDate === null) selectedDate = new Date();
+  initializeSelectedDate();
 
   function createDropdownElement() {
     const dropdownElement = document.createElement('div');
@@ -333,6 +344,11 @@ function createMonthPicker(inputElement, options = {}) {
   }
 
   function createAndShowDropdown() {
+    // min, max 값을 다시 가져와 적용
+    const newOptions = parseOptions();
+    pickerOptions.minDate = newOptions.minDate;
+    pickerOptions.maxDate = newOptions.maxDate;
+
     dropdown = createDropdownElement();
     if(pickerOptions.first) updateValue();
     updateTitle();
