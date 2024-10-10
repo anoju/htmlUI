@@ -116,6 +116,8 @@
   </div>
 
   <script>
+const monthPickers = [];
+const isMonthPickerMobile = false;
 function createMonthPicker(inputElement, options = {}) {
   const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
   let currentDate = new Date();
@@ -160,6 +162,7 @@ function createMonthPicker(inputElement, options = {}) {
     yearSelector.className = 'year-selector';
     
     const prevBtn = document.createElement('button');
+    prevBtn.type = 'button';
     prevBtn.className = 'prev-year';
     prevBtn.textContent = '<';
     
@@ -167,15 +170,14 @@ function createMonthPicker(inputElement, options = {}) {
     yearSpan.className = 'year-display';
     
     const nextBtn = document.createElement('button');
+    nextBtn.type = 'button';
     nextBtn.className = 'next-year';
     nextBtn.textContent = '>';
     
     const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
     closeBtn.className = 'close-btn';
     closeBtn.textContent = 'X';
-    closeBtn.addEventListener('click', function(){
-      removeDropdown(true);
-    });
     
     const monthsDiv = document.createElement('div');
     monthsDiv.className = 'months-grid';
@@ -191,6 +193,7 @@ function createMonthPicker(inputElement, options = {}) {
     dropdownElement.appendChild(dropdownElementInr);
     document.body.appendChild(dropdownElement);
     
+    dropdown = dropdownElement;
     return dropdownElement;
   }
   
@@ -236,6 +239,7 @@ function createMonthPicker(inputElement, options = {}) {
     
     months.forEach((month, index) => {
       const btn = document.createElement('button');
+      btn.type = 'button';
       btn.className = 'month-btn';
       btn.textContent = month;
       
@@ -273,26 +277,39 @@ function createMonthPicker(inputElement, options = {}) {
   
   function toggleDropdown(e) {
     e.stopPropagation();
-    removeDropdown();
+    if (dropdown) {
+      removeDropdown();
+    } else {
+      createAndShowDropdown();
+    }
+  }
+
+  function createAndShowDropdown() {
+    dropdown = createDropdownElement();
+    updateDisplay();
+    createMonthButtons();
+    updateYearButtons();
     
-    if (!dropdown) {
-      dropdown = createDropdownElement();
-      updateDisplay();
-      createMonthButtons();
-      updateYearButtons();
-      
+    if(!isMonthPickerMobile){
       const rect = container.getBoundingClientRect();
       dropdown.style.position = 'absolute';
       dropdown.style.top = `${rect.bottom + window.scrollY}px`;
       dropdown.style.left = `${rect.left + window.scrollX}px`;
-      
-      dropdown.focus();
+      setupFocus();
     }
+    
+    setupDropdownEvents();
+    dropdown.focus();
+  }
+
+  function setupFocus(){
+    //pc 일때만 포커스제어 이벤트 추가필ㅇ요
   }
   
   function setupDropdownEvents() {
     const prevYearBtn = dropdown.querySelector('.prev-year');
     const nextYearBtn = dropdown.querySelector('.next-year');
+    const closeBtn = dropdown.querySelector('.close-btn');
     
     prevYearBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -309,6 +326,10 @@ function createMonthPicker(inputElement, options = {}) {
       createMonthButtons();
       updateYearButtons();
     });
+
+    closeBtn.addEventListener('click', function(){
+      removeDropdown(true);
+    });
   }
   
   function removeDropdown(isFocus) {
@@ -321,18 +342,11 @@ function createMonthPicker(inputElement, options = {}) {
   
   calendarButton.addEventListener('click', toggleDropdown);
   
-  // 전역 클릭 이벤트 리스너
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('.month-picker-container') && !e.target.closest('.month-picker-dropdown')) {
-      removeDropdown();
-    }
-  });
-  
   // 초기화
   updateDisplay();
   
-  // 공개 메서드
-  return {
+  // 인스턴스 객체 생성
+  const instance = {
     update: function(newOptions) {
       Object.assign(pickerOptions, newOptions);
       updateYearButtons();
@@ -344,9 +358,28 @@ function createMonthPicker(inputElement, options = {}) {
         month: selectedDate.getMonth() + 1
       };
     },
-    removeDropdown: removeDropdown
+    removeDropdown: removeDropdown,
+    container: container,
+    getDropdown: function() { return dropdown; }
   };
+
+  // 인스턴스를 전역 배열에 추가
+  monthPickers.push(instance);
+  
+  return instance;
 }
+
+// 전역 클릭 이벤트 리스너를 한 번만 추가
+document.addEventListener('click', function(e) {
+  monthPickers.forEach(picker => {
+    console.log(picker.getDropdown())
+    if (!e.target.closest('.month-picker-container') && 
+        !e.target.closest('.month-picker-dropdown') &&
+        picker.getDropdown()) {
+      picker.removeDropdown();
+    }
+  });
+});
 
 // 모든 month picker 입력 필드 초기화
 document.addEventListener('DOMContentLoaded', function() {
@@ -354,6 +387,6 @@ document.addEventListener('DOMContentLoaded', function() {
     createMonthPicker(input);
   });
 });
-  </script>
+</script>
 </body>
 </html>
