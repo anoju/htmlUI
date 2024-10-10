@@ -15,8 +15,12 @@
       align-items: center;
     }
     .monthpicker {
+      box-sizing: border-box;
       width: 140px;
+      height: 40px;
       padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
     .blind{
       font-size:0;
@@ -27,15 +31,12 @@
     }
     
     /* 버튼 */
-    .month-picker-button {
-      padding: 8px;
-      background: #f0f0f0;
+    .month-picker-btn {
+      width: 45px;
+      height: 40px;
+      background: url(https://nwww-t.sgic.co.kr/resource/pc/images/common/form_calander.png) no-repeat center center;
       border: 1px solid #ccc;
       border-radius: 4px;
-    }
-    
-    .month-picker-button:hover {
-      background: #e0e0e0;
     }
 
     /* 레이어 */
@@ -150,11 +151,11 @@
   <div class="wrap">
     <!-- 예제 입력 필드들 -->
     <div class="monthpicker-container">
-      <input type="text" class="monthpicker" data-min="2022-03" data-max="2024-10">
+      <input type="text" class="monthpicker" data-min="2022-03" data-max="2024-10" title="조회기간">
       <span>2022-03 ~ 2024-10</span>
     </div>
     <div class="monthpicker-container">
-      <input type="text" class="monthpicker" data-min="2023-06" data-mobile placeholder="모바일용">
+      <input type="text" class="monthpicker" data-min="2023-06" value="2024-08" data-mobile placeholder="모바일용">
       <span>모바일용, 최소 2023-06</span>
     </div>
     <div class="monthpicker-container">
@@ -178,8 +179,11 @@ function createMonthPicker(inputElement, options = {}) {
   
   // 달력 버튼 생성
   const calendarButton = document.createElement('button');
-  calendarButton.className = 'month-picker-button';
-  calendarButton.innerHTML = '📅';
+  calendarButton.type = 'button';
+  calendarButton.className = 'month-picker-btn';
+  let btnSettxt = '월 선택';
+  if(inputElement.title) btnSettxt = inputElement.title +' '+ btnSettxt;
+  calendarButton.innerHTML = '<span class="blind">'+btnSettxt+'</span>';
   //container.appendChild(calendarButton);
   container.insertBefore(calendarButton, inputElement.nextSibling);
   
@@ -207,7 +211,7 @@ function createMonthPicker(inputElement, options = {}) {
   }
   
   const pickerOptions = parseOptions();
-  if(pickerOptions.first) selectedDate = new Date();
+  if(pickerOptions.first && selectedDate === null) selectedDate = new Date();
 
   function createDropdownElement() {
     const dropdownElement = document.createElement('div');
