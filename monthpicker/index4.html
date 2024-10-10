@@ -3,23 +3,23 @@
 <head>
   <title>monthpicker4</title>
   <style>
+    /* input 예제 */
     button{
       cursor: pointer;
     }
-
-    .month-picker-container {
+    .monthpicker-container {
       position: relative;
-      width: 200px;
       margin-bottom: 10px;
       display: flex;
       gap: 4px;
+      align-items: center;
     }
-    
-    .month-picker-input {
-      flex-grow: 1;
+    .monthpicker {
+      width: 140px;
       padding: 8px;
     }
     
+    /* 버튼 */
     .month-picker-button {
       padding: 8px;
       background: #f0f0f0;
@@ -31,6 +31,7 @@
       background: #e0e0e0;
     }
 
+    /* 레이어 */
     .month-picker-dropdown.base {
       position: absolute;
       top: 100%;
@@ -117,17 +118,21 @@
 <body>
   <div class="wrap">
     <!-- 예제 입력 필드들 -->
-    <div class="month-picker-container">
-      <input type="text" class="month-picker-input" data-min="2022-03" data-max="2024-10">
+    <div class="monthpicker-container">
+      <input type="text" class="monthpicker" data-min="2022-03" data-max="2024-10">
+      <span>2022-03 ~ 2024-10</span>
     </div>
-    <div class="month-picker-container">
-      <input type="text" class="month-picker-input" data-min="2023-06" data-mobile placeholder="모바일용">
+    <div class="monthpicker-container">
+      <input type="text" class="monthpicker" data-min="2023-06" data-mobile placeholder="모바일용">
+      <span>모바일용, 최소 2023-06</span>
     </div>
-    <div class="month-picker-container">
-      <input type="text" class="month-picker-input" data-max="2025-03" data-first placeholder="초기값 세팅">
+    <div class="monthpicker-container">
+      <input type="text" class="monthpicker" data-max="2025-03" data-first placeholder="초기값 세팅">
+      <span>초기값 세팅, 최소 2025-03</span>
     </div>
-    <div class="month-picker-container">
-      <input type="text" class="month-picker-input">
+    <div class="monthpicker-container">
+      <input type="text" class="monthpicker">
+      <button type="button" class="setDataMin">data-min: 2025-05 클릭시 세팅</button>
     </div>
   </div>
 
@@ -144,7 +149,8 @@ function createMonthPicker(inputElement, options = {}) {
   const calendarButton = document.createElement('button');
   calendarButton.className = 'month-picker-button';
   calendarButton.innerHTML = '📅';
-  container.appendChild(calendarButton);
+  //container.appendChild(calendarButton);
+  container.insertBefore(calendarButton, inputElement.nextSibling);
   
   let dropdown = null;
   
@@ -170,7 +176,6 @@ function createMonthPicker(inputElement, options = {}) {
   }
   
   const pickerOptions = parseOptions();
-  console.log(pickerOptions.first)
   if(pickerOptions.first) selectedDate = new Date();
 
   function createDropdownElement() {
@@ -412,7 +417,7 @@ function createMonthPicker(inputElement, options = {}) {
 // 전역 클릭 이벤트 리스너를 한 번만 추가
 document.addEventListener('click', function(e) {
   monthPickers.forEach(picker => {
-    if (!e.target.closest('.month-picker-container') && !e.target.closest('.month-picker-inr') && picker.getDropdown()) {
+    if (!e.target.closest('.month-picker-inr') && picker.getDropdown()) {
       picker.removeDropdown();
     }
   });
@@ -420,8 +425,16 @@ document.addEventListener('click', function(e) {
 
 // 모든 month picker 입력 필드 초기화
 document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.month-picker-input').forEach(input => {
+  document.querySelectorAll('.monthpicker').forEach(input => {
     createMonthPicker(input);
+  });
+
+
+  //테스트용
+  document.querySelector('.setDataMin').addEventListener('click', (e) => {
+    const target = e.target;
+    const input = target.parentElement.querySelector('input');
+    input.dataset.min = '2025-05';
   });
 });
 </script>
