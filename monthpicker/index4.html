@@ -18,6 +18,13 @@
       width: 140px;
       padding: 8px;
     }
+    .blind{
+      font-size:0;
+      line-height:0;
+      color:transparent;
+      width:0;
+      height:0;
+    }
     
     /* 버튼 */
     .month-picker-button {
@@ -32,14 +39,14 @@
     }
 
     /* 레이어 */
-    .month-picker-dropdown.base {
+    .month-picker-wrap.base {
       position: absolute;
       top: 100%;
       left: 0;
       z-index: 1000;
       margin-top: 4px;
     }
-    .month-picker-dropdown.fixed{
+    .month-picker-wrap.fixed{
       position:fixed;
       top:0;
       left:0;
@@ -50,68 +57,92 @@
       align-items: center;
       justify-content: center;
     }
+    .month-picker-wrap button {
+      background: none;
+      border: none;
+    }
+    .month-picker-wrap button:disabled {
+      cursor: default;
+    }
     .month-picker-inr{
-      width: 300px;
+      width: 240px;
       background: #fff;
       border: 1px solid #ccc;
       border-radius: 4px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .month-picker-dropdown .month-picker-inr{
+    .month-picker-wrap .month-picker-inr{
       position:relative;
     }
     
-    .month-picker-dropdown .year-selector {
+    .month-picker-wrap .year-selector {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-      padding-right: 50px;
+      padding: 20px 40px 10px;
     }
-    
-    .month-picker-dropdown button {
-      background: none;
-      border: none;
-      padding: 5px 10px;
+    .month-picker-wrap .year-selector button{
+      width: 24px;
+      height: 24px;
+      overflow:hidden;
+      background:url(https://nwww-t.sgic.co.kr/resource/pc/images/common/spr_calendar.png) no-repeat 0 0;
     }
-    
-    .month-picker-dropdown button:disabled {
+    .month-picker-wrap .year-selector button:disabled {
       opacity: 0.5;
+      cursor: default;
+    }
+    .month-picker-wrap .year-selector .prev-year{
+      background-position: 0 -24px;
+    }
+    .month-picker-wrap .year-selector .next-year{
+      background-position:0 -72px;
+    }
+    .month-picker-wrap .year-display{
+      font-size: 20px;
+      font-weight: 700;
+      color: #050f26;
     }
     
-    .month-picker-dropdown .months-grid {
+    .month-picker-wrap .months-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 5px;
       padding: 10px;
     }
     
-    .month-picker-dropdown .month-btn {
+    .month-picker-wrap .month-btn {
       padding: 5px;
       border: none;
       background: none;
+      color:#050f26;
+      text-align:center;
+      border-radius: 3px;
     }
     
-    .month-picker-dropdown .month-btn:hover:not(:disabled) {
+    .month-picker-wrap .month-btn:hover:not(:disabled) {
       background-color: #f0f0f0;
     }
     
-    .month-picker-dropdown .month-btn:disabled {
-      opacity: 0.5;
+    .month-picker-wrap .month-btn:disabled {
+      color:#8a8a8a;
     }
     
-    .month-picker-dropdown .selected{
+    .month-picker-wrap .selected{
       font-weight:bold;
     }
-    .month-picker-dropdown .selected:not(:hover) {
-      background-color: #428dfc;
+    .month-picker-wrap .selected:not(:hover) {
+      background-color: #4a42b9;
       color:#fff;
     }
-    .month-picker-dropdown .close-btn{
+    .month-picker-wrap .close-btn{
+      display:block;
       position:absolute;
-      top:10px;
-      right: 10px;
+      right:6px;
+      top:6px;
+      width:20px;
+      height:20px;
+      background:url(https://nwww-t.sgic.co.kr/resource/pc/images/common/btn_calendar_close.png) no-repeat 50% 50%;
+      overflow:hidden;
     }
   </style>
 </head>
@@ -180,46 +211,22 @@ function createMonthPicker(inputElement, options = {}) {
 
   function createDropdownElement() {
     const dropdownElement = document.createElement('div');
-    if(pickerOptions.mobile) dropdownElement.className = 'month-picker-dropdown fixed';
-    else dropdownElement.className = 'month-picker-dropdown base';
+    if(pickerOptions.mobile) dropdownElement.className = 'month-picker-wrap fixed';
+    else dropdownElement.className = 'month-picker-wrap base';
     dropdownElement.setAttribute('tabindex', '-1');
+  
+    const $html = `<div class="month-picker-inr">
+      <div class="year-selector">
+        <button type="button" class="prev-year"><span class="blind">이전년도</span></button>
+        <span class="year-display"></span>
+        <button type="button" class="next-year"><span class="blind">다음년도</span></button>
+      </div>
+      <div class="months-grid"></div>
+      <button type="button" class="close-btn"><span class="blind">닫기</span></button>
+    <div>`;
+    
+    dropdownElement.innerHTML = $html;
 
-    const dropdownElementInr = document.createElement('div');
-    dropdownElementInr.className = 'month-picker-inr';
-    
-    const yearSelector = document.createElement('div');
-    yearSelector.className = 'year-selector';
-    
-    const prevBtn = document.createElement('button');
-    prevBtn.type = 'button';
-    prevBtn.className = 'prev-year';
-    prevBtn.textContent = '<';
-    
-    const yearSpan = document.createElement('span');
-    yearSpan.className = 'year-display';
-    
-    const nextBtn = document.createElement('button');
-    nextBtn.type = 'button';
-    nextBtn.className = 'next-year';
-    nextBtn.textContent = '>';
-    
-    const closeBtn = document.createElement('button');
-    closeBtn.type = 'button';
-    closeBtn.className = 'close-btn';
-    closeBtn.textContent = 'X';
-    
-    const monthsDiv = document.createElement('div');
-    monthsDiv.className = 'months-grid';
-    
-    yearSelector.appendChild(prevBtn);
-    yearSelector.appendChild(yearSpan);
-    yearSelector.appendChild(nextBtn);
-    
-    dropdownElementInr.appendChild(yearSelector);
-    dropdownElementInr.appendChild(monthsDiv);
-    dropdownElementInr.appendChild(closeBtn);
-    
-    dropdownElement.appendChild(dropdownElementInr);
     document.body.appendChild(dropdownElement);
     
     dropdown = dropdownElement;
@@ -274,15 +281,20 @@ function createMonthPicker(inputElement, options = {}) {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'month-btn';
-      btn.textContent = month;
-      
+      btn.innerHTML = month + '<span class="blind">'+currentYear+'</span>';
+            
       if (selectedDate && currentYear === selectedDate.getFullYear() && index === selectedDate.getMonth()) {
         btn.classList.add('selected');
+        btn.title = '선택됨';
       }
       
       if (!isDateInRange(currentYear, index)) {
         btn.disabled = true;
       }
+
+      // const setTitle = `${currentYear}년 ${index+1}월`;
+      // if(pickerOptions.mobile) btn.ariaLabel = setTitle;
+      // else btn.title = setTitle;
       
       btn.addEventListener('click', () => selectMonth(index));
       monthsGrid.appendChild(btn);
