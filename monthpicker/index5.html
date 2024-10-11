@@ -171,12 +171,17 @@
     </div>
     <div class="monthpicker-container">
       <input type="text" class="monthpicker">
-      <button type="button" class="setDataMin">클릭시 옵션 업데이트</button>
+      <button type="button" class="btnUpdate">클릭시 옵션 업데이트</button>
+    </div>
+    <div class="monthpicker-container">
+      <input type="text" class="monthpicker">
+      <button type="button" class="btnDestroy">파괴</button>
     </div>
   </div>
 
   <script>
-class MonthPicker {
+const uiMonthPickers = [];
+class uiMonthPicker {
   constructor(inputElement, options = {}) {
     this.months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
     this.currentDate = new Date();
@@ -223,24 +228,10 @@ class MonthPicker {
     document.removeEventListener('click', this.eventListeners.document);
 
     // 드롭다운이 열려있다면 제거
-    if (this.dropdown) {
-      this.removeDropdown();
-    }
+    if (this.dropdown) this.removeDropdown();
 
     // DOM에서 달력 버튼 제거
     this.container.removeChild(this.calendarButton);
-
-    // input 요소의 data 속성 제거
-    this.inputElement.removeAttribute('data-min');
-    this.inputElement.removeAttribute('data-max');
-    this.inputElement.removeAttribute('data-mobile');
-    this.inputElement.removeAttribute('data-first');
-
-    // monthPickers 배열에서 이 인스턴스 제거
-    const index = monthPickers.findIndex(picker => picker === this);
-    if (index !== -1) {
-      monthPickers.splice(index, 1);
-    }
 
     // 모든 참조 제거
     this.inputElement = null;
@@ -249,6 +240,12 @@ class MonthPicker {
     this.dropdown = null;
     this.eventListeners = null;
     this.pickerOptions = null;
+    
+    // monthPickers 배열에서 이 인스턴스 제거
+    if(typeof uiMonthPickers !== 'undefined' && uiMonthPickers.length){
+      const index = uiMonthPickers.findIndex(picker => picker === this);
+      if (index !== -1) uiMonthPickers.splice(index, 1);
+    }
   }
 
   createCalendarButton() {
@@ -518,21 +515,24 @@ class MonthPicker {
 }
 
 // 모든 month picker 입력 필드 초기화
-const monthPickers = [];
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.monthpicker').forEach(input => {
-    const _monthpicker = new MonthPicker(input);
-    monthPickers.push(_monthpicker);
+    const _monthpicker = new uiMonthPicker(input);
+    uiMonthPickers.push(_monthpicker);
   });
 
   //테스트용
-  document.querySelector('.setDataMin').addEventListener('click', (e) => {
-    const picker = monthPickers[3];
+  document.querySelector('.btnUpdate').addEventListener('click', (e) => {
+    const picker = uiMonthPickers[3];
     picker.update({
       minDate: '2025-02',
       maxDate: '2025-11',
       mobile: true
     });
+  });
+  document.querySelector('.btnDestroy').addEventListener('click', (e) => {
+    const picker = uiMonthPickers[4];
+    picker.destroy();
   });
 });
 </script>
