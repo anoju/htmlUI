@@ -7,6 +7,13 @@
     button{
       cursor: pointer;
     }
+    body{
+      margin:0;
+      padding:0;
+    }
+    .wrap{
+      padding:200px 30px;
+    }
     .monthpicker-container {
       position: relative;
       margin-bottom: 10px;
@@ -45,7 +52,6 @@
       top: 100%;
       left: 0;
       z-index: 1000;
-      margin-top: 4px;
     }
     .month-picker-wrap.fixed{
       position:fixed;
@@ -177,6 +183,17 @@ function createMonthPicker(inputElement, options = {}) {
   let selectedDate = null;
   let dropdown = null;
   const container = inputElement.parentElement;
+
+  // 디폴트 옵션 설정
+  const defaultOptions = {
+    minDate: null,
+    maxDate: null,
+    mobile: false,
+    first: false
+  };
+
+  // 사용자 옵션과 디폴트 옵션 병합
+  const pickerOptions = {...defaultOptions, ...options};
   
   // 달력 버튼 생성
   const calendarButton = document.createElement('button');
@@ -197,17 +214,15 @@ function createMonthPicker(inputElement, options = {}) {
   function parseOptions() {
     const dataMin = inputElement.getAttribute('data-min');
     const dataMax = inputElement.getAttribute('data-max');
-    let mobile = inputElement.getAttribute('data-mobile');
-    if(mobile === '') mobile = true;
-    let first = inputElement.getAttribute('data-first');
-    if(first === '') first = true;
+    const dataMobile = inputElement.getAttribute('data-mobile');
+    const dataFirst = inputElement.getAttribute('data-first');
 
-    return {
-      minDate: dataMin ? parseDateString(dataMin) : options.minDate,
-      maxDate: dataMax ? parseDateString(dataMax) : options.maxDate,
-      mobile: mobile ? mobile : options.mobile,
-      first: first ? first : options.first,
-    };
+    if (dataMin) pickerOptions.minDate = parseDateString(dataMin);
+    if (dataMax) pickerOptions.maxDate = parseDateString(dataMax);
+    if (dataMobile !== null) pickerOptions.mobile = dataMobile === '' || dataMobile === 'true';
+    if (dataFirst !== null) pickerOptions.first = dataFirst === '' || dataFirst === 'true';
+
+    return pickerOptions;
   }
   
   function initializeSelectedDate() {
@@ -220,8 +235,7 @@ function createMonthPicker(inputElement, options = {}) {
     }
   }
   
-  const pickerOptions = parseOptions();
-  // if(pickerOptions.first && selectedDate === null) selectedDate = new Date();
+  parseOptions();
   initializeSelectedDate();
 
   function createDropdownElement() {
@@ -324,11 +338,6 @@ function createMonthPicker(inputElement, options = {}) {
   }
 
   function createAndShowDropdown() {
-    // min, max 값을 다시 가져와 적용
-    const newOptions = parseOptions();
-    pickerOptions.minDate = newOptions.minDate;
-    pickerOptions.maxDate = newOptions.maxDate;
-
     dropdown = createDropdownElement();
     if(pickerOptions.first) updateValue();
     updateTitle();
@@ -339,8 +348,8 @@ function createMonthPicker(inputElement, options = {}) {
       const rect = container.getBoundingClientRect();
       dropdown.style.position = 'absolute';
       dropdown.style.left = `${rect.left + window.scrollX}px`;
-      let setTop = dropdown;
-      if(setTop + dropdown.offsetHeight > window.innerHeight + window.scrollY) setTop = setTop - dropdown.offsetHeight - inputElement.offsetHeight;
+      let setTop = rect.bottom + window.scrollY;
+      if(setTop + dropdown.offsetHeight > window.innerHeight + window.scrollY) setTop = rect.top - dropdown.offsetHeight + window.scrollY;
       dropdown.style.top = `${setTop}px`;
     }
     setFocus(true);
@@ -400,7 +409,7 @@ function createMonthPicker(inputElement, options = {}) {
   calendarButton.addEventListener('click', toggleDropdown);
   
   // 초기화
-  if(pickerOptions.first) updateValue(); //선택해야만 value 세팅
+  if(pickerOptions.first) updateValue();
 
   // 업데이트
   function updateOptions(newOptions = {}) {
