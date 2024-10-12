@@ -3,155 +3,42 @@
 <head>
   <title>monthpicker5</title>
   <style>
-    /* input 예제 */
-    button{
-      cursor: pointer;
-    }
-    body{
-      margin:0;
-      padding:0;
-    }
-    .wrap{
-      padding:200px 30px;
-    }
-    .monthpicker-container {
-      position: relative;
-      margin-bottom: 10px;
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-    .monthpicker {
-      box-sizing: border-box;
-      width: 140px;
-      height: 40px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .blind{
-      font-size:0;
-      line-height:0;
-      color:transparent;
-      width:0;
-      height:0;
-    }
-    
-    /* 버튼 */
-    .month-picker-btn {
-      width: 45px;
-      height: 40px;
-      background: url(https://nwww-t.sgic.co.kr/resource/pc/images/common/form_calander.png) no-repeat center center;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
+/* input 예제 */
+button{cursor: pointer;padding:0;border: 0 none;background: none;}
+body, ul{margin:0;padding:0;}
+.wrap{padding:200px 30px;}
+.monthpicker-container {position: relative;margin-bottom: 10px;display: flex;gap: 4px;align-items: center;}
+.monthpicker {box-sizing: border-box;width: 140px;height: 40px;padding: 8px;border: 1px solid #ccc;border-radius: 4px;}
+.blind{font-size:0;line-height:0;color:transparent;width:0;height:0;}
+.btn{height: 40px;border: 1px solid #ccc;padding:0 10px;background-color:#f1f1f1;}
 
-    /* 레이어 */
-    .month-picker-wrap.base {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      z-index: 1000;
-    }
-    .month-picker-wrap.fixed{
-      position:fixed;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
-      background:rgba(0,0,0,0.6);
-      display:flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .month-picker-wrap button {
-      background: none;
-      border: none;
-    }
-    .month-picker-wrap button:disabled {
-      cursor: default;
-    }
-    .month-picker-inr{
-      width: 240px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .month-picker-wrap .month-picker-inr{
-      position:relative;
-    }
-    
-    .month-picker-wrap .year-selector {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 40px 10px;
-    }
-    .month-picker-wrap .year-selector button{
-      width: 24px;
-      height: 24px;
-      overflow:hidden;
-      background:url(https://nwww-t.sgic.co.kr/resource/pc/images/common/spr_calendar.png) no-repeat 0 0;
-    }
-    .month-picker-wrap .year-selector button:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-    .month-picker-wrap .year-selector .prev-year{
-      background-position: 0 -24px;
-    }
-    .month-picker-wrap .year-selector .next-year{
-      background-position:0 -72px;
-    }
-    .month-picker-wrap .year-display{
-      font-size: 20px;
-      font-weight: 700;
-      color: #050f26;
-    }
-    
-    .month-picker-wrap .months-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 5px;
-      padding: 10px;
-    }
-    
-    .month-picker-wrap .month-btn {
-      padding: 5px;
-      border: none;
-      background: none;
-      color:#050f26;
-      text-align:center;
-      border-radius: 3px;
-    }
-    
-    .month-picker-wrap .month-btn:not(:disabled, .today, .selected):hover {
-      background-color: #f0f0f0;
-    }
-    
-    .month-picker-wrap .month-btn:disabled {
-      color:#8a8a8a;
-    }
-    .month-picker-wrap .today {
-      background-color: #aaa;
-      color:#fff;
-    }
-    .month-picker-wrap .selected{
-      font-weight:bold;
-      background-color: #4a42b9;
-      color:#fff;
-    }
-    .month-picker-wrap .close-btn{
-      display:block;
-      position:absolute;
-      right:6px;
-      top:6px;
-      width:20px;
-      height:20px;
-      background:url(https://nwww-t.sgic.co.kr/resource/pc/images/common/btn_calendar_close.png) no-repeat 50% 50%;
-      overflow:hidden;
-    }
+/* 버튼 */
+.ui-monthpicker-trigger {width: 45px;height: 40px;background: url(https://nwww-t.sgic.co.kr/resource/pc/images/common/form_calander.png) no-repeat center center;border: 1px solid #ccc;border-radius: 4px;}
+
+/* ui-monthpicker */
+.ui-monthpicker {z-index:9999!important;}
+.ui-monthpicker.base {position:absolute;top:100%;left:0;}
+.ui-monthpicker.mobile {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;}
+.ui-monthpicker-inr {position:relative;width:284px;padding:0 12px 24px;overflow:hidden;border:1px solid #ddd;border-radius:10px;background-color:#fff;}
+.ui-monthpicker-head {display:flex;align-items:center;padding:28px 15px 24px;}
+.ui-monthpicker-navi {display:block;width:24px;height:24px;overflow:hidden;background:url(https://nwww-t.sgic.co.kr/resource/pc/images/common/spr_calendar.png) no-repeat 0 0;flex-shrink:0;}
+.ui-monthpicker-navi + .ui-monthpicker-navi{margin-left:4px;}
+.ui-monthpicker-navi:disabled {opacity:0.5;cursor:default;}
+.ui-monthpicker-navi.first {background-position:0 0;}
+.ui-monthpicker-navi.prev {background-position:0 -24px;}
+.ui-monthpicker-navi.next {background-position:0 -72px;}
+.ui-monthpicker-navi.last {background-position:0 -48px;}
+.ui-monthpicker-title {display:block;font-size:20px;font-weight:700;color:#050f26;flex: 1 1 auto;text-align:center;}
+.ui-monthpicker-grid {display:grid;grid-template-columns:repeat(4, 1fr);gap:24px 0;}
+.ui-monthpicker-grid>li{display:flex;justify-content:center;}
+.ui-monthpicker-btn {display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border:none;border-radius:50%;background:none;font-size:15px;color:#050f26;text-align:center;}
+.ui-monthpicker-btn:hover:not(:disabled, .selected, .today) {background-color:#f0f0f0;}
+.ui-monthpicker-btn.today,
+.ui-monthpicker-btn.selected {font-weight:500;color:#fff;}
+.ui-monthpicker-btn.today {background-color:#3d414a;}
+.ui-monthpicker-btn.selected {background-color:#4a42b9;}
+.ui-monthpicker-btn:disabled {color:#8a8a8a;}
+.ui-monthpicker-close {display:block;position:absolute;right:6px;top:6px;width:20px;height:20px;background:url(https://nwww-t.sgic.co.kr/resource/pc/images/common/btn_calendar_close.png) no-repeat 50% 50%;overflow:hidden;}
   </style>
 </head>
 <body>
@@ -171,347 +58,459 @@
     </div>
     <div class="monthpicker-container">
       <input type="text" class="monthpicker">
-      <button type="button" class="btnUpdate">클릭시 옵션 업데이트</button>
+      <button type="button" class="btn btnUpdate">클릭시 옵션 업데이트</button>
     </div>
     <div class="monthpicker-container">
       <input type="text" class="monthpicker">
-      <button type="button" class="btnDestroy">파괴</button>
+      <button type="button" class="btn btnDestroy">파괴</button>
     </div>
   </div>
 
   <script>
 const uiMonthPickers = [];
 class uiMonthPicker {
-  constructor(inputElement, options = {}) {
-    this.months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
-    this.currentDate = new Date();
-    this.todayDate = new Date();
-    this.selectedDate = null;
-    this.dropdown = null;
-    this.inputElement = inputElement;
-    this.container = inputElement.parentElement;
+	constructor(inputElement, options = {}){
+		this.currentDate = new Date();
+		this.todayDate = new Date();
+		this.selectedDate = null;
+		this.dropdown = null;
+		this.inputElement = inputElement;
+		this.container = inputElement.parentElement;
 
-    // 디폴트 옵션 설정
-    this.defaultOptions = {
-      minDate: null,
-      maxDate: null,
-      mobile: false,
-      first: false
-    };
+		//디폴트 옵션
+		this.defaultOptions = {
+			months: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
+			buttonClass: 'ui-monthpicker-trigger',
+			buttonTxt: '월 선택',
+			wrapClass: 'ui-monthpicker',
+			pcClass: 'base',
+			mobileClass: 'mobile',
+			txtBlindClass: 'blind',
+			innerClass: 'ui-monthpicker-inr',
+			headClass: 'ui-monthpicker-head',
+			titleClass: 'ui-monthpicker-title',
+			naviBtnClass: 'ui-monthpicker-navi',
+			prevBtnClass: 'prev',
+			prevBtnTxt: '이전년도',
+			nextBtnClass: 'next',
+			nextBtnTxt: '다음년도',
+			firstBtnClass: 'first',
+			firstBtnTxt: '10년 이전년도',
+			lastBtnClass: 'last',
+			lastBtnTxt: '10년 다음년도',
+			closeClass: 'ui-monthpicker-close',
+			closeTxt: '닫기',
+			gridClass: 'ui-monthpicker-grid',
+			monthBtnClass: 'ui-monthpicker-btn',
+			todayClass: 'today',
+			todayTxt: '이번 달',
+			selectedClass: 'selected',
+			selectedTxt: '선택된 월',
+			minDate: null,
+			maxDate: null,
+			mobile: false,
+			first: false
+		};
 
-    // 사용자 옵션과 디폴트 옵션 병합
-    this.pickerOptions = {...this.defaultOptions, ...options};
+		// 옵션 병합
+		this.pickerOptions = {...this.defaultOptions, ...options};
 
-    // 이벤트 리스너를 저장할 객체
-    this.eventListeners = {
-      calendarButton: this.toggleDropdown.bind(this),
-      document: this.handleOutsideClick.bind(this),
-      prevYearBtn: null,
-      nextYearBtn: null,
-      closeBtn: null
-    };
+		//이벤트 리스너를 저장할 객체
+		this.eventListener = {
+			calendarButton: this.toggleDropdown.bind(this),
+			document: this.outsideClick.bind(this),
+			prevBtn: null,
+			nextBtn: null,
+			firstBtn: null,
+			lastBtn: null,
+			closeBtn: null,
+			monthBtn: null,
+			pcFocus: null
+		};
 
-    this.init();
-  }
+		this.init();
+	}
 
-  init() {
-    this.createCalendarButton();
-    this.parseOptions();
-    this.initializeSelectedDate();
-    if (this.pickerOptions.first) this.updateValue();
-    this.addEventListeners();
-  }
+	init(){
+		this.createCalendarButton();
+		this.parseOptions();
+		this.setSelectedDate(true);
+		if(this.pickerOptions.first) this.updateValue();
+		this.calendarButtonEvents();
+	}
 
-  destroy() {
-    // 모든 이벤트 리스너 제거
-    this.calendarButton.removeEventListener('click', this.eventListeners.calendarButton);
-    document.removeEventListener('click', this.eventListeners.document);
+	destroy(){
+		this.calendarButtonEvents(false);
+		if(this.dropdown) this.removeDropdown();
+		this.container.removeChild(this.calendarButton);
 
-    // 드롭다운이 열려있다면 제거
-    if (this.dropdown) this.removeDropdown();
+		this.inputElement = null;
+		this.container = null;
+		this.calendarButton = null;
+		this.dropdown = null;
+		this.eventListener = null;
+		this.pickerOptions = null;
+	}
 
-    // DOM에서 달력 버튼 제거
-    this.container.removeChild(this.calendarButton);
+	createCalendarButton(){
+		// 달력 버튼 생성
+		this.calendarButton = document.createElement('button');
+		this.calendarButton.type = 'button';
+		this.calendarButton.className = this.pickerOptions.buttonClass;
+		let btnSetTxt = this.pickerOptions.buttonTxt;
+		if(this.inputElement.title) btnSetTxt = this.inputElement.title +' '+ btnSetTxt;
+		this.calendarButton.innerHTML = `<span class="${this.pickerOptions.txtBlindClass}">${btnSetTxt}</span>`;
+		//this.container.appendChild(calendarButton);
+		this.container.insertBefore(this.calendarButton, this.inputElement.nextSibling);
+	}
 
-    // 모든 참조 제거
-    this.inputElement = null;
-    this.container = null;
-    this.calendarButton = null;
-    this.dropdown = null;
-    this.eventListeners = null;
-    this.pickerOptions = null;
-    
-    // monthPickers 배열에서 이 인스턴스 제거
-    if(typeof uiMonthPickers !== 'undefined' && uiMonthPickers.length){
-      const index = uiMonthPickers.findIndex(picker => picker === this);
-      if (index !== -1) uiMonthPickers.splice(index, 1);
-    }
-  }
+	calendarButtonEvents(isRemove){
+		if(isRemove) this.calendarButton.removeEventListener('click', this.eventListener.calendarButton);
+		else this.calendarButton.addEventListener('click', this.eventListener.calendarButton);
+	}
 
-  createCalendarButton() {
-    this.calendarButton = document.createElement('button');
-    this.calendarButton.type = 'button';
-    this.calendarButton.className = 'month-picker-btn';
-    let btnSettxt = '월 선택';
-    if (this.inputElement.title) btnSettxt = this.inputElement.title + ' ' + btnSettxt;
-    this.calendarButton.innerHTML = '<span class="blind">' + btnSettxt + '</span>';
-    this.container.insertBefore(this.calendarButton, this.inputElement.nextSibling);
-  }
+	parseDateString(dateString) {
+		if(dateString === 'today') dateString = $todayMonth.toString().substr(0,4) + '-' + $todayMonth.toString().substr(4,2);
+		const [year, month] = dateString.split('-').map(Number);
+		return new Date(year, month - 1);
+	}
 
-  parseDateString(dateString) {
-    const [year, month] = dateString.split('-').map(Number);
-    return new Date(year, month - 1);
-  }
+	parseOptions() {
+		const dataMin = this.inputElement.getAttribute('data-min');
+		const dataMax = this.inputElement.getAttribute('data-max');
+		const dataMobile = this.inputElement.getAttribute('data-mobile');
+		const dataFirst = this.inputElement.getAttribute('data-first');
 
-  parseOptions() {
-    const dataMin = this.inputElement.getAttribute('data-min');
-    const dataMax = this.inputElement.getAttribute('data-max');
-    const dataMobile = this.inputElement.getAttribute('data-mobile');
-    const dataFirst = this.inputElement.getAttribute('data-first');
+		if(dataMin) this.pickerOptions.minDate = this.parseDateString(dataMin);
+		if(dataMax) this.pickerOptions.maxDate = this.parseDateString(dataMax);
+		if(dataMobile !== null) this.pickerOptions.mobile = (dataMobile === '' ? true : dataMobile);
+		if(dataFirst !== null) this.pickerOptions.first = (dataFirst === '' ? true : dataFirst);
+	}
 
-    if (dataMin) this.pickerOptions.minDate = this.parseDateString(dataMin);
-    if (dataMax) this.pickerOptions.maxDate = this.parseDateString(dataMax);
-    if (dataMobile !== null) this.pickerOptions.mobile = dataMobile === '' || dataMobile === 'true';
-    if (dataFirst !== null) this.pickerOptions.first = dataFirst === '' || dataFirst === 'true';
-  }
+	setSelectedDate(isFirst) {
+		const inputValue = this.inputElement.value;
+		if (inputValue) {
+			this.selectedDate = this.parseDateString(inputValue);
+			this.currentDate = new Date(this.selectedDate);
+		} else if(isFirst && this.pickerOptions.first && this.selectedDate === null) {
+			this.selectedDate = new Date();
+		}
+	}
 
-  initializeSelectedDate() {
-    const inputValue = this.inputElement.value;
-    if (inputValue) {
-      this.selectedDate = this.parseDateString(inputValue);
-      this.currentDate = new Date(this.selectedDate);
-    } else if (this.pickerOptions.first && this.selectedDate === null) {
-      this.selectedDate = new Date();
-    }
-  }
+	createDropdownElement() {
+		const dropdownElement = document.createElement('div');
+		if(this.pickerOptions.mobile) dropdownElement.className = this.defaultOptions.wrapClass+' '+this.defaultOptions.mobileClass;
+		else dropdownElement.className = this.defaultOptions.wrapClass+' '+this.defaultOptions.pcClass;
+		const $html = `<div class="${this.pickerOptions.innerClass}">
+			<div class="${this.pickerOptions.headClass}">
+				<button type="button" class="${this.pickerOptions.naviBtnClass} ${this.pickerOptions.firstBtnClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.firstBtnTxt}</span></button>
+				<button type="button" class="${this.pickerOptions.naviBtnClass} ${this.pickerOptions.prevBtnClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.prevBtnTxt}</span></button>
+				<span class="${this.pickerOptions.titleClass}"></span>
+				<button type="button" class="${this.pickerOptions.naviBtnClass} ${this.pickerOptions.nextBtnClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.nextBtnTxt}</span></button>
+				<button type="button" class="${this.pickerOptions.naviBtnClass} ${this.pickerOptions.lastBtnClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.lastBtnTxt}</span></button>
+			</div>
+			<ul class="${this.pickerOptions.gridClass}"></ul>
+			<button type="button" class="${this.pickerOptions.closeClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.closeTxt}</span></button>
+		<div>`;
+		dropdownElement.innerHTML = $html;
+		document.body.appendChild(dropdownElement);
+		this.dropdown = dropdownElement;
+		return dropdownElement;
+	}
 
-  createDropdownElement() {
-    const dropdownElement = document.createElement('div');
-    if (this.pickerOptions.mobile) dropdownElement.className = 'month-picker-wrap fixed';
-    else dropdownElement.className = 'month-picker-wrap base';
-    
-    const $html = `<div class="month-picker-inr">
-      <div class="year-selector">
-        <button type="button" class="prev-year"><span class="blind">이전년도</span></button>
-        <span class="year-display"></span>
-        <button type="button" class="next-year"><span class="blind">다음년도</span></button>
-      </div>
-      <div class="months-grid"></div>
-      <button type="button" class="close-btn"><span class="blind">닫기</span></button>
-    <div>`;
-    
-    dropdownElement.innerHTML = $html;
-    document.body.appendChild(dropdownElement);
-    this.dropdown = dropdownElement;
-    return dropdownElement;
-  }
+	updateValue() {
+		if(!this.selectedDate) return;
+		let month = this.selectedDate.getMonth() + 1;
+		if(month < 10) month = '0'+month;
+		const selectedYear = this.selectedDate.getFullYear();
+		this.inputElement.value = `${selectedYear}-${month}`;
+	}
 
-  updateValue() {
-    if (!this.selectedDate) return;
-    let month = this.selectedDate.getMonth() + 1;
-    if (month < 10) month = '0' + month;
-    const selectedYear = this.selectedDate.getFullYear();
-    this.inputElement.value = `${selectedYear}-${month}`;
-  }
+	updateTitle(){
+		if (!this.dropdown) return;
+		const year = this.currentDate.getFullYear();
+		this.dropdown.querySelector('.'+this.pickerOptions.titleClass).textContent = year;
+	}
 
-  updateTitle() {
-    const year = this.currentDate.getFullYear();
-    if (this.dropdown) {
-      this.dropdown.querySelector('.year-display').textContent = `${year}년`;
-    }
-  }
+	isDateInRange(year, month) {
+		const date = new Date(year, month);
+		const isAfterMin = !this.pickerOptions.minDate || date >= this.pickerOptions.minDate;
+		const isBeforeMax = !this.pickerOptions.maxDate || date <= this.pickerOptions.maxDate;
+		return isAfterMin && isBeforeMax;
+	}
 
-  isDateInRange(year, month) {
-    const date = new Date(year, month);
-    const isAfterMin = !this.pickerOptions.minDate || date >= this.pickerOptions.minDate;
-    const isBeforeMax = !this.pickerOptions.maxDate || date <= this.pickerOptions.maxDate;
-    return isAfterMin && isBeforeMax;
-  }
+	updateYearButtons() {
+		if (!this.dropdown) return;
+		const currentYear = this.currentDate.getFullYear();
+		const prevBtn = this.dropdown.querySelector('.'+this.pickerOptions.prevBtnClass);
+		const nextBtn = this.dropdown.querySelector('.'+this.pickerOptions.nextBtnClass);
+		const firstBtn = this.dropdown.querySelector('.'+this.pickerOptions.firstBtnClass);
+		const lastBtn = this.dropdown.querySelector('.'+this.pickerOptions.lastBtnClass);
+		if (this.pickerOptions.minDate) {
+			if(prevBtn) prevBtn.disabled = currentYear <= this.pickerOptions.minDate.getFullYear();
+			if(firstBtn) firstBtn.disabled = currentYear - 9 <= this.pickerOptions.minDate.getFullYear();
+		}
+		if (this.pickerOptions.maxDate) {
+			if(nextBtn) nextBtn.disabled = currentYear >= this.pickerOptions.maxDate.getFullYear();
+			if(lastBtn) lastBtn.disabled = currentYear + 9 >= this.pickerOptions.maxDate.getFullYear();
+		}
+	}
 
-  updateYearButtons() {
-    if (!this.dropdown) return;
-    const currentYear = this.currentDate.getFullYear();
-    const prevYearBtn = this.dropdown.querySelector('.prev-year');
-    const nextYearBtn = this.dropdown.querySelector('.next-year');
-    if (this.pickerOptions.minDate) prevYearBtn.disabled = currentYear <= this.pickerOptions.minDate.getFullYear();
-    if (this.pickerOptions.maxDate) nextYearBtn.disabled = currentYear >= this.pickerOptions.maxDate.getFullYear();
-  }
+	createMonthButtons() {
+		if (!this.dropdown) return;
+		const monthsGrid = this.dropdown.querySelector('.'+this.pickerOptions.gridClass);
+		monthsGrid.innerHTML = '';
+		const currentYear = this.currentDate.getFullYear();
 
-  createMonthButtons() {
-    if (!this.dropdown) return;
-    const monthsGrid = this.dropdown.querySelector('.months-grid');
-    monthsGrid.innerHTML = '';
-    const currentYear = this.currentDate.getFullYear();
-    
-    this.months.forEach((month, index) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'month-btn';
-      btn.innerHTML = month + '<span class="blind">' + currentYear + '</span>';
-      
-      if (currentYear === this.todayDate.getFullYear() && index === this.todayDate.getMonth()) {
-        btn.classList.add('today');
-        btn.title = '이번달';
-      }
-      if (this.selectedDate && currentYear === this.selectedDate.getFullYear() && index === this.selectedDate.getMonth()) {
-        btn.classList.add('selected');
-        btn.title = '선택됨';
-      }
-      if (!this.isDateInRange(currentYear, index)) {
-        btn.disabled = true;
-      }
-      
-      btn.addEventListener('click', () => this.selectMonth(index));
-      monthsGrid.appendChild(btn);
-    });
-  }
+		this.pickerOptions.months.forEach((month, index) => {
+			const li = document.createElement('li');
+			const btn = document.createElement('button');
+			btn.type = 'button';
+			btn.className = this.pickerOptions.monthBtnClass;
+			btn.dataset.index = index;
+			btn.innerHTML = month + `<span class="${this.pickerOptions.txtBlindClass}">${currentYear}</span>`;
 
-  selectMonth(monthIndex) {
-    const newDate = new Date(this.currentDate.getFullYear(), monthIndex);
-    if (this.isDateInRange(newDate.getFullYear(), newDate.getMonth())) {
-      this.selectedDate = newDate;
-      this.updateValue();
-      this.removeDropdown(true);
-    }
-  }
+			if (currentYear === this.todayDate.getFullYear() && index === this.todayDate.getMonth()) {
+				btn.classList.add(this.pickerOptions.todayClass);
+				btn.title = this.pickerOptions.todayTxt;
+			}
+			if (this.selectedDate && currentYear === this.selectedDate.getFullYear() && index === this.selectedDate.getMonth()) {
+				btn.classList.add(this.pickerOptions.selectedClass);
+				btn.title = this.pickerOptions.selectedTxt;
+			}
+			if (!this.isDateInRange(currentYear, index)) btn.disabled = true;
 
-  toggleDropdown(e) {
-    e.stopPropagation();
-    if (this.dropdown) this.removeDropdown();
-    else this.createAndShowDropdown();
-  }
+			// btn.addEventListener('click', () => this.selectMonth(index));
+			li.appendChild(btn);
+			monthsGrid.appendChild(li);
+		});
+	}
 
-  createAndShowDropdown() {
-    this.dropdown = this.createDropdownElement();
-    if (this.pickerOptions.first) this.updateValue();
-    this.updateTitle();
-    this.createMonthButtons();
-    this.updateYearButtons();
-    
-    if (!this.pickerOptions.mobile) {
-      const rect = this.container.getBoundingClientRect();
-      this.dropdown.style.position = 'absolute';
-      this.dropdown.style.left = `${rect.left + window.scrollX}px`;
-      let setTop = rect.bottom + window.scrollY;
-      if (setTop + this.dropdown.offsetHeight > window.innerHeight + window.scrollY) setTop = rect.top - this.dropdown.offsetHeight + window.scrollY;
-      this.dropdown.style.top = `${setTop}px`;
-    }
-    this.setFocus(true);
-    this.setDropdownEvents();
-    this.dropdown.setAttribute('tabindex', '-1');
-    this.dropdown.focus();
-  }
+	selectMonth(monthIndex) {
+		const newDate = new Date(this.currentDate.getFullYear(), monthIndex);
+		if (this.isDateInRange(newDate.getFullYear(), newDate.getMonth())) {
+			this.selectedDate = newDate;
+			this.updateValue();
+			this.removeDropdown(true);
+		}
+	}
 
-  setFocus(isShow) {
-    const wrap = document.querySelector('.wrap');
-    if (!wrap) return;
-    if (isShow) {
-      if (this.pickerOptions.mobile) wrap.ariaHidden = true;
-      else wrap.inert = true;
-    } else {
-      if (this.pickerOptions.mobile) wrap.ariaHidden = null;
-      else wrap.inert = false;
-    }
-  }
+	toggleDropdown(e) {
+		e.stopPropagation();
+		if (this.dropdown) this.removeDropdown();
+		else this.createAndShowDropdown();
+	}
 
-  setDropdownEvents() {
-    const prevYearBtn = this.dropdown.querySelector('.prev-year');
-    const nextYearBtn = this.dropdown.querySelector('.next-year');
-    const closeBtn = this.dropdown.querySelector('.close-btn');
-    
-    this.eventListeners.prevYearBtn = (e) => {
-      e.stopPropagation();
-      this.currentDate.setFullYear(this.currentDate.getFullYear() - 1);
-      this.updateTitle();
-      this.createMonthButtons();
-      this.updateYearButtons();
-      this.dropdown.querySelector('.prev-year').focus();
-    };
-    prevYearBtn.addEventListener('click', this.eventListeners.prevYearBtn);
-    
-    this.eventListeners.nextYearBtn = (e) => {
-      e.stopPropagation();
-      this.currentDate.setFullYear(this.currentDate.getFullYear() + 1);
-      this.updateTitle();
-      this.createMonthButtons();
-      this.updateYearButtons();
-      this.dropdown.querySelector('.next-year').focus();
-    };
-    nextYearBtn.addEventListener('click', this.eventListeners.nextYearBtn);
+	createAndShowDropdown() {
+		this.dropdown = this.createDropdownElement();
+		this.setSelectedDate();
+		if(this.pickerOptions.first) this.updateValue();
+		this.updateTitle();
+		this.createMonthButtons();
+		this.updateYearButtons();
 
-    this.eventListeners.closeBtn = () => {
-      this.removeDropdown(true);
-    };
-    closeBtn.addEventListener('click', this.eventListeners.closeBtn);
-  }
+		if(this.pickerOptions.mobile){
+			this.setMobileFocus();
+		}else{
+			const rect = this.container.getBoundingClientRect();
+			this.dropdown.style.left = `${rect.left + window.scrollX}px`;
+			let setTop = rect.bottom + window.scrollY;
+			if(setTop + this.dropdown.offsetHeight > window.innerHeight + window.scrollY) setTop = rect.top - this.dropdown.offsetHeight + window.scrollY;
+			this.dropdown.style.top = `${setTop}px`;
+			this.setPcFocus();
+		}
+		this.setDropdownEvents();
+		this.dropdown.setAttribute('tabindex', '-1');
+		this.dropdown.focus();
+	}
 
-  handleOutsideClick(e) {
-    if (this.dropdown && !e.target.closest('.month-picker-inr') && !e.target.closest('.month-picker-btn')) {
-      this.removeDropdown();
-    }
-  }
+	// 포커스 컨트롤은 기존꺼 활용해서 걍 jqeury로...
+	setPcFocus(isRemove){
+		if(!this.dropdown) return;
+		if(!this.eventListener.pcFocus){
+			this.eventListener.pcFocus = (e) => {
+				const $dropdown = $(this.dropdown);
+				const $keycode = e.keyCode ? e.keyCode : e.which;
+				const $target = $(e.target);
+				const $focusable = $dropdown.find($focusEls.join(','));
+				if ($target.hasClass(this.pickerOptions.wrapClass) || $focusable.index($target) === 0) {
+					if ($keycode === 9 && e.shiftKey) {
+						e.preventDefault();
+						$dropdown.find($focusEls.join(',')).last().focus();
+					}
+				}
+				if ($focusable.length === $focusable.index($target) + 1) {
+					if ($keycode === 9 && !e.shiftKey) {
+						e.preventDefault();
+						$dropdown.find($focusEls.join(',')).first().focus();
+					}
+				}
+			};
+		}
+		if(isRemove){
+			this.dropdown.removeEventListener('keydown', this.eventListener.pcFocus);
+			this.dropdown.removeEventListener('keypress', this.eventListener.pcFocus);
+		}else{
+			this.dropdown.addEventListener('keydown', this.eventListener.pcFocus);
+			this.dropdown.addEventListener('keypress', this.eventListener.pcFocus);
+		}
+	}
+	setMobileFocus(isHide){
+		if(!this.dropdown) return;
+		const $dropdown = $(this.dropdown);
+		const $siblings = $dropdown.siblings('div')
+		if(isHide) $siblings.removeAttr('aria-hidden');
+		else $siblings.attr('aria-hidden', true);
+	}
 
-  removeDropdown(isFocus) {
-    if (!this.dropdown) return;
-    this.setFocus(false);
+	setNaviEvents(num){
+		this.currentDate.setFullYear(this.currentDate.getFullYear() + num);
+		this.updateTitle();
+		this.createMonthButtons();
+		this.updateYearButtons();
+	}
 
-    // 드롭다운 내부의 이벤트 리스너 제거
-    const prevYearBtn = this.dropdown.querySelector('.prev-year');
-    const nextYearBtn = this.dropdown.querySelector('.next-year');
-    const closeBtn = this.dropdown.querySelector('.close-btn');
-    if (prevYearBtn) prevYearBtn.removeEventListener('click', this.eventListeners.prevYearBtn);
-    if (nextYearBtn) nextYearBtn.removeEventListener('click', this.eventListeners.nextYearBtn);
-    if (closeBtn) closeBtn.removeEventListener('click', this.eventListeners.closeBtn);
+	setDropdownEvents(isRemove) {
+		const prevBtn = this.dropdown.querySelector('.'+this.pickerOptions.prevBtnClass);
+		const nextBtn = this.dropdown.querySelector('.'+this.pickerOptions.nextBtnClass);
+		const firstBtn = this.dropdown.querySelector('.'+this.pickerOptions.firstBtnClass);
+		const lastBtn = this.dropdown.querySelector('.'+this.pickerOptions.lastBtnClass);
+		const closeBtn = this.dropdown.querySelector('.'+this.pickerOptions.closeClass);
+		const grid = this.dropdown.querySelector('.'+this.pickerOptions.gridClass);
 
-    document.body.removeChild(this.dropdown);
-    this.dropdown = null;
-    if (isFocus) this.calendarButton.focus();
-  }
+		if(prevBtn){
+			if(!this.eventListener.prevBtn){
+				this.eventListener.prevBtn = (e) => {
+					e.stopPropagation();
+					this.setNaviEvents(-1);
+					// this.dropdown.querySelector('.'+this.pickerOptions.prevBtnClass).focus();
+				};
+			}
+			if(isRemove) prevBtn.removeEventListener('click', this.eventListener.prevBtn);
+			else prevBtn.addEventListener('click', this.eventListener.prevBtn);
+		}
 
-  addEventListeners() {
-    this.calendarButton.addEventListener('click', this.eventListeners.calendarButton);
-    document.addEventListener('click', this.eventListeners.document);
-  }
+		if(nextBtn){
+			if(!this.eventListener.nextBtn){
+				this.eventListener.nextBtn = (e) => {
+					e.stopPropagation();
+					this.setNaviEvents(1);
+					// this.dropdown.querySelector('.'+this.pickerOptions.nextBtnClass).focus();
+				};
+			}
+			if(isRemove) nextBtn.removeEventListener('click', this.eventListener.nextBtn);
+			else nextBtn.addEventListener('click', this.eventListener.nextBtn);
+		}
 
-  update(newOptions = {}) {
-    if (newOptions.minDate) {
-      this.pickerOptions.minDate = this.parseDateString(newOptions.minDate);
-      this.inputElement.setAttribute('data-min', newOptions.minDate);
-    }
-    if (newOptions.maxDate) {
-      this.pickerOptions.maxDate = this.parseDateString(newOptions.maxDate);
-      this.inputElement.setAttribute('data-max', newOptions.maxDate);
-    }
-    if (newOptions.mobile !== undefined) {
-      this.pickerOptions.mobile = newOptions.mobile;
-    }
+		if(firstBtn){
+			if(!this.eventListener.firstBtn){
+				this.eventListener.firstBtn = (e) => {
+					e.stopPropagation();
+					this.setNaviEvents(-10);
+					// this.dropdown.querySelector('.'+this.pickerOptions.firstBtnClass).focus();
+				};
+			}
+			if(isRemove) firstBtn.removeEventListener('click', this.eventListener.firstBtn);
+			else firstBtn.addEventListener('click', this.eventListener.firstBtn);
+		}
 
-    if (this.currentDate < this.pickerOptions.minDate) {
-      this.currentDate = new Date(this.pickerOptions.minDate);
-    } else if (this.currentDate > this.pickerOptions.maxDate) {
-      this.currentDate = new Date(this.pickerOptions.maxDate);
-    }
+		if(lastBtn){
+			if(!this.eventListener.lastBtn){
+				this.eventListener.lastBtn = (e) => {
+					e.stopPropagation();
+					this.setNaviEvents(10);
+					// this.dropdown.querySelector('.'+this.pickerOptions.lastBtnClass).focus();
+				};
+			}
+			if(isRemove) lastBtn.removeEventListener('click', this.eventListener.lastBtn);
+			else lastBtn.addEventListener('click', this.eventListener.lastBtn);
+		}
 
-    if (this.selectedDate && (this.selectedDate < this.pickerOptions.minDate || this.selectedDate > this.pickerOptions.maxDate)) {
-      this.selectedDate = new Date(this.currentDate);
-      this.updateValue();
-    }
+		if(closeBtn){
+			if(!this.eventListener.closeBtn){
+				this.eventListener.closeBtn = (e) => {
+					this.removeDropdown(true);
+				}
+			}
+			if(isRemove) closeBtn.removeEventListener('click', this.eventListener.closeBtn);
+			else closeBtn.addEventListener('click', this.eventListener.closeBtn);
+		}
 
-    this.updateYearButtons();
-    this.createMonthButtons();
-    this.updateTitle();
-  }
+		if(!this.eventListener.monthBtn){
+			this.eventListener.monthBtn = (e) => {
+				const target = e.target;
+				if(target.closest('.'+this.pickerOptions.monthBtnClass)){
+					const monthBtn = target.closest('.'+this.pickerOptions.monthBtnClass);
+					this.selectMonth(monthBtn.dataset.index);
+				}
+			}
+		}
 
-  getValue() {
-    return {
-      year: this.selectedDate.getFullYear(),
-      month: this.selectedDate.getMonth() + 1
-    };
-  }
+		if(isRemove){
+			grid.removeEventListener('click', this.eventListener.monthBtn);
+			document.removeEventListener('click', this.eventListener.document);
+			document.removeEventListener('mouseup', this.eventListener.document);
+			document.removeEventListener('touchend', this.eventListener.document);
+		}else{
+			grid.addEventListener('click', this.eventListener.monthBtn);
+			document.addEventListener('click', this.eventListener.document);
+			document.addEventListener('mouseup', this.eventListener.document);
+			document.addEventListener('touchend', this.eventListener.document);
+		}
+	}
 
-  getDropdown() {
-    return this.dropdown;
-  }
+	outsideClick(e){
+		if(this.dropdown && !e.target.closest('.'+this.pickerOptions.innerClass) && e.target !== this.calendarButton) this.removeDropdown();
+	}
+
+	removeDropdown(isFocus) {
+		if (!this.dropdown) return;
+		if(this.pickerOptions.mobile) this.setMobileFocus(true);
+		else this.setPcFocus(true);
+		this.setDropdownEvents(true);
+		document.body.removeChild(this.dropdown);
+		this.dropdown = null;
+		if(isFocus) this.calendarButton.focus();
+	}
+
+	update(newOptions = {}) {
+		if (newOptions.minDate) {
+			this.pickerOptions.minDate = parseDateString(newOptions.minDate);
+			this.inputElement.setAttribute('data-min', newOptions.minDate);
+		}
+		if (newOptions.maxDate) {
+			pickerOptions.maxDate = parseDateString(newOptions.maxDate);
+			this.inputElement.setAttribute('data-max', newOptions.maxDate);
+		}
+		if (newOptions.mobile !== undefined) {
+			this.pickerOptions.mobile = newOptions.mobile;
+		}
+
+		// 현재 날짜와 선택된 날짜가 새로운 범위 내에 있는지 확인하고 조정
+		if (this.currentDate < this.pickerOptions.minDate) {
+			this.currentDate = new Date(this.pickerOptions.minDate);
+		} else if (currentDate > this.pickerOptions.maxDate) {
+			this.currentDate = new Date(this.pickerOptions.maxDate);
+		}
+
+		if (this.selectedDate && (this.selectedDate < this.pickerOptions.minDate || this.selectedDate > this.pickerOptions.maxDate)) {
+			this.selectedDate = new Date(this.currentDate);
+			this.updateValue();
+		}
+		this.updateYearButtons();
+		this.createMonthButtons();
+		this.updateTitle();
+	}
+
+	getValue () {
+		const selectedYear = this.selectedDate.getFullYear();
+		const selectedMonth = this.selectedDate.getMonth() + 1;
+		return {
+			value: selectedYear + '-' +(selectedMonth < 10 ? '0'+selectedMonth : selectedMonth),
+			year: selectedYear,
+			month: selectedMonth
+		};
+	}
 }
 
 // 모든 month picker 입력 필드 초기화
