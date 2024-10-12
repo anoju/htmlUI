@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다양한 스크롤 애니메이션 예제</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <article class="page">
+        <main class="page-body">
+            <section class="intro">
+                <h1>SCROLL UI</h1>
+                <p>스크롤하면 컨텐츠가 변합니다.</p>
+                <p><button class="button" onclick="popupOpen('.popup')">팝업열기</button></p>
+            </section>
+
+            <section class="feature-container">
+                <div class="feature feature-1">
+                    <div class="feature-content">
+                        <h2>섹션1</h2>
+                        <p>점점 커집니다.</p>
+                    </div>
+                    <div class="feature-image">
+                        <img src="../img/thumb-temp.jpg" alt="이미지1" data-scroll-ani="scale-up fade-in">
+                    </div>
+                </div>
+            </section>
+
+            <section class="feature-container">
+                <div class="feature feature-2">
+                    <div class="feature-content">
+                        <h2>섹션2</h2>
+                        <p>좌측에서 나옵니다.</p>
+                    </div>
+                    <div class="feature-image">
+                        <img src="../img/thumb-temp2.jpg" alt="이미지2" data-scroll-ani="slide-left">
+                    </div>
+                </div>
+            </section>
+
+            <section class="feature-container">
+                <div class="feature feature-3">
+                    <div class="feature-content">
+                        <h2>섹션3</h2>
+                        <p>우측에서 나옵니다.</p>
+                    </div>
+                    <div class="feature-image">
+                        <img src="../img/thumb-temp3.jpg" alt="이미지3" data-scroll-ani="slide-right">
+                    </div>
+                </div>
+            </section>
+
+            <section class="feature-container">
+                <div class="feature feature-4">
+                    <div class="feature-content">
+                        <h2>섹션4</h2>
+                        <p>서서히 나타납니다.</p>
+                    </div>
+                    <div class="feature-image">
+                        <img src="../img/thumb-temp4.jpg" alt="이미지4" data-scroll-ani="fade-in">
+                    </div>
+                </div>
+            </section>
+        </main>
+    </article>
+
+    <div class="popup">
+        <article class="page">
+            <header class="page-head">
+                <h1>팝업</h1>
+                <button class="button" onclick="popupClose('.popup')">팝업닫기</button>
+            </header>
+            <main class="page-body">
+                <section class="intro">
+                    <h1>SCROLL UI</h1>
+                    <p>스크롤하면 컨텐츠가 변합니다.</p>
+                </section>
+        
+                <section class="feature-container">
+                    <div class="feature feature-1">
+                        <div class="feature-content">
+                            <h2>섹션1</h2>
+                            <p>점점 커집니다.</p>
+                        </div>
+                        <div class="feature-image">
+                            <img src="../img/thumb-temp.jpg" alt="이미지1" data-scroll-ani="scale-up">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="feature-container">
+                    <div class="feature feature-2">
+                        <div class="feature-content">
+                            <h2>섹션2</h2>
+                            <p>좌측에서 나옵니다.</p>
+                        </div>
+                        <div class="feature-image">
+                            <img src="../img/thumb-temp2.jpg" alt="이미지2" data-scroll-ani="slide-left">
+                        </div>
+                    </div>
+                </section>
+    
+                <section class="feature-container">
+                    <div class="feature feature-3">
+                        <div class="feature-content">
+                            <h2>섹션3</h2>
+                            <p>우측에서 나옵니다.</p>
+                        </div>
+                        <div class="feature-image">
+                            <img src="../img/thumb-temp3.jpg" alt="이미지3" data-scroll-ani="slide-right">
+                        </div>
+                    </div>
+                </section>
+    
+                <section class="feature-container">
+                    <div class="feature feature-4">
+                        <div class="feature-content">
+                            <h2>섹션4</h2>
+                            <p>서서히 나타납니다.</p>
+                        </div>
+                        <div class="feature-image">
+                            <img src="../img/thumb-temp4.jpg" alt="이미지4" data-scroll-ani="fade-in">
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </article>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

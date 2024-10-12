@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>뷰포트 내 요소만 애니메이션 적용</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+      .section {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2em;
+        color: white;
+      }
+      .section:nth-child(odd) {
+        background-color: #3498db;
+      }
+      .section:nth-child(even) {
+        background-color: #e74c3c;
+      }
+      .animate-me {
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="section">
+      <h1 class="animate-me">스크롤을 내려보세요</h1>
+    </div>
+    <div class="section">
+      <p class="animate-me">이 텍스트는 뷰포트 내에서만 애니메이션됩니다.</p>
+    </div>
+    <div class="section">
+      <p class="animate-me">각 섹션은 개별적으로 애니메이션됩니다.</p>
+    </div>
+    <div class="section">
+      <p class="animate-me">스크롤의 힘을 느껴보세요!</p>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const animateElements = document.querySelectorAll('.animate-me');
+
+        function updateElementStyle(element) {
+          const rect = element.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          const windowCenter = windowHeight / 2;
+          const elementCenter = rect.top + rect.height / 2;
+
+          // 요소 중심이 화면 중심에 도달할 때까지의 진행도 계산
+          let progress = 1 - (elementCenter - windowCenter) / (windowHeight / 2);
+          progress = Math.max(0, Math.min(1, progress)); // 0과 1 사이의 값으로 제한
+
+          // 진행도에 따라 스타일 적용
+          const translateY = 50 - progress * 50; // 50px에서 0px로
+          const scale = 0.8 + progress * 0.2; // 0.8에서 1로
+          const opacity = progress; // 0에서 1로
+
+          element.style.transform = `translateY(${translateY}px) scale(${scale})`;
+          element.style.opacity = opacity;
+        }
+
+        function resetElementStyle(element) {
+          element.style.transform = 'translateY(50px) scale(0.8)';
+          element.style.opacity = '0';
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.dataset.visible = 'true';
+                updateElementStyle(entry.target);
+              } else {
+                entry.target.dataset.visible = 'false';
+                resetElementStyle(entry.target);
+              }
+            });
+          },
+          {
+            threshold: 0
+          }
+        );
+
+        animateElements.forEach((element) => {
+          observer.observe(element);
+          resetElementStyle(element); // 초기 상태 설정
+        });
+
+        function updateVisibleElements() {
+          animateElements.forEach((element) => {
+            if (element.dataset.visible === 'true') {
+              updateElementStyle(element);
+            }
+          });
+        }
+
+        // 스크롤 이벤트에 연결
+        window.addEventListener('scroll', updateVisibleElements);
+
+        // 창 크기 변경 시에도 업데이트
+        window.addEventListener('resize', updateVisibleElements);
+      });
+    </script>
+  </body>
+</html>
