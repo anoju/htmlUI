@@ -29,7 +29,7 @@ body, ul{margin:0;padding:0;}
 .ui-monthpicker-navi.next {background-position:0 -72px;}
 .ui-monthpicker-navi.last {background-position:0 -48px;}
 .ui-monthpicker-navi.none{visibility:hidden;}
-.ui-monthpicker-title {display:block;font-size:20px;margin:0 20px;font-weight:700;color:#050f26;flex: 1 1 auto;text-align:center;}
+.ui-monthpicker-title {display:block;font-size:20px;line-height:24px;margin:0 20px;font-weight:700;color:#050f26;flex: 1 1 auto;text-align:center;}
 .ui-monthpicker-grid>ul{display:none;grid-template-columns:repeat(4, 1fr);gap:24px 0;}
 .ui-monthpicker-grid>ul.active{display:grid;}
 .ui-monthpicker-grid>ul>li{display:flex;justify-content:center;}
@@ -96,6 +96,8 @@ class uiMonthPicker {
 			innerClass: 'ui-monthpicker-inr',
 			headClass: 'ui-monthpicker-head',
 			titleClass: 'ui-monthpicker-title',
+			titleMonthTxt: '년도 선택모드 변경',
+			titleYearTxt: '월 선택모드 변경',
 			naviBtnClass: 'ui-monthpicker-navi',
 			prevBtnClass: 'prev',
 			prevBtnTxt: '이전년도',
@@ -225,7 +227,7 @@ class uiMonthPicker {
 			<div class="${this.pickerOptions.headClass}">
 				<button type="button" class="${this.pickerOptions.naviBtnClass} ${this.pickerOptions.firstBtnClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.firstBtnTxt}</span></button>
 				<button type="button" class="${this.pickerOptions.naviBtnClass} ${this.pickerOptions.prevBtnClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.prevBtnTxt}</span></button>
-				<button type="button" class="${this.pickerOptions.titleClass}"></span>
+				<button type="button" class="${this.pickerOptions.titleClass}" title="${this.pickerOptions.titleMonthTxt}"></button>
 				<button type="button" class="${this.pickerOptions.naviBtnClass} ${this.pickerOptions.nextBtnClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.nextBtnTxt}</span></button>
 				<button type="button" class="${this.pickerOptions.naviBtnClass} ${this.pickerOptions.lastBtnClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.lastBtnTxt}</span></button>
 			</div>
@@ -262,15 +264,18 @@ class uiMonthPicker {
     this.yearViewActive = !this.yearViewActive;
     const monthsGrid = this.dropdown.querySelector('.'+this.pickerOptions.gridMonthClass);
     const yearsGrid = this.dropdown.querySelector('.'+this.pickerOptions.gridYearClass);
+    const titleBtn = this.dropdown.querySelector('.'+this.pickerOptions.titleClass);
     
     if (this.yearViewActive) {
       monthsGrid.classList.remove(this.pickerOptions.gridActiveClass);
       yearsGrid.classList.add(this.pickerOptions.gridActiveClass);
       this.createYearButtons();
+			titleBtn.title = this.pickerOptions.titleYearTxt;
     } else {
       monthsGrid.classList.add(this.pickerOptions.gridActiveClass);
       yearsGrid.classList.remove(this.pickerOptions.gridActiveClass);
       this.createMonthButtons();
+			titleBtn.title = this.pickerOptions.titleMonthTxt;
     }
 		this.updateTitle();
     this.updateYearButtons();
