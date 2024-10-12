@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>monthpicker</title>
-  <style>
+<title>monthpicker</title>
+<meta name="viewport" content="width=420">
+<style>
 /* input 예제 */
-button{cursor: pointer;padding:0;border: 0 none;background: none;}
+button{cursor:pointer;padding:0;border:0 none;background:none;}
 body, ul{margin:0;padding:0;}
 .wrap{padding:200px 30px;}
-.monthpicker-container {position: relative;margin-bottom: 10px;display: flex;gap: 4px;align-items: center;}
-.monthpicker {box-sizing: border-box;width: 140px;height: 40px;padding: 8px;border: 1px solid #ccc;border-radius: 4px;}
+.monthpicker-container {position:relative;margin-bottom:10px;display:flex;gap:4px;align-items:center;}
+.monthpicker {box-sizing:border-box;width:140px;height:40px;padding:8px;border:1px solid #ccc;border-radius:4px;}
 .blind{font-size:0;line-height:0;color:transparent;width:0;height:0;}
-.btn{height: 40px;border: 1px solid #ccc;padding:0 10px;background-color:#f1f1f1;}
+.btn{height:40px;border:1px solid #ccc;padding:0 10px;background-color:#f1f1f1;}
 
 /* 버튼 */
-.ui-monthpicker-trigger {width: 45px;height: 40px;background: url(https://nwww-t.sgic.co.kr/resource/pc/images/common/form_calander.png) no-repeat center center;border: 1px solid #ccc;border-radius: 4px;}
+.ui-monthpicker-trigger {width:45px;height:40px;background:url(https://nwww-t.sgic.co.kr/resource/pc/images/common/form_calander.png) no-repeat center center;border:1px solid #ccc;border-radius:4px;flex-shrink:0;}
 
 /* ui-monthpicker */
 .ui-monthpicker {z-index:9999!important;}
@@ -29,7 +30,7 @@ body, ul{margin:0;padding:0;}
 .ui-monthpicker-navi.next {background-position:0 -72px;}
 .ui-monthpicker-navi.last {background-position:0 -48px;}
 .ui-monthpicker-navi.none{visibility:hidden;}
-.ui-monthpicker-title {display:block;font-size:20px;line-height:24px;margin:0 20px;font-weight:700;color:#050f26;flex: 1 1 auto;text-align:center;}
+.ui-monthpicker-title {display:block;font-size:20px;line-height:24px;margin:0 20px;font-weight:700;color:#050f26;flex:1 1 auto;text-align:center;}
 .ui-monthpicker-grid>ul{display:none;grid-template-columns:repeat(4, 1fr);gap:24px 0;}
 .ui-monthpicker-grid>ul.active{display:grid;}
 .ui-monthpicker-grid>ul>li{display:flex;justify-content:center;}
@@ -41,32 +42,33 @@ body, ul{margin:0;padding:0;}
 .ui-monthpicker-btn.selected {background-color:#4a42b9;}
 .ui-monthpicker-btn:disabled {color:#8a8a8a;}
 .ui-monthpicker-close {display:block;position:absolute;right:6px;top:6px;width:20px;height:20px;background:url(https://nwww-t.sgic.co.kr/resource/pc/images/common/btn_calendar_close.png) no-repeat 50% 50%;overflow:hidden;}
-  </style>
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <!-- 예제 입력 필드들 -->
-    <div class="monthpicker-container">
-      <input type="text" class="monthpicker" data-min="2022-03" data-max="2024-10" title="조회기간">
-      <span>2022-03 ~ 2024-10</span>
-    </div>
-    <div class="monthpicker-container">
-      <input type="text" class="monthpicker" data-min="2023-06" value="2024-08" data-mobile placeholder="모바일용">
-      <span>모바일용, 최소 2023-06</span>
-    </div>
-    <div class="monthpicker-container">
-      <input type="text" class="monthpicker" data-max="2025-03" data-first>
-      <span>초기값(현재 월) 세팅, 최소 2025-03</span>
-    </div>
-    <div class="monthpicker-container">
-      <input type="text" class="monthpicker">
-      <button type="button" class="btn btnUpdate">클릭시 옵션 업데이트</button>
-    </div>
-    <div class="monthpicker-container">
-      <input type="text" class="monthpicker">
-      <button type="button" class="btn btnDestroy">파괴</button>
-    </div>
-  </div>
+
+<div class="wrap">
+	<!-- 예제 입력 필드들 -->
+	<div class="monthpicker-container">
+		<input type="text" class="monthpicker" data-min="2022-03" data-max="2024-10" title="조회기간">
+		<span>2022-03 ~ 2024-10</span>
+	</div>
+	<div class="monthpicker-container">
+		<input type="text" class="monthpicker" data-min="2023-06" value="2024-08" data-mobile placeholder="모바일용">
+		<span>모바일용, 최소 2023-06</span>
+	</div>
+	<div class="monthpicker-container">
+		<input type="text" class="monthpicker" data-max="2025-03" data-first>
+		<span>초기값(현재 월) 세팅, 최소 2025-03</span>
+	</div>
+	<div class="monthpicker-container">
+		<input type="text" class="monthpicker">
+		<button type="button" class="btn btnUpdate">클릭시 옵션 업데이트</button>
+	</div>
+	<div class="monthpicker-container">
+		<input type="text" class="monthpicker">
+		<button type="button" class="btn btnDestroy">파괴</button>
+	</div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
