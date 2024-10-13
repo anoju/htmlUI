@@ -58,7 +58,10 @@ body, ul{margin:0;padding:0;}
 	</div>
 	<div class="monthpicker-container">
 		<input type="text" class="monthpicker" data-max="2025-03" data-first>
-		<span>초기값(현재 월) 세팅, 최소 2025-03</span>
+		<span>초기값(현재 월) 세팅, 최대 2025-03</span>
+	</div>
+	<div class="monthpicker-container">
+		<input type="text" class="monthpicker" data-mode="year" placeholder="년도 선택" data-min="2002" data-max="2047">
 	</div>
 	<div class="monthpicker-container">
 		<input type="text" class="monthpicker">
@@ -84,10 +87,12 @@ class uiMonthPicker {
 		this.inputElement = inputElement;
 		this.container = inputElement.parentElement;
     this.yearViewActive = false;
+    this.yearMode = false;
 		this.yearRange = { start: 0, end: 0 };
 
 		//디폴트 옵션
 		this.defaultOptions = {
+			mode: 'month',
 			months: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
 			buttonClass: 'ui-monthpicker-trigger',
 			buttonTxt: '월 선택',
@@ -190,21 +195,55 @@ class uiMonthPicker {
 	}
 
 	parseDateString(dateString) {
-		if(dateString === 'today') dateString = $todayMonth.toString().substr(0,4) + '-' + $todayMonth.toString().substr(4,2);
-		const [year, month] = dateString.split('-').map(Number);
-		return new Date(year, month - 1);
+		if (dateString === 'today') {
+			return new Date();
+		}
+		
+		// 'year' 모드를 위한 처리
+		if (dateString.length === 4 && !isNaN(dateString)) {
+			return new Date(parseInt(dateString, 10), 0, 1);
+		}
+		
+		const parts = dateString.split('-');
+		if (parts.length !== 2) {
+			throw new Error('Invalid date format. Expected "YYYY-MM" or "YYYY"');
+		}
+		
+		const year = parseInt(parts[0], 10);
+		const month = parseInt(parts[1], 10) - 1; // JavaScript의 월은 0부터 시작합니다.
+		
+		if (isNaN(year) || isNaN(month) || month < 0 || month > 11) {
+			throw new Error('Invalid year or month');
+		}
+		
+		return new Date(year, month);
 	}
 
 	parseOptions() {
-		const dataMin = this.inputElement.getAttribute('data-min');
-		const dataMax = this.inputElement.getAttribute('data-max');
+		const dataMode = this.inputElement.getAttribute('data-mode');
 		const dataMobile = this.inputElement.getAttribute('data-mobile');
 		const dataFirst = this.inputElement.getAttribute('data-first');
+		const dataMin = this.inputElement.getAttribute('data-min');
+		const dataMax = this.inputElement.getAttribute('data-max');
 
-		if(dataMin) this.pickerOptions.minDate = this.parseDateString(dataMin);
-		if(dataMax) this.pickerOptions.maxDate = this.parseDateString(dataMax);
+		if(dataMode !== null) this.pickerOptions.mode = dataMode;
 		if(dataMobile !== null) this.pickerOptions.mobile = (dataMobile === '' ? true : dataMobile);
 		if(dataFirst !== null) this.pickerOptions.first = (dataFirst === '' ? true : dataFirst);
+		if(dataMin) {
+			this.pickerOptions.minDate = this.parseDateString(dataMin);
+			if (dataMin.length === 4) this.pickerOptions.minDate.setMonth(11);
+		}
+		if(dataMax) {
+			this.pickerOptions.maxDate = this.parseDateString(dataMax);
+			if (dataMax.length === 4) this.pickerOptions.maxDate.setMonth(0);
+		}
+
+		this.checkYearMode();	
+	}
+
+	checkYearMode(){
+		if(this.pickerOptions.mode === 'year') this.yearMode = true;
+		else this.yearMode = false;
 	}
 
 	setSelectedDate(isFirst) {
@@ -225,17 +264,25 @@ class uiMonthPicker {
 		const dropdownElement = document.createElement('div');
 		if(this.pickerOptions.mobile) dropdownElement.className = this.defaultOptions.wrapClass+' '+this.defaultOptions.mobileClass;
 		else dropdownElement.className = this.defaultOptions.wrapClass+' '+this.defaultOptions.pcClass;
+		let titleHtml = `<button type="button" class="${this.pickerOptions.titleClass}" title="${this.pickerOptions.titleMonthTxt}"></button>`;
+		let monthActive = this.pickerOptions.gridActiveClass;
+		let yearActive = '';
+		if(this.yearMode){
+			titleHtml = `<span class="${this.pickerOptions.titleClass}"></span>`;
+			monthActive = '';
+			yearActive = this.pickerOptions.gridActiveClass;
+		}
 		const $html = `<div class="${this.pickerOptions.innerClass}">
 			<div class="${this.pickerOptions.headClass}">
 				<button type="button" class="${this.pickerOptions.naviBtnClass} ${this.pickerOptions.firstBtnClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.firstBtnTxt}</span></button>
 				<button type="button" class="${this.pickerOptions.naviBtnClass} ${this.pickerOptions.prevBtnClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.prevBtnTxt}</span></button>
-				<button type="button" class="${this.pickerOptions.titleClass}" title="${this.pickerOptions.titleMonthTxt}"></button>
+				${titleHtml}
 				<button type="button" class="${this.pickerOptions.naviBtnClass} ${this.pickerOptions.nextBtnClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.nextBtnTxt}</span></button>
 				<button type="button" class="${this.pickerOptions.naviBtnClass} ${this.pickerOptions.lastBtnClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.lastBtnTxt}</span></button>
 			</div>
       <div class="${this.pickerOptions.gridClass}">
-        <ul class="${this.pickerOptions.gridMonthClass} ${this.pickerOptions.gridActiveClass}"></ul>
-        <ul class="${this.pickerOptions.gridYearClass}"></ul>
+        <ul class="${this.pickerOptions.gridMonthClass} ${monthActive}"></ul>
+        <ul class="${this.pickerOptions.gridYearClass} ${yearActive}"></ul>
       </div> 
 			<button type="button" class="${this.pickerOptions.closeClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.closeTxt}</span></button>
 		<div>`;
@@ -247,17 +294,21 @@ class uiMonthPicker {
 
 	updateValue() {
 		if(!this.selectedDate) return;
-		let month = this.selectedDate.getMonth() + 1;
-		if(month < 10) month = '0'+month;
 		const selectedYear = this.selectedDate.getFullYear();
-		this.inputElement.value = `${selectedYear}-${month}`;
+		if(this.yearMode){
+			this.inputElement.value = selectedYear;
+		}else{
+			let month = this.selectedDate.getMonth() + 1;
+			if(month < 10) month = '0'+month;
+			this.inputElement.value = `${selectedYear}-${month}`;
+		}
 	}
 
 	updateTitle(){
 		if (!this.dropdown) return;
 		const year = this.currentDate.getFullYear();
 		const title = this.dropdown.querySelector('.'+this.pickerOptions.titleClass);
-		if (this.yearViewActive) title.textContent = `${this.yearRange.start}~${this.yearRange.end}`;
+		if (this.yearViewActive || this.yearMode) title.textContent = `${this.yearRange.start}~${this.yearRange.end}`;
 		else title.textContent = year+'년';
 	}
 
@@ -268,7 +319,7 @@ class uiMonthPicker {
     const yearsGrid = this.dropdown.querySelector('.'+this.pickerOptions.gridYearClass);
     const titleBtn = this.dropdown.querySelector('.'+this.pickerOptions.titleClass);
     
-    if (this.yearViewActive) {
+    if (this.yearViewActive || this.yearMode) {
       monthsGrid.classList.remove(this.pickerOptions.gridActiveClass);
       yearsGrid.classList.add(this.pickerOptions.gridActiveClass);
       this.createYearButtons();
@@ -297,7 +348,7 @@ class uiMonthPicker {
 		const nextBtn = this.dropdown.querySelector('.'+this.pickerOptions.nextBtnClass);
 		const firstBtn = this.dropdown.querySelector('.'+this.pickerOptions.firstBtnClass);
 		const lastBtn = this.dropdown.querySelector('.'+this.pickerOptions.lastBtnClass);
-		if (this.yearViewActive) {
+		if (this.yearViewActive || this.yearMode) {
 			if(firstBtn) {
 				firstBtn.disabled = true;
 				firstBtn.classList.add('none');
@@ -406,10 +457,16 @@ class uiMonthPicker {
 	}
 
   selectYear(year) {
-    this.currentDate.setFullYear(year);
-    this.updateTitle();
-    this.createMonthButtons();
-    this.toggleYearView();
+		this.currentDate.setFullYear(year);
+		if (this.yearMode) {
+			this.selectedDate = new Date(year, 0, 1);
+			this.updateValue();
+			this.removeDropdown(true);
+		}else{
+			this.updateTitle();
+			this.createMonthButtons();
+			this.toggleYearView();
+		}
   }
 
 	toggleDropdown(e) {
@@ -423,7 +480,8 @@ class uiMonthPicker {
 		this.setSelectedDate();
 		if(this.pickerOptions.first) this.updateValue();
 		this.updateTitle();
-		this.createMonthButtons();
+		if(this.yearMode) this.createYearButtons();
+		else this.createMonthButtons();
 		this.updateYearButtons();
 
 		if(this.pickerOptions.mobile){
@@ -481,7 +539,7 @@ class uiMonthPicker {
 	}
 
 	setNaviEvents(num){
-		if (this.yearViewActive) {
+		if (this.yearViewActive || this.yearMode) {
 			this.yearRange.start += (num*10);
       this.yearRange.end += (num*10);
 			this.createYearButtons();
@@ -498,7 +556,7 @@ class uiMonthPicker {
 		const nextBtn = this.dropdown.querySelector('.'+this.pickerOptions.nextBtnClass);
 		const firstBtn = this.dropdown.querySelector('.'+this.pickerOptions.firstBtnClass);
 		const lastBtn = this.dropdown.querySelector('.'+this.pickerOptions.lastBtnClass);
-    const titleBtn = this.dropdown.querySelector('.'+this.pickerOptions.titleClass);
+    const titleBtn = this.dropdown.querySelector('button.'+this.pickerOptions.titleClass);
 		const closeBtn = this.dropdown.querySelector('.'+this.pickerOptions.closeClass);
 		const grid = this.dropdown.querySelector('.'+this.pickerOptions.gridClass);
 
@@ -572,14 +630,16 @@ class uiMonthPicker {
 			}
 		}
 
+		if(titleBtn){
+			if(isRemove) titleBtn.removeEventListener('click', this.eventListener.titleBtn);
+			else titleBtn.addEventListener('click', this.eventListener.titleBtn);
+		}
 		if(isRemove){
-      titleBtn.removeEventListener('click', this.eventListener.titleBtn);
 			grid.removeEventListener('click', this.eventListener.gridBtn);
 			document.removeEventListener('click', this.eventListener.document);
 			document.removeEventListener('mouseup', this.eventListener.document);
 			document.removeEventListener('touchend', this.eventListener.document);
 		}else{
-      titleBtn.addEventListener('click', this.eventListener.titleBtn);
 			grid.addEventListener('click', this.eventListener.gridBtn);
 			document.addEventListener('click', this.eventListener.document);
 			document.addEventListener('mouseup', this.eventListener.document);
@@ -602,6 +662,8 @@ class uiMonthPicker {
 	}
 
 	update(newOptions = {}) {
+		if (newOptions.mode !== undefined) this.pickerOptions.mode = newOptions.mode;
+		if (newOptions.mobile !== undefined) this.pickerOptions.mobile = newOptions.mobile;
 		if (newOptions.minDate) {
 			this.pickerOptions.minDate = parseDateString(newOptions.minDate);
 			this.inputElement.setAttribute('data-min', newOptions.minDate);
@@ -610,9 +672,8 @@ class uiMonthPicker {
 			pickerOptions.maxDate = parseDateString(newOptions.maxDate);
 			this.inputElement.setAttribute('data-max', newOptions.maxDate);
 		}
-		if (newOptions.mobile !== undefined) {
-			this.pickerOptions.mobile = newOptions.mobile;
-		}
+
+		this.checkYearMode();
 
 		// 현재 날짜와 선택된 날짜가 새로운 범위 내에 있는지 확인하고 조정
 		if (this.currentDate < this.pickerOptions.minDate) {
