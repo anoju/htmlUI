@@ -205,7 +205,7 @@ class uiMonthPicker {
     // 이벤트 리스너를 저장할 객체
     this.eventListeners = {
       calendarButton: this.toggleDropdown.bind(this),
-      document: this.handleOutsideClick.bind(this),
+      document: this.outsideClick.bind(this),
       prevYearBtn: null,
       nextYearBtn: null,
       closeBtn: null
@@ -315,10 +315,9 @@ class uiMonthPicker {
   }
 
   updateTitle() {
+    if (!this.dropdown) return;
     const year = this.currentDate.getFullYear();
-    if (this.dropdown) {
-      this.dropdown.querySelector('.year-display').textContent = `${year}년`;
-    }
+    this.dropdown.querySelector('.year-display').textContent = `${year}년`;
   }
 
   isDateInRange(year, month) {
@@ -390,7 +389,6 @@ class uiMonthPicker {
     
     if (!this.pickerOptions.mobile) {
       const rect = this.container.getBoundingClientRect();
-      this.dropdown.style.position = 'absolute';
       this.dropdown.style.left = `${rect.left + window.scrollX}px`;
       let setTop = rect.bottom + window.scrollY;
       if (setTop + this.dropdown.offsetHeight > window.innerHeight + window.scrollY) setTop = rect.top - this.dropdown.offsetHeight + window.scrollY;
@@ -445,7 +443,7 @@ class uiMonthPicker {
     closeBtn.addEventListener('click', this.eventListeners.closeBtn);
   }
 
-  handleOutsideClick(e) {
+  outsideClick(e) {
     if (this.dropdown && !e.target.closest('.month-picker-inr') && !e.target.closest('.month-picker-btn')) {
       this.removeDropdown();
     }
