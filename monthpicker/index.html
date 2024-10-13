@@ -70,10 +70,7 @@ body, ul{margin:0;padding:0;}
 	</div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
-const $focusEls = ['a[href]','area[href]','input:not(hidden)','select','textarea','button', 'iframe', 'object', 'embed', '[tabindex]', '[contenteditable]'];
-
 const uiMonthPickers = [];
 class uiMonthPicker {
 	constructor(inputElement, options = {}){
@@ -446,21 +443,23 @@ class uiMonthPicker {
 		if(!this.dropdown) return;
 		if(!this.eventListener.pcFocus){
 			this.eventListener.pcFocus = (e) => {
-				const $dropdown = $(this.dropdown);
-				const $keycode = e.keyCode ? e.keyCode : e.which;
-				const $target = $(e.target);
-				const $focusable = $dropdown.find($focusEls.join(',')).not(':disabled');
-				if ($target.hasClass(this.pickerOptions.wrapClass) || $focusable.index($target) === 0) {
-					if ($keycode === 9 && e.shiftKey) {
-						e.preventDefault();
-						$focusable.last().focus();
-					}
+				const focusEls = ['a[href]','area[href]','input:not([type="hidden"]):not([disabled])','select:not([disabled])','textarea:not([disabled])','button:not([disabled])','iframe','object','embed','[contenteditable]','[tabindex]:not([tabindex^="-"])'];
+				const keycode = e.keyCode || e.which;
+				const target = e.target;
+				const focusable = Array.from(this.dropdown.querySelectorAll(focusEls.join(','))).filter(el => !el.disabled); 
+				
+				if (target.classList.contains(this.pickerOptions.wrapClass) || focusable.indexOf(target) === 0) {
+						if (keycode === 9 && e.shiftKey) {
+								e.preventDefault();
+								focusable[focusable.length - 1].focus();
+						}
 				}
-				if ($focusable.length === $focusable.index($target) + 1) {
-					if ($keycode === 9 && !e.shiftKey) {
-						e.preventDefault();
-						$focusable.first().focus();
-					}
+				
+				if (focusable.indexOf(target) === focusable.length - 1) {
+						if (keycode === 9 && !e.shiftKey) {
+								e.preventDefault();
+								focusable[0].focus();
+						}
 				}
 			};
 		}
@@ -474,10 +473,16 @@ class uiMonthPicker {
 	}
 	setMobileFocus(isHide){
 		if(!this.dropdown) return;
-		const $dropdown = $(this.dropdown);
-		const $siblings = $dropdown.siblings('div')
-		if(isHide) $siblings.removeAttr('aria-hidden');
-		else $siblings.attr('aria-hidden', true);
+		const siblingTags = ['div', 'section', 'main', 'article'];
+    const siblings = Array.from(this.dropdown.parentNode.children).filter(child => 
+        child !== this.dropdown && siblingTags.includes(child.tagName.toLowerCase())
+    );
+
+    if (isHide) {
+        siblings.forEach(sibling => sibling.removeAttribute('aria-hidden'));
+    } else {
+        siblings.forEach(sibling => sibling.setAttribute('aria-hidden', 'true'));
+    }
 	}
 
 	setNaviEvents(num){
