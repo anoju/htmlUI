@@ -603,11 +603,11 @@ class uiMonthPicker {
 
 	update(newOptions = {}) {
 		if (newOptions.minDate) {
-			this.pickerOptions.minDate = parseDateString(newOptions.minDate);
+			this.pickerOptions.minDate = this.parseDateString(newOptions.minDate);
 			this.inputElement.setAttribute('data-min', newOptions.minDate);
 		}
 		if (newOptions.maxDate) {
-			pickerOptions.maxDate = parseDateString(newOptions.maxDate);
+			this.pickerOptions.maxDate = this.parseDateString(newOptions.maxDate);
 			this.inputElement.setAttribute('data-max', newOptions.maxDate);
 		}
 		if (newOptions.mobile !== undefined) {
@@ -656,6 +656,7 @@ document.addEventListener('DOMContentLoaded', function() {
       maxDate: '2025-11',
       mobile: true
     });
+		e.target.disabled = true;
   });
   document.querySelector('.btnDestroy').addEventListener('click', (e) => {
     const picker = uiMonthPickers[4];

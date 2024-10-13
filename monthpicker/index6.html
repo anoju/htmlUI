@@ -61,15 +61,15 @@ body, ul{margin:0;padding:0;}
 		<span>초기값(현재 월) 세팅, 최대 2025-03</span>
 	</div>
 	<div class="monthpicker-container">
-		<input type="text" class="monthpicker" data-mode="year" placeholder="년도 선택" data-min="2002" data-max="2047">
-	</div>
-	<div class="monthpicker-container">
 		<input type="text" class="monthpicker">
 		<button type="button" class="btn btnUpdate">클릭시 옵션 업데이트</button>
 	</div>
 	<div class="monthpicker-container">
 		<input type="text" class="monthpicker">
 		<button type="button" class="btn btnDestroy">파괴</button>
+	</div>
+	<div class="monthpicker-container">
+		<input type="text" class="monthpicker" data-mode="year" placeholder="년도 선택" data-min="2002" data-max="2047">
 	</div>
 </div>
 
@@ -665,11 +665,11 @@ class uiMonthPicker {
 		if (newOptions.mode !== undefined) this.pickerOptions.mode = newOptions.mode;
 		if (newOptions.mobile !== undefined) this.pickerOptions.mobile = newOptions.mobile;
 		if (newOptions.minDate) {
-			this.pickerOptions.minDate = parseDateString(newOptions.minDate);
+			this.pickerOptions.minDate = this.parseDateString(newOptions.minDate);
 			this.inputElement.setAttribute('data-min', newOptions.minDate);
 		}
 		if (newOptions.maxDate) {
-			pickerOptions.maxDate = parseDateString(newOptions.maxDate);
+			this.pickerOptions.maxDate = this.parseDateString(newOptions.maxDate);
 			this.inputElement.setAttribute('data-max', newOptions.maxDate);
 		}
 
@@ -713,10 +713,11 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('.btnUpdate').addEventListener('click', (e) => {
     const picker = uiMonthPickers[3];
     picker.update({
-      minDate: '2025-02',
-      maxDate: '2025-11',
+      minDate: '2023-02',
+      maxDate: '2026-11',
       mobile: true
     });
+		e.target.disabled = true;
   });
   document.querySelector('.btnDestroy').addEventListener('click', (e) => {
     const picker = uiMonthPickers[4];
