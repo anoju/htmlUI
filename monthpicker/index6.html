@@ -246,11 +246,14 @@ class uiMonthPicker {
 
 	setSelectedDate(isFirst) {
 		const inputValue = this.inputElement.value;
-		if (inputValue) {
+		if (inputValue && (inputValue.length === 4 || inputValue.length === 7)) {
 			this.selectedDate = this.parseDateString(inputValue);
 			this.currentDate = new Date(this.selectedDate);
 		} else if(isFirst && this.pickerOptions.first && this.selectedDate === null) {
 			this.selectedDate = new Date();
+		}else{
+			this.selectedDate = null;
+			this.currentDate = new Date();
 		}
 
 		const currentYear = this.currentDate.getFullYear();
@@ -306,8 +309,8 @@ class uiMonthPicker {
 		if (!this.dropdown) return;
 		const year = this.currentDate.getFullYear();
 		const title = this.dropdown.querySelector('.'+this.pickerOptions.titleClass);
-		if (this.yearViewActive || this.yearMode) title.textContent = `${this.yearRange.start}~${this.yearRange.end}`;
-		else title.textContent = year+'년';
+		if (this.yearViewActive) title.innerHTML = `${this.yearRange.start}<span class="${this.pickerOptions.txtBlindClass}">년</span> ~ ${this.yearRange.end}<span class="${this.pickerOptions.txtBlindClass}">년</span>`;
+		else title.innerHTML = year+'년';
 	}
 
   toggleYearView() {
