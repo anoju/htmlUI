@@ -196,24 +196,24 @@ class uiMonthPicker {
 		if (dateString === 'today') {
 			return new Date();
 		}
-		
+
 		// 'year' 모드를 위한 처리
 		if (dateString.length === 4 && !isNaN(dateString)) {
 			return new Date(parseInt(dateString, 10), 0, 1);
 		}
-		
+
 		const parts = dateString.split('-');
 		if (parts.length !== 2) {
 			throw new Error('Invalid date format. Expected "YYYY-MM" or "YYYY"');
 		}
-		
+
 		const year = parseInt(parts[0], 10);
 		const month = parseInt(parts[1], 10) - 1; // JavaScript의 월은 0부터 시작합니다.
-		
+
 		if (isNaN(year) || isNaN(month) || month < 0 || month > 11) {
 			throw new Error('Invalid year or month');
 		}
-		
+
 		return new Date(year, month);
 	}
 
@@ -236,7 +236,7 @@ class uiMonthPicker {
 			if (dataMax.length === 4) this.pickerOptions.maxDate.setMonth(0);
 		}
 
-		this.checkYearMode();	
+		this.checkYearMode();
 	}
 
 	checkYearMode(){
@@ -281,7 +281,7 @@ class uiMonthPicker {
       <div class="${this.pickerOptions.gridClass}">
         <ul class="${this.pickerOptions.gridMonthClass} ${monthActive}"></ul>
         <ul class="${this.pickerOptions.gridYearClass} ${yearActive}"></ul>
-      </div> 
+      </div>
 			<button type="button" class="${this.pickerOptions.closeClass}"><span class="${this.pickerOptions.txtBlindClass}">${this.pickerOptions.closeTxt}</span></button>
 		<div>`;
 		dropdownElement.innerHTML = $html;
@@ -316,7 +316,7 @@ class uiMonthPicker {
     const monthsGrid = this.dropdown.querySelector('.'+this.pickerOptions.gridMonthClass);
     const yearsGrid = this.dropdown.querySelector('.'+this.pickerOptions.gridYearClass);
     const titleBtn = this.dropdown.querySelector('button.'+this.pickerOptions.titleClass);
-    
+
     if (this.yearViewActive || this.yearMode) {
       monthsGrid.classList.remove(this.pickerOptions.gridActiveClass);
       yearsGrid.classList.add(this.pickerOptions.gridActiveClass);
@@ -420,7 +420,7 @@ class uiMonthPicker {
     const yearsGrid = this.dropdown.querySelector('.'+this.pickerOptions.gridYearClass);
     yearsGrid.innerHTML = '';
 		const currentYear = this.currentDate.getFullYear();
-    
+
     for (let year = this.yearRange.start; year <= this.yearRange.end; year++) {
       const li = document.createElement('li');
       const btn = document.createElement('button');
@@ -428,7 +428,7 @@ class uiMonthPicker {
       btn.className = this.pickerOptions.gridBtnClass+' '+this.pickerOptions.gridYearBtnClass;
       btn.dataset.index = year;
       btn.textContent = year;
-      
+
       if (year === currentYear) {
         btn.classList.add(this.pickerOptions.selectedClass);
 				btn.title = this.pickerOptions.selectedYearTxt;
@@ -438,7 +438,7 @@ class uiMonthPicker {
           this.pickerOptions.maxDate && year > this.pickerOptions.maxDate.getFullYear()) {
         btn.disabled = true;
       }
-      
+
       // btn.addEventListener('click', () => this.selectYear(year));
       li.appendChild(btn);
       yearsGrid.appendChild(li);
@@ -504,15 +504,29 @@ class uiMonthPicker {
 				const focusEls = ['a[href]','area[href]','input:not([type="hidden"]):not([disabled])','select:not([disabled])','textarea:not([disabled])','button:not([disabled])','iframe','object','embed','[contenteditable]','[tabindex]:not([tabindex^="-"])'];
 				const keycode = e.keyCode || e.which;
 				const target = e.target;
-				const focusable = Array.from(this.dropdown.querySelectorAll(focusEls.join(','))).filter(el => !el.disabled); 
-				
+				const focusable = Array.from(this.dropdown.querySelectorAll(focusEls.join(','))).filter(el => {
+					if (el.disabled) return false;
+
+					const style = window.getComputedStyle(el);
+					if (style.display === 'none' || style.visibility === 'hidden') return false;
+
+					// 부모 요소들도 확인
+					let parent = el.parentElement;
+					while (parent !== this.dropdown) {
+						const parentStyle = window.getComputedStyle(parent);
+						if (parentStyle.display === 'none' || parentStyle.visibility === 'hidden') return false;
+						parent = parent.parentElement;
+					}
+					return true;
+				});
+
 				if (target.classList.contains(this.pickerOptions.wrapClass) || focusable.indexOf(target) === 0) {
 						if (keycode === 9 && e.shiftKey) {
 								e.preventDefault();
 								focusable[focusable.length - 1].focus();
 						}
 				}
-				
+
 				if (focusable.indexOf(target) === focusable.length - 1) {
 						if (keycode === 9 && !e.shiftKey) {
 								e.preventDefault();
@@ -532,15 +546,12 @@ class uiMonthPicker {
 	setMobileFocus(isHide){
 		if(!this.dropdown) return;
 		const siblingTags = ['div', 'section', 'main', 'article'];
-    const siblings = Array.from(this.dropdown.parentNode.children).filter(child => 
+    const siblings = Array.from(this.dropdown.parentNode.children).filter(child =>
         child !== this.dropdown && siblingTags.includes(child.tagName.toLowerCase())
     );
 
-    if (isHide) {
-        siblings.forEach(sibling => sibling.removeAttribute('aria-hidden'));
-    } else {
-        siblings.forEach(sibling => sibling.setAttribute('aria-hidden', 'true'));
-    }
+    if (isHide) siblings.forEach(sibling => sibling.removeAttribute('aria-hidden'));
+    else siblings.forEach(sibling => sibling.setAttribute('aria-hidden', 'true'));
 	}
 
 	setNaviEvents(num){
