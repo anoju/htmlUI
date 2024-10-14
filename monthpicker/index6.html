@@ -397,7 +397,7 @@ class uiMonthPicker {
 			btn.type = 'button';
 			btn.className = this.pickerOptions.gridBtnClass+' '+this.pickerOptions.gridMonthBtnClass;
 			btn.dataset.index = index;
-			btn.innerHTML = month + `<span class="${this.pickerOptions.txtBlindClass}">${currentYear}</span>`;
+			btn.innerHTML = month + `<span class="${this.pickerOptions.txtBlindClass}">${currentYear}년</span>`;
 
 			if (currentYear === this.todayDate.getFullYear() && index === this.todayDate.getMonth()) {
 				btn.classList.add(this.pickerOptions.todayClass);
@@ -427,7 +427,7 @@ class uiMonthPicker {
       btn.type = 'button';
       btn.className = this.pickerOptions.gridBtnClass+' '+this.pickerOptions.gridYearBtnClass;
       btn.dataset.index = year;
-      btn.textContent = year;
+      btn.innerHTML = year + `<span class="${this.pickerOptions.txtBlindClass}">년</span>`;
 
       if (year === currentYear) {
         btn.classList.add(this.pickerOptions.selectedClass);
