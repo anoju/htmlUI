@@ -103,6 +103,7 @@ class uiMonthPicker {
 			titleMonthTxt: '년도 선택모드 변경',
 			titleYearTxt: '월 선택모드 변경',
 			naviBtnClass: 'ui-monthpicker-navi',
+			naviBtnHiddenClass: 'none',
 			prevBtnClass: 'prev',
 			prevBtnTxt: '이전년도',
 			nextBtnClass: 'next',
@@ -314,18 +315,18 @@ class uiMonthPicker {
     this.yearViewActive = !this.yearViewActive;
     const monthsGrid = this.dropdown.querySelector('.'+this.pickerOptions.gridMonthClass);
     const yearsGrid = this.dropdown.querySelector('.'+this.pickerOptions.gridYearClass);
-    const titleBtn = this.dropdown.querySelector('.'+this.pickerOptions.titleClass);
+    const titleBtn = this.dropdown.querySelector('button.'+this.pickerOptions.titleClass);
     
     if (this.yearViewActive || this.yearMode) {
       monthsGrid.classList.remove(this.pickerOptions.gridActiveClass);
       yearsGrid.classList.add(this.pickerOptions.gridActiveClass);
       this.createYearButtons();
-			titleBtn.title = this.pickerOptions.titleYearTxt;
+			if(titleBtn) titleBtn.title = this.pickerOptions.titleYearTxt;
     } else {
       monthsGrid.classList.add(this.pickerOptions.gridActiveClass);
       yearsGrid.classList.remove(this.pickerOptions.gridActiveClass);
       this.createMonthButtons();
-			titleBtn.title = this.pickerOptions.titleMonthTxt;
+			if(titleBtn) titleBtn.title = this.pickerOptions.titleMonthTxt;
     }
 		this.updateTitle();
     this.updateYearButtons();
@@ -348,11 +349,11 @@ class uiMonthPicker {
 		if (this.yearViewActive || this.yearMode) {
 			if(firstBtn) {
 				firstBtn.disabled = true;
-				firstBtn.classList.add('none');
+				firstBtn.classList.add(this.pickerOptions.naviBtnHiddenClass);
 			}
 			if(lastBtn) {
 				lastBtn.disabled = true;
-				lastBtn.classList.add('none');
+				lastBtn.classList.add(this.pickerOptions.naviBtnHiddenClass);
 			}
 			if(prevBtn) {
 				prevBtn.children.textContent = this.pickerOptions.prevYearBtnTxt;
@@ -365,11 +366,11 @@ class uiMonthPicker {
 		}else{
 			if(firstBtn) {
 				firstBtn.disabled = false;
-				firstBtn.classList.remove('none');
+				firstBtn.classList.remove(this.pickerOptions.naviBtnHiddenClass);
 			}
 			if(lastBtn) {
 				lastBtn.disabled = false;
-				lastBtn.classList.remove('none');
+				lastBtn.classList.remove(this.pickerOptions.naviBtnHiddenClass);
 			}
 			if(prevBtn) prevBtn.children.textContent = this.pickerOptions.prevBtnTxt;
 			if(nextBtn) nextBtn.children.textContent = this.pickerOptions.nextBtnTxt;
@@ -425,8 +426,8 @@ class uiMonthPicker {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = this.pickerOptions.gridBtnClass+' '+this.pickerOptions.gridYearBtnClass;
-      btn.textContent = year;
       btn.dataset.index = year;
+      btn.textContent = year;
       
       if (year === currentYear) {
         btn.classList.add(this.pickerOptions.selectedClass);
@@ -461,7 +462,7 @@ class uiMonthPicker {
 			this.removeDropdown(true);
 		}else{
 			this.updateTitle();
-			this.createMonthButtons();
+			// this.createMonthButtons();
 			this.toggleYearView();
 		}
   }
@@ -552,7 +553,7 @@ class uiMonthPicker {
 			this.createMonthButtons();
 		}
 		this.updateTitle();
-		this.updateYearButtons();
+		// this.updateYearButtons();
 	}
 
 	setDropdownEvents(isRemove) {
