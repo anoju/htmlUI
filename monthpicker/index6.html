@@ -112,7 +112,7 @@ class uiMonthPicker {
 			lastBtnClass: 'last',
 			lastBtnTxt: '10년 다음년도',
 			prevYearBtnTxt: '10년 이전년도',
-			nextYearBtnTxt: '10년 이전년도',
+			nextYearBtnTxt: '10년 다음년도',
 			closeClass: 'ui-monthpicker-close',
 			closeTxt: '닫기',
 			gridClass: 'ui-monthpicker-grid',
@@ -662,6 +662,7 @@ class uiMonthPicker {
 		this.setDropdownEvents(true);
 		document.body.removeChild(this.dropdown);
 		this.dropdown = null;
+		if(this.yearViewActive) this.yearViewActive = false;
 		if(isFocus) this.calendarButton.focus();
 	}
 
