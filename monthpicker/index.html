@@ -278,7 +278,10 @@ class uiMonthPicker {
       monthsGrid.classList.add(this.pickerOptions.gridActiveClass);
       yearsGrid.classList.remove(this.pickerOptions.gridActiveClass);
       this.createMonthButtons();
-			if(titleBtn) titleBtn.title = this.pickerOptions.titleMonthTxt;
+			if(titleBtn) {
+				titleBtn.title = this.pickerOptions.titleMonthTxt;
+				titleBtn.focus();
+			}
     }
 		this.updateTitle();
     this.updateYearButtons();
