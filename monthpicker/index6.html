@@ -49,12 +49,15 @@ body, ul{margin:0;padding:0;}
 <div class="wrap">
 	<!-- 예제 입력 필드들 -->
 	<div class="monthpicker-container">
-		<input type="text" class="monthpicker" data-min="2022-03" data-max="2024-10" title="조회기간">
-		<span>2022-03 ~ 2024-10</span>
+		<input type="text" class="monthpicker" value="2024-12" title="조회기간">
 	</div>
 	<div class="monthpicker-container">
-		<input type="text" class="monthpicker" data-min="-2y" data-max="3y" value="2024-08" data-mobile placeholder="모바일용">
-		<span>모바일용, 최소 2023-06</span>
+		<input type="text" class="monthpicker" data-min="2022-03" data-max="2025-11" title="조회기간">
+		<span>2022-03 ~ 2025-11</span>
+	</div>
+	<div class="monthpicker-container">
+		<input type="text" class="monthpicker" data-min="-2y -7m" data-max="1y 1m" data-mobile placeholder="모바일용">
+		<span>모바일용, -2y -7m ~ 1y 1m</span>
 	</div>
 	<div class="monthpicker-container">
 		<input type="text" class="monthpicker" data-max="2025-03" data-first>
@@ -222,7 +225,7 @@ class uiMonthPicker {
 				if (unit === 'y') {
 					result.setFullYear(result.getFullYear() + numValue);
 				} else if (unit === 'm') {
-					result.setMonth(result.getMonth() + numValue);
+					result.setMonth(result.getMonth() + (numValue < 0 ? numValue - 1: numValue));
 				}
 			}
 		});
@@ -746,7 +749,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   //테스트용
   document.querySelector('.btnUpdate').addEventListener('click', (e) => {
-    const picker = uiMonthPickers[3];
+    const picker = uiMonthPickers[4];
     picker.update({
       minDate: '2023-02',
       maxDate: '2026-11',
@@ -755,7 +758,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		e.target.disabled = true;
   });
   document.querySelector('.btnDestroy').addEventListener('click', (e) => {
-    const picker = uiMonthPickers[4];
+    const picker = uiMonthPickers[5];
     picker.destroy();
   });
 });
