@@ -199,9 +199,10 @@ class uiMonthPicker {
 		}
 
 		// 기존의 'YYYY-MM' 형식 처리
-		if (/^\d{4}-\d{2}$/.test(dateString)) {
-			const [year, month] = dateString.split('-').map(Number);
-			return new Date(year, month - 1, 1);
+		const regex = new RegExp(`^\\d{4}${this.pickerOptions.formatMark}\\d{2}$`); //정규식 /^\d{4}-\d{2}$/
+		if (regex.test(dateString)) {
+			const [year, month] = dateString.split(this.pickerOptions.formatMark).map(Number);
+			return new Date(year, month - 1);
 		}
 
 		// 'YYYY' 형식 처리 (연도만 있는 경우)
