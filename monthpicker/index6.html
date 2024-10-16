@@ -91,6 +91,7 @@ class uiMonthPicker {
 		this.defaultOptions = {
 			mode: 'month',
 			months: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+			formatMark: '-',
 			buttonClass: 'ui-monthpicker-trigger',
 			buttonTxt: '월 선택',
 			wrapClass: 'ui-monthpicker',
@@ -202,7 +203,7 @@ class uiMonthPicker {
 			return new Date(parseInt(dateString, 10), 0, 1);
 		}
 
-		const parts = dateString.split('-');
+		const parts = dateString.split(this.parseOptions.formatMark);
 		if (parts.length !== 2) {
 			throw new Error('Invalid date format. Expected "YYYY-MM" or "YYYY"');
 		}
@@ -301,7 +302,7 @@ class uiMonthPicker {
 		}else{
 			let month = this.selectedDate.getMonth() + 1;
 			if(month < 10) month = '0'+month;
-			this.inputElement.value = `${selectedYear}-${month}`;
+			this.inputElement.value = `${selectedYear}${this.parseOptions.formatMark}${month}`;
 		}
 	}
 
@@ -718,7 +719,7 @@ class uiMonthPicker {
 		const selectedYear = this.selectedDate.getFullYear();
 		const selectedMonth = this.selectedDate.getMonth() + 1;
 		return {
-			value: selectedYear + '-' +(selectedMonth < 10 ? '0'+selectedMonth : selectedMonth),
+			value: selectedYear + this.parseOptions.formatMark +(selectedMonth < 10 ? '0'+selectedMonth : selectedMonth),
 			year: selectedYear,
 			month: selectedMonth
 		};
