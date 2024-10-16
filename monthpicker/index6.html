@@ -704,11 +704,11 @@ class uiMonthPicker {
 		if (newOptions.mobile !== undefined) this.pickerOptions.mobile = newOptions.mobile;
 		if (newOptions.minDate) {
 			this.pickerOptions.minDate = this.parseDateString(newOptions.minDate);
-			this.inputElement.setAttribute('data-min', newOptions.minDate);
+			//this.inputElement.setAttribute('data-min', newOptions.minDate);
 		}
 		if (newOptions.maxDate) {
 			this.pickerOptions.maxDate = this.parseDateString(newOptions.maxDate);
-			this.inputElement.setAttribute('data-max', newOptions.maxDate);
+			//this.inputElement.setAttribute('data-max', newOptions.maxDate);
 		}
 
 		this.checkYearMode();
@@ -716,7 +716,7 @@ class uiMonthPicker {
 		// 현재 날짜와 선택된 날짜가 새로운 범위 내에 있는지 확인하고 조정
 		if (this.currentDate < this.pickerOptions.minDate) {
 			this.currentDate = new Date(this.pickerOptions.minDate);
-		} else if (currentDate > this.pickerOptions.maxDate) {
+		} else if (this.currentDate > this.pickerOptions.maxDate) {
 			this.currentDate = new Date(this.pickerOptions.maxDate);
 		}
 
