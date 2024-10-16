@@ -189,8 +189,8 @@ class uiMonthPicker {
 	}
 
 	parseDateString(dateString) {
-		if(dateString === 'today') dateString = $todayMonth.toString().substr(0,4) + this.parseOptions.formatMark + $todayMonth.toString().substr(4,2);
-		const [year, month] = dateString.split(this.parseOptions.formatMark).map(Number);
+		if(dateString === 'today') dateString = $todayMonth.toString().substr(0,4) + this.pickerOptions.formatMark + $todayMonth.toString().substr(4,2);
+		const [year, month] = dateString.split(this.pickerOptions.formatMark).map(Number);
 		return new Date(year, month - 1);
 	}
 
@@ -252,7 +252,7 @@ class uiMonthPicker {
 		let month = this.selectedDate.getMonth() + 1;
 		if(month < 10) month = '0'+month;
 		const selectedYear = this.selectedDate.getFullYear();
-		this.inputElement.value = `${selectedYear}${this.parseOptions.formatMark}${month}`;
+		this.inputElement.value = `${selectedYear}${this.pickerOptions.formatMark}${month}`;
 	}
 
 	updateTitle(){
@@ -285,7 +285,7 @@ class uiMonthPicker {
 			}
     }
 		this.updateTitle();
-    this.updateYearButtons();
+    this.updateNaviButtons();
   }
 
 	isDateInRange(year, month) {
@@ -295,7 +295,7 @@ class uiMonthPicker {
 		return isAfterMin && isBeforeMax;
 	}
 
-	updateYearButtons() {
+	updateNaviButtons() {
 		if (!this.dropdown) return;
 		const currentYear = this.currentDate.getFullYear();
 		const prevBtn = this.dropdown.querySelector('.'+this.pickerOptions.prevBtnClass);
@@ -313,11 +313,11 @@ class uiMonthPicker {
 			}
 			if(prevBtn) {
 				prevBtn.children.textContent = this.pickerOptions.prevYearBtnTxt;
-				if (this.pickerOptions.minDate) prevBtn.disabled = this.pickerOptions.minDate && this.yearRange.start <= this.pickerOptions.minDate.getFullYear();
+				if (this.pickerOptions.minDate) prevBtn.disabled = this.yearRange.start <= this.pickerOptions.minDate.getFullYear();
 			}
 			if(nextBtn) {
 				nextBtn.children.textContent = this.pickerOptions.nextYearBtnTxt;
-				if (this.pickerOptions.maxDate) nextBtn.disabled = this.pickerOptions.maxDate && this.yearRange.end >= this.pickerOptions.maxDate.getFullYear();
+				if (this.pickerOptions.maxDate) nextBtn.disabled = this.yearRange.end >= this.pickerOptions.maxDate.getFullYear();
 			}
 		}else{
 			if(firstBtn) {
@@ -429,7 +429,7 @@ class uiMonthPicker {
 		if(this.pickerOptions.first) this.updateValue();
 		this.updateTitle();
 		this.createMonthButtons();
-		this.updateYearButtons();
+		this.updateNaviButtons();
 
 		if(this.pickerOptions.mobile){
 			this.setMobileFocus();
@@ -514,7 +514,7 @@ class uiMonthPicker {
 			this.createMonthButtons();
 		}
 		this.updateTitle();
-		// this.updateYearButtons();
+		this.updateNaviButtons();
 	}
 
 	setDropdownEvents(isRemove) {
@@ -650,16 +650,16 @@ class uiMonthPicker {
 			this.selectedDate = new Date(this.currentDate);
 			this.updateValue();
 		}
-		this.updateYearButtons();
 		this.createMonthButtons();
 		this.updateTitle();
+		this.updateNaviButtons();
 	}
 
 	getValue () {
 		const selectedYear = this.selectedDate.getFullYear();
 		const selectedMonth = this.selectedDate.getMonth() + 1;
 		return {
-			value: selectedYear + this.parseOptions.formatMark +(selectedMonth < 10 ? '0'+selectedMonth : selectedMonth),
+			value: selectedYear + this.pickerOptions.formatMark +(selectedMonth < 10 ? '0'+selectedMonth : selectedMonth),
 			year: selectedYear,
 			month: selectedMonth
 		};

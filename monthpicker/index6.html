@@ -53,7 +53,7 @@ body, ul{margin:0;padding:0;}
 		<span>2022-03 ~ 2024-10</span>
 	</div>
 	<div class="monthpicker-container">
-		<input type="text" class="monthpicker" data-min="2023-06" value="2024-08" data-mobile placeholder="모바일용">
+		<input type="text" class="monthpicker" data-min="-2y" data-max="3y" value="2024-08" data-mobile placeholder="모바일용">
 		<span>모바일용, 최소 2023-06</span>
 	</div>
 	<div class="monthpicker-container">
@@ -198,24 +198,34 @@ class uiMonthPicker {
 			return new Date();
 		}
 
-		// 'year' 모드를 위한 처리
-		if (dateString.length === 4 && !isNaN(dateString)) {
+		// 기존의 'YYYY-MM' 형식 처리
+		if (/^\d{4}-\d{2}$/.test(dateString)) {
+			const [year, month] = dateString.split('-').map(Number);
+			return new Date(year, month - 1, 1);
+		}
+
+		// 'YYYY' 형식 처리 (연도만 있는 경우)
+		if (/^\d{4}$/.test(dateString)) {
 			return new Date(parseInt(dateString, 10), 0, 1);
 		}
 
-		const parts = dateString.split(this.parseOptions.formatMark);
-		if (parts.length !== 2) {
-			throw new Error('Invalid date format. Expected "YYYY-MM" or "YYYY"');
-		}
+		// 새로운 상대적 날짜 형식 처리
+		const parts = dateString.split(' ');
+		let result = new Date();
 
-		const year = parseInt(parts[0], 10);
-		const month = parseInt(parts[1], 10) - 1; // JavaScript의 월은 0부터 시작합니다.
-
-		if (isNaN(year) || isNaN(month) || month < 0 || month > 11) {
-			throw new Error('Invalid year or month');
-		}
-
-		return new Date(year, month);
+		parts.forEach(part => {
+			const match = part.match(/^(-?\d+)([ym])$/);
+			if (match) {
+				const [txt, value, unit] = match;
+				const numValue = parseInt(value, 10);
+				if (unit === 'y') {
+					result.setFullYear(result.getFullYear() + numValue);
+				} else if (unit === 'm') {
+					result.setMonth(result.getMonth() + numValue);
+				}
+			}
+		});
+		return result;
 	}
 
 	parseOptions() {
@@ -230,11 +240,11 @@ class uiMonthPicker {
 		if(dataFirst !== null) this.pickerOptions.first = (dataFirst === '' ? true : dataFirst);
 		if(dataMin) {
 			this.pickerOptions.minDate = this.parseDateString(dataMin);
-			if (dataMin.length === 4) this.pickerOptions.minDate.setMonth(11);
+			// if (dataMin.length === 4) this.pickerOptions.minDate.setMonth(11);
 		}
 		if(dataMax) {
 			this.pickerOptions.maxDate = this.parseDateString(dataMax);
-			if (dataMax.length === 4) this.pickerOptions.maxDate.setMonth(0);
+			// if (dataMax.length === 4) this.pickerOptions.maxDate.setMonth(0);
 		}
 
 		this.checkYearMode();
@@ -302,7 +312,7 @@ class uiMonthPicker {
 		}else{
 			let month = this.selectedDate.getMonth() + 1;
 			if(month < 10) month = '0'+month;
-			this.inputElement.value = `${selectedYear}${this.parseOptions.formatMark}${month}`;
+			this.inputElement.value = `${selectedYear}${this.pickerOptions.formatMark}${month}`;
 		}
 	}
 
@@ -336,7 +346,7 @@ class uiMonthPicker {
 			}
     }
 		this.updateTitle();
-    this.updateYearButtons();
+    this.updateNaviButtons();
   }
 
 	isDateInRange(year, month) {
@@ -346,7 +356,7 @@ class uiMonthPicker {
 		return isAfterMin && isBeforeMax;
 	}
 
-	updateYearButtons() {
+	updateNaviButtons() {
 		if (!this.dropdown) return;
 		const currentYear = this.currentDate.getFullYear();
 		const prevBtn = this.dropdown.querySelector('.'+this.pickerOptions.prevBtnClass);
@@ -364,11 +374,11 @@ class uiMonthPicker {
 			}
 			if(prevBtn) {
 				prevBtn.children.textContent = this.pickerOptions.prevYearBtnTxt;
-				if (this.pickerOptions.minDate) prevBtn.disabled = this.pickerOptions.minDate && this.yearRange.start <= this.pickerOptions.minDate.getFullYear();
+				if (this.pickerOptions.minDate) prevBtn.disabled = this.yearRange.start <= this.pickerOptions.minDate.getFullYear();
 			}
 			if(nextBtn) {
 				nextBtn.children.textContent = this.pickerOptions.nextYearBtnTxt;
-				if (this.pickerOptions.maxDate) nextBtn.disabled = this.pickerOptions.maxDate && this.yearRange.end >= this.pickerOptions.maxDate.getFullYear();
+				if (this.pickerOptions.maxDate) nextBtn.disabled = this.yearRange.end >= this.pickerOptions.maxDate.getFullYear();
 			}
 		}else{
 			if(firstBtn) {
@@ -487,7 +497,7 @@ class uiMonthPicker {
 		this.updateTitle();
 		if(this.yearMode) this.createYearButtons();
 		else this.createMonthButtons();
-		this.updateYearButtons();
+		this.updateNaviButtons();
 
 		if(this.pickerOptions.mobile){
 			this.setMobileFocus();
@@ -571,7 +581,7 @@ class uiMonthPicker {
 			this.createMonthButtons();
 		}
 		this.updateTitle();
-		// this.updateYearButtons();
+		this.updateNaviButtons();
 	}
 
 	setDropdownEvents(isRemove) {
@@ -710,16 +720,16 @@ class uiMonthPicker {
 			this.selectedDate = new Date(this.currentDate);
 			this.updateValue();
 		}
-		this.updateYearButtons();
 		this.createMonthButtons();
 		this.updateTitle();
+		this.updateNaviButtons();
 	}
 
 	getValue () {
 		const selectedYear = this.selectedDate.getFullYear();
 		const selectedMonth = this.selectedDate.getMonth() + 1;
 		return {
-			value: selectedYear + this.parseOptions.formatMark +(selectedMonth < 10 ? '0'+selectedMonth : selectedMonth),
+			value: selectedYear + this.pickerOptions.formatMark +(selectedMonth < 10 ? '0'+selectedMonth : selectedMonth),
 			year: selectedYear,
 			month: selectedMonth
 		};
