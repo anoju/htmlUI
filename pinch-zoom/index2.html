@@ -48,6 +48,10 @@
         let initialDistance = 0;
         let initialScale = 1;
         let originalWidth, originalHeight;
+        const scrollVal = {
+            left: 0,
+            top: 0,
+        }
 
         // 원본 크기 저장
         function saveOriginalSize() {
@@ -63,6 +67,8 @@
                 e.preventDefault();
                 initialDistance = getDistance(e.touches[0], e.touches[1]);
                 initialScale = currentScale;
+                scrollVal.left = container.scrollLeft - (content.offsetWidth - container.clientWidth) / 2;
+                scrollVal.top = container.scrollTop - (content.offsetHeight - container.clientHeight) / 2;
             }
         });
 
@@ -89,17 +95,8 @@
                 }
                 currentScale = scale;
                 
-                // 현재 스크롤 위치의 중심점 계산
-                const centerX = container.scrollLeft + container.clientWidth / 2;
-                const centerY = container.scrollTop + container.clientHeight / 2;
-
-                // 컨텐츠 내에서의 상대적 위치 계산
-                const relativeX = centerX / (originalWidth * currentScale);
-                const relativeY = centerY / (originalHeight * currentScale);
-
-                // 새로운 스크롤 위치 계산
-                const newScrollX = (originalWidth * scale * relativeX) - (container.clientWidth / 2);
-                const newScrollY = (originalHeight * scale * relativeY) - (container.clientHeight / 2);
+                const newScrollX = (content.offsetWidth - container.clientWidth) / 2 - scrollVal.left;
+                const newScrollY = (content.offsetHeight - container.clientHeight) / 2 - scrollVal.top;
 
                 container.scrollTo(newScrollX, newScrollY);
             }
