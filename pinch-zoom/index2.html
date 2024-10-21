@@ -92,10 +92,14 @@
                 // 현재 스크롤 위치의 중심점 계산
                 const centerX = container.scrollLeft + container.clientWidth / 2;
                 const centerY = container.scrollTop + container.clientHeight / 2;
-                
+
+                // 컨텐츠 내에서의 상대적 위치 계산
+                const relativeX = centerX / (originalWidth * currentScale);
+                const relativeY = centerY / (originalHeight * currentScale);
+
                 // 새로운 스크롤 위치 계산
-                const newScrollX = (centerX / currentScale) * scale - container.clientWidth / 2;
-                const newScrollY = (centerY / currentScale) * scale - container.clientHeight / 2;
+                const newScrollX = (originalWidth * scale * relativeX) - (container.clientWidth / 2);
+                const newScrollY = (originalHeight * scale * relativeY) - (container.clientHeight / 2);
 
                 container.scrollTo(newScrollX, newScrollY);
             }
