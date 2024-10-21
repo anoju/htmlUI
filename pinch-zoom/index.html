@@ -41,44 +41,70 @@
     <br>
     <br>
     <script>
-      const container = document.getElementById('zoom-container');
-      const content = document.getElementById('zoom-content');
-      let currentScale = 1;
-      let initialDistance = 0;
-      let initialScale = 1;
+        const container = document.getElementById('zoom-container');
+        const content = document.getElementById('zoom-content');
+        let currentScale = 1;
+        let initialDistance = 0;
+        let initialScale = 1;
+        let originalWidth, originalHeight;
 
-      container.addEventListener('touchstart', (e) => {
-          if (e.touches.length === 2) {
-              e.preventDefault();
-              initialDistance = getDistance(e.touches[0], e.touches[1]);
-              initialScale = currentScale;
-          }
-      });
+        // 원본 크기 저장
+        function saveOriginalSize() {
+            originalWidth = content.offsetWidth;
+            originalHeight = content.offsetHeight;
+        }
 
-      container.addEventListener('touchmove', (e) => {
-          if (e.touches.length === 2) {
-              e.preventDefault();
-              const distance = getDistance(e.touches[0], e.touches[1]);
-              const scale = Math.max(1, initialScale * (distance / initialDistance));
-              
-              content.style.transform = `scale(${scale})`;
-              
-              // 스크롤 위치 조정
-              const scrollX = (container.scrollWidth * scale - container.clientWidth) / 2;
-              const scrollY = (container.scrollHeight * scale - container.clientHeight) / 2;
-              container.scrollTo(scrollX, scrollY);
-          }
-      });
+        // 페이지 로드 시 원본 크기 저장
+        window.addEventListener('load', saveOriginalSize);
 
-      container.addEventListener('touchend', () => {
-          currentScale = parseFloat(content.style.transform.replace('scale(', '').replace(')', '') || 1);
-      });
+        container.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                initialDistance = getDistance(e.touches[0], e.touches[1]);
+                initialScale = currentScale;
+            }
+        });
 
-      function getDistance(touch1, touch2) {
-          const dx = touch1.clientX - touch2.clientX;
-          const dy = touch1.clientY - touch2.clientY;
-          return Math.sqrt(dx * dx + dy * dy);
-      }
-  </script>
+        container.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const distance = getDistance(e.touches[0], e.touches[1]);
+                let scale = initialScale * (distance / initialDistance);
+                
+                // 원본 크기보다 작아지지 않도록 제한
+                const minScale = Math.max(
+                    container.clientWidth / originalWidth,
+                    container.clientHeight / originalHeight
+                );
+                scale = Math.max(scale, minScale);
+                
+                content.style.transform = `scale(${scale})`;
+                currentScale = scale;
+                
+                // 스크롤 위치 조정
+                const scrollX = (content.offsetWidth * scale - container.clientWidth) / 2;
+                const scrollY = (content.offsetHeight * scale - container.clientHeight) / 2;
+                container.scrollTo(scrollX, scrollY);
+            }
+        });
+
+        function getDistance(touch1, touch2) {
+            const dx = touch1.clientX - touch2.clientX;
+            const dy = touch1.clientY - touch2.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        // 화면 크기 변경 시 원본 크기 다시 계산
+        window.addEventListener('resize', () => {
+            saveOriginalSize();
+            resetZoom();
+        });
+
+        function resetZoom() {
+            currentScale = 1;
+            content.style.transform = `scale(1)`;
+            container.scrollTo(0, 0);
+        }
+    </script>
 </body>
 </html>
