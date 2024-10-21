@@ -15,6 +15,8 @@
             height: 80vh;
             overflow: auto;
             position: relative;
+            max-width: 100%;
+            max-height: 100%;
         }
         #zoom-content {
             display: flex;
@@ -78,22 +80,19 @@
                 );
                 scale = Math.max(scale, minScale);
                 
+                // 컨테이너 크기 조정
+                container.style.width = `${originalWidth * scale}px`;
+                container.style.height = `${originalHeight * scale}px`;
+                
+                // 컨텐츠 크기 및 위치 조정
                 content.style.transform = `scale(${scale})`;
+                content.style.transformOrigin = 'top left';
                 currentScale = scale;
                 
                 // 스크롤 위치 조정
-                const scrollX = (content.offsetWidth * scale - container.clientWidth) / 2;
-                const scrollY = (content.offsetHeight * scale - container.clientHeight) / 2;
-                
-                // 현재 스크롤 위치의 중심점 계산
-                const centerX = (container.scrollLeft + container.clientWidth / 2) / currentScale;
-                const centerY = (container.scrollTop + container.clientHeight / 2) / currentScale;
-                
-                // 새로운 스크롤 위치 계산
-                const newScrollX = centerX * scale - container.clientWidth / 2;
-                const newScrollY = centerY * scale - container.clientHeight / 2;
-                
-                container.scrollTo(newScrollX, newScrollY);
+                const scrollX = (originalWidth * scale - container.clientWidth) / 2;
+                const scrollY = (originalHeight * scale - container.clientHeight) / 2;
+                container.scrollTo(scrollX, scrollY);
             }
         });
 
