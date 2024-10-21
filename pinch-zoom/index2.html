@@ -86,12 +86,12 @@
                 currentScale = scale;
                 
                 // 현재 스크롤 위치의 중심점 계산
-                const centerX = (container.scrollLeft + container.clientWidth / 2) / currentScale;
-                const centerY = (container.scrollTop + container.clientHeight / 2) / currentScale;
+                const centerX = container.scrollLeft + container.clientWidth / 2;
+                const centerY = container.scrollTop + container.clientHeight / 2;
                 
                 // 새로운 스크롤 위치 계산
-                const newScrollX = centerX * scale - content.offsetWidth / 2;
-                const newScrollY = centerY * scale - content.offsetHeight / 2;
+                const newScrollX = (centerX / currentScale) * scale - container.clientWidth / 2;
+                const newScrollY = (centerY / currentScale) * scale - container.clientHeight / 2;
 
                 container.scrollTo(newScrollX, newScrollY);
             }
