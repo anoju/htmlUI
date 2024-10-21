@@ -80,8 +80,14 @@
                 );
                 scale = Math.max(scale, minScale);
                 
-                content.style.width = originalWidth * scale;
                 currentScale = scale;
+                if(scale === 1){
+                    content.style.width = '';
+                    return;
+                }else{
+                    content.style.width = originalWidth * scale + 'px';
+                }
+                
                 
                 // 스크롤 위치 조정
                 const scrollX = (content.offsetWidth * scale - container.clientWidth) / 2;
