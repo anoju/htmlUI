@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>핀치 줌 예제</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #zoom-container {
+            width: 100vw;
+            height: 80vh;
+            overflow: auto;
+            position: relative;
+        }
+        #zoom-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background:#ddd;
+        }
+        #zoom-content img{
+          max-width: 100%;
+          max-height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <br>
+    <br>
+    <div id="zoom-container">
+        <div id="zoom-content">
+          <img src="../img/thumb-temp.jpg" alt="">
+        </div>
+    </div>
+    <br>
+    <br>
+    <script>
+        const container = document.getElementById('zoom-container');
+        const content = document.getElementById('zoom-content');
+        let currentScale = 1;
+        let initialDistance = 0;
+
+        container.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                initialDistance = getDistance(e.touches[0], e.touches[1]);
+            }
+        });
+
+        container.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (e.touches.length === 2) {
+                const distance = getDistance(e.touches[0], e.touches[1]);
+                const scale = Math.max(1, currentScale * (distance / initialDistance));
+                
+                if (scale > currentScale) {
+                    content.style.transform = `scale(${scale})`;
+                }
+            }
+        });
+
+        container.addEventListener('touchend', () => {
+            currentScale = parseFloat(content.style.transform.replace('scale(', '').replace(')', '') || 1);
+        });
+
+        function getDistance(touch1, touch2) {
+            const dx = touch1.clientX - touch2.clientX;
+            const dy = touch1.clientY - touch2.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+    </script>
+</body>
+</html>
