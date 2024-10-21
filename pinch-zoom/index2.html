@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>핀치 줌 예제</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #zoom-container {
+            width: 100vw;
+            height: 80vh;
+            overflow: auto;
+            position: relative;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        #zoom-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background:#ddd;
+        }
+        #zoom-content img{
+          max-width: 100%;
+          max-height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <br>
+    <br>
+    <div id="zoom-container">
+        <div id="zoom-content">
+          <img src="../img/thumb-temp.jpg" alt="">
+        </div>
+    </div>
+    <br>
+    <br>
+    <script>
+        const container = document.getElementById('zoom-container');
+        const content = document.getElementById('zoom-content');
+        let currentScale = 1;
+        let initialDistance = 0;
+        let initialScale = 1;
+        let originalWidth, originalHeight;
+
+        // 원본 크기 저장
+        function saveOriginalSize() {
+            originalWidth = content.offsetWidth;
+            originalHeight = content.offsetHeight;
+        }
+
+        // 페이지 로드 시 원본 크기 저장
+        window.addEventListener('load', saveOriginalSize);
+
+        container.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                initialDistance = getDistance(e.touches[0], e.touches[1]);
+                initialScale = currentScale;
+            }
+        });
+
+        container.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const distance = getDistance(e.touches[0], e.touches[1]);
+                let scale = initialScale * (distance / initialDistance);
+                
+                // 원본 크기보다 작아지지 않도록 제한
+                const minScale = Math.max(
+                    container.clientWidth / originalWidth,
+                    container.clientHeight / originalHeight
+                );
+                scale = Math.max(scale, minScale);
+                
+                content.style.width = originalWidth * scale;
+                currentScale = scale;
+                
+                // 스크롤 위치 조정
+                const scrollX = (content.offsetWidth * scale - container.clientWidth) / 2;
+                const scrollY = (content.offsetHeight * scale - container.clientHeight) / 2;
+                
+                // 현재 스크롤 위치의 중심점 계산
+                const centerX = (container.scrollLeft + container.clientWidth / 2) / currentScale;
+                const centerY = (container.scrollTop + container.clientHeight / 2) / currentScale;
+                
+                // 새로운 스크롤 위치 계산
+                const newScrollX = centerX * scale - container.clientWidth / 2;
+                const newScrollY = centerY * scale - container.clientHeight / 2;
+                
+                container.scrollTo(newScrollX, newScrollY);
+            }
+        });
+
+        function getDistance(touch1, touch2) {
+            const dx = touch1.clientX - touch2.clientX;
+            const dy = touch1.clientY - touch2.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        // 화면 크기 변경 시 원본 크기 다시 계산
+        window.addEventListener('resize', () => {
+            resetZoom();
+            saveOriginalSize();
+        });
+
+        function resetZoom() {
+            currentScale = 1;
+            content.style.width = '';
+            container.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
