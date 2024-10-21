@@ -23,6 +23,7 @@
             width: 100%;
             height: 100%;
             background:#ddd;
+            transition: transform 0.3s ease-out;
         }
         #zoom-content img{
             max-width: 100%;
@@ -76,7 +77,8 @@
                     container.clientWidth / originalWidth,
                     container.clientHeight / originalHeight
                 );
-                scale = Math.max(scale, minScale);
+                const maxScale = 3; // 예: 최대 3배 확대
+                scale = Math.min(Math.max(scale, minScale), maxScale);
                 
                 if(scale === 1){
                     content.style.width = '';
