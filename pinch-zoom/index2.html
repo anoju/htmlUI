@@ -15,8 +15,6 @@
             height: 80vh;
             overflow: auto;
             position: relative;
-            max-width: 100%;
-            max-height: 100%;
         }
         #zoom-content {
             display: flex;
@@ -27,8 +25,8 @@
             background:#ddd;
         }
         #zoom-content img{
-          max-width: 100%;
-          max-height: 100%;
+            max-width: 100%;
+            max-height: 100%;
         }
     </style>
 </head>
@@ -37,7 +35,7 @@
     <br>
     <div id="zoom-container">
         <div id="zoom-content">
-          <img src="../img/thumb-temp.jpg" alt="">
+            <img src="../img/thumb-temp.jpg" alt="">
         </div>
     </div>
     <br>
@@ -80,18 +78,16 @@
                 );
                 scale = Math.max(scale, minScale);
                 
-                currentScale = scale;
                 if(scale === 1){
                     content.style.width = '';
-                    return;
                 }else{
                     content.style.width = originalWidth * scale + 'px';
                 }
-                
+                currentScale = scale;
                 
                 // 스크롤 위치 조정
-                const scrollX = (content.offsetWidth * scale - container.clientWidth) / 2;
-                const scrollY = (content.offsetHeight * scale - container.clientHeight) / 2;
+                // const scrollX = (content.offsetWidth * scale - container.clientWidth) / 2;
+                // const scrollY = (content.offsetHeight * scale - container.clientHeight) / 2;
                 
                 // 현재 스크롤 위치의 중심점 계산
                 const centerX = (container.scrollLeft + container.clientWidth / 2) / currentScale;
@@ -101,6 +97,7 @@
                 const newScrollX = centerX * scale - container.clientWidth / 2;
                 const newScrollY = centerY * scale - container.clientHeight / 2;
                 
+                console.log(centerX, centerY, newScrollX, newScrollY);
                 container.scrollTo(newScrollX, newScrollY);
             }
         });
