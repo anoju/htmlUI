@@ -42,77 +42,76 @@
     </div>
     <br>
     <br>
-    <script>
-        const container = document.getElementById('zoom-container');
-        const content = document.getElementById('zoom-content');
-        let currentScale = 1;
-        let initialDistance = 0;
-        let initialScale = 1;
-        let originalWidth, originalHeight;
+<script>
+const container = document.getElementById('zoom-container');
+const content = document.getElementById('zoom-content');
+let currentScale = 1;
+let initialDistance = 0;
+let initialScale = 1;
+let lastX = 0;
+let lastY = 0;
 
-        // 원본 크기 저장
-        function saveOriginalSize() {
-            originalWidth = content.offsetWidth;
-            originalHeight = content.offsetHeight;
-        }
+function initZoom() {
+    const img = content.querySelector('img');
+    const containerAspect = container.clientWidth / container.clientHeight;
+    const imgAspect = img.naturalWidth / img.naturalHeight;
 
-        // 페이지 로드 시 원본 크기 저장
-        window.addEventListener('load', saveOriginalSize);
+    if (containerAspect > imgAspect) {
+        content.style.height = '100%';
+        content.style.width = 'auto';
+    } else {
+        content.style.width = '100%';
+        content.style.height = 'auto';
+    }
 
-        container.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 2) {
-                e.preventDefault();
-                initialDistance = getDistance(e.touches[0], e.touches[1]);
-                initialScale = currentScale;
-            }
-        });
+    currentScale = 1;
+    content.style.transform = `scale(1)`;
+    container.scrollTo(0, 0);
+}
 
-        container.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 2) {
-                e.preventDefault();
-                const distance = getDistance(e.touches[0], e.touches[1]);
-                let scale = initialScale * (distance / initialDistance);
-                
-                // 원본 크기보다 작아지지 않도록 제한
-                const minScale = Math.max(
-                    container.clientWidth / originalWidth,
-                    container.clientHeight / originalHeight
-                );
-                scale = Math.max(scale, minScale);
-                
-                // 컨테이너 크기 조정
-                container.style.width = `${originalWidth * scale}px`;
-                container.style.height = `${originalHeight * scale}px`;
-                
-                // 컨텐츠 크기 및 위치 조정
-                content.style.transform = `scale(${scale})`;
-                content.style.transformOrigin = 'top left';
-                currentScale = scale;
-                
-                // 스크롤 위치 조정
-                const scrollX = (originalWidth * scale - container.clientWidth) / 2;
-                const scrollY = (originalHeight * scale - container.clientHeight) / 2;
-                container.scrollTo(scrollX, scrollY);
-            }
-        });
+container.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+        e.preventDefault();
+        initialDistance = getDistance(e.touches[0], e.touches[1]);
+        initialScale = currentScale;
+    } else if (e.touches.length === 1) {
+        lastX = e.touches[0].clientX;
+        lastY = e.touches[0].clientY;
+    }
+});
 
-        function getDistance(touch1, touch2) {
-            const dx = touch1.clientX - touch2.clientX;
-            const dy = touch1.clientY - touch2.clientY;
-            return Math.sqrt(dx * dx + dy * dy);
-        }
+container.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2) {
+        e.preventDefault();
+        const distance = getDistance(e.touches[0], e.touches[1]);
+        let scale = initialScale * (distance / initialDistance);
+        scale = Math.max(1, Math.min(scale, 4)); // 최소 1배, 최대 4배로 제한
 
-        // 화면 크기 변경 시 원본 크기 다시 계산
-        window.addEventListener('resize', () => {
-            saveOriginalSize();
-            resetZoom();
-        });
+        const rect = content.getBoundingClientRect();
+        const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+        const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
 
-        function resetZoom() {
-            currentScale = 1;
-            content.style.transform = `scale(1)`;
-            container.scrollTo(0, 0);
-        }
-    </script>
+        content.style.transformOrigin = `${centerX}px ${centerY}px`;
+        content.style.transform = `scale(${scale})`;
+        currentScale = scale;
+    } else if (e.touches.length === 1) {
+        const deltaX = e.touches[0].clientX - lastX;
+        const deltaY = e.touches[0].clientY - lastY;
+        container.scrollLeft -= deltaX;
+        container.scrollTop -= deltaY;
+        lastX = e.touches[0].clientX;
+        lastY = e.touches[0].clientY;
+    }
+});
+
+function getDistance(touch1, touch2) {
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+window.addEventListener('load', initZoom);
+window.addEventListener('resize', initZoom);
+</script>
 </body>
 </html>
