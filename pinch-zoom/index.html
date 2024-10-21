@@ -41,38 +41,44 @@
     <br>
     <br>
     <script>
-        const container = document.getElementById('zoom-container');
-        const content = document.getElementById('zoom-content');
-        let currentScale = 1;
-        let initialDistance = 0;
+      const container = document.getElementById('zoom-container');
+      const content = document.getElementById('zoom-content');
+      let currentScale = 1;
+      let initialDistance = 0;
+      let initialScale = 1;
 
-        container.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 2) {
-                initialDistance = getDistance(e.touches[0], e.touches[1]);
-            }
-        });
+      container.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 2) {
+              e.preventDefault();
+              initialDistance = getDistance(e.touches[0], e.touches[1]);
+              initialScale = currentScale;
+          }
+      });
 
-        container.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            if (e.touches.length === 2) {
-                const distance = getDistance(e.touches[0], e.touches[1]);
-                const scale = Math.max(1, currentScale * (distance / initialDistance));
-                
-                if (scale > currentScale) {
-                    content.style.transform = `scale(${scale})`;
-                }
-            }
-        });
+      container.addEventListener('touchmove', (e) => {
+          if (e.touches.length === 2) {
+              e.preventDefault();
+              const distance = getDistance(e.touches[0], e.touches[1]);
+              const scale = Math.max(1, initialScale * (distance / initialDistance));
+              
+              content.style.transform = `scale(${scale})`;
+              
+              // 스크롤 위치 조정
+              const scrollX = (container.scrollWidth * scale - container.clientWidth) / 2;
+              const scrollY = (container.scrollHeight * scale - container.clientHeight) / 2;
+              container.scrollTo(scrollX, scrollY);
+          }
+      });
 
-        container.addEventListener('touchend', () => {
-            currentScale = parseFloat(content.style.transform.replace('scale(', '').replace(')', '') || 1);
-        });
+      container.addEventListener('touchend', () => {
+          currentScale = parseFloat(content.style.transform.replace('scale(', '').replace(')', '') || 1);
+      });
 
-        function getDistance(touch1, touch2) {
-            const dx = touch1.clientX - touch2.clientX;
-            const dy = touch1.clientY - touch2.clientY;
-            return Math.sqrt(dx * dx + dy * dy);
-        }
-    </script>
+      function getDistance(touch1, touch2) {
+          const dx = touch1.clientX - touch2.clientX;
+          const dy = touch1.clientY - touch2.clientY;
+          return Math.sqrt(dx * dx + dy * dy);
+      }
+  </script>
 </body>
 </html>
