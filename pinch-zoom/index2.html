@@ -82,8 +82,10 @@
                 
                 if(scale === 1){
                     content.style.width = '';
+                    content.style.height = '';
                 }else{
                     content.style.width = originalWidth * scale + 'px';
+                    content.style.height = originalHeight * scale + 'px';
                 }
                 currentScale = scale;
                 
@@ -114,6 +116,7 @@
         function resetZoom() {
             currentScale = 1;
             content.style.width = '';
+            content.style.height = '';
             container.scrollTo(0, 0);
         }
     </script>
