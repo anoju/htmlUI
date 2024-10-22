@@ -10,13 +10,13 @@
             padding: 0;
             overflow: hidden;
         }
-        #zoom-container {
+        .zoom-container {
             width: 100vw;
             height: 80vh;
             overflow: auto;
             position: relative;
         }
-        #zoom-content {
+        .zoom-content {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,7 +25,7 @@
             background:#ddd;
             transition: transform 0.3s ease-out;
         }
-        #zoom-content img{
+        .zoom-content img{
             max-width: 100%;
             max-height: 100%;
         }
@@ -34,21 +34,21 @@
 <body>
     <br>
     <br>
-    <div id="zoom-container">
-        <div id="zoom-content">
+    <div class="zoom-container">
+        <div class="zoom-content">
             <img src="../img/thumb-temp.jpg" alt="">
         </div>
     </div>
     <br>
     <br>
     <script>
-        const container = document.getElementById('zoom-container');
-        const content = document.getElementById('zoom-content');
+        const container = document.querySelector('.zoom-container');
+        const content = container.querySelector('.zoom-content');
         let currentScale = 1;
         let initialDistance = 0;
         let initialScale = 1;
         let originalWidth, originalHeight;
-        const scrollVal = {
+        const beforeScroll = {
             left: 0,
             top: 0,
         }
@@ -67,8 +67,8 @@
                 e.preventDefault();
                 initialDistance = getDistance(e.touches[0], e.touches[1]);
                 initialScale = currentScale;
-                scrollVal.left = container.scrollLeft - (content.offsetWidth - container.clientWidth) / 2;
-                scrollVal.top = container.scrollTop - (content.offsetHeight - container.clientHeight) / 2;
+                beforeScroll.left = container.scrollLeft - (originalWidth * currentScale - originalWidth) / 2;
+                beforeScroll.top = container.scrollTop - (originalHeight * currentScale - originalHeight) / 2;
             }
         });
 
@@ -83,7 +83,7 @@
                     container.clientWidth / originalWidth,
                     container.clientHeight / originalHeight
                 );
-                const maxScale = 3; // 예: 최대 3배 확대
+                const maxScale = 5; // 예: 최대 5배 확대
                 scale = Math.min(Math.max(scale, minScale), maxScale);
                 
                 if(scale === 1){
@@ -95,10 +95,9 @@
                 }
                 currentScale = scale;
                 
-                const newScrollX = (content.offsetWidth - container.clientWidth) / 2 - scrollVal.left;
-                const newScrollY = (content.offsetHeight - container.clientHeight) / 2 - scrollVal.top;
-
-                container.scrollTo(newScrollX, newScrollY);
+                const scrollX = (originalWidth * scale - originalWidth) / 2 + beforeScroll.left;
+                const scrollY = (originalHeight * scale - originalHeight) / 2 + beforeScroll.top;
+                container.scrollTo(scrollX, scrollY);
             }
         });
 
