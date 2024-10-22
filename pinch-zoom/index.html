@@ -15,17 +15,15 @@
             height: 80vh;
             overflow: auto;
             position: relative;
-            display: grid;
-            grid-template-areas: "overlap";
         }
         .zoom-sec{
-            grid-area: overlap;
             width: 100%;
             height: 100%;
         }
         .zoom-content {
-            grid-area: overlap;
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -58,6 +56,10 @@
         let initialDistance = 0;
         let initialScale = 1;
         let originalWidth, originalHeight;
+        const beforeScroll = {
+            left: 0,
+            top: 0,
+        }
 
         // 원본 크기 저장
         function saveOriginalSize() {
@@ -73,6 +75,8 @@
                 e.preventDefault();
                 initialDistance = getDistance(e.touches[0], e.touches[1]);
                 initialScale = currentScale;
+                beforeScroll.left = container.scrollLeft - (sec.offsetWidth - originalWidth) / 2;
+                beforeScroll.top = container.scrollTop - (sec.offsetHeight - originalHeight) / 2;
             }
         });
 
@@ -87,37 +91,39 @@
                     container.clientWidth / originalWidth,
                     container.clientHeight / originalHeight
                 );
-                const maxScale = 5; // 예: 최대 3배 확대
+                const maxScale = 5; // 예: 최대 5배 확대
                 scale = Math.min(Math.max(scale, minScale), maxScale);
-                
+                let setLeft = null;
+                let setTop = null;
+
                 if(scale === 1){
-                    content.style.transform = '';
                     sec.style.width = '';
                     sec.style.height = '';
-                    sec.style.left = '';
-                    sec.style.top = '';
+                    content.style.transform = '';
+                    content.style.width = '';
+                    content.style.height = '';
+                    content.style.left = '';
+                    content.style.top = '';
                 }else{
-                    content.style.transform = `scale(${scale})`;
                     sec.style.width = originalWidth * scale + 'px';
                     sec.style.height = originalHeight * scale + 'px';
-                    sec.style.left = -((originalWidth * scale - container.clientWidth) / 2) + 'px';
-                    sec.style.top = -((originalHeight * scale - container.clientHeight) / 2) + 'px';
+                    content.style.transform = `scale(${scale})`;
+                    content.style.width = originalWidth;
+                    content.style.height = originalHeight;
+
+                    setLeft = (originalWidth * scale - originalWidth) / 2;
+                    setTop = (originalHeight * scale - originalHeight) / 2;
+                    content.style.left = setLeft + 'px';
+                    content.style.top = setTop + 'px';
                 }
                 currentScale = scale;
                 
                 // 스크롤 위치 조정
-                const scrollX = (content.offsetWidth * scale - container.clientWidth) / 2;
-                const scrollY = (content.offsetHeight * scale - container.clientHeight) / 2;
-                
-                // 현재 스크롤 위치의 중심점 계산
-                const centerX = (container.scrollLeft + container.clientWidth / 2) / currentScale;
-                const centerY = (container.scrollTop + container.clientHeight / 2) / currentScale;
-                
-                // 새로운 스크롤 위치 계산
-                const newScrollX = centerX * scale - container.clientWidth / 2;
-                const newScrollY = centerY * scale - container.clientHeight / 2;
-                
-                container.scrollTo(newScrollX, newScrollY);
+                if(setLeft && setTop){
+                    const scrollX = setLeft + beforeScroll.left;
+                    const scrollY = setTop + beforeScroll.top;
+                    container.scrollTo(scrollX, scrollY);
+                }
             }
         });
 
@@ -135,12 +141,13 @@
 
         function resetZoom() {
             currentScale = 1;
-            content.style.transform = '';
             sec.style.width = '';
             sec.style.height = '';
-            sec.style.left = '';
-            sec.style.top = '';
-            // container.scrollTo(0, 0);
+            content.style.transform = '';
+            content.style.width = '';
+            content.style.height = '';
+            content.style.left = '';
+            content.style.top = '';
         }
     </script>
 </body>
