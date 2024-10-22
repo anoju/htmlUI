@@ -99,8 +99,8 @@
                     content.style.transform = `scale(${scale})`;
                     sec.style.width = originalWidth * scale + 'px';
                     sec.style.height = originalHeight * scale + 'px';
-                    sec.style.left = -(originalWidth * scale / 2) + 'px';
-                    sec.style.top = 1(originalHeight * scale / 2) + 'px';
+                    sec.style.left = -((originalWidth * scale - container.clientWidth) / 2) + 'px';
+                    sec.style.top = -((originalHeight * scale - container.clientHeight) / 2) + 'px';
                 }
                 currentScale = scale;
                 
