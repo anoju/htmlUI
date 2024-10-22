@@ -15,15 +15,16 @@
             height: 80vh;
             overflow: auto;
             position: relative;
+            display: grid;
+            grid-template-areas: "overlap";
         }
         .zoom-sec{
-            position:absolute;
-            left: 0;
-            top: 0;
+            grid-area: overlap;
             width: 100%;
             height: 100%;
         }
         .zoom-content {
+            grid-area: overlap;
             position: relative;
             display: flex;
             justify-content: center;
