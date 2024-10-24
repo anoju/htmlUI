@@ -45,7 +45,7 @@
 				overflow:hidden;
 				height:190px;
 			}
-			.banner.fix{
+			.banner.pd{
 				position:relative;
 				top: auto;
 				height: auto;
@@ -95,13 +95,14 @@
 				const maxH = banner.offsetHeight;
 				let isSetHeight = false;
 				let isSetTop = false;
+				let prevScl = 0;
 
 				window.addEventListener('scroll', scrollBannerSize);
 
 				function removeEvent(){
-					banner.classList.add('fix');
+					banner.classList.add('end');
 					window.removeEventListener('scroll', scrollBannerSize);
-					window.scrollTo({top:0});
+					// window.scrollTo({top:0});
 				}
 
 				function scrollBannerSize(){
@@ -112,7 +113,22 @@
 						if(setHeight === minH) isSetHeight = true;
 					}
 					
-					if(isSetHeight) removeEvent();
+					if(isSetHeight) {
+						let setTop = null;
+						if(!banner.classList.contains('pd')) {
+							banner.classList.add('pd');
+							setTop = maxH - minH;
+						}else{
+							setTop = parseInt(banner.style.paddingTop) - Math.abs(prevScl - sclTop);
+						}
+						if(setTop < 0) setTop = 0;
+						banner.style.paddingTop = setTop+'px';
+						
+						if(setHeight === 0) isSetTop = true;
+					}
+					if(isSetHeight && isSetTop) removeEvent();
+
+					prevScl = sclTop;
 				}
 			}
 			document.addEventListener('DOMContentLoaded', () => {
