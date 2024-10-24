@@ -40,20 +40,14 @@
 				z-index: 120;
 			}
 			.banner {
-				position: sticky;
-				top: 64px;
-				overflow:hidden;
-				height:190px;
-			}
-			.banner.fix{
-				position:relative;
-				top: auto;
-				height: auto;
+				height: 190px;
 			}
 			.banner .btn {
 				display:block;
-				width: 100%;
-				height: 100%;
+				position: sticky;
+				top: 64px;
+				height: 190px;
+				min-height: 48px;
 				overflow: hidden;
 				border-radius: 1.2rem;
 			}
@@ -61,7 +55,6 @@
 				width:100%;
 				height:100%;
 				object-fit:cover;
-				vertical-align:top;
 			}
 			.item {
 				height: 300px;
@@ -88,35 +81,56 @@
 			</div>
 		</div>
 		<script>
-			function scrollBanner(){
+			function getOffset(element) {
+				let $el = element;
+				let $elX = 0;
+				let $elY = 0;
+				let isSticky = false;
+				while ($el && !Number.isNaN($el.offsetLeft) && !Number.isNaN($el.offsetTop)) {
+					let $style = window.getComputedStyle($el);
+					// const $matrix = new WebKitCSSMatrix($style.transform);
+					if ($style.position === 'sticky') {
+						isSticky = true;
+						$el.style.position = 'static';
+					}
+					$elX += $el.offsetLeft;
+					// $elX += $matrix.m41; //translateX
+					$elY += $el.offsetTop;
+					// $elY += $matrix.m42;  //translateY
+					if (isSticky) {
+						isSticky = false;
+						$el.style.position = '';
+						if ($el.getAttribute('style') === '') $el.removeAttribute('style');
+					}
+					$el = $el.offsetParent;
+					if ($el !== null) {
+						$style = window.getComputedStyle($el);
+						$elX += parseInt($style.borderLeftWidth);
+						$elY += parseInt($style.borderTopWidth);
+					}
+				}
+				return {
+					left: $elX,
+					top: $elY
+				};
+			};
+
+			function scrollBanner(e){
 				const banner = document.querySelector('.banner');
-				const btn = document.querySelector('.btn');
+				const btn = banner.querySelector('.btn');
 				const minH = 48;
 				const maxH = banner.offsetHeight;
-				let isSetHeight = false;
-				let isSetTop = false;
-
-				window.addEventListener('scroll', scrollBannerSize);
-
-				function removeEvent(){
-					banner.classList.add('fix');
-					window.removeEventListener('scroll', scrollBannerSize);
-					window.scrollTo({top:0});
-				}
-
-				function scrollBannerSize(){
-					const sclTop = window.scrollY || window.pageYOffset;
+				const top = getOffset(banner).top;
+				const end = top + maxH;
+				const sclTop = window.scrollY || window.pageYOffset;
+				if(sclTop < end){
 					const setHeight = Math.max(minH, Math.min(maxH, maxH - sclTop));
-					if(!isSetHeight) {
-						btn.style.height = setHeight+'px';
-						if(setHeight === minH) isSetHeight = true;
-					}
-					
-					if(isSetHeight) removeEvent();
+					if(sclTop === 0) btn.style.height = ''
+					else btn.style.height = setHeight+'px';
 				}
 			}
 			document.addEventListener('DOMContentLoaded', () => {
-				scrollBanner();
+				window.addEventListener('scroll', scrollBanner);
 			});
 		</script>
 	</body>
