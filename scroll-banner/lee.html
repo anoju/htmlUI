@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>배너스크롤연동</title>
+		<style>
+			html, body {
+				width: 100%;
+				height: 100%;
+				min-height: 100%;
+			}
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			#wrap {
+				min-height: 100%;
+				height: 100%;
+			}
+			#content {
+				position: relative;
+    			min-height: 100%;
+				padding: 16px 20px 96px;
+				padding: 16px 20px calc(constant(safe-area-inset-bottom) / 2);
+    			padding: 16px 20px calc(env(safe-area-inset-bottom) / 2);
+			}
+			.header {
+				position: relative;
+				height: 48px;
+			}
+			.header_inr {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 48px;
+				background-color: burlywood;
+				z-index: 120;
+			}
+			.banner {
+				position: sticky;
+				top: 64px;
+				height: 190px;
+			}
+			.banner.fix {
+				position: static;
+				top: 0;
+				height: 48px;
+			}
+			.banner .btn {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				position: relative;
+				height: 190px;
+				min-height: 48px;
+				overflow: hidden;
+				background-color: antiquewhite;
+				border-radius: 1.2rem;
+				text-align: center;
+			}
+			.banner.fix .btn {
+				height: 48px;
+			}
+			.item {
+				height: 300px;
+				margin-top: 30px;
+				background-color: aquamarine;
+				border-radius: 1.2rem;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="wrap">
+			<div class="header">
+				<div class="header_inr"></div>
+			</div>
+			<div id="content">
+				<div class="banner">
+					<a href="#" class="btn" role="button">배너</a>
+				</div>
+				<div class="item"></div>
+				<div class="item"></div>
+				<div class="item"></div>
+			</div>
+		</div>
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				window.addEventListener('scroll', handleScroll);
+				const banner = document.querySelector('.banner');
+				const btn = document.querySelector('.banner .btn');
+				const max = 190;
+				const min = 48;
+				function handleScroll() {
+					if (banner.classList.contains('fix')) {
+						btn.removeAttribute('style');
+						return false;
+					}
+					const sclTop = this.scrollY || document.documentElement.scrollTop;
+					btn.style.height = (function () {
+						const height = max - sclTop;
+						if (min >= height) {
+							banner.classList.add('fix');
+							window.scrollTo(0, 0);
+							banner.offsetHeight;
+						}
+						return `${height}px`;
+					})();
+				}
+			});
+		</script>
+	</body>
+</html>

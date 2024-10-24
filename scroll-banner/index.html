@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>배너스크롤연동</title>
+		<style>
+			html, body {
+				width: 100%;
+				height: 100%;
+				min-height: 100%;
+			}
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			#wrap {
+				min-height: 100%;
+				height: 100%;
+			}
+			#content {
+				position: relative;
+    			min-height: 100%;
+				padding: 16px 20px 96px;
+				padding: 16px 20px calc(constant(safe-area-inset-bottom) / 2);
+    			padding: 16px 20px calc(env(safe-area-inset-bottom) / 2);
+			}
+			.header {
+				position: relative;
+				height: 48px;
+			}
+			.header_inr {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 48px;
+				background-color: burlywood;
+				z-index: 120;
+			}
+			.banner {
+				height: 190px;
+			}
+			.banner .btn {
+				display:block;
+				position: sticky;
+				top: 64px;
+				height: 190px;
+				min-height: 48px;
+				overflow: hidden;
+				border-radius: 1.2rem;
+			}
+			.banner .btn img{
+				width:100%;
+				height:100%;
+				object-fit:cover;
+			}
+			.item {
+				height: 300px;
+				margin-top: 30px;
+				background-color: aquamarine;
+				border-radius: 1.2rem;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="wrap">
+			<div class="header">
+				<div class="header_inr"></div>
+			</div>
+			<div id="content">
+				<div class="banner">
+					<a href="#" class="btn" role="button">
+						<img src="../img/thumb-temp4-3.jpg" alt="">
+					</a>
+				</div>
+				<div class="item"></div>
+				<div class="item"></div>
+				<div class="item"></div>
+			</div>
+		</div>
+		<script>
+			function getOffset(element) {
+				let $el = element;
+				let $elX = 0;
+				let $elY = 0;
+				let isSticky = false;
+				while ($el && !Number.isNaN($el.offsetLeft) && !Number.isNaN($el.offsetTop)) {
+					let $style = window.getComputedStyle($el);
+					// const $matrix = new WebKitCSSMatrix($style.transform);
+					if ($style.position === 'sticky') {
+						isSticky = true;
+						$el.style.position = 'static';
+					}
+					$elX += $el.offsetLeft;
+					// $elX += $matrix.m41; //translateX
+					$elY += $el.offsetTop;
+					// $elY += $matrix.m42;  //translateY
+					if (isSticky) {
+						isSticky = false;
+						$el.style.position = '';
+						if ($el.getAttribute('style') === '') $el.removeAttribute('style');
+					}
+					$el = $el.offsetParent;
+					if ($el !== null) {
+						$style = window.getComputedStyle($el);
+						$elX += parseInt($style.borderLeftWidth);
+						$elY += parseInt($style.borderTopWidth);
+					}
+				}
+				return {
+					left: $elX,
+					top: $elY
+				};
+			};
+
+			function scrollBanner(e){
+				const banner = document.querySelector('.banner');
+				const btn = banner.querySelector('.btn');
+				const minH = 48;
+				const maxH = banner.offsetHeight;
+				const top = getOffset(banner).top;
+				const end = top + maxH;
+				const sclTop = window.scrollY || window.pageYOffset;
+				if(sclTop < end){
+					const setHeight = Math.max(minH, Math.min(maxH, maxH - sclTop));
+					if(sclTop === 0) btn.style.height = ''
+					else btn.style.height = setHeight+'px';
+				}
+			}
+			document.addEventListener('DOMContentLoaded', () => {
+				window.addEventListener('scroll', scrollBanner);
+			});
+		</script>
+	</body>
+</html>
