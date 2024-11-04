@@ -113,6 +113,8 @@
 						if(setHeight === minH) isSetHeight = true;
 					}
 					
+					// if(prevScl === 0 && sclTop > maxH - minH) isSetTop = true;
+
 					if(isSetHeight) {
 						let setTop = null;
 						if(!banner.classList.contains('pd')) {
@@ -122,7 +124,7 @@
 							setTop = parseInt(banner.style.paddingTop) - Math.abs(prevScl - sclTop);
 						}
 						if(setTop < 0) setTop = 0;
-						banner.style.paddingTop = setTop+'px';
+						if(!isSetTop) banner.style.paddingTop = setTop+'px';
 						
 						if(setHeight === 0) isSetTop = true;
 					}
