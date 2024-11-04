@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mosaic</title>
+  <style>
+    .container {
+      width: 400px;
+      margin: 20px;
+    }
+
+    .mosaic-wrapper {
+      width: 400px;
+      height: 400px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    canvas {
+      width: 400px;
+      height: 400px;
+    }
+
+    .controls {
+      margin: 20px 0;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+    }
+
+    .original {
+      margin-top: 20px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: #ddd;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #4a90e2;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h3>모자이크 효과 (슬라이더로 픽셀 크기 조절)</h3>
+    <div class="controls">
+      <div class="slider-container">
+        <span>픽셀 크기:</span>
+        <input type="range" id="pixelSize" min="1" max="50" value="10" />
+        <span id="pixelValue">10px</span>
+      </div>
+    </div>
+    <div class="mosaic-wrapper">
+      <canvas id="canvas"></canvas>
+    </div>
+    <div class="original">
+      <h3>원본 이미지</h3>
+      <img src="../img/thumb-temp.jpg" alt="Original image" width="400" id="sourceImage">
+    </div>
+  </div>
+
+  <script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('pixelSize');
+const img = document.getElementById('sourceImage');
+
+// 캔버스 크기 설정
+canvas.width = 400;
+canvas.height = 400;
+
+function createMosaic(size) {
+  // 이미지가 로드되었는지 확인
+  if (!img.complete) {
+    img.onload = () => createMosaic(size);
+    return;
+  }
+
+  // 캔버스 초기화
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // 원본 이미지를 작은 캔버스에 그리기
+  const tempCanvas = document.createElement('canvas');
+  const tempCtx = tempCanvas.getContext('2d');
+  
+  // 축소된 크기 계산
+  const scaledWidth = Math.ceil(canvas.width / size);
+  const scaledHeight = Math.ceil(canvas.height / size);
+  
+  tempCanvas.width = scaledWidth;
+  tempCanvas.height = scaledHeight;
+  
+  // 이미지를 작은 크기로 그리기
+  tempCtx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
+  
+  // 작은 이미지를 다시 원래 크기로 확대
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(
+    tempCanvas, 
+    0, 0, scaledWidth, scaledHeight,
+    0, 0, canvas.width, canvas.height
+  );
+
+  // 픽셀 크기 표시 업데이트
+  pixelValue.textContent = `${size}px`;
+}
+
+// 초기 모자이크 생성
+img.onload = () => createMosaic(parseInt(slider.value));
+
+// 슬라이더 이벤트 리스너
+slider.addEventListener('input', (e) => {
+  createMosaic(parseInt(e.target.value));
+});
+  </script>
+</body>
+</html>
