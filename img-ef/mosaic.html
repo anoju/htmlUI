@@ -82,15 +82,12 @@
 
   <script>
 const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
 const slider = document.getElementById('pixelSize');
 const img = document.getElementById('sourceImage');
 
-// 캔버스 크기 설정
-canvas.width = 400;
-canvas.height = 400;
-
 function createMosaic(size) {
+  const ctx = canvas.getContext('2d');
+  
   // 이미지가 로드되었는지 확인
   if (!img.complete) {
     img.onload = () => createMosaic(size);
@@ -134,7 +131,13 @@ function createMosaic(size) {
 }
 
 // 초기 모자이크 생성
-img.onload = () => createMosaic(parseInt(slider.value));
+img.onload = () => {
+  // 캔버스 크기 설정
+  canvas.width = img.offsetWidth;
+  canvas.height = img.offsetHeight;
+
+  createMosaic(parseInt(slider.value));
+};
 
 // 슬라이더 이벤트 리스너
 slider.addEventListener('input', (e) => {
