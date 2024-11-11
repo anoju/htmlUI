@@ -31,6 +31,7 @@ const pubList = {
 		if(wrap && wrap.getAttribute('data-layout') === 'index'){
 			pubList.makeList();
 		}
+		pubList.action();
 	},
 	makeList(){
 		const pubPage = document.querySelector('.pub-page');
@@ -584,6 +585,29 @@ const pubList = {
 		if(depth6Name) pubList.beforeTr.dep5 = depth6Name;
 
 		return fragment;
+	},
+	action(){
+		document.addEventListener('click', (e) => {
+			const target = e.target;
+			const pubSide = document.querySelector('.pub-side');
+			if (target.matches('.pub-button-detail')) {
+				e.preventDefault();
+				if (target.ariaExpanded === 'false'){
+					target.ariaExpanded = 'true';
+					pubSide.classList.add('on');
+				}else{
+					target.ariaExpanded = 'false';
+					pubSide.classList.remove('on');
+				}
+			}else{
+				// 왜 작동이 안됨???
+				// const detailBtn = document.querySelector('.pub-button-detail');
+				// if(detailBtn && detailBtn.ariaExpanded === 'true') {
+				// 	detailBtn.ariaExpanded = 'false';
+				// 	pubSide.classList.remove('on');
+				// }
+			}
+		});
 	}
 }
 
