@@ -587,6 +587,7 @@ const pubList = {
 		return fragment;
 	},
 	action(){
+		let beforeTarget = null;
 		document.addEventListener('click', (e) => {
 			const target = e.target;
 			const pubSide = document.querySelector('.pub-side');
@@ -600,13 +601,12 @@ const pubList = {
 					pubSide.classList.remove('on');
 				}
 			}else{
-				// 왜 작동이 안됨???
-				// const detailBtn = document.querySelector('.pub-button-detail');
-				// if(detailBtn && detailBtn.ariaExpanded === 'true') {
-				// 	detailBtn.ariaExpanded = 'false';
-				// 	pubSide.classList.remove('on');
-				// }
+				if(beforeTarget){
+					beforeTarget.ariaExpanded = 'false';
+					pubSide.classList.remove('on');
+				}
 			}
+			if(beforeTarget !== target) beforeTarget = target;
 		});
 	}
 }
