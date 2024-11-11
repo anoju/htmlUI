@@ -55,15 +55,15 @@ const pubList = {
 
 		const countObj = {};
 		countObj.total = pubJSON.length; // 전체
-		countObj.unuse = pubJSON.filter(item => parseInt(item.count) === 0).length; // 미포함
+		countObj.unuse = pubJSON.filter(item => parseInt(item.COUNT) === 0).length; // 미포함
 		countObj.useTotal = countObj.total - countObj.unuse;
-		countObj.del = pubJSON.filter(item => parseInt(item.STATUS) === 0 && parseInt(item.count) !== 0).length;
-		countObj.end = pubJSON.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.count) !== 0).length;
-		countObj.endDel = pubJSON.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) === 0 && parseInt(item.count) !== 0).length;
-		countObj.wait = pubJSON.filter(item => parseInt(item.STATUS) === 1 && item.END.trim() === '' && parseInt(item.count) !== 0).length;
-		countObj.ing = pubJSON.filter(item => parseInt(item.STATUS) === 2 && item.END.trim() === '' && parseInt(item.count) !== 0).length;
-		countObj.chk = pubJSON.filter(item => parseInt(item.STATUS) === 3 && item.END.trim() === '' && parseInt(item.count) !== 0).length;
-		countObj.reChk = pubJSON.filter(item => parseInt(item.STATUS) === 4 && item.END.trim() === '' && parseInt(item.count) !== 0).length;
+		countObj.del = pubJSON.filter(item => parseInt(item.STATUS) === 0 && parseInt(item.COUNT) !== 0).length;
+		countObj.end = pubJSON.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) !== 0).length;
+		countObj.endDel = pubJSON.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) === 0 && parseInt(item.COUNT) !== 0).length;
+		countObj.wait = pubJSON.filter(item => parseInt(item.STATUS) === 1 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
+		countObj.ing = pubJSON.filter(item => parseInt(item.STATUS) === 2 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
+		countObj.chk = pubJSON.filter(item => parseInt(item.STATUS) === 3 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
+		countObj.reChk = pubJSON.filter(item => parseInt(item.STATUS) === 4 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
 		
 		pubList.createSide(pubHeader, countObj);
 		countObj.modify = pubJSON.filter(item => item.MODIFY.trim() !== '').length;
@@ -438,7 +438,7 @@ const pubList = {
 		dep6: null,
 	},
 	createTableRow(rowData, index){
-		const count = parseInt(rowData.COUNT.trim());
+		const count = parseInt(typeof rowData.COUNT === 'string' ? rowData.COUNT.trim() : rowData.COUNT);
 		// const depth1Name = rowData.DEP1.replace(/ /gi,"").replace(/[/]/gi, 'ㆍ').replace(/[(]/gi, '！').replace(/[)]/gi, '？');
 		const depth2Name = rowData.DEP2.trim();
 		const depth3Name = rowData.DEP3.trim();
@@ -454,7 +454,7 @@ const pubList = {
 		const designer = rowData.DGN.trim();
 		const planner = rowData.PLA.trim();
 		const developer = rowData.DEV.trim();
-		const status = parseInt(rowData.STATUS.trim());
+		const status = parseInt(typeof rowData.STATUS === 'string' ? rowData.STATUS.trim() : rowData.STATUS);
 		const schedule = rowData.WBS.trim();
 		const end = rowData.END.trim();
 		const modify = rowData.MODIFY.trim();
@@ -505,7 +505,7 @@ const pubList = {
 			let rtnVal = id;
 			const preUrl = '..';
 			const file = typeof pubSetting !== 'undefined' && typeof pubSetting.file !== 'undefined' ? pubSetting.file : 'html';
-			if(url && id && status !== 1){
+			if(url && id && (status !== 1 || end)){
 				const setUrl = url.slice(-1) === '/' ? preUrl+url+id+'.'+file : preUrl+url;
 				rtnVal = `<a href="${setUrl}" target="_blank"><strong>${id}</strong></a><button type="button" class="pub-copy" title="메뉴복사"></button>`;
 			}
@@ -518,6 +518,18 @@ const pubList = {
 			if(rtnVal) return `(${rtnVal})`;
 			else return '';
 		}
+
+		const statusTd = () => {
+			let rtnVal = ''
+			if(end){
+				rtnVal = `<em><span>${end}</span>${getWeek(end)}</em>`;
+			}else if(count !== 0){
+				if(status === 2) rtnVal = '<em>퍼블중</em>';
+				else if(status === 3) rtnVal = '<em>검토중</em>';
+				else if(status === 4) rtnVal = '<em>재검토중</em>';
+			}
+			return rtnVal;
+		};
 
 		const convertModifyList = (htmlString) => {
 			// 각각의 li 항목을 매칭하는 정규식
@@ -557,8 +569,8 @@ const pubList = {
 			<td class="designer">${designer}</td>
 			<td class="planner">${planner}</td>
 			<td class="developer">${developer}</td>
-			<td class="wbs">${schedule}${getWeek(schedule)}</td>
-			<td class="status">${status}</td>
+			<td class="wbs"><em><span>${schedule}</span>${getWeek(schedule)}</em></td>
+			<td class="status">${statusTd()}</td>
 			<td class="modify">${modifyTd}</td>
 			<td class="memo">${memo}</td>
 		`;
