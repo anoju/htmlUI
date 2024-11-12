@@ -737,7 +737,7 @@ const pubList = {
 		function toggleAllTr(isShow){
 			const trs = document.querySelectorAll('.tr');
 			if(trs){
-				if(isShow) trs.forEach(tr => tr.style.display = '');
+				if(isShow) trs.forEach(tr => tr.style.removeProperty('display'));
 				else trs.forEach(tr => tr.style.display = 'none');
 			}
 		}
@@ -750,20 +750,20 @@ const pubList = {
 			else if(num === 3) className = '.chk'
 			if(!className) return;
 			const trs = document.querySelectorAll('.tr'+className);
-			if(trs) trs.forEach(tr => tr.style.display = '');
+			if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
 		}
 		function toggleTableTr(target, isShow){
 			const wrap = target.closest('.pub-site');
 			const trs = wrap.querySelectorAll('.tr');
 			if(trs){
-				if(isShow) trs.forEach(tr => tr.style.display = '');
+				if(isShow) trs.forEach(tr => tr.style.removeProperty('display'));
 				else trs.forEach(tr => tr.style.display = 'none');
 			}
 		}
 		function showTableTr(target, className){
 			const wrap = target.closest('.pub-site');
 			const trs = wrap.querySelectorAll(className);
-			if(trs) trs.forEach(tr => tr.style.display = '');
+			if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
 		}
 		function tableSelectReset(target){
 			const wrap = target.closest('.pub-site');
@@ -820,12 +820,12 @@ const pubList = {
 				target.classList.add('on');
 				const pubSites = document.querySelectorAll('.pub-site');
 				if(href === '#all'){
-					if(pubSites) pubSites.forEach(el => el.style.display = '');
+					if(pubSites) pubSites.forEach(el => el.style.removeProperty('display'));
 				}else{
 					const showSite = document.querySelector('.pub-site'+href);
 					if(pubSites && showSite) {
 						pubSites.forEach(el => el.style.display = 'none');
-						showSite.style.display = '';
+						showSite.style.removeProperty('display');
 					}
 				}
 			}
@@ -908,24 +908,23 @@ const pubList = {
 		document.addEventListener('change', (e) => {
 			const target = e.target;
 
-			// select 요소인지 확인
-			if (target.matches('.dep2 select, .dep3 select, .dep4 select, .dep5 select, .dep6 select')) {
+			if (target.matches('th.dep2 select, th.dep3 select, th.dep4 select, th.dep5 select, th.dep6 select, th.status select')) {
 				const selVal = target.value;
-				const depNum = target.closest('[class^="dep"]').className.match(/\d+/)[0];
 				if (selVal === '') {
 					toggleTableTr(target, true);
 				} else {
 					tableSelectReset(target);
 					toggleTableTr(target, false);
-					const className = `.tr-dep${depNum}_${selVal}`;
-					showTableTr(target, className);
+					let className = null;
+					if(target.closest('th[class^="dep"]')){
+						const depNum = target.closest('[class^="dep"]').className.match(/\d+/)[0];
+						className = `.tr-dep${depNum}_${selVal}`;
+					}else if(target.closest('th.status')){
+						className = '.tr-end_'+selVal;
+					}
+					if(className) showTableTr(target, className);
 				}
-			}
-
-			if (target.matches('.status select')) {
-				const selVal = target.value;
-				
-			}
+			}	
 
 			if(beforeTarget !== target) beforeTarget = target;
 		});
