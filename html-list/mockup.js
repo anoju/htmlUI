@@ -330,7 +330,7 @@ const pubList = {
 			</ul>
 			<ul>
 				<li class="history">
-					<button type="button" class="pub-modify-open" ${filterData.modify.length ? `disabled="disabled"`: ''}>수정이력</button>
+					<button type="button" class="pub-modify-open" ${!filterData.modify.length ? `disabled="disabled"`: ''}>수정이력</button>
 				</li>
 			</ul>
 			<ul>
@@ -855,26 +855,23 @@ const pubList = {
 			}
 
 			//수정이력 확장버튼
-			if (target.matches('th.modify button')){
+			if (target.matches('th.modify button, td.modify button')){
 				e.preventDefault();
-				const table = target.closest('.pub-table');
-				const tdBtn = table.querySelectorAll('.pub-tbody td.modify button');
-				let setVal = null
+				const cell = target.closest('.modify')
+				
+				let setVal = null;
 				if (target.ariaPressed === 'false') setVal = 'true';
 				else setVal = 'false';
 				target.ariaPressed = setVal;
-				if(tdBtn){
-					tdBtn.forEach(btn => {
-						btn.ariaPressed = setVal;
-					});
-				}
-			}
-			if (target.matches('td.modify button')){
-				e.preventDefault();
-				if (target.ariaPressed === 'false'){
-					target.ariaPressed = 'true';
-				}else{
-					target.ariaPressed = 'false';
+
+				if(cell.tagName === 'TH'){
+					const table = target.closest('.pub-table');
+					const tdBtn = table.querySelectorAll('.pub-tbody td.modify button');
+					if(tdBtn){
+						tdBtn.forEach(btn => {
+							btn.ariaPressed = setVal;
+						});
+					}
 				}
 			}
 
