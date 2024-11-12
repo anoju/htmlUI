@@ -4,23 +4,25 @@ const pubJSON = pub_index_data;
 /* LOADING */
 const loading = {
 	open() {
-		const loader = document.createElement('div');
-    loader.id = 'loadingbar';
-    loader.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:100%;z-index:10000;';
+		const loadingEl = document.createElement('div');
+    loadingEl.id = 'loadingbar';
+    loadingEl.className = 'loading';
 
-    const img = document.createElement('img');
-    img.src = 'https://nwww-t.sgic.co.kr/resource/pc/images/common/loading.gif';
-    img.alt = '로딩중';
-    img.style.cssText = 'position:fixed;inset:0;margin:auto;';
+    const loadingInnerEl = `<div class="loading-svg" role="img" aria-label="화면을 불러오는중입니다.">
+			<svg width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+				<circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+			</svg>
+    </div>`;
 
-    loader.appendChild(img);
-    document.body.appendChild(loader);
+    loadingEl.innerHTML = loadingInnerEl;
+    document.body.appendChild(loadingEl);
 	},
 	close() {
-		const loader = document.getElementById('loadingbar');
-    if (loader) loader.remove();
+		const loadingEl = document.getElementById('loadingbar');
+    if (loadingEl) loadingEl.remove();
 	}
 }
+loading.open();
 
 /* pubUtil */
 const pubUtil = {
@@ -110,6 +112,7 @@ const pubList = {
 		if(wrap && wrap.getAttribute('data-layout') === 'index'){
 			await pubList.makeList();
 			pubList.action();
+			loading.close();
 		}
 	},
 	makeList(){
@@ -546,7 +549,7 @@ const pubList = {
 		data.forEach(function(dataItem){
 			let html ='';
 			dataItem.counts.forEach(item => {
-				html += `<option value="${item.value}">${item.value} (${item.count})</option>`;
+				html += `<option value="${item.value.replace(/\s+/g, '_')}">${item.value} (${item.count})</option>`;
 			});
 			rtnVal.push(html);
 		});
@@ -603,11 +606,11 @@ const pubList = {
 		}
 
 		const trClassAry = ['tr'];
-		if(depth2Name) trClassAry.push('tr-dep2_'+depth2Name);
-		if(depth3Name) trClassAry.push('tr-dep3_'+depth3Name);
-		if(depth4Name) trClassAry.push('tr-dep4_'+depth4Name);
-		if(depth5Name) trClassAry.push('tr-dep5_'+depth5Name);
-		if(depth6Name) trClassAry.push('tr-dep6_'+depth6Name);
+		if(depth2Name) trClassAry.push('tr-dep2_'+depth2Name.replace(/\s+/g, '_'));
+		if(depth3Name) trClassAry.push('tr-dep3_'+depth3Name.replace(/\s+/g, '_'));
+		if(depth4Name) trClassAry.push('tr-dep4_'+depth4Name.replace(/\s+/g, '_'));
+		if(depth5Name) trClassAry.push('tr-dep5_'+depth5Name.replace(/\s+/g, '_'));
+		if(depth6Name) trClassAry.push('tr-dep6_'+depth6Name.replace(/\s+/g, '_'));
 		if(id) trClassAry.push('tr-id_'+id);
 		if(count === 0) {
 			trClassAry.push('unuse');
@@ -732,6 +735,8 @@ const pubList = {
 		}
 
 		let beforeTarget = null;
+
+		// 클릭 이벤트
 		document.addEventListener('click', (e) => {
 			const target = e.target;
 			const pubSide = document.querySelector('.pub-side');
@@ -797,13 +802,13 @@ const pubList = {
 				const dep5El = tr.querySelector('td.dep5');
 				const dep6El = tr.querySelector('td.dep6');
 				const screenEl = tr.querySelector('td.screen');
-				if(dep1El) depAry.push(dep1El.textContent);
-				if(dep2El) depAry.push(dep2El.textContent);
-				if(dep3El) depAry.push(dep3El.textContent);
-				if(dep4El) depAry.push(dep4El.textContent);
-				if(dep5El) depAry.push(dep5El.textContent);
-				if(dep6El) depAry.push(dep6El.textContent);
-				if(screenEl) depAry.push(screenEl.textContent);
+				if(dep1El && dep1El.textContent) depAry.push(dep1El.textContent);
+				if(dep2El && dep2El.textContent) depAry.push(dep2El.textContent);
+				if(dep3El && dep3El.textContent) depAry.push(dep3El.textContent);
+				if(dep4El && dep4El.textContent) depAry.push(dep4El.textContent);
+				if(dep5El && dep5El.textContent) depAry.push(dep5El.textContent);
+				if(dep6El && dep6El.textContent) depAry.push(dep6El.textContent);
+				if(screenEl && screenEl.textContent) depAry.push(screenEl.textContent);
 				const idEl = tr.querySelector('td.id');
 				const copyMsg = '· '+ depAry.join(' > ')+'\n  '+idEl.textContent;
 				pubUtil.clipboardCopy(copyMsg);
@@ -854,6 +859,18 @@ const pubList = {
 				link.href = URL.createObjectURL(blob);
 				link.download = fileTxt+'json_data.csv';
 				link.click();
+			}
+
+			if(beforeTarget !== target) beforeTarget = target;
+		});
+
+		// change 이벤트
+		document.addEventListener('change', (e) => {
+			const target = e.target;
+
+			// select 요소인지 확인
+			if (target.matches('.dep2 select')) {
+					const selectedValue = target.value;
 			}
 
 			if(beforeTarget !== target) beforeTarget = target;
