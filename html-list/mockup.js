@@ -111,7 +111,7 @@ const pubUtil = {
 		return csvRows.join('\n');
 	},
 	changeTxt(str){
-		return str.replace(/\s+/g, '_').replace(/[^가-힣a-zA-Z0-9]/g, '__');
+		return str.replace(/\s+/g, '_').replace(/[^가-힣a-zA-Z0-9_]/g, '__');
 	}
 };
 
@@ -280,6 +280,10 @@ const pubList = {
 							<em>완료<span>(<strong>${filterData.end.length}</strong>)</span></em>
 							<span><strong>${pubList.getPercent(filterData.end.length, filterData.total.length)}</strong>%</span>
 					</li>
+					<li class="delay">
+							<em>지연<span>(<strong>${filterData.delay.length}</strong>)</span></em>
+							<span><strong>${pubList.getPercent(filterData.delay.length, filterData.total.length)}</strong>%</span>
+					</li>
 			</ul>
 		</div>`;
 		/*
@@ -366,6 +370,9 @@ const pubList = {
 		rtnObj.modify = data.filter(item => {
 			return item.MODIFY.replace(/\[/g, '').replace(/\]/g, '').trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) !== 0
 		});
+		rtnObj.delay = data.filter(item => {
+			return item.WBS.trim() !== '' && new Date(item.WBS.trim()) > new Date() && item.END.trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) !== 0
+		});
 		return rtnObj;
 	},
 	createSection(data, idx){
@@ -405,6 +412,7 @@ const pubList = {
 						(
 						<span class="total">전체</span><strong>${filterState.useTotal.length}</strong>,
 						<span class="end">완료</span><strong>${filterState.end.length}</strong>,
+						<span class="delay">지연</span><strong>${filterState.delay.length}</strong>,
 						<span class="chk">재/검토중</span><strong>${filterState.chk.length+filterState.reChk.length}</strong>,
 						<span class="ing">퍼블중</span><strong>${filterState.ing.length}</strong>,
 						<span class="wait">대기</span><strong>${filterState.wait.length}</strong>,
@@ -625,12 +633,6 @@ const pubList = {
 		}
 
 		const trClassAry = ['tr'];
-		if(depth2Name) trClassAry.push('tr-dep2_'+pubUtil.changeTxt(depth2Name));
-		if(depth3Name) trClassAry.push('tr-dep3_'+pubUtil.changeTxt(depth3Name));
-		if(depth4Name) trClassAry.push('tr-dep4_'+pubUtil.changeTxt(depth4Name));
-		if(depth5Name) trClassAry.push('tr-dep5_'+pubUtil.changeTxt(depth5Name));
-		if(depth6Name) trClassAry.push('tr-dep6_'+pubUtil.changeTxt(depth6Name));
-		if(id) trClassAry.push('tr-id_'+id);
 		if(count === 0) {
 			trClassAry.push('unuse');
 		}else{
@@ -645,8 +647,18 @@ const pubList = {
 				else if(status === 2) trClassAry.push('ing');
 				else if(status === 3) trClassAry.push('chk');
 				else if(status === 4) trClassAry.push('chk re');
+
+				if(schedule){
+					if(new Date(schedule) < new Date()) trClassAry.push('delay');
+				}
 			}
 		}
+		if(depth2Name) trClassAry.push('tr-dep2_'+pubUtil.changeTxt(depth2Name));
+		if(depth3Name) trClassAry.push('tr-dep3_'+pubUtil.changeTxt(depth3Name));
+		if(depth4Name) trClassAry.push('tr-dep4_'+pubUtil.changeTxt(depth4Name));
+		if(depth5Name) trClassAry.push('tr-dep5_'+pubUtil.changeTxt(depth5Name));
+		if(depth6Name) trClassAry.push('tr-dep6_'+pubUtil.changeTxt(depth6Name));
+		if(id) trClassAry.push('tr-id_'+id);
 
 		const depth2Html = pubList.beforeTr.dep2 === depth2Name ? `<span>${depth2Name}</span>` : `<strong>${depth2Name}</strong>`;
 		const depth3Html = pubList.beforeTr.dep3 === depth3Name ? `<span>${depth3Name}</span>` : `<strong>${depth3Name}</strong>`;
@@ -679,19 +691,53 @@ const pubList = {
 			return rtnVal;
 		};
 
+		let isDuplicate = false;
 		const convertModifyList = (htmlString) => {
-			// 각각의 li 항목을 매칭하는 정규식
-			const regex = /\[(\d{4}-\d{2}-\d{2}) (.*?)\]/g;
-			// replace 함수를 사용하여 매칭되는 모든 항목을 변환
-			return htmlString.replace(regex, (match, dateStr, content) => {
-					const weekday = pubUtil.getWeek(dateStr);
+			// 유효성 검사 함수
+			const isValidDate = (dateStr) => {
+				const date = new Date(dateStr);
+				return date instanceof Date && !isNaN(date);
+			};
+	
+			// 모든 매칭을 객체 배열로 변환
+			const matches = Array.from(htmlString.matchAll(/\[(\d{4}-\d{2}-\d{2}) (.*?)\]/g))
+				.map(([match, date, content]) => ({
+					date,
+					content,
+					timestamp: new Date(date).getTime()
+				}))
+				.filter(item => isValidDate(item.date)); // 유효한 날짜만 필터링
+	
+			// 날짜별 중복 체크
+			const duplicates = matches.reduce((acc, item) => {
+				acc[item.date] = (acc[item.date] || 0) + 1;
+				return acc;
+			}, {});
+	
+			// 중복 날짜 경고
+			Object.entries(duplicates)
+				.filter(([date, count]) => count > 1)
+				.forEach(([date, count]) => {
+					isDuplicate = true;
+					console.warn(`경고: ${id}항목의 ${date} 날짜가 ${count}번 중복되었습니다.`);
+				});
+	
+			// 타임스탬프로 정렬 (내림차순)
+			const sortedMatches = matches.sort((a, b) => b.timestamp - a.timestamp);
+	
+			// HTML 생성
+			const result = sortedMatches.map(({ date, content }) => {
+				const weekday = pubUtil.getWeek(date);
+				const dateWithoutHyphen = date.replace(/-/g, '');
+				trClassAry.push('tr-modify_' + dateWithoutHyphen);
 
-					const dateStr2 = dateStr.replace(/-/g, '');
-					trClassAry.push('tr-modify_'+dateStr2);
-
-					// 새로운 형식으로 변환
-					return `<li title="${dateStr} ${content}"><em><span>${dateStr}</span>${weekday}</em><p>${content}</p></li>`;
-			});
+				return `<li title="${date} ${content}"><em><span>${date}</span>${weekday}</em><p>${content}</p></li>`;
+			}).join('');
+	
+			// 처리된 항목 수 반환 (디버깅용)
+			// console.log(`총 ${sortedMatches.length}개 항목 처리됨`);
+			
+			return result;
 		};
 		const getModifyTd = () => {
 			const txt = modify.replace(/\[/g, '').replace(/\]/g, '').trim();
@@ -724,6 +770,11 @@ const pubList = {
 		`;
 		trHtml.innerHTML = trInnerHtml;
 		fragment.appendChild(trHtml);
+
+		if(isDuplicate){
+			const ul = fragment.querySelector('.modify ul');
+			if(ul) ul.classList.add('error-cell');
+		}
 
 		if(depth2Name) pubList.beforeTr.dep2 = depth2Name;
 		if(depth3Name) pubList.beforeTr.dep3 = depth3Name;
