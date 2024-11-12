@@ -22,7 +22,87 @@ const loading = {
 	}
 }
 
-/* UTILS */
+/* pubUtil */
+const pubUtil = {
+	getWeek (date) {
+		const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+		let rtnVal = weekdays[new Date(date).getDay()]
+		if(rtnVal) return `(${rtnVal})`;
+		else return '';
+	},
+	clipboardCopy(text){
+		const textarea = document.createElement('textarea');
+    textarea.id = 'pub-modify-textarea';
+		textarea.style.zIndex = -1;
+		textarea.style.opacity = 0;
+		textarea.style.position = 'fixed';
+		textarea.value = text; 
+		document.body.appendChild(textarea);
+		textarea.select();
+		document.execCommand('Copy');
+		document.body.removeChild(textarea);
+		pubUtil.toastPop('클립보드에 복사되었습니다.');
+	},
+	toastPop(text){
+		const msg = document.createElement('div');
+    msg.className = 'toast-pop';
+		msg.textContent = text;
+    document.body.appendChild(msg);
+		setTimeout(function() {
+			msg.remove();
+		}, 600);
+	},
+	jsonToCSV(jsonData){
+		const excludedHeaders = ['COUNT', 'URL', 'WBS', 'SB', 'MEMO', 'MODIFY'];
+		// if (dev === '0') excludedHeaders.push('DEV');
+		// if (dgn === '0') excludedHeaders.push('DGN');
+		// if (pla === '0') excludedHeaders.push('PLA');
+	
+		const headers = Object.keys(jsonData[0]).filter(header => !excludedHeaders.includes(header));
+		const csvRows = [headers.join(',')];
+	
+		jsonData.forEach(row => {
+			if (row.STATUS === '0') {
+				row.STATUS = '삭제';
+			} else {
+				row.STATUS = '';
+			}
+			if (row.TYPE) {
+				row.TYPE = row.TYPE.toUpperCase();
+				if (row.TYPE === 'F') row.TYPE = 'F(메인)';
+				if (row.TYPE === 'T') row.TYPE = 'T(탭)';
+				if (row.TYPE === 'L') row.TYPE = 'L(링크)';
+				if (row.TYPE === 'P') row.TYPE = 'P(팝업)';
+				if (row.TYPE === 'WP') row.TYPE = 'P(팝업)';
+				if (row.TYPE === 'FP') row.TYPE = 'P(팝업)';
+				if (row.TYPE === 'CP') row.TYPE = 'P(팝업)';
+				if (row.TYPE === 'BP') row.TYPE = 'P(팝업)';
+			}
+	
+			if (!String(row.COUNT).startsWith('0')) {
+				const values = headers.map(header => {
+					const escapedValue = ('' + row[header]).replace(/"/g, '""');
+					return `"${escapedValue}"`;
+				});
+				csvRows.push(values.join(','));
+			}
+		});
+	
+		csvRows[0] = csvRows[0].split(',').map(cell => cell.replace('DEP', 'Depth')).join(',');
+		csvRows[0] = csvRows[0].replace('SCREEN', '화면명');
+		csvRows[0] = csvRows[0].replace('TYPE', '유형');
+		csvRows[0] = csvRows[0].replace('ID', '화면ID');
+		csvRows[0] = csvRows[0].replace('PLA', '기획');
+		csvRows[0] = csvRows[0].replace('DGN', '디자인');
+		csvRows[0] = csvRows[0].replace('PUB', '퍼블리싱');
+		csvRows[0] = csvRows[0].replace('DEV', '개발');
+		csvRows[0] = csvRows[0].replace('STATUS', '상태');
+		csvRows[0] = csvRows[0].replace('WBS', '완료예정일');
+		csvRows[0] = csvRows[0].replace('END', '최종완료일');
+		return csvRows.join('\n');
+	},
+};
+
 
 /* pubList */
 const pubList = {
@@ -54,17 +134,7 @@ const pubList = {
 		//pubList.createMobileFrame(pubPage);
 		pubList.createNav(pubHeader, navAry);
 
-		const countObj = {};
-		countObj.total = pubJSON.length; // 전체
-		countObj.unuse = pubJSON.filter(item => parseInt(item.COUNT) === 0).length; // 미포함
-		countObj.useTotal = countObj.total - countObj.unuse;
-		countObj.del = pubJSON.filter(item => parseInt(item.STATUS) === 0 && parseInt(item.COUNT) !== 0).length;
-		countObj.end = pubJSON.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) !== 0).length;
-		countObj.endDel = pubJSON.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) === 0 && parseInt(item.COUNT) !== 0).length;
-		countObj.wait = pubJSON.filter(item => parseInt(item.STATUS) === 1 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
-		countObj.ing = pubJSON.filter(item => parseInt(item.STATUS) === 2 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
-		countObj.chk = pubJSON.filter(item => parseInt(item.STATUS) === 3 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
-		countObj.reChk = pubJSON.filter(item => parseInt(item.STATUS) === 4 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
+		const countObj = pubList.getCount(pubJSON)
 		
 		pubList.createSide(pubHeader, countObj);
 		countObj.modify = pubJSON.filter(item => item.MODIFY.trim() !== '').length;
@@ -220,29 +290,29 @@ const pubList = {
 			<ul>
 				<li class="wait">
 					${alarmHtml(countObj.wait)}
-					<button type="button" class="pub-filter-status"  ${countObj.wait?'':`disabled="disabled"`}><em>대기중</em></button>
+					<button type="button" class="pub-filter-status"  ${countObj.wait?'':`disabled="disabled"`}>대기중</button>
 				</li>
 				<li class="ing">
 					${alarmHtml(countObj.ing)}
-					<button type="button" class="pub-filter-status"  ${countObj.ing?'':`disabled="disabled"`}><em>퍼블중</em></button>
+					<button type="button" class="pub-filter-status"  ${countObj.ing?'':`disabled="disabled"`}>퍼블중</button>
 				</li>
 				<li class="chk">
 					${alarmHtml(countObj.chk+countObj.reChk)}
-					<button type="button" class="pub-filter-status"  ${countObj.chk+countObj.reChk?'':`disabled="disabled"`}><em>재/검토중</em></button>
+					<button type="button" class="pub-filter-status"  ${countObj.chk+countObj.reChk?'':`disabled="disabled"`}>재/검토중</button>
 				</li>
 				<li class="del">
 					${alarmHtml(countObj.del)}
-					<button type="button" class="pub-filter-status" ${countObj.del?'':`disabled="disabled"`}><em>삭제</em></button>
+					<button type="button" class="pub-filter-status" ${countObj.del?'':`disabled="disabled"`}>삭제</button>
 				</li>
 			</ul>
 			<ul>
 				<li class="history">
-					<button type="button" class="pub-modify-open" ${countObj.modify ? `disabled="disabled"`: ''}><span>수정이력</span></button>
+					<button type="button" class="pub-modify-open" ${countObj.modify ? `disabled="disabled"`: ''}>수정이력</button>
 				</li>
 			</ul>
 			<ul>
 				<li class="down">
-					<button type="button" class="pub-csv-down"><span>CSV 다운</span></button>
+					<button type="button" class="pub-csv-down">CSV 다운</button>
 				</li>
 			</ul>
 		</div>`;
@@ -257,6 +327,21 @@ const pubList = {
 		`;
 		sideHtml.innerHTML = sideInnerHtml;
 		element.appendChild(sideHtml);
+	},
+	getCount(data){
+		const rtnObj = {};
+		rtnObj.total = data.length; // 전체
+		rtnObj.unuse = data.filter(item => parseInt(item.COUNT) === 0).length; // 미포함
+		rtnObj.useTotal = rtnObj.total - rtnObj.unuse;
+		rtnObj.del = data.filter(item => parseInt(item.STATUS) === 0 && parseInt(item.COUNT) !== 0).length;
+		rtnObj.end = data.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) !== 0).length;
+		rtnObj.endDel = data.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) === 0 && parseInt(item.COUNT) !== 0).length;
+		rtnObj.wait = data.filter(item => parseInt(item.STATUS) === 1 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
+		rtnObj.ing = data.filter(item => parseInt(item.STATUS) === 2 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
+		rtnObj.chk = data.filter(item => parseInt(item.STATUS) === 3 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
+		rtnObj.reChk = data.filter(item => parseInt(item.STATUS) === 4 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
+
+		return rtnObj;
 	},
 	createSection(data){
 		const dataTit = data.dep1.replace(/ /gi,"").replace(/[/]/gi, 'ㆍ').replace(/[(]/gi, '！').replace(/[)]/gi, '？');
@@ -513,17 +598,10 @@ const pubList = {
 			return rtnVal;
 		}
 
-		const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-		const getWeek = (date) => {
-			let rtnVal = weekdays[new Date(date).getDay()]
-			if(rtnVal) return `(${rtnVal})`;
-			else return '';
-		}
-
 		const statusTd = () => {
 			let rtnVal = ''
 			if(end){
-				rtnVal = `<em><span>${end}</span>${getWeek(end)}</em>`;
+				rtnVal = `<em><span>${end}</span>${pubUtil.getWeek(end)}</em>`;
 			}else if(count !== 0){
 				if(status === 2) rtnVal = '<em>퍼블중</em>';
 				else if(status === 3) rtnVal = '<em>검토중</em>';
@@ -537,7 +615,7 @@ const pubList = {
 			const regex = /\[(\d{4}-\d{2}-\d{2}) (.*?)\]/g;
 			// replace 함수를 사용하여 매칭되는 모든 항목을 변환
 			return htmlString.replace(regex, (match, dateStr, content) => {
-					const weekday = getWeek(dateStr);
+					const weekday = pubUtil.getWeek(dateStr);
 					
 					const dateStr2 = dateStr.replace(/-/g, '');
 					trClassAry.push('tr-modify_'+dateStr2);
@@ -570,7 +648,7 @@ const pubList = {
 			<td class="designer">${designer}</td>
 			<td class="planner">${planner}</td>
 			<td class="developer">${developer}</td>
-			<td class="wbs"><em><span>${schedule}</span>${getWeek(schedule)}</em></td>
+			<td class="wbs"><em><span>${schedule}</span>${pubUtil.getWeek(schedule)}</em></td>
 			<td class="status">${statusTd()}</td>
 			<td class="modify">${modifyTd}</td>
 			<td class="memo">${memo}</td>
@@ -591,6 +669,8 @@ const pubList = {
 		document.addEventListener('click', (e) => {
 			const target = e.target;
 			const pubSide = document.querySelector('.pub-side');
+
+			//진척률 툴팁
 			if (target.matches('.pub-button-detail')) {
 				e.preventDefault();
 				if (target.ariaExpanded === 'false'){
@@ -600,12 +680,58 @@ const pubList = {
 					target.ariaExpanded = 'false';
 					pubSide.classList.remove('on');
 				}
-			}else{
-				if(beforeTarget){
-					beforeTarget.ariaExpanded = 'false';
-					pubSide.classList.remove('on');
-				}
+			}else if(beforeTarget && beforeTarget.matches('.pub-button-detail')){
+				beforeTarget.ariaExpanded = 'false';
+				pubSide.classList.remove('on');
 			}
+
+			//메뉴 복사
+			if(target.matches('.pub-copy')){
+				const depAry = []
+				const tr = target.closest('tr');
+				const dep1El = target.closest('.pub-site').querySelector('.pub-site-title h2 > span');
+				const dep2El = tr.querySelector('td.dep2');
+				const dep3El = tr.querySelector('td.dep3');
+				const dep4El = tr.querySelector('td.dep4');
+				const dep5El = tr.querySelector('td.dep5');
+				const dep6El = tr.querySelector('td.dep6');
+				const screenEl = tr.querySelector('td.screen');
+				if(dep1El) depAry.push(dep1El.textContent);
+				if(dep2El) depAry.push(dep2El.textContent);
+				if(dep3El) depAry.push(dep3El.textContent);
+				if(dep4El) depAry.push(dep4El.textContent);
+				if(dep5El) depAry.push(dep5El.textContent);
+				if(dep6El) depAry.push(dep6El.textContent);
+				if(screenEl) depAry.push(screenEl.textContent);
+				const idEl = tr.querySelector('td.id');
+				const copyMsg = '· '+ depAry.join(' > ')+'\n  '+idEl.textContent;
+				pubUtil.clipboardCopy(copyMsg);
+			}
+				
+
+			//csv 파일 다운로드
+			if (target.matches('.pub-csv-down')){
+				console.log('csv 파일 다운로드');
+				if(typeof pubJSON === 'undefined'){
+					console.error('pub_index_data json 목록이 없습니다.');
+					return
+				}
+				if(pubJSON.length === 0){
+					console.error('pub_index_data json 목록 비엿습니다.');
+					return
+				}
+	
+				const pubTabOn = document.querySelector('.pub-tab.on');
+				const csvData = pubUtil.jsonToCSV(pubJSON);
+				const fileTxt = pubTabOn ? pubTabOn.textContent + '_' : '';
+				const bom = '\uFEFF';
+				const blob = new Blob([bom+csvData], {type: 'text/csv;charset=utf-8;'});
+				const link = document.createElement('a');
+				link.href = URL.createObjectURL(blob);
+				link.download = fileTxt+'json_data.csv';
+				link.click();
+			}
+
 			if(beforeTarget !== target) beforeTarget = target;
 		});
 	}
