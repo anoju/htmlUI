@@ -112,6 +112,23 @@ const pubUtil = {
 	},
 	changeTxt(str){
 		return str.replace(/\s+/g, '_').replace(/[^가-힣a-zA-Z0-9_]/g, '__');
+	},
+	getUrlParams() {
+		const params = {};
+		window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
+			params[key] = value;
+		});
+		return params;
+	},
+	setUrlParams(key, value){
+		const currentUrl = new URL(window.location.href);
+		const params = new URLSearchParams(currentUrl.search);
+		let newUrl = currentUrl.pathname;
+		if(key){
+			params.set(key, value);
+			newUrl = newUrl+'?'+params.toString();
+		}
+		history.pushState(null, '', newUrl);
 	}
 };
 
@@ -121,8 +138,13 @@ const pubList = {
 		const wrap = document.querySelector('.pub-wrap');
 		if(wrap && wrap.getAttribute('data-layout') === 'index'){
 			await pubList.makeList();
-			pubList.action();
-			loading.close();
+		}
+		pubList.action();
+		loading.close();
+		let tab = pubUtil.getUrlParams().tab;
+		if(tab){
+			tab = parseInt(tab);
+			document.querySelector(`.pub-nav .pub-menu > ul > li:nth-child(${tab}) a`).click();
 		}
 	},
 	makeList(){
@@ -872,12 +894,15 @@ const pubList = {
 				const pubSites = document.querySelectorAll('.pub-site');
 				if(href === '#all'){
 					if(pubSites) pubSites.forEach(el => el.style.removeProperty('display'));
+					pubUtil.setUrlParams(false);
 				}else{
 					const showSite = document.querySelector('.pub-site'+href);
 					if(pubSites && showSite) {
 						pubSites.forEach(el => el.style.display = 'none');
 						showSite.style.removeProperty('display');
 					}
+					const idx = parseInt(href.replace(/\D/g, ''));
+					pubUtil.setUrlParams('tab', idx);
 				}
 			}
 
