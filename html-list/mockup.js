@@ -679,6 +679,25 @@ const pubList = {
 		return fragment;
 	},
 	action(){
+		function toggleAllTr(isHide){
+			const trs = document.querySelectorAll('.tr');
+			if(trs){
+				if(isHide) trs.forEach(tr => tr.style.display = 'none');
+				else trs.forEach(tr => tr.style.display = '');
+			}
+		}
+		function showStateTr(str){
+			const num = typeof str === 'string' ? Number(str) : str;
+			let className = null;
+			if(num === 0) className = '.del'
+			else if(num === 1) className = '.wait'
+			else if(num === 2) className = '.ing'
+			else if(num === 3) className = '.chk'
+			if(!className) return;
+			const trs = document.querySelectorAll('.tr'+className);
+			if(trs) trs.forEach(tr => tr.style.display = '');
+		}
+
 		let beforeTarget = null;
 		document.addEventListener('click', (e) => {
 			const target = e.target;
@@ -702,7 +721,15 @@ const pubList = {
 			//status 버튼
 			if(target.matches('.pub-filter-status')){
 				e.preventDefault();
-
+				const status = target.dataset.status;
+				if(target.classList.contains('on')){
+					target.classList.remove('on');
+					toggleAllTr(false);
+				}else{
+					target.classList.add('on');
+					toggleAllTr(true);
+					showStateTr(status);;
+				}
 			}
 
 			//메뉴 복사
