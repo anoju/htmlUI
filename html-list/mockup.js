@@ -103,7 +103,6 @@ const pubUtil = {
 	},
 };
 
-
 /* pubList */
 const pubList = {
 	async init(){
@@ -129,9 +128,9 @@ const pubList = {
 			const navAry = [];
 			const fragment = document.createDocumentFragment();
 
-			groupDep1.forEach(item => {
+			groupDep1.forEach((item, i) => {
 				navAry.push(item.dep1);
-				const section = pubList.createSection(item);
+				const section = pubList.createSection(item, i);
 				fragment.appendChild(section);
 			});
 
@@ -141,8 +140,8 @@ const pubList = {
 			//pubList.createMobileFrame(pubPage);
 			pubList.createNav(pubHeader, navAry);
 
-			const countObj = pubList.getCount(pubJSON);
-			pubList.createSide(pubHeader, countObj);
+			const filterState = pubList.getFilterState(pubJSON);
+			pubList.createSide(pubHeader, filterState);
 
 			// DOM 업데이트가 완료되었음을 보장하기 위해
 			// requestAnimationFrame 사용
@@ -152,7 +151,7 @@ const pubList = {
 		});
 	},
 	getPercent (val1, val2){
-		const rtnVal = ((val1/val2)*100).toFixed(2);
+		let rtnVal = ((val1/val2)*100).toFixed(2);
 		if (isNaN(rtnVal)) rtnVal = 0;
 		return rtnVal;
 	},
@@ -220,53 +219,54 @@ const pubList = {
 		navHtml.innerHTML = navInnerHtml;
 		element.appendChild(navHtml);
 	},
-	createSide(element, countObj, ){
+	createSide(element, filterData){
+		console.log(filterData);
 		const sideHtml = document.createElement('div');
     sideHtml.className = 'pub-side';
 		const totalHtml = `<div class="pub-total">
 			<strong>
-				${countObj.end}
-				<span><em>${countObj.endDel}</em></span>
+				${filterData.end.length}
+				<span><em>${filterData.endDel.length}</em></span>
 			</strong>
 			<span>/</span>
 			<strong>
-				${countObj.useTotal - countObj.del}
-				<span><em>${countObj.del}</em></span>
+				${filterData.useTotal.length - filterData.del.length}
+				<span><em>${filterData.del.length}</em></span>
 			</strong>
 			<em>
 				<span>
 					<span>진척률</span>
-					<strong>${pubList.getPercent(countObj.end, countObj.useTotal - countObj.del)}</strong>%
+					<strong>${pubList.getPercent(filterData.end.length, filterData.useTotal.length - filterData.del.length)}</strong>%
 				</span>
 				<button type="button" class="pub-button-detail" aria-expanded="false"></button>
 			</em>
 			<ul class="pub-total-layer">
 					<li>
-							<em>전체<span>(<strong>${countObj.total}</strong>)</span></em>
+							<em>전체<span>(<strong>${filterData.total.length}</strong>)</span></em>
 					</li>
 					<li class="unuse">
-							<em>미포함<span>(<strong>${countObj.unuse}</strong>)</span></em>
-							<span><strong>${pubList.getPercent(countObj.unuse, countObj.total)}</strong>%</span>
+							<em>미포함<span>(<strong>${filterData.unuse.length}</strong>)</span></em>
+							<span><strong>${pubList.getPercent(filterData.unuse.length, filterData.total.length)}</strong>%</span>
 					</li>
 					<li class="del">
-							<em>삭제<span>(<strong>${countObj.del}</strong>)</span></em>
-							<span><strong>${pubList.getPercent(countObj.del, countObj.total)}</strong>%</span>
+							<em>삭제<span>(<strong>${filterData.del.length}</strong>)</span></em>
+							<span><strong>${pubList.getPercent(filterData.del.length, filterData.total.length)}</strong>%</span>
 					</li>
 					<li class="wait">
-							<em>대기<span>(<strong>${countObj.wait}</strong>)</span></em>
-							<span><strong>${pubList.getPercent(countObj.wait, countObj.total)}</strong>%</span>
+							<em>대기<span>(<strong>${filterData.wait}</strong>)</span></em>
+							<span><strong>${pubList.getPercent(filterData.wait.length, filterData.total.length)}</strong>%</span>
 					</li>
 					<li class="ing">
-							<em>퍼블중<span>(<strong>${countObj.ing}</strong>)</span></em>
-							<span><strong>${pubList.getPercent(countObj.ing, countObj.total)}</strong>%</span>
+							<em>퍼블중<span>(<strong>${filterData.ing.length}</strong>)</span></em>
+							<span><strong>${pubList.getPercent(filterData.ing.length, filterData.total.length)}</strong>%</span>
 					</li>
 					<li class="chk">
-							<em>재/검토중<span>(<strong>${countObj.chk+countObj.reChk}</strong>)</span></em>
-							<span><strong>${pubList.getPercent(countObj.chk+countObj.reChk, countObj.total)}</strong>%</span>
+							<em>재/검토중<span>(<strong>${filterData.chk.length+filterData.reChk.length}</strong>)</span></em>
+							<span><strong>${pubList.getPercent(filterData.chk.length+filterData.reChk.length, filterData.total.length)}</strong>%</span>
 					</li>
 					<li class="end">
-							<em>완료<span>(<strong>${countObj.end}</strong>)</span></em>
-							<span><strong>${pubList.getPercent(countObj.end, countObj.total)}</strong>%</span>
+							<em>완료<span>(<strong>${filterData.end.length}</strong>)</span></em>
+							<span><strong>${pubList.getPercent(filterData.end.length, filterData.total.length)}</strong>%</span>
 					</li>
 			</ul>
 		</div>`;
@@ -300,25 +300,25 @@ const pubList = {
 		const util2Html = `<div class="pub-label">
 			<ul>
 				<li class="wait">
-					${alarmHtml(countObj.wait)}
-					<button type="button" class="pub-filter-status"  ${countObj.wait?'':`disabled="disabled"`} data-status="1">대기중</button>
+					${alarmHtml(filterData.wait.length)}
+					<button type="button" class="pub-filter-status"  ${filterData.wait.length?'':`disabled="disabled"`} data-status="1">대기중</button>
 				</li>
 				<li class="ing">
-					${alarmHtml(countObj.ing)}
-					<button type="button" class="pub-filter-status"  ${countObj.ing?'':`disabled="disabled"`} data-status="2">퍼블중</button>
+					${alarmHtml(filterData.ing.length)}
+					<button type="button" class="pub-filter-status"  ${filterData.ing.length?'':`disabled="disabled"`} data-status="2">퍼블중</button>
 				</li>
 				<li class="chk">
-					${alarmHtml(countObj.chk+countObj.reChk)}
-					<button type="button" class="pub-filter-status"  ${countObj.chk+countObj.reChk?'':`disabled="disabled"`} data-status="3">재/검토중</button>
+					${alarmHtml(filterData.chk.length+filterData.reChk.length)}
+					<button type="button" class="pub-filter-status"  ${filterData.chk.length+filterData.reChk.length?'':`disabled="disabled"`} data-status="3">재/검토중</button>
 				</li>
 				<li class="del">
-					${alarmHtml(countObj.del)}
-					<button type="button" class="pub-filter-status" ${countObj.del?'':`disabled="disabled"`} data-status="0">삭제</button>
+					${alarmHtml(filterData.del.length)}
+					<button type="button" class="pub-filter-status" ${filterData.del.length?'':`disabled="disabled"`} data-status="0">삭제</button>
 				</li>
 			</ul>
 			<ul>
 				<li class="history">
-					<button type="button" class="pub-modify-open" ${countObj.modify ? `disabled="disabled"`: ''}>수정이력</button>
+					<button type="button" class="pub-modify-open" ${filterData.modify.length ? `disabled="disabled"`: ''}>수정이력</button>
 				</li>
 			</ul>
 			<ul>
@@ -339,22 +339,25 @@ const pubList = {
 		sideHtml.innerHTML = sideInnerHtml;
 		element.appendChild(sideHtml);
 	},
-	getCount(data){
+	getFilterState(data){
 		const rtnObj = {};
-		rtnObj.total = data.length; // 전체
-		rtnObj.unuse = data.filter(item => parseInt(item.COUNT) === 0).length; // 미포함
-		rtnObj.useTotal = rtnObj.total - rtnObj.unuse;
-		rtnObj.del = data.filter(item => parseInt(item.STATUS) === 0 && parseInt(item.COUNT) !== 0).length;
-		rtnObj.end = data.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) !== 0).length;
-		rtnObj.endDel = data.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) === 0 && parseInt(item.COUNT) !== 0).length;
-		rtnObj.wait = data.filter(item => parseInt(item.STATUS) === 1 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
-		rtnObj.ing = data.filter(item => parseInt(item.STATUS) === 2 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
-		rtnObj.chk = data.filter(item => parseInt(item.STATUS) === 3 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
-		rtnObj.reChk = data.filter(item => parseInt(item.STATUS) === 4 && item.END.trim() === '' && parseInt(item.COUNT) !== 0).length;
-		rtnObj.modify = data.filter(item => item.MODIFY.trim() !== '').length;
+		rtnObj.total = data; // 전체
+		rtnObj.unuse = data.filter(item => parseInt(item.COUNT) === 0);
+		rtnObj.useTotal = data.filter(item => parseInt(item.COUNT) !== 0);
+		rtnObj.del = data.filter(item => parseInt(item.STATUS) === 0 && parseInt(item.COUNT) !== 0);
+		rtnObj.end = data.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) !== 0);
+		rtnObj.endDel = data.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) === 0 && parseInt(item.COUNT) !== 0);
+		rtnObj.wait = data.filter(item => parseInt(item.STATUS) === 1 && item.END.trim() === '' && parseInt(item.COUNT) !== 0);
+		rtnObj.ing = data.filter(item => parseInt(item.STATUS) === 2 && item.END.trim() === '' && parseInt(item.COUNT) !== 0);
+		rtnObj.chk = data.filter(item => parseInt(item.STATUS) === 3 && item.END.trim() === '' && parseInt(item.COUNT) !== 0);
+		rtnObj.reChk = data.filter(item => parseInt(item.STATUS) === 4 && item.END.trim() === '' && parseInt(item.COUNT) !== 0);
+		rtnObj.modify = data.filter(item => {
+			return item.MODIFY.replace(/\[/g, '').replace(/\]/g, '').trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) !== 0
+		});
+		console.log(rtnObj)
 		return rtnObj;
 	},
-	createSection(data){
+	createSection(data, idx){
 		const dataTit = data.dep1.replace(/ /gi,"").replace(/[/]/gi, 'ㆍ').replace(/[(]/gi, '！').replace(/[)]/gi, '？');
 
 		const dataItems = data.items;
@@ -378,13 +381,43 @@ const pubList = {
 			return rtnVal;
 		};
 
+		const filterState = pubList.getFilterState(dataItems);
+		const titleCount = (type) => {
+			let rtnVal = '';
+			let rtnVal2 = '';
+			if(filterState.useTotal.length-filterState.del.length){
+				rtnVal = `<p>
+					<strong>${filterState.end.length}</strong>
+					<span>/</span>
+					<strong>${filterState.useTotal.length-filterState.del.length}</strong>
+					<em>
+						(
+						<span class="total">전체</span><strong>${filterState.useTotal.length}</strong>,
+						<span class="end">완료</span><strong>${filterState.end.length}</strong>,
+						<span class="chk">재/검토중</span><strong>${filterState.chk.length+filterState.reChk.length}</strong>,
+						<span class="ing">퍼블중</span><strong>${filterState.ing.length}</strong>,
+						<span class="wait">대기</span><strong>${filterState.wait.length}</strong>,
+						<span class="del">삭제</span><strong>${filterState.del.length}</strong>
+						)
+					</em>
+				</p>
+				<div class="pub-progress"><span style="width:${pubList.getPercent(filterState.end.length, filterState.useTotal.length-filterState.del.length)}%"></span></div>`;
+				rtnVal2 = `<div class="pub-total"><em><span><span>진척률</span><strong>${pubList.getPercent(filterState.end.length, filterState.useTotal.length-filterState.del.length)}</strong>%</span></em></div>`;
+			}
+			if(type == 'ty2') return rtnVal2;
+			else return rtnVal;
+		}
+
 		const siteHtml = document.createElement('div');
     siteHtml.className = 'pub-site';
+    siteHtml.id = 'menu'+idx;
 		const innerHtml = `
 			<div class="pub-site-title">
 				<h2>
 					<span>${dataTit}</span><div class="pub-progress"></div>
+					${titleCount()}
 				</h2>
+				${titleCount('ty2')}
 			</div>
 			<div class="pub-table" id="index_${dataTit}">
 				<div class="pub-thead">
@@ -729,6 +762,26 @@ const pubList = {
 					target.classList.add('on');
 					toggleAllTr(true);
 					showStateTr(status);;
+				}
+			}
+
+			//nav
+			if(target.matches('.pub-nav a')){
+				e.preventDefault();
+				if(target.classList.contains('on')) return;
+				const href = target.getAttribute('href');
+				const navBtns = document.querySelectorAll('.pub-nav a');
+				navBtns.forEach(btn => btn.classList.remove('on'));
+				target.classList.add('on');
+				const pubSites = document.querySelectorAll('.pub-site');
+				if(href === '#all'){
+					if(pubSites) pubSites.forEach(el => el.style.display = '');
+				}else{
+					const showSite = document.querySelector('.pub-site'+href);
+					if(pubSites && showSite) {
+						pubSites.forEach(el => el.style.display = 'none');
+						showSite.style.display = '';
+					}
 				}
 			}
 
