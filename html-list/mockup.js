@@ -32,6 +32,13 @@ const pubUtil = {
 		if(rtnVal) return `(${rtnVal})`;
 		else return '';
 	},
+	isValidDate (dateStr) {
+		const regex = /^\d{4}-\d{2}-\d{2}$/;
+		if (!regex.test(dateStr)) return false;
+		
+		const date = new Date(dateStr);
+		return date instanceof Date && !isNaN(date);
+	},
 	clipboardCopy(text){
 		const textarea = document.createElement('textarea');
     textarea.id = 'pub-modify-textarea';
@@ -103,6 +110,9 @@ const pubUtil = {
 		csvRows[0] = csvRows[0].replace('END', '최종완료일');
 		return csvRows.join('\n');
 	},
+	changeTxt(str){
+		return str.replace(/\s+/g, '_').replace(/[^가-힣a-zA-Z0-9]/g, '__');
+	}
 };
 
 /* pubList */
@@ -223,9 +233,8 @@ const pubList = {
 		element.appendChild(navHtml);
 	},
 	createSide(element, filterData){
-		console.log(filterData);
 		const sideHtml = document.createElement('div');
-    sideHtml.className = 'pub-side';
+		sideHtml.className = 'pub-side';
 		const totalHtml = `<div class="pub-total">
 			<strong>
 				${filterData.end.length}
@@ -357,7 +366,6 @@ const pubList = {
 		rtnObj.modify = data.filter(item => {
 			return item.MODIFY.replace(/\[/g, '').replace(/\]/g, '').trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) !== 0
 		});
-		console.log(rtnObj)
 		return rtnObj;
 	},
 	createSection(data, idx){
@@ -370,15 +378,15 @@ const pubList = {
 			fragment.appendChild(row);
 		});
 
-		const depKeys = ['DEP2', 'DEP3', 'DEP4', 'DEP5', 'DEP6'];
-		const depList = pubList.countByMultipleKeys(dataItems, depKeys);
-		const depOpts = pubList.changeDepOpt(depList);
-		const depSelect = (idx,str) => {
+		const thSelKeys = ['DEP2', 'DEP3', 'DEP4', 'DEP5', 'DEP6', 'END'];
+		const thSelList = pubList.countByMultipleKeys(dataItems, thSelKeys);
+		const thSelOpts = pubList.changeSelOpt(thSelList);
+		const thSelect = (idx,str) => {
 			let rtnVal = str;
-			if(depOpts[idx].length){
+			if(thSelOpts[idx].length > 1){
 				rtnVal = `<select>
 					<option value="">${str}</option>
-					${depOpts[idx]}
+					${thSelOpts[idx]}
 				</select>`;
 			}
 			return rtnVal;
@@ -448,11 +456,11 @@ const pubList = {
 						<thead>
 							<tr>
 								<th class="no">번호</th>
-								<th class="dep2">${depSelect(0, 'D2')}</th>
-								<th class="dep3">${depSelect(1, 'D3')}</th>
-								<th class="dep4">${depSelect(2, 'D4')}</th>
-								<th class="dep5">${depSelect(3, 'D5')}</th>
-								<th class="dep6">${depSelect(4, 'D6')}</th>
+								<th class="dep2">${thSelect(0, 'D2')}</th>
+								<th class="dep3">${thSelect(1, 'D3')}</th>
+								<th class="dep4">${thSelect(2, 'D4')}</th>
+								<th class="dep5">${thSelect(3, 'D5')}</th>
+								<th class="dep6">${thSelect(4, 'D6')}</th>
 								<th class="screen">화면명</th>
 								<th class="type">유형</th>
 								<th class="url">URL</th>
@@ -462,7 +470,7 @@ const pubList = {
 								<th class="planner">기획</th>
 								<th class="developer">개발</th>
 								<th class="wbs">완료예정일</th>
-								<th class="status">최종완료일</th>
+								<th class="status">${thSelect(5, '최종완료일')}</th>
 								<th class="modify">
 									수정이력
 									<button type="button" aria-pressed="false"></button>
@@ -501,8 +509,8 @@ const pubList = {
 		`;
 		siteHtml.innerHTML = innerHtml;
 		siteHtml.querySelector('.pub-tbody tbody').append(fragment);
-		if(depList.length){
-			depList.forEach(item => {
+		if(thSelList.length){
+			thSelList.forEach(item => {
 				if(item.counts.length === 0){
 					let removeEls = null;
 					if(item.key === 'DEP2') removeEls = siteHtml.querySelectorAll('.dep2');
@@ -544,12 +552,23 @@ const pubList = {
         counts: countByKey(data, key)
     }));
 	},
-	changeDepOpt(data){
+	changeSelOpt(data){
 		const rtnVal = [];
 		data.forEach(function(dataItem){
 			let html ='';
-			dataItem.counts.forEach(item => {
-				html += `<option value="${item.value.replace(/\s+/g, '_')}">${item.value} (${item.count})</option>`;
+			let newAry = [...dataItem.counts];
+
+			// 날짜형식인지 체크
+			let isDate = false;
+			if(dataItem.counts[0] && pubUtil.isValidDate(dataItem.counts[0].value)) {
+				isDate = true;
+				newAry = newAry.sort((a, b) => {
+					return new Date(b.value) - new Date(a.value);
+				});
+			}
+			newAry.forEach(item => {
+				const setVal = isDate ? item.value.replace(/-/g, ''):pubUtil.changeTxt(item.value);
+				html += `<option value="${setVal}">${item.value} (${item.count})</option>`;
 			});
 			rtnVal.push(html);
 		});
@@ -606,11 +625,11 @@ const pubList = {
 		}
 
 		const trClassAry = ['tr'];
-		if(depth2Name) trClassAry.push('tr-dep2_'+depth2Name.replace(/\s+/g, '_'));
-		if(depth3Name) trClassAry.push('tr-dep3_'+depth3Name.replace(/\s+/g, '_'));
-		if(depth4Name) trClassAry.push('tr-dep4_'+depth4Name.replace(/\s+/g, '_'));
-		if(depth5Name) trClassAry.push('tr-dep5_'+depth5Name.replace(/\s+/g, '_'));
-		if(depth6Name) trClassAry.push('tr-dep6_'+depth6Name.replace(/\s+/g, '_'));
+		if(depth2Name) trClassAry.push('tr-dep2_'+pubUtil.changeTxt(depth2Name));
+		if(depth3Name) trClassAry.push('tr-dep3_'+pubUtil.changeTxt(depth3Name));
+		if(depth4Name) trClassAry.push('tr-dep4_'+pubUtil.changeTxt(depth4Name));
+		if(depth5Name) trClassAry.push('tr-dep5_'+pubUtil.changeTxt(depth5Name));
+		if(depth6Name) trClassAry.push('tr-dep6_'+pubUtil.changeTxt(depth6Name));
 		if(id) trClassAry.push('tr-id_'+id);
 		if(count === 0) {
 			trClassAry.push('unuse');
@@ -715,11 +734,11 @@ const pubList = {
 		return fragment;
 	},
 	action(){
-		function toggleAllTr(isHide){
+		function toggleAllTr(isShow){
 			const trs = document.querySelectorAll('.tr');
 			if(trs){
-				if(isHide) trs.forEach(tr => tr.style.display = 'none');
-				else trs.forEach(tr => tr.style.display = '');
+				if(isShow) trs.forEach(tr => tr.style.display = '');
+				else trs.forEach(tr => tr.style.display = 'none');
 			}
 		}
 		function showStateTr(str){
@@ -732,6 +751,27 @@ const pubList = {
 			if(!className) return;
 			const trs = document.querySelectorAll('.tr'+className);
 			if(trs) trs.forEach(tr => tr.style.display = '');
+		}
+		function toggleTableTr(target, isShow){
+			const wrap = target.closest('.pub-site');
+			const trs = wrap.querySelectorAll('.tr');
+			if(trs){
+				if(isShow) trs.forEach(tr => tr.style.display = '');
+				else trs.forEach(tr => tr.style.display = 'none');
+			}
+		}
+		function showTableTr(target, className){
+			const wrap = target.closest('.pub-site');
+			const trs = wrap.querySelectorAll(className);
+			if(trs) trs.forEach(tr => tr.style.display = '');
+		}
+		function tableSelectReset(target){
+			const wrap = target.closest('.pub-site');
+			const selects = wrap.querySelectorAll('.pub-thead select');
+			if(!selects) return;
+			selects.forEach(sel => {
+				if(sel !== target) sel.value = '';
+			});
 		}
 
 		let beforeTarget = null;
@@ -762,10 +802,10 @@ const pubList = {
 				const status = target.dataset.status;
 				if(target.classList.contains('on')){
 					target.classList.remove('on');
-					toggleAllTr(false);
+					toggleAllTr(true);
 				}else{
 					target.classList.add('on');
-					toggleAllTr(true);
+					toggleAllTr(false);
 					showStateTr(status);;
 				}
 			}
@@ -869,8 +909,22 @@ const pubList = {
 			const target = e.target;
 
 			// select 요소인지 확인
-			if (target.matches('.dep2 select')) {
-					const selectedValue = target.value;
+			if (target.matches('.dep2 select, .dep3 select, .dep4 select, .dep5 select, .dep6 select')) {
+				const selVal = target.value;
+				const depNum = target.closest('[class^="dep"]').className.match(/\d+/)[0];
+				if (selVal === '') {
+					toggleTableTr(target, true);
+				} else {
+					tableSelectReset(target);
+					toggleTableTr(target, false);
+					const className = `.tr-dep${depNum}_${selVal}`;
+					showTableTr(target, className);
+				}
+			}
+
+			if (target.matches('.status select')) {
+				const selVal = target.value;
+				
 			}
 
 			if(beforeTarget !== target) beforeTarget = target;
