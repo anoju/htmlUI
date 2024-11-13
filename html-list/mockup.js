@@ -410,7 +410,9 @@ const pubList = {
 		const allModifyDateAry = new Set(); 
 		dataItems.forEach((item, i) => {
 			const row = pubList.createTableRow(item, i);
-			const modifyDates = JSON.parse(row.querySelector('tr').dataset.modifyDates || '[]');
+			const tr = row.querySelector('tr');
+			const modifyDates = JSON.parse(tr.dataset.modifyDates || '[]');
+			delete tr.dataset.modifyDates;
 			modifyDates.forEach(date => allModifyDateAry.add(date));
 			fragment.appendChild(row);
 		});
@@ -870,7 +872,10 @@ const pubList = {
 			const selects = wrap.querySelectorAll('.pub-thead select');
 			if(!selects) return;
 			selects.forEach(sel => {
-				if(sel !== target) sel.value = '';
+				if(sel !== target) {
+					sel.value = '';
+					sel.classList.remove('on');
+				}
 			});
 		}
 
@@ -1008,19 +1013,23 @@ const pubList = {
 		document.addEventListener('change', (e) => {
 			const target = e.target;
 
-			if (target.matches('th.dep2 select, th.dep3 select, th.dep4 select, th.dep5 select, th.dep6 select, th.status select')) {
+			if (target.matches('th.dep2 select, th.dep3 select, th.dep4 select, th.dep5 select, th.dep6 select, th.status select, th.modify select')) {
 				const selVal = target.value;
 				if (selVal === '') {
 					toggleTableTr(target, true);
+					target.classList.remove('on');
 				} else {
 					tableSelectReset(target);
 					toggleTableTr(target, false);
+					target.classList.add('on');
 					let className = null;
 					if(target.closest('th[class^="dep"]')){
 						const depNum = target.closest('[class^="dep"]').className.match(/\d+/)[0];
 						className = `.tr-dep${depNum}_${selVal}`;
 					}else if(target.closest('th.status')){
 						className = '.tr-end_'+selVal;
+					}else if(target.closest('th.modify')){
+						className = '.tr-modify_'+selVal;
 					}
 					if(className) showTableTr(target, className);
 				}
