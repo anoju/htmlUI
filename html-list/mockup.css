@@ -817,9 +817,12 @@ html:not(#isMobile) .pub-wrap:not([data-layout="index"]) .pub-site .pub-site-tit
 	--loading-svg-offset: 187;
   --loading-svg-duration: 1.4s;
 }
-.error-cell{border:3px solid red !important;background-color:rgba(255,0,0,0.2) !important;}
-.today-cell{border:3px solid green !important;}
-.yesterday-cell{border:3px solid blue !important;}
+.error-cell{border:3px solid #ff0000 !important;background-color:rgba(255,0,0,0.1) !important;color:#ff0000 !important;font-weight:bold !important;}
+.today-cell{border:3px solid #008000 !important;background-color:rgba(0,128,0,0.1) !important;color:#008000 !important;font-weight:bold !important;}
+.yesterday-cell{border:3px solid #0000ff !important;background-color:rgba(0,0,255,0.1) !important;color:#0000ff !important;font-weight:bold !important;}
+.error-cell *,
+.today-cell *,
+.yesterday-cell *{color:inherit !important;font-weight:inherit !important;}
 .toast-pop{position:fixed;left:50%;top:50%;z-index:99999;padding:50px 60px;background-color:#fff;border-radius:5px;box-shadow:0 3px 5px 0 rgba(0,0,0,.2);font-size:14px;color:#111;transform:translate3d(-50%,-50%,0);}
 .loading{position:fixed;left:0;top:0;width:100%;height:100%;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.2);backdrop-filter:blur(1px);}
 .loading-svg {display:flex;align-items:center;justify-content:center;background-color:#fff;width:120px;height:120px;border-radius:24px;box-shadow:0 3px 5px 0 rgba(0,0,0,.2);}

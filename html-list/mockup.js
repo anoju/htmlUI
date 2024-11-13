@@ -28,12 +28,30 @@ const pubUtil = {
 		if(rtnVal) return `(${rtnVal})`;
 		else return '';
 	},
-	getToday(){
-		let today = new Date();
+	getToday(setDate){
+		let today = setDate ? new Date(setDate) : new Date();
 		let year = today.getFullYear();
 		let month = String(today.getMonth() + 1).padStart(2, '0');
 		let day = String(today.getDate()).padStart(2, '0');
 		return `${year}-${month}-${day}`;
+	},
+	getPrevDates(setDate) {
+    const result = [];
+    let date = setDate ? new Date(setDate) : new Date();
+    date.setDate(date.getDate() - 1); // 어제 날짜로 설정
+    while (true) {
+        const formattedDate = pubUtil.getToday(date);
+        const dayOfWeek = date.getDay(); // 0은 일요일, 6은 토요일
+
+        if (dayOfWeek === 0 || dayOfWeek === 6 || setting.holiday.includes(formattedDate)) {
+            result.push(formattedDate);
+            date.setDate(date.getDate() - 1); // 하루 전으로 이동
+        } else {
+            result.push(formattedDate); // 평일이면서 공휴일이 아닌 경우 마지막 날짜 추가
+            break; // 반복 종료
+        }
+    }
+    return result;
 	},
 	isValidDate (dateStr) {
 		const regex = /^\d{4}-\d{2}-\d{2}$/;
@@ -736,11 +754,14 @@ const pubList = {
 			return rtnVal;
 		}
 
+		let isStateYesterday = false;
 		let isStateToday = false;
+		const prevDates = pubUtil.getPrevDates();
 		const todayDate = pubUtil.getToday();
 		const statusTd = () => {
 			let rtnVal = ''
 			if(end){
+				if(prevDates.includes(end)) isStateYesterday = true;
 				if(end === todayDate) isStateToday = true;
 				rtnVal = `<em><span>${end}</span>${pubUtil.getWeek(end)}</em>`;
 			}else if(count !== 0){
@@ -752,6 +773,7 @@ const pubList = {
 		};
 
 		let isDuplicate = false;
+		let isModifyYesterday = false;
 		let isModifyToday = false;
 		const modifyDateAry = [];
 		const convertModifyList = (htmlString) => {
@@ -790,6 +812,7 @@ const pubList = {
 			// HTML 생성
 			const result = sortedMatches.map(({ date, content }) => {
 				const weekday = pubUtil.getWeek(date);
+				if(prevDates.includes(date)) isModifyYesterday = true;
 				if(date === todayDate) isModifyToday = true;
 				const dateWithoutHyphen = date.replace(/-/g, '');
 				modifyDateAry.push(dateWithoutHyphen);
@@ -846,7 +869,9 @@ const pubList = {
 		if(depth5Name) pubList.beforeTr.dep5 = depth5Name;
 		if(depth6Name) pubList.beforeTr.dep5 = depth6Name;
 		trHtml.dataset.modifyDates = JSON.stringify(modifyDateAry);
+		if(isStateYesterday) trHtml.querySelector('.status').classList.add('yesterday-cell');
 		if(isStateToday) trHtml.querySelector('.status').classList.add('today-cell');
+		if(isModifyYesterday) trHtml.querySelector('.modify').classList.add('yesterday-cell');
 		if(isModifyToday) trHtml.querySelector('.modify').classList.add('today-cell');
 		return fragment;
 	},
