@@ -1,6 +1,3 @@
-
-const pubJSON = pub_index_data;
-
 /* LOADING */
 const loading = {
 	open() {
@@ -22,7 +19,6 @@ const loading = {
     if (loadingEl) loadingEl.remove();
 	}
 }
-loading.open();
 
 /* pubUtil */
 const pubUtil = {
@@ -133,8 +129,12 @@ const pubUtil = {
 };
 
 /* pubList */
+let pubJSON = null;
 const pubList = {
-	async init(){
+	async init(data, setting){
+		if(typeof data === 'undefined') return;
+		pubJSON = data;
+		if(setting)pubList.setting = {...pubList.setting, ...setting};
 		const wrap = document.querySelector('.pub-wrap');
 		if(wrap && wrap.getAttribute('data-layout') === 'index'){
 			await pubList.makeList();
@@ -146,6 +146,11 @@ const pubList = {
 			tab = parseInt(tab);
 			document.querySelector(`.pub-nav .pub-menu > ul > li:nth-child(${tab}) a`).click();
 		}
+	},
+	setting: {
+		preURL: '',
+		file: 'html',
+		holiday: [],
 	},
 	makeList(){
 		return new Promise((resolve) => {
@@ -402,10 +407,30 @@ const pubList = {
 
 		const dataItems = data.items;
 		const fragment = document.createDocumentFragment();
+		const allModifyDateAry = new Set(); 
 		dataItems.forEach((item, i) => {
 			const row = pubList.createTableRow(item, i);
+			const modifyDates = JSON.parse(row.querySelector('tr').dataset.modifyDates || '[]');
+			modifyDates.forEach(date => allModifyDateAry.add(date));
 			fragment.appendChild(row);
 		});
+		const sortedModifyDates = Array.from(allModifyDateAry).sort((a, b) => b - a); // 내림차순 정렬
+		const modifySelect = (str) => {
+			let rtnVal = str;
+			if(sortedModifyDates.length > 1){
+				const modifyDateOptions = sortedModifyDates.map(date => {
+					const formattedDate = `${date.slice(0,4)}-${date.slice(4,6)}-${date.slice(6,8)}`;
+					return `<option value="${date}">${formattedDate}</option>`;
+				}).join('');
+
+				rtnVal = `<select>
+					<option value="">${str}</option>
+					${modifyDateOptions}
+				</select>`;
+			}
+			return rtnVal;
+		}
+		
 
 		const thSelKeys = ['DEP2', 'DEP3', 'DEP4', 'DEP5', 'DEP6', 'END'];
 		const thSelList = pubList.countByMultipleKeys(dataItems, thSelKeys);
@@ -502,7 +527,7 @@ const pubList = {
 								<th class="wbs">완료예정일</th>
 								<th class="status">${thSelect(5, '최종완료일')}</th>
 								<th class="modify">
-									수정이력
+									${modifySelect('수정이력')}
 									<button type="button" aria-pressed="false"></button>
 								</th>
 								<th class="memo">비고</th>
@@ -692,10 +717,10 @@ const pubList = {
 
 		const idTd = () => {
 			let rtnVal = id;
-			const preUrl = '..';
-			const file = typeof pubSetting !== 'undefined' && typeof pubSetting.file !== 'undefined' ? pubSetting.file : 'html';
+			const preURL = pubList.setting.preURL;
+			const file = pubList.setting.file;
 			if(url && id && (status !== 1 || end)){
-				const setUrl = url.slice(-1) === '/' ? preUrl+url+id+'.'+file : preUrl+url;
+				const setUrl = url.slice(-1) === '/' ? preURL+url+id+'.'+file : preUrl+url;
 				rtnVal = `<a href="${setUrl}" target="_blank"><strong>${id}</strong></a><button type="button" class="pub-copy" title="메뉴복사"></button>`;
 			}
 			return rtnVal;
@@ -714,6 +739,7 @@ const pubList = {
 		};
 
 		let isDuplicate = false;
+		const modifyDateAry = [];
 		const convertModifyList = (htmlString) => {
 			// 유효성 검사 함수
 			const isValidDate = (dateStr) => {
@@ -751,6 +777,7 @@ const pubList = {
 			const result = sortedMatches.map(({ date, content }) => {
 				const weekday = pubUtil.getWeek(date);
 				const dateWithoutHyphen = date.replace(/-/g, '');
+				modifyDateAry.push(dateWithoutHyphen);
 				trClassAry.push('tr-modify_' + dateWithoutHyphen);
 
 				return `<li title="${date} ${content}"><em><span>${date}</span>${weekday}</em><p>${content}</p></li>`;
@@ -803,7 +830,7 @@ const pubList = {
 		if(depth4Name) pubList.beforeTr.dep4 = depth4Name;
 		if(depth5Name) pubList.beforeTr.dep5 = depth5Name;
 		if(depth6Name) pubList.beforeTr.dep5 = depth6Name;
-
+		trHtml.dataset.modifyDates = JSON.stringify(modifyDateAry);
 		return fragment;
 	},
 	action(){
@@ -1004,9 +1031,3 @@ const pubList = {
 	}
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-	if(typeof pubJSON !== 'undefined'){
-		// loading.open();
-		await pubList.init();
-	}
-});
