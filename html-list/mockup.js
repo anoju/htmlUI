@@ -313,34 +313,24 @@ const pubList = {
 					</li>
 			</ul>
 		</div>`;
-		/*
-		const util1Html = `<div class="pub-group">
-			<button class="pub-unlock on">&#8634;</button>
-			<div class="pub-record">
-				<button type="button" aria-expanded="false"># 전체</button>
-				<div class="pub-option">
-					<button type="button" data-value="optionAll" class="on"># 전체</button>
-					<div class="pub-option-inr">
-						<div class="progress"></div>
-						<div class="type"></div>
-						<div class="wbs"></div>
-						<div class="pub-team"></div>
-					</div>
-				</div>
-			</div>
+		const util1Html =  `<div class="pub-group">
+			<button class="pub-reset">&#8634;</button>
 			<div class="pub-search">
 				<input type="text" placeholder="메뉴명"><button class="pub-search-btn"></button>
 			</div>
 			<button type="button" class="pub-viewer" aria-pressed="false"></button>
 			<button type="button" aria-pressed="false" class="pub-toggle"></button>
 		</div>`;
-		*/
-		const util1Html = '';
 		const alarmHtml = function(num){
 			if(num) return `<strong class="pub-alarm"><span>${num}</span></strong>`;
 			else return '';
 		}
 		const util2Html = `<div class="pub-label">
+			<ul>
+				<li>
+					<button type="button" class="pub-filter-sb">SB</button>
+				</li>
+			</ul>
 			<ul>
 				<li class="wait">
 					${alarmHtml(filterData.wait.length)}
@@ -363,8 +353,6 @@ const pubList = {
 				<li class="history">
 					<button type="button" class="pub-modify-open" ${!filterData.modify.length ? `disabled="disabled"`: ''}>수정이력</button>
 				</li>
-			</ul>
-			<ul>
 				<li class="down">
 					<button type="button" class="pub-csv-down">CSV 다운</button>
 				</li>
@@ -854,6 +842,13 @@ const pubList = {
 			const trs = document.querySelectorAll('.tr'+className);
 			if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
 		}
+		function toggleAllTable(isShow){
+			const tables = document.querySelectorAll('.pub-table');
+			if(tables){
+				if(isShow) tables.forEach(table => table.style.removeProperty('display'));
+				else tables.forEach(table => table.style.display = 'none');
+			}
+		}
 		function toggleTableTr(target, isShow){
 			const wrap = target.closest('.pub-site');
 			const trs = wrap.querySelectorAll('.tr');
@@ -868,8 +863,13 @@ const pubList = {
 			if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
 		}
 		function tableSelectReset(target){
-			const wrap = target.closest('.pub-site');
-			const selects = wrap.querySelectorAll('.pub-thead select');
+			let selects = null;
+			if(target){
+				const wrap = target.closest('.pub-site');
+				selects = wrap.querySelectorAll('.pub-thead select');
+			}else{
+				selects = document.querySelectorAll('.pub-thead select');
+			}
 			if(!selects) return;
 			selects.forEach(sel => {
 				if(sel !== target) {
@@ -878,15 +878,41 @@ const pubList = {
 				}
 			});
 		}
+		function buttonReset(){
+			const onBtns = document.querySelectorAll('.pub-label button.on');;
+			if(onBtns) onBtns.forEach(btn => btn.class.remove('on'));
 
+			const pressedBtns = document.querySelectorAll('button[aria-pressed="true"]');;
+			if(pressedBtns) pressedBtns.forEach(btn => btn.ariaPressed = 'false');
+		}
+		function navActive(el){
+			const href = el.getAttribute('href');
+			const navBtns = document.querySelectorAll('.pub-nav a');
+			navBtns.forEach(btn => btn.classList.remove('on'));
+			el.classList.add('on');
+			const pubSites = document.querySelectorAll('.pub-site');
+			if(href === '#all'){
+				if(pubSites) pubSites.forEach(el => el.style.removeProperty('display'));
+				pubUtil.setUrlParams(false);
+			}else{
+				const showSite = document.querySelector('.pub-site'+href);
+				if(pubSites && showSite) {
+					pubSites.forEach(el => el.style.display = 'none');
+					showSite.style.removeProperty('display');
+				}
+				const idx = parseInt(href.replace(/\D/g, ''));
+				pubUtil.setUrlParams('tab', idx);
+			}
+		}
+
+		
 		let beforeTarget = null;
-
 		// 클릭 이벤트
 		document.addEventListener('click', (e) => {
 			const target = e.target;
-			const pubSide = document.querySelector('.pub-side');
-
+			
 			//진척률 툴팁
+			const pubSide = document.querySelector('.pub-side');
 			if (target.matches('.pub-button-detail')) {
 				e.preventDefault();
 				if (target.ariaExpanded === 'false'){
@@ -899,6 +925,43 @@ const pubList = {
 			}else if(beforeTarget && beforeTarget.matches('.pub-button-detail')){
 				beforeTarget.ariaExpanded = 'false';
 				pubSide.classList.remove('on');
+			}
+
+			//초기화 pub-reset
+			if(target.matches('.pub-reset')){
+				e.preventDefault();
+				toggleAllTable(true);
+				toggleAllTr(true);
+				tableSelectReset();
+				buttonReset();
+				const tab = document.querySelector('.pub-nav .pub-all a');
+				navActive(tab);
+			}
+
+			//토글버튼 pub-toggle
+			if(target.matches('.pub-toggle')){
+				e.preventDefault();
+				if(target.ariaPressed === 'false'){
+					target.ariaPressed = 'true';
+					toggleAllTable(false);
+				}else{
+					target.ariaPressed = 'false';
+					toggleAllTable(true);
+				}
+			}
+
+			// SB버튼
+			if(target.matches('.pub-filter-sb')){
+				e.preventDefault();
+				if(target.classList.contains('on')){
+					target.classList.remove('on');
+					toggleAllTr(true);
+				}else{
+					target.classList.add('on');
+					toggleAllTr(false);
+					const sbTrs = document.querySelectorAll('tr.sb');
+					sbTrs.forEach(tr => tr.style.removeProperty('display'));
+				}
 			}
 
 			//status 버튼
@@ -919,23 +982,7 @@ const pubList = {
 			if(target.matches('.pub-nav a')){
 				e.preventDefault();
 				if(target.classList.contains('on')) return;
-				const href = target.getAttribute('href');
-				const navBtns = document.querySelectorAll('.pub-nav a');
-				navBtns.forEach(btn => btn.classList.remove('on'));
-				target.classList.add('on');
-				const pubSites = document.querySelectorAll('.pub-site');
-				if(href === '#all'){
-					if(pubSites) pubSites.forEach(el => el.style.removeProperty('display'));
-					pubUtil.setUrlParams(false);
-				}else{
-					const showSite = document.querySelector('.pub-site'+href);
-					if(pubSites && showSite) {
-						pubSites.forEach(el => el.style.display = 'none');
-						showSite.style.removeProperty('display');
-					}
-					const idx = parseInt(href.replace(/\D/g, ''));
-					pubUtil.setUrlParams('tab', idx);
-				}
+				navActive(target);
 			}
 
 			//메뉴 복사
