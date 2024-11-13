@@ -28,6 +28,13 @@ const pubUtil = {
 		if(rtnVal) return `(${rtnVal})`;
 		else return '';
 	},
+	getToday(){
+		let today = new Date();
+		let year = today.getFullYear();
+		let month = String(today.getMonth() + 1).padStart(2, '0');
+		let day = String(today.getDate()).padStart(2, '0');
+		return `${year}-${month}-${day}`;
+	},
 	isValidDate (dateStr) {
 		const regex = /^\d{4}-\d{2}-\d{2}$/;
 		if (!regex.test(dateStr)) return false;
@@ -58,19 +65,36 @@ const pubUtil = {
 		}, 600);
 	},
 	jsonToCSV(jsonData){
-		const excludedHeaders = ['COUNT', 'URL', 'WBS', 'SB', 'MEMO', 'MODIFY'];
-		// if (dev === '0') excludedHeaders.push('DEV');
-		// if (dgn === '0') excludedHeaders.push('DGN');
-		// if (pla === '0') excludedHeaders.push('PLA');
-
-		const headers = Object.keys(jsonData[0]).filter(header => !excludedHeaders.includes(header));
+		const excludedHeaders = ['URL', 'WBS', 'SB', 'MEMO', 'MODIFY']; //제외항목
+		let headers = Object.keys(jsonData[0]).filter(header => !excludedHeaders.includes(header));
+		headers = headers.map(header => header
+			.replace('COUNT', '사용여부')
+			.replace('DEP', '뎁스')
+			.replace('SCREEN', '화면명')
+			.replace('TYPE', '유형')
+			.replace('ID', '화면ID')
+			.replace('PLA', '기획')
+			.replace('DGN', '디자인')
+			.replace('PUB', '퍼블리싱')
+			.replace('DEV', '개발')
+			.replace('STATUS', '상태')
+			.replace('WBS', '완료예정일')
+			.replace('END', '최종완료일')
+		);
+		console.log(headers)
 		const csvRows = [headers.join(',')];
 
 		jsonData.forEach(row => {
-			if (row.STATUS === '0') {
-				row.STATUS = '삭제';
-			} else {
-				row.STATUS = '';
+			if(row.COUNT){
+				if (row.COUNT === '0') row.COUNT = '미사용';
+				if (row.COUNT === '1') row.COUNT = '사용';
+			}
+			if(row.STATUS){
+				if (row.STATUS === '0') row.STATUS = '삭제';
+				if (row.STATUS === '1') row.STATUS = '대기';
+				if (row.STATUS === '2') row.STATUS = '퍼블중';
+				if (row.STATUS === '3') row.STATUS = '검토중';
+				if (row.STATUS === '4') row.STATUS = '재검토중';
 			}
 			if (row.TYPE) {
 				row.TYPE = row.TYPE.toUpperCase();
@@ -93,21 +117,10 @@ const pubUtil = {
 			}
 		});
 
-		csvRows[0] = csvRows[0].split(',').map(cell => cell.replace('DEP', 'Depth')).join(',');
-		csvRows[0] = csvRows[0].replace('SCREEN', '화면명');
-		csvRows[0] = csvRows[0].replace('TYPE', '유형');
-		csvRows[0] = csvRows[0].replace('ID', '화면ID');
-		csvRows[0] = csvRows[0].replace('PLA', '기획');
-		csvRows[0] = csvRows[0].replace('DGN', '디자인');
-		csvRows[0] = csvRows[0].replace('PUB', '퍼블리싱');
-		csvRows[0] = csvRows[0].replace('DEV', '개발');
-		csvRows[0] = csvRows[0].replace('STATUS', '상태');
-		csvRows[0] = csvRows[0].replace('WBS', '완료예정일');
-		csvRows[0] = csvRows[0].replace('END', '최종완료일');
 		return csvRows.join('\n');
 	},
 	changeTxt(str){
-		return str.replace(/\s+/g, '_').replace(/[^가-힣a-zA-Z0-9_]/g, '__');
+		return str.replace(/\s+/g, '_').replace(/[^가-힣a-zA-Z0-9_-]/g, '__');
 	},
 	getUrlParams() {
 		const params = {};
@@ -669,15 +682,18 @@ const pubList = {
 			fragment.appendChild(sbHtml);
 		}
 
+		let isEnd = false;
 		const trClassAry = ['tr'];
 		if(count === 0) {
 			trClassAry.push('unuse');
 		}else{
 			if(end){
-				if(status === 0) trClassAry.push('del');
-				else trClassAry.push('end');
-				const endStr = end.replace(/-/g, '');
-				trClassAry.push('tr-end_'+endStr);
+				if(status === 0) {
+					trClassAry.push('del');
+				}else {
+					isEnd = true;
+					trClassAry.push('end');
+				}
 			}else{
 				if(status === 0) trClassAry.push('del');
 				else if(status === 1) trClassAry.push('wait');
@@ -696,6 +712,10 @@ const pubList = {
 		if(depth5Name) trClassAry.push('tr-dep5_'+pubUtil.changeTxt(depth5Name));
 		if(depth6Name) trClassAry.push('tr-dep6_'+pubUtil.changeTxt(depth6Name));
 		if(id) trClassAry.push('tr-id_'+id);
+		if(isEnd){
+			const endStr = end.replace(/-/g, '');
+			trClassAry.push('tr-end_'+endStr);
+		}
 
 		const depth2Html = pubList.beforeTr.dep2 === depth2Name ? `<span>${depth2Name}</span>` : `<strong>${depth2Name}</strong>`;
 		const depth3Html = pubList.beforeTr.dep3 === depth3Name ? `<span>${depth3Name}</span>` : `<strong>${depth3Name}</strong>`;
@@ -716,9 +736,12 @@ const pubList = {
 			return rtnVal;
 		}
 
+		let isStateToday = false;
+		const todayDate = pubUtil.getToday();
 		const statusTd = () => {
 			let rtnVal = ''
 			if(end){
+				if(end === todayDate) isStateToday = true;
 				rtnVal = `<em><span>${end}</span>${pubUtil.getWeek(end)}</em>`;
 			}else if(count !== 0){
 				if(status === 2) rtnVal = '<em>퍼블중</em>';
@@ -729,6 +752,7 @@ const pubList = {
 		};
 
 		let isDuplicate = false;
+		let isModifyToday = false;
 		const modifyDateAry = [];
 		const convertModifyList = (htmlString) => {
 			// 유효성 검사 함수
@@ -766,6 +790,7 @@ const pubList = {
 			// HTML 생성
 			const result = sortedMatches.map(({ date, content }) => {
 				const weekday = pubUtil.getWeek(date);
+				if(date === todayDate) isModifyToday = true;
 				const dateWithoutHyphen = date.replace(/-/g, '');
 				modifyDateAry.push(dateWithoutHyphen);
 				trClassAry.push('tr-modify_' + dateWithoutHyphen);
@@ -821,6 +846,8 @@ const pubList = {
 		if(depth5Name) pubList.beforeTr.dep5 = depth5Name;
 		if(depth6Name) pubList.beforeTr.dep5 = depth6Name;
 		trHtml.dataset.modifyDates = JSON.stringify(modifyDateAry);
+		if(isStateToday) trHtml.querySelector('.status').classList.add('today-cell');
+		if(isModifyToday) trHtml.querySelector('.modify').classList.add('today-cell');
 		return fragment;
 	},
 	action(){
