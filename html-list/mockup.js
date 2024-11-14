@@ -910,8 +910,9 @@ const pubList = {
     function toggleAllTable(isShow){
       const tables = document.querySelectorAll('.pub-table');
       if(tables){
-        if(isShow) tables.forEach(table => table.style.removeProperty('display'));
-        else tables.forEach(table => table.style.display = 'none');
+        // if(isShow) tables.forEach(table => table.style.removeProperty('display'));
+        // else tables.forEach(table => table.style.display = 'none');
+        tables.forEach(table => table.classList.toggle('d-none', !isShow));
       }
     }
     function toggleTableTr(target, isShow){

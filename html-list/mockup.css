@@ -840,6 +840,7 @@ html:not(#isMobile) .pub-wrap:not([data-layout="index"]) .pub-site .pub-site-tit
 }
 button > *,
 .td-link > *{pointer-events:none;}
+.d-none{display:none !important;}
 .error-cell{border:3px solid #ff0000 !important;background-color:rgba(255,0,0,0.1) !important;color:#ff0000 !important;font-weight:bold !important;}
 .today-cell{border:3px solid #008000 !important;background-color:rgba(0,128,0,0.1) !important;color:#008000 !important;font-weight:bold !important;}
 .yesterday-cell{border:3px solid #0000ff !important;background-color:rgba(0,0,255,0.1) !important;color:#0000ff !important;font-weight:bold !important;}
