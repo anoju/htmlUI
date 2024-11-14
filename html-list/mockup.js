@@ -78,9 +78,9 @@ const pubUtil = {
     msg.className = 'toast-pop';
 		msg.textContent = text;
     document.body.appendChild(msg);
-		setTimeout(function() {
+		setTimeout(() => {
 			msg.remove();
-		}, 600);
+		}, 1500);
 	},
 	jsonToCSV(jsonData){
 		const excludedHeaders = ['URL', 'WBS', 'SB', 'MEMO', 'MODIFY']; //제외항목
@@ -142,7 +142,7 @@ const pubUtil = {
 	},
 	getUrlParams() {
 		const params = {};
-		window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (str, key, value) {
+		window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, (str, key, value) => {
 			params[key] = value;
 		});
 		return params;
@@ -182,6 +182,18 @@ const pubList = {
 		preURL: '',
 		file: 'html',
 		holiday: [],
+	},
+	device() {
+		const filter="win16|win32|win64|mac";
+		const isMobile=navigator.userAgent.match(/Android|Mobile|iP(hone|od|ad)|BlackBerry|IEMobile|kindle|NetFront|Silk-Accelerated|(hpw|web)OS|Fennec|Minimo|Opera M(obi|ini)|Blazer|Dolfin|Dolphin|Skyfire|Zune/) || filter.indexOf(navigator.platform.toLowerCase()) < 0 ? true : false;
+		const docEl = document.documentElement;
+		if (isMobile) {
+			docEl.id = 'isMobile';
+		} else {
+			docEl.removeAttribute('id');
+			// document.body.class.remove('pub-nav-up');
+			// document.body.class.add('pub-nav-down');
+		}
 	},
 	makeList(){
 		return new Promise((resolve) => {
@@ -347,12 +359,12 @@ const pubList = {
 		const util1Html =  `<div class="pub-group">
 			<button class="pub-reset">&#8634;</button>
 			<div class="pub-search">
-				<input type="text" placeholder="메뉴명"><button class="pub-search-btn"></button>
+				<input type="text" class="pub-search-inp" placeholder="메뉴명" /><button class="pub-search-btn"></button>
 			</div>
 			<button type="button" class="pub-viewer" aria-pressed="false"></button>
 			<button type="button" aria-pressed="false" class="pub-toggle"></button>
 		</div>`;
-		const alarmHtml = function(num){
+		const alarmHtml = (num) => {
 			if(num) return `<strong class="pub-alarm"><span>${num}</span></strong>`;
 			else return '';
 		}
@@ -630,7 +642,7 @@ const pubList = {
 	},
 	changeSelOpt(data){
 		const rtnVal = [];
-		data.forEach(function(dataItem){
+		data.forEach(dataItem => {
 			let html ='';
 			let newAry = [...dataItem.counts];
 
@@ -956,8 +968,60 @@ const pubList = {
 				pubUtil.setUrlParams('tab', idx);
 			}
 		}
+		let isSearch = false;
+		function searchRemove(){
+			// 이전 하이라이트 제거
+			const highlighted = document.querySelectorAll('.pub-highlight');
+			highlighted.forEach(el => {
+				// highlight 태그의 내용만 추출하여 부모 노드에 직접 삽입
+				const text = el.textContent;
+				el.outerHTML = text;
+			});
+		}
+		function searchResult(str){
+			searchRemove();
 
+			// 검색어가 비어있으면 하이라이트 제거만 하고 종료
+			if (!str.trim()) return;
+
+			// 각 td를 순회하며 검색어 강조
+			const cells = document.querySelectorAll('tr.tr td');
+			cells.forEach(cell => {
+				const text = cell.textContent;
+				if (text.includes(str)) {
+					const regex = new RegExp(str, 'g');
+					cell.innerHTML = text.replace(
+						regex, 
+						`<span class="pub-highlight">${str}</span>`
+					);
+					const tr = cell.closest('tr');
+					tr.style.removeProperty('display');
+				}
+			});
+		}
+		function searchInit(){
+			const inp = document.querySelector('.pub-search-inp');
+			const inpVal = inp.value.trim();
+			if(inpVal.length === 1){
+				pubUtil.toastPop('2글자 이상 입력해주세요.');
+			}else{
+				if(inpVal !== '') {
+					isSearch = true;
+					toggleAllTr(false);
+				}else if(isSearch) {
+					isSearch = false;
+					toggleAllTr(true);
+				}
+				searchResult(inpVal);
+			}
+		}
+		function searchReset(){
+			searchRemove();
+			const inp = document.querySelector('.pub-search-inp');
+			inp.value = '';
+		}
 		
+
 		let beforeTarget = null;
 		// 클릭 이벤트
 		document.addEventListener('click', (e) => {
@@ -988,6 +1052,13 @@ const pubList = {
 				buttonReset();
 				const tab = document.querySelector('.pub-nav .pub-all a');
 				navActive(tab);
+				searchReset()
+			}
+
+			// 검색버튼
+			if(target.matches('.pub-search-btn')){
+				e.preventDefault();
+				searchInit();
 			}
 
 			//토글버튼 pub-toggle
@@ -1133,6 +1204,21 @@ const pubList = {
 					if(className) showTableTr(target, className);
 				}
 			}	
+
+			if(beforeTarget !== target) beforeTarget = target;
+		});
+
+		// 키보드 이벤트
+		document.addEventListener('keydown', (e) => {
+			const target = e.target;
+			const key = e.key;
+			const keyCode = e.keyCode || e.which;
+			// console.log(key,keyCode);
+			
+			if(target.matches('.pub-search-inp') && (key === 'Enter' || keyCode === 13)){
+				e.preventDefault();
+				searchInit();
+			}
 
 			if(beforeTarget !== target) beforeTarget = target;
 		});
