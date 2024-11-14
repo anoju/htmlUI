@@ -838,6 +838,7 @@ html:not(#isMobile) .pub-wrap:not([data-layout="index"]) .pub-site .pub-site-tit
 	--loading-svg-offset: 187;
   --loading-svg-duration: 1.4s;
 }
+button > *,
 .td-link > *{pointer-events:none;}
 .error-cell{border:3px solid #ff0000 !important;background-color:rgba(255,0,0,0.1) !important;color:#ff0000 !important;font-weight:bold !important;}
 .today-cell{border:3px solid #008000 !important;background-color:rgba(0,128,0,0.1) !important;color:#008000 !important;font-weight:bold !important;}

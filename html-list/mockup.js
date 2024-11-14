@@ -967,6 +967,10 @@ const pubList = {
         pubUtil.setUrlParams('tab', idx);
       }
     }
+    function navReset(){
+      const tab = document.querySelector('.pub-nav .pub-all a');
+      navActive(tab);
+    }
     let isSearch = false;
     function searchRemove(){
       // 이전 하이라이트 제거
@@ -1009,6 +1013,7 @@ const pubList = {
           toggleAllTr(false);
         }else if(isSearch) {
           isSearch = false;
+          navReset();
           toggleAllTr(true);
         }
         searchResult(inpVal);
@@ -1093,8 +1098,7 @@ const pubList = {
         toggleAllTr(true);
         tableSelectReset();
         buttonReset();
-        const tab = document.querySelector('.pub-nav .pub-all a');
-        navActive(tab);
+        navReset();
         searchReset();
         toggleViewer(false);
       }
@@ -1126,6 +1130,7 @@ const pubList = {
         e.preventDefault();
         if(target.ariaPressed === 'false'){
           target.ariaPressed = 'true';
+          navReset();
           toggleAllTable(false);
         }else{
           target.ariaPressed = 'false';
