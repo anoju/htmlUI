@@ -1314,6 +1314,7 @@ const pubModify = {
     wrap.classList.add('on');
     const select = wrap.querySelector('.pub-modify-select');
     const selVal = select.value;
+    if(selVal !== '' & start === 0) return;
     const modifyList = wrap.querySelector('.pub-modify-list');
 
     // 날짜별 수정이력 데이터 가져오기
@@ -1359,24 +1360,11 @@ const pubModify = {
     wrap.classList.add('on');
     const select = wrap.querySelector('.pub-modify-select');
     const selVal = select.value;
+    if(selVal) return;
     const modifyList = wrap.querySelector('.pub-modify-list');
-
+    
     // 메뉴별 데이터 가져오기
     const menus = this.getMenuData();
-    
-    // select options 생성
-    // const newOptions = menus
-    //   .map(menu => {
-    //     const option = document.createElement('option');
-    //     option.value = pubUtil.changeTxt(menu.name);
-    //     option.textContent = menu.name;
-    //     return option;
-    //   });
-    // newOptions.forEach(option => select.appendChild(option));
-
-    // 메뉴별 수정이력 목록 생성 및 추가
-    // newListHTML = this.createMenuListHTML(menus);
-    // modifyList.insertAdjacentHTML('beforeend', newListHTML);
 
     // select options 생성
     select.innerHTML = menus
@@ -1386,18 +1374,20 @@ const pubModify = {
     // 메뉴별 수정이력 목록 생성
     modifyList.innerHTML = this.createMenuListHTML(menus);
 
-    if(!selVal){
-      select.selectedIndex = 0;
-      const firstList = modifyList.querySelector('.list:first-child');
-      firstList.classList.add('on');
-    }
+    // 초기 세팅
+    select.selectedIndex = 0;
+    const firstList = modifyList.querySelector('.list:first-child');
+    firstList.classList.add('on');
   },
 
   changeView(e) {
-    if (e.target.value === 'date') {
+    const value = e.target.value;
+    const wrap = document.querySelector('.pub-modify-inr.'+value);
+    const select = wrap.querySelector('.pub-modify-select');
+    if (value === 'date') {
       this.loadDateView();
       document.querySelector('.pub-date-more').style.removeProperty('display');
-    } else if (e.target.value === 'menu'){
+    } else if (value === 'menu'){
       this.loadMenuView();
       document.querySelector('.pub-date-more').style.display = 'none';
     }
