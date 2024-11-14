@@ -221,7 +221,7 @@ const pubList = {
       contentHtml.appendChild(fragment);
       pubPage.appendChild(contentHtml);
 
-      //pubList.createMobileFrame(pubPage);
+      pubList.createMobileFrame(pubPage);
       pubList.createNav(pubHeader, navAry);
 
       const filterState = pubList.getFilterState(pubJSON);
@@ -262,11 +262,11 @@ const pubList = {
     const frameInnerHtml = `
       <div class="pub-mobile-frame-inr">
           <div class="pub-device">
-              <select>
+              <select class="pub-device-select">
                   <option value="375*667">iPhone 6/7/8</option>
                   <option value="375*812">iPhone 12 Mini</option>
                   <option value="390*844">iPhone 12 Pro</option>
-                  <option value="360*740" selected="selected">Galaxy S8+</option>
+                  <option value="360*740" selected>Galaxy S8+</option>
                   <option value="280*653">Galaxy Fold</option>
               </select>
           </div>
@@ -274,10 +274,8 @@ const pubList = {
               <button type="button">&#8634;</button>
               <div class="link"></div>
           </div>
-          <div class="pub-iframe"><iframe src frameborder="0"></div>
-          <button type="button" class="pub-frame-toggle">
-              <span>닫기</span>
-          </button>
+          <div class="pub-iframe"></div>
+          <button type="button" class="pub-frame-toggle"><span>닫기</span></button>
       </div>
     `;
     frameHtml.innerHTML = frameInnerHtml;
@@ -762,7 +760,7 @@ const pubList = {
       const file = pubList.setting.file;
       if(url && id && (status !== 1 || end)){
         const setUrl = url.slice(-1) === '/' ? preURL+url+id+'.'+file : preURL+url;
-        rtnVal = `<a href="${setUrl}" target="_blank"><strong>${id}</strong></a><button type="button" class="pub-copy" title="메뉴복사"></button>`;
+        rtnVal = `<a href="${setUrl}" target="_blank" class="td-link"><strong>${id}</strong></a><button type="button" class="pub-copy" title="메뉴복사"></button>`;
       }
       return rtnVal;
     }
@@ -1021,6 +1019,50 @@ const pubList = {
       const inp = document.querySelector('.pub-search-inp');
       inp.value = '';
     }
+    const viewer = document.querySelector('.pub-mobile-frame');
+    function toggleViewer(isShow, isOn){
+      if(!viewer) return;
+      const className = 'show';
+      if(isShow){
+        viewer.classList.add(className);
+        setViewerSize();
+      }else{
+        if(viewer.classList.contains('on')) viewer.classList.remove('on');
+        viewer.classList.remove(className);
+      }
+    }
+    function toggleViewerOn(){
+      if(viewer.classList.contains('on')) viewer.classList.remove('on');
+      else viewer.classList.add('on');
+    }
+    function setViewerSize(){
+      const select = viewer.querySelector('.pub-device-select');
+      const value = select.value;
+      const sizes = value.split('*');
+      const width = sizes[0];
+      const height = sizes[1];
+      viewer.style.setProperty('--iframe-width', `${width}px`);
+      viewer.style.setProperty('--iframe-height', `${height}px`);
+    }
+    function setViewerIframe(target){
+      const href = target.getAttribute('href');
+      const text = target.textContent;
+      const linkHtml = '<a href="'+href+'" target="_blank"><strong>'+text+'</strong></a>';
+      viewer.querySelector('.link').innerHTML = linkHtml;
+      let iframe = viewer.querySelector('iframe');
+      if(iframe){
+        iframe.src = href;
+      }else{
+        iframe = document.createElement('iframe');
+        iframe.src = href;
+        iframe.frameborder = '0;'
+        viewer.querySelector('.pub-iframe').appendChild(iframe);
+      }
+    }
+    function resetTDlink(){
+      const links = document.querySelectorAll('.td-link.active');
+      if(links) links.forEach(link => link.classList.remove('active'));
+    }
     
 
     let beforeTarget = null;
@@ -1053,13 +1095,30 @@ const pubList = {
         buttonReset();
         const tab = document.querySelector('.pub-nav .pub-all a');
         navActive(tab);
-        searchReset()
+        searchReset();
+        toggleViewer(false);
       }
 
       // 검색버튼
       if(target.matches('.pub-search-btn')){
         e.preventDefault();
         searchInit();
+      }
+
+      // 모바일 뷰어
+      if(target.matches('.pub-viewer')){
+        e.preventDefault();
+        if(target.ariaPressed === 'false'){
+          target.ariaPressed = 'true';
+          toggleViewer(true);
+        }else{
+          target.ariaPressed = 'false';
+          toggleViewer(false);
+        }
+      }
+      if(target.matches('.pub-frame-toggle')){
+        e.preventDefault();
+        toggleViewerOn();
       }
 
       //토글버튼 pub-toggle
@@ -1107,6 +1166,16 @@ const pubList = {
         e.preventDefault();
         if(target.classList.contains('on')) return;
         navActive(target);
+      }
+
+      // ID 링크 클릭
+      if(target.matches('.td-link')){
+        resetTDlink();
+        target.classList.add('active');
+        if(viewer.classList.contains('on')){
+          e.preventDefault();
+          setViewerIframe(target);
+        }
       }
 
       //메뉴 복사

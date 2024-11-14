@@ -490,8 +490,13 @@ html:not(#isMobile) [data-layout="index"] .pub-site .pub-table .pub-tbody td .pu
 	100% {opacity:1;}
 }
 
+:root{
+	--iframe-width: 360px;
+	--iframe-height: 740px;
+}
 [data-layout="index"] .pub-mobile-frame {visibility:hidden;}
-[data-layout="index"] .pub-mobile-frame .pub-mobile-frame-inr {position:fixed;top:50%;z-index:1000;transform:translateY(-50%);}
+[data-layout="index"] .pub-mobile-frame.show{visibility:visible;}
+[data-layout="index"] .pub-mobile-frame .pub-mobile-frame-inr {position:fixed;top:50%;left:100%;z-index:1000;transform:translateY(-50%);padding:30px 15px 15px;border-radius:20px;box-shadow:5px 5px 5px rgba(0,0,0,.2);background-color:#000;}
 [data-layout="index"] .pub-mobile-frame .pub-screen {position:absolute;left:35px;top:9px;font-size:11px;font-weight:normal;color:rgba(255,255,255,.9);}
 [data-layout="index"] .pub-mobile-frame .pub-screen .link {padding-left:25px;}
 [data-layout="index"] .pub-mobile-frame .pub-screen a {display:none;font-size:11px;line-height:1;color:#fff;white-space:nowrap;text-decoration:underline;text-underline-position:under;}
@@ -499,12 +504,13 @@ html:not(#isMobile) [data-layout="index"] .pub-site .pub-table .pub-tbody td .pu
 [data-layout="index"] .pub-mobile-frame .pub-device {position:absolute;right:15px;top:7px;}
 [data-layout="index"] .pub-mobile-frame .pub-device select {appearance:none;padding-right:15px;border:0;background-color:transparent;font-size:11px;color:#999;}
 [data-layout="index"] .pub-mobile-frame .pub-device::after {content:'';position:absolute;right:0;top:50%;margin-top:-2px;border:4px solid;border-color:transparent transparent #999 transparent;transform:rotate(180deg);}
-[data-layout="index"] .pub-mobile-frame .pub-iframe {margin-left:20px;border:15px solid #000;border-top-width:30px;border-radius:20px;box-shadow:5px 5px 5px rgba(0,0,0,.2);background-color:#fff;}
+[data-layout="index"] .pub-mobile-frame .pub-iframe {background-color:#fff;width:var(--iframe-width);height:var(--iframe-height);}
 [data-layout="index"] .pub-mobile-frame .pub-iframe iframe {overflow:hidden;width:100%;height:100%;}
-[data-layout="index"] .pub-mobile-frame .pub-frame-toggle {position:absolute;left:0;top:50%;margin-top:-30px;display:block;width:20px;height:60px;border:0;border-radius:3px 0 0 3px;background-color:#000;box-shadow:5px 5px 5px rgba(0,0,0,.2);font-size:0;color:transparent;outline:0 none;}
+[data-layout="index"] .pub-mobile-frame .pub-frame-toggle {position:absolute;left:-20px;top:50%;margin-top:-30px;display:block;width:20px;height:60px;border:0;border-radius:3px 0 0 3px;background-color:#000;box-shadow:5px 5px 5px rgba(0,0,0,.2);font-size:0;color:transparent;outline:0 none;}
 [data-layout="index"] .pub-mobile-frame .pub-frame-toggle span {position:absolute;left:11px;top:26px;}
 [data-layout="index"] .pub-mobile-frame:not(.on) .pub-frame-toggle span {animation:frameLeft 2s infinite;}
 [data-layout="index"] .pub-mobile-frame .pub-frame-toggle span::after {content:"";display:block;width:8px;height:8px;border-top:2px solid rgba(255,255,255,.9);border-right:2px solid rgba(255,255,255,.9);transform:rotate(-135deg);}
+[data-layout="index"] .pub-mobile-frame.on .pub-mobile-frame-inr{left:calc(100% - var(--iframe-width) - 40px);}
 [data-layout="index"] .pub-mobile-frame.on .pub-screen a {display:block;}
 [data-layout="index"] .pub-mobile-frame.on .pub-frame-toggle {box-shadow:none;}
 [data-layout="index"] .pub-mobile-frame.on .pub-frame-toggle span {left:6px;}
@@ -832,6 +838,7 @@ html:not(#isMobile) .pub-wrap:not([data-layout="index"]) .pub-site .pub-site-tit
 	--loading-svg-offset: 187;
   --loading-svg-duration: 1.4s;
 }
+.td-link > *{pointer-events:none;}
 .error-cell{border:3px solid #ff0000 !important;background-color:rgba(255,0,0,0.1) !important;color:#ff0000 !important;font-weight:bold !important;}
 .today-cell{border:3px solid #008000 !important;background-color:rgba(0,128,0,0.1) !important;color:#008000 !important;font-weight:bold !important;}
 .yesterday-cell{border:3px solid #0000ff !important;background-color:rgba(0,0,255,0.1) !important;color:#0000ff !important;font-weight:bold !important;}
