@@ -165,6 +165,7 @@ const pubUtil = {
 let pubJSON = null;
 const pubList = {
   async init(data, setting){
+    pubList.device();
     if(typeof data === 'undefined') return;
     pubJSON = data;
     if(setting)pubList.setting = {...pubList.setting, ...setting};
