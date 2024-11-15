@@ -1016,6 +1016,7 @@ const pubList = {
           toggleAllTr(false);
         }else if(isSearch) {
           isSearch = false;
+          tableSelectReset()
           navReset();
           toggleAllTr(true);
         }
@@ -1133,6 +1134,7 @@ const pubList = {
         e.preventDefault();
         if(target.ariaPressed === 'false'){
           target.ariaPressed = 'true';
+          tableSelectReset();
           navReset();
           toggleAllTable(false);
         }else{
