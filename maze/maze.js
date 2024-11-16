@@ -12,7 +12,6 @@ class MazeGame {
     this.maze = Array(this.rows).fill().map(() => Array(this.cols).fill(1));
     this.path = Array(this.rows).fill().map(() => Array(this.cols).fill(0));
 
-    // 시작점과 도착점 초기화
     this.start = {
       x: 0,
       y: 0
@@ -23,10 +22,14 @@ class MazeGame {
     };
     this.playerX = 0;
     this.playerY = 0;
+    this.playerDirection = 'right'; // 캐릭터 방향
+
+    // 이미지 로드
+    this.playerAngle = 0;
+    this.loadImages();
 
     this.isDragging = false;
     this.setupEventListeners();
-    this.initializeNewMaze();
   }
 
   generateMaze() {
@@ -161,10 +164,79 @@ class MazeGame {
     return passages[Math.floor(Math.random() * passages.length)];
   }
 
+  loadImages() {
+    this.images = {
+      character: new Image(),
+      start: new Image(),
+      end: new Image()
+    };
+
+    // 이미지 경로 설정
+    this.images.character.src = 'character.png';
+    this.images.start.src = 'start.png';
+    this.images.end.src = 'end.png';
+
+    // 모든 이미지가 로드되면 게임 시작
+    let loadedImages = 0;
+    const totalImages = Object.keys(this.images).length;
+
+    const onImageLoad = () => {
+      loadedImages++;
+      if (loadedImages === totalImages) {
+        this.initializeNewMaze();
+      }
+    };
+
+    Object.values(this.images).forEach(img => {
+      img.onload = onImageLoad;
+    });
+  }
+
+  setRandomStartEnd() {
+    // 랜덤으로 시작점과 도착점의 위치 결정 (서로 반대편에 위치)
+    const sides = ['left', 'right'];
+    const startSide = sides[Math.floor(Math.random() * 2)];
+    const endSide = startSide === 'left' ? 'right' : 'left';
+
+    if (startSide === 'left') {
+      // 왼쪽 벽에 입구 생성
+      const y = Math.floor(Math.random() * (this.rows - 4)) + 2;
+      this.start.x = 0;
+      this.start.y = y;
+      this.maze[y][0] = 0; // 입구 뚫기
+      this.maze[y][1] = 0; // 입구 연결 통로
+
+      // 오른쪽 벽에 출구 생성
+      const endY = Math.floor(Math.random() * (this.rows - 4)) + 2;
+      this.end.x = this.cols - 1;
+      this.end.y = endY;
+      this.maze[endY][this.cols - 1] = 0; // 출구 뚫기
+      this.maze[endY][this.cols - 2] = 0; // 출구 연결 통로
+    } else {
+      // 오른쪽 벽에 입구 생성
+      const y = Math.floor(Math.random() * (this.rows - 4)) + 2;
+      this.start.x = this.cols - 1;
+      this.start.y = y;
+      this.maze[y][this.cols - 1] = 0;
+      this.maze[y][this.cols - 2] = 0;
+
+      // 왼쪽 벽에 출구 생성
+      const endY = Math.floor(Math.random() * (this.rows - 4)) + 2;
+      this.end.x = 0;
+      this.end.y = endY;
+      this.maze[endY][0] = 0;
+      this.maze[endY][1] = 0;
+    }
+
+    // 플레이어 시작 위치 설정
+    this.playerX = this.start.x;
+    this.playerY = this.start.y;
+  }
+
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // 미로 그리기
+    // 미로와 경로 그리기
     for (let y = 0; y < this.rows; y++) {
       for (let x = 0; x < this.cols; x++) {
         if (this.maze[y][x] === 1) {
@@ -172,7 +244,6 @@ class MazeGame {
           this.ctx.fillRect(x * this.cellSize, y * this.cellSize,
             this.cellSize, this.cellSize);
         }
-        // 지나간 경로 표시
         if (this.path[y][x] === 1) {
           this.ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
           this.ctx.fillRect(x * this.cellSize, y * this.cellSize,
@@ -181,21 +252,96 @@ class MazeGame {
       }
     }
 
-    // 도착점 그리기
-    this.ctx.fillStyle = 'green';
-    this.ctx.beginPath();
-    this.ctx.arc(this.end.x * this.cellSize + this.cellSize / 2,
-      this.end.y * this.cellSize + this.cellSize / 2,
-      this.cellSize / 3, 0, Math.PI * 2);
-    this.ctx.fill();
+    // 시작점과 도착점 이미지 그리기
+    this.ctx.drawImage(this.images.start,
+      this.start.x * this.cellSize,
+      this.start.y * this.cellSize,
+      this.cellSize, this.cellSize);
 
-    // 플레이어 그리기
-    this.ctx.fillStyle = 'red';
-    this.ctx.beginPath();
-    this.ctx.arc(this.playerX * this.cellSize + this.cellSize / 2,
-      this.playerY * this.cellSize + this.cellSize / 2,
-      this.cellSize / 3, 0, Math.PI * 2);
-    this.ctx.fill();
+    this.ctx.drawImage(this.images.end,
+      this.end.x * this.cellSize,
+      this.end.y * this.cellSize,
+      this.cellSize, this.cellSize);
+
+    // 캐릭터 이미지 회전하여 그리기
+    this.drawRotatedCharacter();
+  }
+
+  drawRotatedCharacter() {
+    const x = this.playerX * this.cellSize + this.cellSize / 2;
+    const y = this.playerY * this.cellSize + this.cellSize / 2;
+
+    this.ctx.save();
+    this.ctx.translate(x, y);
+    this.ctx.rotate(this.playerAngle * Math.PI / 180);
+
+    // 이미지의 중심을 기준으로 그리기
+    this.ctx.drawImage(
+      this.images.character,
+      -this.cellSize / 2,
+      -this.cellSize / 2,
+      this.cellSize,
+      this.cellSize
+    );
+
+    this.ctx.restore();
+  }
+
+  handleMove(clientX, clientY) {
+    const rect = this.canvas.getBoundingClientRect();
+    const x = Math.floor((clientX - rect.left) / this.cellSize);
+    const y = Math.floor((clientY - rect.top) / this.cellSize);
+
+    if (this.canMoveTo(x, y)) {
+      // 부드러운 회전 애니메이션 추가
+      this.animateRotation(x, y);
+
+      this.playerX = x;
+      this.playerY = y;
+      this.path[y][x] = 1;
+      this.draw();
+
+      if (x === this.end.x && y === this.end.y) {
+        setTimeout(() => {
+          alert('도착! 새로운 미로를 생성합니다.');
+          this.initializeNewMaze();
+        }, 100);
+      }
+    }
+  }
+
+  animateRotation(newX, newY) {
+    // 목표 각도 계산
+    let targetAngle = this.playerAngle;
+    if (newX > this.playerX) targetAngle = 0;
+    else if (newX < this.playerX) targetAngle = 180;
+    else if (newY > this.playerY) targetAngle = 90;
+    else if (newY < this.playerY) targetAngle = 270;
+
+    // 현재 각도와 목표 각도의 차이 계산
+    let angleDiff = targetAngle - this.playerAngle;
+
+    // 가장 짧은 회전 방향 선택
+    if (angleDiff > 180) angleDiff -= 360;
+    if (angleDiff < -180) angleDiff += 360;
+
+    // 애니메이션 실행
+    const steps = 10;
+    const angleStep = angleDiff / steps;
+    let currentStep = 0;
+
+    const animate = () => {
+      if (currentStep < steps) {
+        this.playerAngle += angleStep;
+        // 각도 정규화 (0-360 범위 유지)
+        this.playerAngle = (this.playerAngle + 360) % 360;
+        this.draw();
+        currentStep++;
+        requestAnimationFrame(animate);
+      }
+    };
+
+    animate();
   }
 
   setupEventListeners() {
@@ -275,6 +421,3 @@ class MazeGame {
     return dx + dy === 1;
   }
 }
-
-// 게임 시작
-const game = new MazeGame(15, 15, 30);
