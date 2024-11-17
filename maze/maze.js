@@ -222,6 +222,10 @@ class MazeGame {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    var metaTag = document.createElement('meta');
+    metaTag.name = 'viewport';
+    metaTag.content = 'width=' + this.canvas.width;
+    document.head.appendChild(metaTag);
 
     // 미로와 경로 그리기
     for (let y = 0; y < this.rows; y++) {
