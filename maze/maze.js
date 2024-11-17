@@ -85,6 +85,7 @@ class MazeGame {
   }
 
   initializeNewMaze() {
+    window.scrollTo(0, 0);
     // 미로 초기화
     this.maze = Array(this.rows).fill().map(() => Array(this.cols).fill(1));
     this.path = Array(this.rows).fill().map(() => Array(this.cols).fill(0));
@@ -375,28 +376,28 @@ class MazeGame {
         // 오른쪽 스크롤
         if (touch.clientX > window.innerWidth - scrollThreshold) {
           window.scrollBy({
-            left: 10,
+            left: 50,
             behavior: 'smooth'
           });
         }
         // 왼쪽 스크롤
         if (touch.clientX < scrollThreshold) {
           window.scrollBy({
-            left: -10,
+            left: -50,
             behavior: 'smooth'
           });
         }
         // 아래쪽 스크롤
         if (touch.clientY > window.innerHeight - scrollThreshold) {
           window.scrollBy({
-            top: 10,
+            top: 50,
             behavior: 'smooth'
           });
         }
         // 위쪽 스크롤
         if (touch.clientY < scrollThreshold) {
           window.scrollBy({
-            top: -10,
+            top: -50,
             behavior: 'smooth'
           });
         }
