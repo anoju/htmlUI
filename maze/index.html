@@ -2,7 +2,6 @@
 <html>
 <head>
 <title>maze</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <style>
 canvas {
   touch-action: none;
@@ -12,10 +11,8 @@ body {
   background: #f0f0f0;
 }
 .maze {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  margin: 0 auto;
+  text-align: center;
 }
 </style>
 </head>
@@ -26,7 +23,7 @@ body {
 </div>
 <script>
 // 게임 생성
-const game = new MazeGame(21, 41, 60);
+const game = new MazeGame(21, 41, 40);
 </script>
 </body>
 </html>
