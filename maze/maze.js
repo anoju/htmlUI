@@ -1,6 +1,7 @@
 class MazeGame {
   constructor(width, height, cellSize) {
-    this.canvas = document.getElementById('mazeCanvas');
+    this.btns = document.querySelector('.btns');
+    this.canvas = document.querySelector('#mazeCanvas');
     this.ctx = this.canvas.getContext('2d');
     this.cellSize = cellSize;
     this.cols = width;
@@ -85,7 +86,10 @@ class MazeGame {
   }
 
   initializeNewMaze() {
-    window.scrollTo(0, 0);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
     // 미로 초기화
     this.maze = Array(this.rows).fill().map(() => Array(this.cols).fill(1));
     this.path = Array(this.rows).fill().map(() => Array(this.cols).fill(0));
@@ -203,14 +207,14 @@ class MazeGame {
 
   setRandomStartEnd() {
     // 왼쪽 벽 상단에 시작점 생성
-    const startY = Math.floor(this.rows * 0.05); // 상단 25% 위치
+    const startY = Math.floor(this.rows * 0.02); // 상단 25% 위치
     this.start.x = 0;
     this.start.y = startY;
     this.maze[startY][0] = 0; // 입구 뚫기
     this.maze[startY][1] = 0; // 입구 연결 통로
 
     // 오른쪽 벽 하단에 도착점 생성
-    const endY = Math.floor(this.rows * 0.95); // 하단 75% 위치
+    const endY = Math.floor(this.rows * 0.98); // 하단 75% 위치
     this.end.x = this.cols - 1;
     this.end.y = endY;
     this.maze[endY][this.cols - 1] = 0; // 출구 뚫기
@@ -340,6 +344,41 @@ class MazeGame {
   }
 
   setupEventListeners() {
+    const _this = this;
+
+    function move(touch) {
+      // 화면의 10% 영역 계산
+      const scrollXThreshold = window.innerWidth * 0.2;
+      const scrollYThreshold = window.innerHeight * 0.2;
+
+      // 오른쪽 스크롤
+      if (touch.clientX > window.innerWidth - scrollXThreshold) {
+        window.scrollBy({
+          left: 30
+        });
+      }
+      // 왼쪽 스크롤
+      if (touch.clientX < scrollXThreshold) {
+        window.scrollBy({
+          left: -30
+        });
+      }
+      // 아래쪽 스크롤
+      if (touch.clientY > window.innerHeight - scrollYThreshold) {
+        window.scrollBy({
+          top: 30
+        });
+      }
+      // 위쪽 스크롤
+      if (touch.clientY < scrollYThreshold) {
+        window.scrollBy({
+          top: -30
+        });
+      }
+
+      _this.handleMove(touch.clientX, touch.clientY);
+    }
+
     // 마우스 이벤트
     this.canvas.addEventListener('mousedown', (e) => {
       this.isDragging = true;
@@ -347,9 +386,7 @@ class MazeGame {
     });
 
     this.canvas.addEventListener('mousemove', (e) => {
-      if (this.isDragging) {
-        this.handleMove(e.clientX, e.clientY);
-      }
+      if (this.isDragging) move(e);
     });
 
     this.canvas.addEventListener('mouseup', () => {
@@ -366,45 +403,28 @@ class MazeGame {
 
     this.canvas.addEventListener('touchmove', (e) => {
       e.preventDefault();
-      if (this.isDragging) {
-        const touch = e.touches[0];
-        // const rect = this.canvas.getBoundingClientRect();
-
-        // 화면의 10% 영역 계산
-        const scrollXThreshold = window.innerWidth * 0.2;
-        const scrollYThreshold = window.innerHeight * 0.2;
-
-        // 오른쪽 스크롤
-        if (touch.clientX > window.innerWidth - scrollXThreshold) {
-          window.scrollBy({
-            left: 30
-          });
-        }
-        // 왼쪽 스크롤
-        if (touch.clientX < scrollXThreshold) {
-          window.scrollBy({
-            left: -30
-          });
-        }
-        // 아래쪽 스크롤
-        if (touch.clientY > window.innerHeight - scrollYThreshold) {
-          window.scrollBy({
-            top: 30
-          });
-        }
-        // 위쪽 스크롤
-        if (touch.clientY < scrollYThreshold) {
-          window.scrollBy({
-            top: -30
-          });
-        }
-
-        this.handleMove(touch.clientX, touch.clientY);
-      }
+      const touch = e.touches[0];
+      if (this.isDragging) move(touch);
     });
 
     this.canvas.addEventListener('touchend', () => {
       this.isDragging = false;
+    });
+
+    this.btns.addEventListener('click', (e) => {
+      const target = e.target;
+      const text = target.textContent
+      if (text === '↑') {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      } else {
+        window.scrollTo({
+          top: (document.body.scrollHeight - window.innerHeight),
+          behavior: 'smooth'
+        });
+      }
     });
   }
 

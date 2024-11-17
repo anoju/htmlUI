@@ -12,16 +12,37 @@ body {
   background: #f0f0f0;
 }
 .maze {
+  position: relative;
   margin: 0 auto;
   text-align: center;
+}
+.btns {
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+.btns button {
+  display: block;
+  width: 40px;
+  height: 40px;
+  background-color: #333;
+  border: 0 none;
+  font-weight: bold;
+  color: yellow;
+  font-size: 18px;
+  line-height: 1;
 }
 </style>
 </head>
 <body>
 <div class="maze">
   <canvas id="mazeCanvas"></canvas>
-  <script src="maze.js"></script>
+  <div class="btns">
+    <button type="button">↑</button>
+    <button type="button">↓</button>
+  </div>
 </div>
+<script src="maze.js"></script>
 <script>
 // 게임 생성
 const game = new MazeGame(21, 61, 40);
