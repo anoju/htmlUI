@@ -368,7 +368,7 @@ class MazeGame {
       e.preventDefault();
       if (this.isDragging) {
         const touch = e.touches[0];
-        const rect = this.canvas.getBoundingClientRect();
+        // const rect = this.canvas.getBoundingClientRect();
 
         // 화면의 10% 영역 계산
         const scrollThreshold = window.innerWidth * 0.1;
@@ -376,29 +376,25 @@ class MazeGame {
         // 오른쪽 스크롤
         if (touch.clientX > window.innerWidth - scrollThreshold) {
           window.scrollBy({
-            left: 50,
-            behavior: 'smooth'
+            left: 30
           });
         }
         // 왼쪽 스크롤
         if (touch.clientX < scrollThreshold) {
           window.scrollBy({
-            left: -50,
-            behavior: 'smooth'
+            left: -30
           });
         }
         // 아래쪽 스크롤
         if (touch.clientY > window.innerHeight - scrollThreshold) {
           window.scrollBy({
-            top: 50,
-            behavior: 'smooth'
+            top: 30
           });
         }
         // 위쪽 스크롤
         if (touch.clientY < scrollThreshold) {
           window.scrollBy({
-            top: -50,
-            behavior: 'smooth'
+            top: -30
           });
         }
 
