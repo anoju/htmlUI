@@ -67,10 +67,18 @@ class MazeGame {
     for (const [dx, dy] of directions) {
       const newX = x + dx;
       const newY = y + dy;
+
+      // 범위 체크를 수정하여 더 넓은 영역 허용
       if (newX > 0 && newX < this.cols - 1 &&
         newY > 0 && newY < this.rows - 1 &&
         this.maze[newY][newX] === 1) {
-        neighbors.push([newX, newY]);
+
+        // 중간 벽이 아직 뚫리지 않았는지 확인
+        const wallY = (y + newY) / 2;
+        const wallX = (x + newX) / 2;
+        if (this.maze[wallY][wallX] === 1) {
+          neighbors.push([newX, newY]);
+        }
       }
     }
     return neighbors;
@@ -193,40 +201,19 @@ class MazeGame {
   }
 
   setRandomStartEnd() {
-    // 랜덤으로 시작점과 도착점의 위치 결정 (서로 반대편에 위치)
-    const sides = ['left', 'right'];
-    const startSide = sides[Math.floor(Math.random() * 2)];
-    const endSide = startSide === 'left' ? 'right' : 'left';
+    // 왼쪽 벽 상단에 시작점 생성
+    const startY = Math.floor(this.rows * 0.05); // 상단 25% 위치
+    this.start.x = 0;
+    this.start.y = startY;
+    this.maze[startY][0] = 0; // 입구 뚫기
+    this.maze[startY][1] = 0; // 입구 연결 통로
 
-    if (startSide === 'left') {
-      // 왼쪽 벽에 입구 생성
-      const y = Math.floor(Math.random() * (this.rows - 4)) + 2;
-      this.start.x = 0;
-      this.start.y = y;
-      this.maze[y][0] = 0; // 입구 뚫기
-      this.maze[y][1] = 0; // 입구 연결 통로
-
-      // 오른쪽 벽에 출구 생성
-      const endY = Math.floor(Math.random() * (this.rows - 4)) + 2;
-      this.end.x = this.cols - 1;
-      this.end.y = endY;
-      this.maze[endY][this.cols - 1] = 0; // 출구 뚫기
-      this.maze[endY][this.cols - 2] = 0; // 출구 연결 통로
-    } else {
-      // 오른쪽 벽에 입구 생성
-      const y = Math.floor(Math.random() * (this.rows - 4)) + 2;
-      this.start.x = this.cols - 1;
-      this.start.y = y;
-      this.maze[y][this.cols - 1] = 0;
-      this.maze[y][this.cols - 2] = 0;
-
-      // 왼쪽 벽에 출구 생성
-      const endY = Math.floor(Math.random() * (this.rows - 4)) + 2;
-      this.end.x = 0;
-      this.end.y = endY;
-      this.maze[endY][0] = 0;
-      this.maze[endY][1] = 0;
-    }
+    // 오른쪽 벽 하단에 도착점 생성
+    const endY = Math.floor(this.rows * 0.95); // 하단 75% 위치
+    this.end.x = this.cols - 1;
+    this.end.y = endY;
+    this.maze[endY][this.cols - 1] = 0; // 출구 뚫기
+    this.maze[endY][this.cols - 2] = 0; // 출구 연결 통로
 
     // 플레이어 시작 위치 설정
     this.playerX = this.start.x;
