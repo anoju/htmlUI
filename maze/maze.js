@@ -227,7 +227,6 @@ class MazeGame {
     // metaTag.content = 'width=' + this.canvas.width;
     // document.head.appendChild(metaTag);
     const mazeEl = document.querySelector('.maze');
-    console.log(mazeEl)
     mazeEl.style.width = this.canvas.width + 'px';
     mazeEl.style.height = this.canvas.height + 'px';
 
