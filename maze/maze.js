@@ -348,8 +348,10 @@ class MazeGame {
 
     function move(touch) {
       // 화면의 10% 영역 계산
-      const scrollXThreshold = window.innerWidth * 0.2;
-      const scrollYThreshold = window.innerHeight * 0.2;
+      // const scrollXThreshold = window.innerWidth * 0.2;
+      // const scrollYThreshold = window.innerHeight * 0.2;
+      const scrollXThreshold = 20;
+      const scrollYThreshold = 30;
 
       // 오른쪽 스크롤
       if (touch.clientX > window.innerWidth - scrollXThreshold) {
