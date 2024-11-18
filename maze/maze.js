@@ -486,5 +486,50 @@ class MazeGame {
         });
       }
     });
+
+    // 키보드 이벤트 추가
+    window.addEventListener('keydown', (e) => {
+      let newX = this.playerX;
+      let newY = this.playerY;
+
+      switch (e.key) {
+        case 'ArrowUp':
+        case 'w':
+          newY = this.playerY - 1;
+          //this.animateRotation(this.playerX, this.playerY - 1);
+          break;
+        case 'ArrowDown':
+        case 's':
+          newY = this.playerY + 1;
+          //this.animateRotation(this.playerX, this.playerY + 1);
+          break;
+        case 'ArrowLeft':
+        case 'a':
+          newX = this.playerX - 1;
+          //this.animateRotation(this.playerX - 1, this.playerY);
+          break;
+        case 'ArrowRight':
+        case 'd':
+          newX = this.playerX + 1;
+          //this.animateRotation(this.playerX + 1, this.playerY);
+          break;
+        default:
+          return;
+      }
+
+      if (this.canMoveTo(newX, newY)) {
+        this.playerX = newX;
+        this.playerY = newY;
+        this.path[newY][newX] = 1;
+        this.draw();
+
+        if (newX === this.end.x && newY === this.end.y) {
+          setTimeout(() => {
+            alert('도착! 새로운 미로를 생성합니다.');
+            this.initializeNewMaze();
+          }, 100);
+        }
+      }
+    });
   }
 }
