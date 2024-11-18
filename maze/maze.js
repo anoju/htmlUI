@@ -288,25 +288,83 @@ class MazeGame {
 
   handleMove(clientX, clientY) {
     const rect = this.canvas.getBoundingClientRect();
-    const x = Math.floor((clientX - rect.left) / this.cellSize);
-    const y = Math.floor((clientY - rect.top) / this.cellSize);
+    const touchX = clientX - rect.left;
+    const touchY = clientY - rect.top;
 
-    if (this.canMoveTo(x, y)) {
-      // 부드러운 회전 애니메이션 추가
-      this.animateRotation(x, y);
+    // 현재 플레이어 위치의 중심점
+    const playerCenterX = (this.playerX * this.cellSize) + (this.cellSize / 2);
+    const playerCenterY = (this.playerY * this.cellSize) + (this.cellSize / 2);
 
-      this.playerX = x;
-      this.playerY = y;
-      this.path[y][x] = 1;
+    // 터치 지점과 현재 위치의 각도 계산
+    const angle = Math.atan2(touchY - playerCenterY, touchX - playerCenterX);
+
+    // 각도를 기반으로 이동 방향 결정
+    let newX = this.playerX;
+    let newY = this.playerY;
+
+    // 각도에 따른 방향 결정 (8방향)
+    if (angle > -Math.PI / 8 && angle <= Math.PI / 8) {
+      newX = this.playerX + 1; // 오른쪽
+    } else if (angle > Math.PI / 8 && angle <= 3 * Math.PI / 8) {
+      newX = this.playerX + 1; // 오른쪽 아래
+      newY = this.playerY + 1;
+    } else if (angle > 3 * Math.PI / 8 && angle <= 5 * Math.PI / 8) {
+      newY = this.playerY + 1; // 아래
+    } else if (angle > 5 * Math.PI / 8 && angle <= 7 * Math.PI / 8) {
+      newX = this.playerX - 1; // 왼쪽 아래
+      newY = this.playerY + 1;
+    } else if (angle > 7 * Math.PI / 8 || angle <= -7 * Math.PI / 8) {
+      newX = this.playerX - 1; // 왼쪽
+    } else if (angle > -7 * Math.PI / 8 && angle <= -5 * Math.PI / 8) {
+      newX = this.playerX - 1; // 왼쪽 위
+      newY = this.playerY - 1;
+    } else if (angle > -5 * Math.PI / 8 && angle <= -3 * Math.PI / 8) {
+      newY = this.playerY - 1; // 위
+    } else if (angle > -3 * Math.PI / 8 && angle <= -Math.PI / 8) {
+      newX = this.playerX + 1; // 오른쪽 위
+      newY = this.playerY - 1;
+    }
+
+    // 대각선 이동 시 벽 체크
+    if (newX !== this.playerX && newY !== this.playerY) {
+      // 대각선 이동 시 양쪽 벽 모두 체크
+      if (!this.canMoveTo(newX, this.playerY) || !this.canMoveTo(this.playerX, newY)) {
+        return;
+      }
+    }
+
+    // 새로운 위치가 이동 가능한지 확인
+    if (this.canMoveTo(newX, newY)) {
+      // this.animateRotation(newX, newY);
+      this.playerX = newX;
+      this.playerY = newY;
+      this.path[newY][newX] = 1;
       this.draw();
 
-      if (x === this.end.x && y === this.end.y) {
+      if (newX === this.end.x && newY === this.end.y) {
         setTimeout(() => {
           alert('도착! 새로운 미로를 생성합니다.');
           this.initializeNewMaze();
         }, 100);
       }
     }
+  }
+
+  canMoveTo(x, y) {
+    // 미로 범위 확인
+    if (x < 0 || x >= this.cols || y < 0 || y >= this.rows) {
+      return false;
+    }
+
+    // 벽 확인
+    if (this.maze[y][x] === 1) {
+      return false;
+    }
+
+    // 현재 위치에서 인접한 칸으로만 이동 가능
+    const dx = Math.abs(x - this.playerX);
+    const dy = Math.abs(y - this.playerY);
+    return dx + dy === 1;
   }
 
   animateRotation(newX, newY) {
@@ -356,25 +414,25 @@ class MazeGame {
       // 오른쪽 스크롤
       if (touch.clientX > window.innerWidth - scrollXThreshold) {
         window.scrollBy({
-          left: 30
+          left: 10
         });
       }
       // 왼쪽 스크롤
       if (touch.clientX < scrollXThreshold) {
         window.scrollBy({
-          left: -30
+          left: -10
         });
       }
       // 아래쪽 스크롤
       if (touch.clientY > window.innerHeight - scrollYThreshold) {
         window.scrollBy({
-          top: 30
+          top: 10
         });
       }
       // 위쪽 스크롤
       if (touch.clientY < scrollYThreshold) {
         window.scrollBy({
-          top: -30
+          top: -10
         });
       }
 
@@ -428,44 +486,5 @@ class MazeGame {
         });
       }
     });
-  }
-
-  handleMove(clientX, clientY) {
-    const rect = this.canvas.getBoundingClientRect();
-    const x = Math.floor((clientX - rect.left) / this.cellSize);
-    const y = Math.floor((clientY - rect.top) / this.cellSize);
-
-    // 현재 위치에서 목표 위치까지의 경로 확인
-    if (this.canMoveTo(x, y)) {
-      this.playerX = x;
-      this.playerY = y;
-      this.path[y][x] = 1; // 지나간 경로 표시
-      this.draw();
-
-      // 도착점 도달 확인
-      if (x === this.end.x && y === this.end.y) {
-        setTimeout(() => {
-          alert('도착! 새로운 미로를 생성합니다.');
-          this.initializeNewMaze();
-        }, 100);
-      }
-    }
-  }
-
-  canMoveTo(x, y) {
-    // 미로 범위 확인
-    if (x < 0 || x >= this.cols || y < 0 || y >= this.rows) {
-      return false;
-    }
-
-    // 벽 확인
-    if (this.maze[y][x] === 1) {
-      return false;
-    }
-
-    // 현재 위치에서 인접한 칸으로만 이동 가능
-    const dx = Math.abs(x - this.playerX);
-    const dy = Math.abs(y - this.playerY);
-    return dx + dy === 1;
   }
 }
