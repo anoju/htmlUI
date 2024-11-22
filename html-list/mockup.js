@@ -1,5 +1,8 @@
 // Made By Anoju (zun5761@gmail.com)
 
+// const isJQuery = () =>{
+//   return typeof jQuery === 'function'
+// }
 /* LOADING */
 const loading = {
   open() {
@@ -12,6 +15,7 @@ const loading = {
         <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
       </svg>
     </div>`;
+    // const loadingInnerEl = `<img src="../../resource/pc/images/common/loading.gif" alt="로딩중" />`;
 
     loadingEl.innerHTML = loadingInnerEl;
     document.body.appendChild(loadingEl);
@@ -20,7 +24,7 @@ const loading = {
     const loadingEl = document.getElementById('loadingbar');
     if (loadingEl) loadingEl.remove();
   }
-}
+};
 
 /* pubUtil */
 const pubUtil = {
@@ -166,21 +170,28 @@ let pubJSON = null;
 const pubList = {
   async init(data, setting){
     pubList.device();
-    if(typeof data === 'undefined') return;
-    pubJSON = data;
     if(setting)pubList.setting = {...pubList.setting, ...setting};
     const wrap = document.querySelector('.pub-wrap');
-    if(wrap && wrap.getAttribute('data-layout') === 'index'){
-      await pubList.makeList();
+    if(wrap) {
+      if(wrap.getAttribute('data-layout') === 'index'){
+        if(typeof data === 'undefined') {
+          loading.close();
+          return;
+        }
+        pubJSON = data;
+        await pubList.makeList();
+        let tabIdx = pubUtil.getUrlParams().tab;
+        if(tabIdx){
+          tabIdx = parseInt(tabIdx);
+          const tabBtn = document.querySelector(`.pub-nav .pub-menu > ul > li:nth-child(${tabIdx}) a`);
+          if(tabBtn) tabBtn.click();
+        }
+      }else if(wrap.getAttribute('data-layout') === 'guide'){
+        await pubList.makeGuideMenu();
+      }
+      loading.close();
     }
     pubList.action();
-    
-    let tab = pubUtil.getUrlParams().tab;
-    if(tab){
-      tab = parseInt(tab);
-      document.querySelector(`.pub-nav .pub-menu > ul > li:nth-child(${tab}) a`).click();
-    }
-    loading.close();
   },
   setting: {
     preURL: '',
@@ -198,6 +209,34 @@ const pubList = {
       // document.body.class.remove('pub-nav-up');
       // document.body.class.add('pub-nav-down');
     }
+  },
+  makeGuideMenu(){
+    const titleEl = document.querySelector('.pub-header .pub-title');
+    const menus = document.querySelectorAll('.pub-site .pub-site-title h2>span');
+    const navHtml = document.createElement('div');
+    navHtml.className = 'pub-nav';
+    let navListHtml ='';
+    if(menus.length){
+      navListHtml += '<ul>';
+      menus.forEach((menu, i) => {
+        const text = menu.textContent;
+        navListHtml += `<li><a href="#menu${i}" title="${text}"><span>${text}</span></a></li>`;
+      });
+      navListHtml += '/<ul>';
+      const sites = document.querySelectorAll('.pub-site');
+      sites.forEach((site, i) => {
+        site.id = `menu${i}`;
+      });
+    }
+    const navInnerHtml = `
+      <div class="pub-nav-inr">
+        <div class="pub-all"><a href="#all" class="on"><span>전체</span></a></div>
+        <div class="pub-menu">${navListHtml}</div>
+      </div>
+    `;
+    navHtml.innerHTML = navInnerHtml;
+    // titleEl.insertAdjacentHTML('afterend', navHtml);
+    titleEl.parentNode.insertBefore(navHtml, titleEl.nextSibling);
   },
   makeList(){
     return new Promise((resolve) => {
@@ -436,7 +475,8 @@ const pubList = {
     return rtnObj;
   },
   createSection(data, idx){
-    const dataTit = data.dep1.replace(/ /gi,"").replace(/[/]/gi, 'ㆍ').replace(/[(]/gi, '！').replace(/[)]/gi, '？');
+    // const dataTit = data.dep1.replace(/ /gi,"").replace(/[/]/gi, 'ㆍ').replace(/[(]/gi, '！').replace(/[)]/gi, '？');
+    const dataTit = data.dep1;
 
     const dataItems = data.items;
     const fragment = document.createDocumentFragment();
@@ -760,9 +800,9 @@ const pubList = {
     const idTd = () => {
       let rtnVal = id;
       const preURL = pubList.setting.preURL;
-      const file = pubList.setting.file;
+      const file = pubList.setting.file ? '.'+pubList.setting.file : '';
       if(url && id && (status !== 1 || end)){
-        const setUrl = url.slice(-1) === '/' ? preURL+url+id+'.'+file : preURL+url;
+        const setUrl = url.slice(-1) === '/' ? preURL+url+id+file : preURL+url;
         rtnVal = `<a href="${setUrl}" target="_blank" class="td-link"><strong>${id}</strong></a><button type="button" class="pub-copy" title="메뉴복사"></button>`;
       }
       return rtnVal;
@@ -893,8 +933,9 @@ const pubList = {
     function toggleAllTr(isShow){
       const trs = document.querySelectorAll('.tr');
       if(trs){
-        if(isShow) trs.forEach(tr => tr.style.removeProperty('display'));
-        else trs.forEach(tr => tr.style.display = 'none');
+        // if(isShow) trs.forEach(tr => tr.style.removeProperty('display'));
+        // else trs.forEach(tr => tr.style.display = 'none');
+        trs.forEach(tr => tr.classList.toggle('d-none', !isShow));
       }
     }
     function showStateTr(str){
@@ -906,7 +947,8 @@ const pubList = {
       else if(num === 3) className = '.chk'
       if(!className) return;
       const trs = document.querySelectorAll('.tr'+className);
-      if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
+      // if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
+      if(trs) trs.forEach(tr => tr.classList.remove('d-none'));
     }
     function toggleAllTable(isShow){
       const tables = document.querySelectorAll('.pub-table');
@@ -920,14 +962,16 @@ const pubList = {
       const wrap = target.closest('.pub-site');
       const trs = wrap.querySelectorAll('.tr');
       if(trs){
-        if(isShow) trs.forEach(tr => tr.style.removeProperty('display'));
-        else trs.forEach(tr => tr.style.display = 'none');
+        // if(isShow) trs.forEach(tr => tr.style.removeProperty('display'));
+        // else trs.forEach(tr => tr.style.display = 'none');
+        trs.forEach(tr => tr.classList.toggle('d-none', !isShow));
       }
     }
     function showTableTr(target, className){
       const wrap = target.closest('.pub-site');
       const trs = wrap.querySelectorAll(className);
-      if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
+      // if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
+      if(trs) trs.forEach(tr => tr.classList.remove('d-none'));
     }
     function tableSelectReset(target){
       let selects = null;
@@ -953,23 +997,35 @@ const pubList = {
       if(pressedBtns) pressedBtns.forEach(btn => btn.ariaPressed = 'false');
     }
     function navActive(el){
-      const href = el.getAttribute('href');
-      const navBtns = document.querySelectorAll('.pub-nav a');
-      navBtns.forEach(btn => btn.classList.remove('on'));
-      el.classList.add('on');
-      const pubSites = document.querySelectorAll('.pub-site');
-      if(href === '#all'){
-        if(pubSites) pubSites.forEach(el => el.style.removeProperty('display'));
-        pubUtil.setUrlParams(false);
-      }else{
-        const showSite = document.querySelector('.pub-site'+href);
-        if(pubSites && showSite) {
-          pubSites.forEach(el => el.style.display = 'none');
-          showSite.style.removeProperty('display');
+      /*if(isJQuery()){
+        const $el = $(el);
+        const $href = $el.attr('href');
+        $('.pub-nav a').removeClass('on');
+        $el.addClass('on');
+        if($href === '#all') $('.pub-site').removeClass('d-none');
+        else $($href+'.pub-site').removeClass('d-none').siblings('.pub-site').addClass('d-none');
+      }else{*/
+        const href = el.getAttribute('href');
+        const navBtns = document.querySelectorAll('.pub-nav a');
+        navBtns.forEach(btn => btn.classList.remove('on'));
+        el.classList.add('on');
+        const pubSites = document.querySelectorAll('.pub-site');
+        if(href === '#all'){
+          // if(pubSites) pubSites.forEach(el => el.style.removeProperty('display'));
+          if(pubSites) pubSites.forEach(el => el.classList.remove('d-none'));
+          pubUtil.setUrlParams(false);
+        }else{
+          const showSite = document.querySelector(href+'.pub-site');
+          if(pubSites && showSite) {
+            // pubSites.forEach(el => el.style.display = 'none');
+            // showSite.style.removeProperty('display');
+            pubSites.forEach(el => el.classList.add('d-none'));
+            showSite.classList.remove('d-none');
+          }
+          const idx = parseInt(href.replace(/\D/g, ''));
+          pubUtil.setUrlParams('tab', idx);
         }
-        const idx = parseInt(href.replace(/\D/g, ''));
-        pubUtil.setUrlParams('tab', idx);
-      }
+      //}
     }
     function navReset(){
       const tab = document.querySelector('.pub-nav .pub-all a');
@@ -1002,7 +1058,8 @@ const pubList = {
             `<span class="pub-highlight">${str}</span>`
           );
           const tr = cell.closest('tr');
-          tr.style.removeProperty('display');
+          // tr.style.removeProperty('display');
+          tr.classList.remove('d-none');
         }
       });
     }
@@ -1153,8 +1210,6 @@ const pubList = {
         }else{
           target.classList.add('on');
           toggleAllTr(false);
-          const sbTrs = document.querySelectorAll('tr.sb');
-          sbTrs.forEach(tr => tr.style.removeProperty('display'));
         }
       }
 
@@ -1466,10 +1521,12 @@ const pubModify = {
     const select = wrap.querySelector('.pub-modify-select');
     if (value === 'date') {
       this.loadDateView();
-      document.querySelector('.pub-date-more').style.removeProperty('display');
+      //document.querySelector('.pub-date-more').style.removeProperty('display');
+      document.querySelector('.pub-date-more').classList.remove('d-none');
     } else if (value === 'menu'){
       this.loadMenuView();
-      document.querySelector('.pub-date-more').style.display = 'none';
+      // document.querySelector('.pub-date-more').style.display = 'none';
+      document.querySelector('.pub-date-more').classList.add('d-none');
     }
   },
 
@@ -1498,9 +1555,12 @@ const pubModify = {
   },
   copySection(e){
     const target = e.target;
+    const sectionWrap =  target.closest('.list');
+    const title = sectionWrap.querySelector('.list-tit');
+    const titTxt = title.textContent + '\n'
     const section =  target.closest('.mb2-list');
     const content = section.innerText;
-    pubUtil.clipboardCopy(content);
+    pubUtil.clipboardCopy(titTxt+content);
   },
 
   getModifyDates() {
@@ -1567,8 +1627,8 @@ const pubModify = {
           const modifyMatch = item.MODIFY.match(new RegExp(`\\[${date} (.*?)\\]`));
           const modifyContent = modifyMatch ? modifyMatch[1] : '';
           const preURL = pubList.setting.preURL;
-          const file = pubList.setting.file;
-          const setURL = item.URL && item.ID ? preURL+item.URL+item.ID+'.'+file : '#';
+          const file = pubList.setting.file ? '.'+pubList.setting.file : '';;
+          const setURL = item.URL && item.ID ? preURL+item.URL+item.ID+file : '#';
           return `
             ● ${[item.DEP3, item.DEP4, item.DEP5, item.DEP6, item.SCREEN].filter(Boolean).join('<span> &gt; </span>')}
             <br>
@@ -1592,7 +1652,7 @@ const pubModify = {
   
       return `
         <div class="list mb-${date.replace(/-/g, '')}">
-          <mark><strong>${date}</strong></mark><br>
+          <mark class="list-tit"><strong>${date}</strong></mark><br>
           ${groupsHTML}
         </div>
       `;
