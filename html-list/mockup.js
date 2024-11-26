@@ -211,6 +211,7 @@ const pubList = {
     }
   },
   makeGuideMenu(){
+    //guide menu
     const titleEl = document.querySelector('.pub-header .pub-title');
     const menus = document.querySelectorAll('.pub-site .pub-site-title h2>span');
     const navHtml = document.createElement('div');
@@ -237,6 +238,20 @@ const pubList = {
     navHtml.innerHTML = navInnerHtml;
     // titleEl.insertAdjacentHTML('afterend', navHtml);
     titleEl.parentNode.insertBefore(navHtml, titleEl.nextSibling);
+
+
+    //guide 복사버튼
+    const codes = document.querySelectorAll('.pub-site .pub-template .pub-code');
+    if(codes.length){
+      codes.forEach(code => {
+        const btnHtml = document.createElement('button');
+        btnHtml.type = 'button';
+        btnHtml.className = 'pub-copy-code';
+        btnHtml.title = 'Copy Code';
+        btnHtml.innerHTML = '<i></i>코드 복사';
+        code.appendChild(btnHtml);
+      });
+    }
   },
   makeList(){
     return new Promise((resolve) => {
@@ -857,7 +872,8 @@ const pubList = {
         .filter(([date, count]) => count > 1)
         .forEach(([date, count]) => {
           isDuplicate = true;
-          console.warn(`경고: ${id}항목의 ${date} 날짜가 ${count}번 중복되었습니다.`);
+          // console.warn(`경고: ${id}항목의 ${date} 날짜가 ${count}번 중복되었습니다.`);
+          alert(`경고: ${id}항목의 수정이력 날짜 ${date}가 ${count}번 중복되었습니다.`);
         });
   
       // 타임스탬프로 정렬 (내림차순)
@@ -1050,18 +1066,41 @@ const pubList = {
       // 각 td를 순회하며 검색어 강조
       const cells = document.querySelectorAll('tr.tr td');
       cells.forEach(cell => {
-        const text = cell.textContent;
-        if (text.includes(str)) {
-          const regex = new RegExp(str, 'g');
-          cell.innerHTML = text.replace(
-            regex, 
-            `<span class="pub-highlight">${str}</span>`
-          );
+        const hasMatch = highlightTextNodes(cell, str);
+        if (hasMatch) {
           const tr = cell.closest('tr');
           // tr.style.removeProperty('display');
           tr.classList.remove('d-none');
         }
       });
+    }
+    function highlightTextNodes(node, searchText){
+      const regex = new RegExp(searchText, 'gi');
+      if(node.nodeType === Node.TEXT_NODE){
+        console.log(node.textContent.match(regex))
+        if(node.textContent.match(regex)){
+          const span = document.createElement('span');
+          span.className = 'pub-highlight' ;
+          span.textContent = node.textContent;
+          node.replaceWith(span);
+          console.log(span)
+          span.innerHTML = span.textContent.replace(
+            regex, 
+            `<span class="pub-highlight">$&</span>`
+          );
+          return true;
+        }
+        return false;
+      }
+
+      let hasMatch = false;
+      const childNodes = [...node.childNodes];
+      childNodes.forEach(child => {
+        const result = highlightTextNodes(child, searchText);
+        hasMatch = hasMatch || result;
+      });
+
+      return hasMatch;
     }
     function searchInit(){
       const inp = document.querySelector('.pub-search-inp');
@@ -1334,6 +1373,16 @@ const pubList = {
         pubModify.loadMoreDates();
       }
       //수정이력 관련 action: e
+      
+
+      if (target.matches('.pub-copy-code')){
+        e.preventDefault();
+        const prevEl = target.previousElementSibling;
+        if(prevEl && prevEl.classList.contains('pub-pre')){
+          const code = prevEl.innerText;
+          pubUtil.clipboardCopy(code);
+        }
+      }
 
       if(beforeTarget !== target) beforeTarget = target;
     });
