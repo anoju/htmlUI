@@ -1073,18 +1073,31 @@ const pubList = {
     }
     function highlightTextNodes(node, searchText){
       const regex = new RegExp(searchText, 'gi');
-      if(node.nodeType === Node.TEXT_NODE){
-        console.log(node.textContent.match(regex))
-        if(node.textContent.match(regex)){
-          const span = document.createElement('span');
-          span.className = 'pub-highlight' ;
-          span.textContent = node.textContent;
-          node.replaceWith(span);
-          console.log(span)
-          span.innerHTML = span.textContent.replace(
-            regex, 
-            `<span class="pub-highlight">$&</span>`
-          );
+    
+      // 텍스트 노드만 처리
+      if (node.nodeType === Node.TEXT_NODE) {
+        if (node.textContent.match(regex)) {
+          // 텍스트 노드의 내용을 검색어 기준으로 분할하여 처리
+          const fragment = document.createDocumentFragment();
+          const parts = node.textContent.split(regex);
+          const matches = node.textContent.match(regex);
+          
+          parts.forEach((part, index) => {
+            // 일반 텍스트 추가
+            if (part) {
+              fragment.appendChild(document.createTextNode(part));
+            }
+            
+            // 매칭된 텍스트에 하이라이트 적용
+            if (matches && index < parts.length - 1) {
+              const highlight = document.createElement('span');
+              highlight.className = 'pub-highlight';
+              highlight.textContent = matches[index];
+              fragment.appendChild(highlight);
+            }
+          });
+          
+          node.replaceWith(fragment);
           return true;
         }
         return false;
