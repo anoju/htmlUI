@@ -4,13 +4,13 @@
 //   return typeof jQuery === 'function'
 // }
 /* LOADING */
-const loading = {
+const pubLoading = {
   open() {
     const loadingEl = document.createElement('div');
     loadingEl.id = 'loadingbar';
-    loadingEl.className = 'loading';
+    loadingEl.className = 'pub-loading';
 
-    const loadingInnerEl = `<div class="loading-svg" role="img" aria-label="화면을 불러오는중입니다.">
+    const loadingInnerEl = `<div class="pub-loading-svg" role="img" aria-label="화면을 불러오는중입니다.">
       <svg width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
         <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
       </svg>
@@ -175,23 +175,18 @@ const pubList = {
     if(wrap) {
       if(wrap.getAttribute('data-layout') === 'index'){
         if(typeof data === 'undefined') {
-          loading.close();
+          pubLoading.close();
           return;
         }
         pubJSON = data;
         await pubList.makeList();
-        let tabIdx = pubUtil.getUrlParams().tab;
-        if(tabIdx){
-          tabIdx = parseInt(tabIdx);
-          const tabBtn = document.querySelector(`.pub-nav .pub-menu > ul > li:nth-child(${tabIdx}) a`);
-          if(tabBtn) tabBtn.click();
-        }
       }else if(wrap.getAttribute('data-layout') === 'guide'){
         await pubList.makeGuideMenu();
       }
-      loading.close();
     }
     pubList.action();
+    pubList.setFirstNav();
+    pubLoading.close();
   },
   setting: {
     preURL: '',
@@ -239,7 +234,6 @@ const pubList = {
     // titleEl.insertAdjacentHTML('afterend', navHtml);
     titleEl.parentNode.insertBefore(navHtml, titleEl.nextSibling);
 
-
     //guide 복사버튼
     const codes = document.querySelectorAll('.pub-site .pub-template .pub-code');
     if(codes.length){
@@ -251,6 +245,14 @@ const pubList = {
         btnHtml.innerHTML = '<i></i>코드 복사';
         code.appendChild(btnHtml);
       });
+    }
+  },
+  setFirstNav(){
+    let tabIdx = pubUtil.getUrlParams().tab;
+    if(tabIdx){
+      tabIdx = parseInt(tabIdx);
+      const tabBtn = document.querySelector(`.pub-nav .pub-menu > ul > li:nth-child(${tabIdx+1}) a`);
+      if(tabBtn) tabBtn.click();
     }
   },
   makeList(){
@@ -746,7 +748,7 @@ const pubList = {
     const depth5Name = rowData.DEP5.trim();
     const depth6Name = rowData.DEP6.trim();
     const screen = rowData.SCREEN.trim();
-    const type = rowData.TYPE.trim();
+    const type = rowData.TYPE.trim().toLowerCase();
     const size = rowData.SIZE ? rowData.SIZE.trim() : null;
     const url = rowData.URL.trim();
     const id = rowData.ID.trim();
@@ -818,7 +820,9 @@ const pubList = {
       const file = pubList.setting.file ? '.'+pubList.setting.file : '';
       if(url && id && (status !== 1 || end)){
         const setUrl = url.slice(-1) === '/' ? preURL+url+id+file : preURL+url;
-        rtnVal = `<a href="${setUrl}" target="_blank" class="td-link"><strong>${id}</strong></a><button type="button" class="pub-copy" title="메뉴복사"></button>`;
+        if(type === 'wp' && size) rtnVal = `<a href="${setUrl}" class="td-link winpop" data-size="${size}"><strong>${id}</strong></a>`
+        else rtnVal = `<a href="${setUrl}" target="_blank" class="td-link"><strong>${id}</strong></a>`
+        rtnVal += `<button type="button" class="pub-copy" title="메뉴복사"></button>`;
       }
       return rtnVal;
     }
@@ -1013,35 +1017,28 @@ const pubList = {
       if(pressedBtns) pressedBtns.forEach(btn => btn.ariaPressed = 'false');
     }
     function navActive(el){
-      /*if(isJQuery()){
-        const $el = $(el);
-        const $href = $el.attr('href');
-        $('.pub-nav a').removeClass('on');
-        $el.addClass('on');
-        if($href === '#all') $('.pub-site').removeClass('d-none');
-        else $($href+'.pub-site').removeClass('d-none').siblings('.pub-site').addClass('d-none');
-      }else{*/
-        const href = el.getAttribute('href');
-        const navBtns = document.querySelectorAll('.pub-nav a');
-        navBtns.forEach(btn => btn.classList.remove('on'));
-        el.classList.add('on');
-        const pubSites = document.querySelectorAll('.pub-site');
-        if(href === '#all'){
-          // if(pubSites) pubSites.forEach(el => el.style.removeProperty('display'));
-          if(pubSites) pubSites.forEach(el => el.classList.remove('d-none'));
-          pubUtil.setUrlParams(false);
-        }else{
-          const showSite = document.querySelector(href+'.pub-site');
-          if(pubSites && showSite) {
-            // pubSites.forEach(el => el.style.display = 'none');
-            // showSite.style.removeProperty('display');
-            pubSites.forEach(el => el.classList.add('d-none'));
-            showSite.classList.remove('d-none');
-          }
-          const idx = parseInt(href.replace(/\D/g, ''));
-          pubUtil.setUrlParams('tab', idx);
+      const href = el.getAttribute('href');
+      const navBtns = document.querySelectorAll('.pub-nav a');
+      navBtns.forEach(btn => btn.classList.remove('on'));
+      el.classList.add('on');
+      const pubSites = document.querySelectorAll('.pub-site');
+      if(href === '#all'){
+        // if(pubSites) pubSites.forEach(el => el.style.removeProperty('display'));
+        if(pubSites) pubSites.forEach(el => el.classList.remove('d-none'));
+        pubUtil.setUrlParams(false);
+      }else{
+        const showSite = document.querySelector(href+'.pub-site');
+        if(pubSites && showSite) {
+          // pubSites.forEach(el => el.style.display = 'none');
+          // showSite.style.removeProperty('display');
+          pubSites.forEach(el => el.classList.add('d-none'));
+          showSite.classList.remove('d-none');
         }
-      //}
+        const idx = parseInt(href.replace(/\D/g, ''));
+        pubUtil.setUrlParams('tab', idx);
+      }
+
+      window.dispatchEvent(new Event('scroll'));
     }
     function navReset(){
       const tab = document.querySelector('.pub-nav .pub-all a');
@@ -1277,7 +1274,15 @@ const pubList = {
       if(target.matches('.td-link')){
         resetTDlink();
         target.classList.add('active');
-        if(viewer.classList.contains('on')){
+        if(target.matches('.winpop')){
+          e.preventDefault();
+          const $href = target.getAttribute('href');
+          const $name = $href.split('/').pop();
+          const $size = target.dataset.size.split(',');
+          const $width = parseInt($size[0]);
+          const $height = parseInt($size[1]);
+          window.open($href, $name, 'width=' + $width + ', height=' + $height);
+        }else if(viewer.classList.contains('on')){
           e.preventDefault();
           setViewerIframe(target);
         }
