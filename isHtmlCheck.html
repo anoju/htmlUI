@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>isHtmlCheck(string)</title>
+</head>
+<body>
+<script>
+function isHTML(text) {
+  // 표준 HTML 태그 목록
+  const validTags = [
+      'a', 'span', 'strong','em', 'b', 'br', 'hr', 'i', 'img',
+      'div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'ul', 'ol', 'li', 'table', 'tr', 'td', 'th', 'thead', 'tbody',
+      'input', 'form', 'button', 'select', 'option', 'label', 'header', 'footer',
+      'nav', 'article', 'section', 'aside', 'main', 'figure', 'figcaption',
+  ];
+
+  // 태그 패턴을 만듭니다
+  const tagPattern = validTags.join('|');
+  const htmlRegex = new RegExp(`<(?:\\/?)(${tagPattern})(?:\\s+[^>]*>|>)`, 'i');
+  
+  return htmlRegex.test(text);
+}
+
+// 사용 예시
+console.log(isHTML("Hello<strong>Hello</strong>Hello")); // true
+console.log(isHTML("<br />")); // true
+console.log(isHTML("<br/>")); // false
+console.log(isHTML("<img>")); // true
+console.log(isHTML('<input value="1">')); // true
+console.log(isHTML("<우리집>")); // false
+</script>
+</body>
+</html>
