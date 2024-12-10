@@ -34,6 +34,68 @@
         background:rgba(255,255,255,0.8);
         z-index:1;
       }
+      [class*=cardimg-]{
+        color:transparent;
+        font-size:0;
+        background-repeat:no-repeat;
+        background-position:center center;
+        background-size:100% 100%;
+      }
+      .matched [class*=cardimg-]{
+        opacity:0.5;
+      }
+      .cardimg-s-A{background-image:url(./img/s-1.png);}
+      .cardimg-s-2{background-image:url(./img/s-2.png);}
+      .cardimg-s-3{background-image:url(./img/s-3.png);}
+      .cardimg-s-4{background-image:url(./img/s-4.png);}
+      .cardimg-s-5{background-image:url(./img/s-5.png);}
+      .cardimg-s-6{background-image:url(./img/s-6.png);}
+      .cardimg-s-7{background-image:url(./img/s-7.png);}
+      .cardimg-s-8{background-image:url(./img/s-8.png);}
+      .cardimg-s-9{background-image:url(./img/s-9.png);}
+      .cardimg-s-10{background-image:url(./img/s-10.png);}
+      .cardimg-s-J{background-image:url(./img/s-J.png);}
+      .cardimg-s-Q{background-image:url(./img/s-Q.png);}
+      .cardimg-s-K{background-image:url(./img/s-K.png);}
+      .cardimg-h-A{background-image:url(./img/h-1.png);}
+      .cardimg-h-2{background-image:url(./img/h-2.png);}
+      .cardimg-h-3{background-image:url(./img/h-3.png);}
+      .cardimg-h-4{background-image:url(./img/h-4.png);}
+      .cardimg-h-5{background-image:url(./img/h-5.png);}
+      .cardimg-h-6{background-image:url(./img/h-6.png);}
+      .cardimg-h-7{background-image:url(./img/h-7.png);}
+      .cardimg-h-8{background-image:url(./img/h-8.png);}
+      .cardimg-h-9{background-image:url(./img/h-9.png);}
+      .cardimg-h-10{background-image:url(./img/h-10.png);}
+      .cardimg-h-J{background-image:url(./img/h-J.png);}
+      .cardimg-h-Q{background-image:url(./img/h-Q.png);}
+      .cardimg-h-K{background-image:url(./img/h-K.png);}
+      .cardimg-c-A{background-image:url(./img/c-1.png);}
+      .cardimg-c-2{background-image:url(./img/c-2.png);}
+      .cardimg-c-3{background-image:url(./img/c-3.png);}
+      .cardimg-c-4{background-image:url(./img/c-4.png);}
+      .cardimg-c-5{background-image:url(./img/c-5.png);}
+      .cardimg-c-6{background-image:url(./img/c-6.png);}
+      .cardimg-c-7{background-image:url(./img/c-7.png);}
+      .cardimg-c-8{background-image:url(./img/c-8.png);}
+      .cardimg-c-9{background-image:url(./img/c-9.png);}
+      .cardimg-c-10{background-image:url(./img/c-10.png);}
+      .cardimg-c-J{background-image:url(./img/c-J.png);}
+      .cardimg-c-Q{background-image:url(./img/c-Q.png);}
+      .cardimg-c-K{background-image:url(./img/c-K.png);}
+      .cardimg-d-A{background-image:url(./img/d-1.png);}
+      .cardimg-d-2{background-image:url(./img/d-2.png);}
+      .cardimg-d-3{background-image:url(./img/d-3.png);}
+      .cardimg-d-4{background-image:url(./img/d-4.png);}
+      .cardimg-d-5{background-image:url(./img/d-5.png);}
+      .cardimg-d-6{background-image:url(./img/d-6.png);}
+      .cardimg-d-7{background-image:url(./img/d-7.png);}
+      .cardimg-d-8{background-image:url(./img/d-8.png);}
+      .cardimg-d-9{background-image:url(./img/d-9.png);}
+      .cardimg-d-10{background-image:url(./img/d-10.png);}
+      .cardimg-d-J{background-image:url(./img/d-J.png);}
+      .cardimg-d-Q{background-image:url(./img/d-Q.png);}
+      .cardimg-d-K{background-image:url(./img/d-K.png);}
   </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen">
@@ -229,9 +291,22 @@
         frontFace.textContent = '?';
 
         const backFace = document.createElement('div');
-        let backFaceClass = 'card-back absolute w-full h-full bg-white rounded-xl flex items-center justify-center font-bold shadow-md border-2 border-blue-200' 
-        if(this.finalOptions.cols <= 8) backFaceClass += ' text-5xl';
-        else backFaceClass += ' text-4xl';
+        let backFaceClass = 'card-back';
+        let imgClass = '';
+        if(card.suit === '♠') imgClass = 's';
+        else if(card.suit === '♥') imgClass = 'h';
+        else if(card.suit === '♣') imgClass = 'c';
+        else if(card.suit === '♦') imgClass = 'd';
+
+        if(imgClass){
+          imgClass = 'cardimg-'+imgClass+'-'+ card.rank;
+          backFaceClass += ' '+imgClass;
+        }else {
+          backFaceClass += ' absolute w-full h-full bg-white rounded-xl flex items-center justify-center font-bold shadow-md border-2 border-blue-200' 
+          if(this.finalOptions.cols <= 8) backFaceClass += ' text-5xl';
+          else backFaceClass += ' text-4xl';
+        }
+
         backFace.className = backFaceClass;
         backFace.textContent = card.display;
 
