@@ -7,28 +7,28 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
       .card {
-          perspective: 1000px;
-          transition: transform 0.3s;
-          transform-style: preserve-3d;
+          perspective:1000px;
+          transition:transform 0.5s;
+          transform-style:preserve-3d;
       }
       .card.flipped {
-          transform: rotateY(180deg);
+          transform:rotateY(180deg);
       }
       .card-front, .card-back {
-          position: absolute;
-          width: 100%;
-          height: 100%;
+          position:absolute;
+          width:100%;
+          height:100%;
           backface-visibility: hidden;
       }
       .card-back {
-          transform: rotateY(180deg);
+          transform:rotateY(180deg);
       }
       .card[data-suit="♥"] .card-back,
       .card[data-suit="♦"] .card-back{
-          color: #EF4444;
+          color:#EF4444;
       }
       .card-timer{
-        pointer-events: none;
+        pointer-events:none;
         position:sticky;
         top:10px;
         background:rgba(255,255,255,0.8);
@@ -59,7 +59,8 @@
           <input type="number" id="timer" min="30" max="300" value="60"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
-        <div class="flex items-end">
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700"><input type="checkbox" id="first" checked> first show</label>
           <button id="start"
             class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 ease-in-out transform hover:scale-105">
             게임 시작
@@ -116,20 +117,22 @@
 
       if (this.finalOptions.firstShow) {
         // 모든 카드를 먼저 보여줌
-        const allCards = this.target.querySelectorAll('.card');
-        allCards.forEach(card => {
-          card.classList.add('flipped');
-        });
-
-        // 3초 후에 카드를 숨기고 타이머 시작
         setTimeout(() => {
+          const allCards = this.target.querySelectorAll('.card');
           allCards.forEach(card => {
-            card.classList.remove('flipped');
+            card.classList.add('flipped');
           });
-          this.startTimer();
-          // 클릭 이벤트 활성화
-          this.enableCardClicks();
-        }, this.finalOptions.firstShowTime);
+
+          // 3초 후에 카드를 숨기고 타이머 시작
+          setTimeout(() => {
+            allCards.forEach(card => {
+              card.classList.remove('flipped');
+            });
+            this.startTimer();
+            // 클릭 이벤트 활성화
+            this.enableCardClicks();
+          }, this.finalOptions.firstShowTime);
+        });
       } else {
         this.startTimer();
         this.enableCardClicks();
@@ -308,12 +311,15 @@
     const rows = parseInt(document.getElementById('rows').value);
     const cols = parseInt(document.getElementById('cols').value);
     const timeLimit = parseInt(document.getElementById('timer').value);
+    const firstShow = document.getElementById('first').checked;
+    console.log(first)
     
     const gameEl = document.getElementById('cardGame');
     const gameOption = {
       rows: rows,
       cols: cols,
       timeLimit: timeLimit,
+      firstShow: firstShow
     };
     currentGame = new MemoryGame(gameEl, gameOption);
   });
