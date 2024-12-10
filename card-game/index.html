@@ -22,7 +22,8 @@
       .card-back {
           transform: rotateY(180deg);
       }
-      .card.flipped[data-suit="♥"], .card.flipped[data-suit="♦"] {
+      .card[data-suit="♥"] .card-back,
+      .card[data-suit="♦"] .card-back{
           color: #EF4444;
       }
   </style>
