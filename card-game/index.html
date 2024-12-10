@@ -222,11 +222,17 @@
         cardElement.dataset.rank = card.rank;
 
         const frontFace = document.createElement('div');
-        frontFace.className = 'card-front absolute w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white text-3xl font-bold shadow-md';
+        let frontFaceClass = 'card-front absolute w-full h-full bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold shadow-md';
+        if(this.finalOptions.cols <= 8) frontFaceClass += ' text-5xl';
+        else frontFaceClass += ' text-4xl';
+        frontFace.className = frontFaceClass;
         frontFace.textContent = '?';
 
         const backFace = document.createElement('div');
-        backFace.className = 'card-back absolute w-full h-full bg-white rounded-xl flex items-center justify-center text-4xl font-bold shadow-md border-2 border-blue-200';
+        let backFaceClass = 'card-back absolute w-full h-full bg-white rounded-xl flex items-center justify-center font-bold shadow-md border-2 border-blue-200' 
+        if(this.finalOptions.cols <= 8) backFaceClass += ' text-5xl';
+        else backFaceClass += ' text-4xl';
+        backFace.className = backFaceClass;
         backFace.textContent = card.display;
 
         cardElement.appendChild(frontFace);
