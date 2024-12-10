@@ -59,22 +59,15 @@
       </div>
     </div>
 
-    <!-- 타이머 디스플레이 -->
-    <div id="timer-display" 
-      class="text-2xl font-bold text-center mb-8 text-blue-800 bg-white rounded-lg shadow-md py-3 max-w-xs mx-auto hidden">
-    </div>
-
-    <!-- 게임 보드 -->
-    <div id="game-container" 
-      class="grid gap-4 justify-center mx-auto p-4 bg-white/50 rounded-xl shadow-xl max-w-6xl hidden">
-    </div>
+    <div id="cardGame"></div>
   </div>
 
 <script>
   class MemoryGame {
     constructor(targetElement, options = {}) {
       this.target = targetElement;
-      
+      if(!this.target) return;
+
       //디폴트 옵션
       this.defaultOptions = {
         rows: 4,
@@ -87,6 +80,7 @@
 
       this.cards = [];
       this.timer = null;
+      this.timerEl = null;
       this.remainingTime = this.finalOptions.timeLimit;
       this.flippedCards = [];
       this.matchedPairs = 0;
@@ -115,12 +109,7 @@
       this.flippedCards = [];
       this.remainingTime = this.finalOptions.timeLimit;
       if (this.timer) clearInterval(this.timer);
-      const container = document.getElementById('game-container');
-      container.innerHTML = '';
-      container.classList.remove('hidden');
-      const timer = document.getElementById('timer-display');
-      timer.classList.remove('hidden');
-      timer.textContent = `남은 시간: ${this.finalOptions.timeLimit}초`;
+      this.target.innerHTML = '';
     }
 
     cleanup() {
@@ -136,11 +125,7 @@
       this.cardListeners.clear();
 
       // DOM 요소 정리
-      const container = document.getElementById('game-container');
-      const timer = document.getElementById('timer-display');
-      container.innerHTML = '';
-      container.classList.add('hidden');
-      timer.classList.add('hidden');
+      this.target.innerHTML = '';
     }
 
     createDeck(pairCount) {
@@ -184,7 +169,14 @@
     }
 
     renderBoard() {
-      const container = document.getElementById('game-container');
+      const timerEl  = document.createElement('div');
+      timerEl.className = 'text-2xl font-bold text-center mb-8 text-blue-800 bg-white rounded-lg shadow-md py-3 max-w-xs mx-auto';
+      timerEl.textContent = `남은 시간: ${this.finalOptions.timeLimit}초`;
+      this.target.appendChild(timerEl);
+      this.timerEl = timerEl;
+
+      const container = document.createElement('div');
+      container.className = 'grid gap-4 justify-center mx-auto p-4 bg-white/50 rounded-xl shadow-xl max-w-6xl';
       container.style.gridTemplateColumns = `repeat(${this.finalOptions.cols}, minmax(100px, 1fr))`;
       
       this.cards.forEach((card, index) => {
@@ -212,6 +204,7 @@
         
         container.appendChild(cardElement);
       });
+      this.target.appendChild(container);
     }
 
     flipCard(cardElement, card) {
@@ -254,7 +247,7 @@
     startTimer() {
       this.timer = setInterval(() => {
         this.remainingTime--;
-        document.getElementById('timer-display').textContent = `남은 시간: ${this.remainingTime}초`;
+        this.timerEl.textContent = `남은 시간: ${this.remainingTime}초`;
             
         if (this.remainingTime <= 0) {
           this.endGame('시간 초과!');
@@ -277,12 +270,14 @@
     const rows = parseInt(document.getElementById('rows').value);
     const cols = parseInt(document.getElementById('cols').value);
     const timeLimit = parseInt(document.getElementById('timer').value);
-    const opt = {
+    
+    const gameEl = document.getElementById('cardGame');
+    const gameOption = {
       rows: rows,
       cols: cols,
       timeLimit: timeLimit,
-    }
-    currentGame = new MemoryGame(opt);
+    };
+    currentGame = new MemoryGame(gameEl, gameOption);
   });
 </script>
 </body>
