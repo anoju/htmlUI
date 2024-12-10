@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <p class="text-center my-4">※ 행 x 열의 값이 짝수여야하며, 54(최대수)를 넘어가면 안됩니다. </p>
+    <p class="text-center my-4">※ 행 x 열의 값이 짝수여야하며, 최대수 108를 넘어가면 안됩니다. </p>
 
     <div id="cardGame"></div>
   </div>
@@ -84,6 +84,8 @@
         rows: 4,
         cols: 4,
         timeLimit: 120,
+        firstShow: true,
+        firstShowTime: 3000
       };
 
       // 옵션 병합
@@ -102,17 +104,36 @@
 
     init() {
       const totalCards = this.finalOptions.rows * this.finalOptions.cols;
-      if (totalCards > 54 || totalCards % 2 !== 0) {
-          alert("카드 수가 올바르지 않습니다. 짝수여야 하며 54장을 넘을 수 없습니다.");
-          this.
-          return;
+      if (totalCards > 108 || totalCards % 2 !== 0) {
+        alert("카드 수가 올바르지 않습니다. 짝수여야 하며 108장을 넘을 수 없습니다.");
+        return;
       }
 
       this.resetGame();
       const deck = this.createDeck(totalCards / 2);
       this.cards = this.shuffleCards(deck);
       this.renderBoard();
-      this.startTimer();
+
+      if (this.finalOptions.firstShow) {
+        // 모든 카드를 먼저 보여줌
+        const allCards = this.target.querySelectorAll('.card');
+        allCards.forEach(card => {
+          card.classList.add('flipped');
+        });
+
+        // 3초 후에 카드를 숨기고 타이머 시작
+        setTimeout(() => {
+          allCards.forEach(card => {
+            card.classList.remove('flipped');
+          });
+          this.startTimer();
+          // 클릭 이벤트 활성화
+          this.enableCardClicks();
+        }, this.finalOptions.firstShowTime);
+      } else {
+        this.startTimer();
+        this.enableCardClicks();
+      }
     }
 
     resetGame() {
@@ -208,14 +229,20 @@
         cardElement.appendChild(frontFace);
         cardElement.appendChild(backFace);
         
-        // 이벤트 리스너 추적을 위해 Map에 저장
+        // 이벤트 리스너는 저장만 하고 바로 추가하지 않음
         const listener = () => this.flipCard(cardElement, card);
         this.cardListeners.set(cardElement, listener);
-        cardElement.addEventListener('click', listener);
         
         container.appendChild(cardElement);
       });
       this.target.appendChild(container);
+    }
+
+    enableCardClicks() {
+      // 저장된 이벤트 리스너들을 카드에 추가
+      this.cardListeners.forEach((listener, element) => {
+        element.addEventListener('click', listener);
+      });
     }
 
     flipCard(cardElement, card) {
