@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>트럼프 카드 짝 찾기</title>
+  <title>카드 짝 찾기 게임</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
       .card {
@@ -72,21 +72,31 @@
 
 <script>
   class MemoryGame {
-    constructor(rows, cols, timeLimit) {
-      this.rows = rows;
-      this.cols = cols;
-      this.timeLimit = timeLimit;
+    constructor(targetElement, options = {}) {
+      this.target = targetElement;
+      
+      //디폴트 옵션
+      this.defaultOptions = {
+        rows: 4,
+        cols: 4,
+        timeLimit: 120,
+      };
+
+      // 옵션 병합
+      this.finalOptions = {...this.defaultOptions, ...options};
+
       this.cards = [];
       this.timer = null;
-      this.remainingTime = timeLimit;
+      this.remainingTime = this.finalOptions.timeLimit;
       this.flippedCards = [];
       this.matchedPairs = 0;
       this.cardListeners = new Map(); // 이벤트 리스너 추적을 위한 Map
+      
       this.init();
     }
 
     init() {
-      const totalCards = this.rows * this.cols;
+      const totalCards = this.finalOptions.rows * this.finalOptions.cols;
       if (totalCards > 54 || totalCards % 2 !== 0) {
           alert("카드 수가 올바르지 않습니다. 짝수여야 하며 54장을 넘을 수 없습니다.");
           this.
@@ -103,14 +113,14 @@
     resetGame() {
       this.matchedPairs = 0;
       this.flippedCards = [];
-      this.remainingTime = this.timeLimit;
+      this.remainingTime = this.finalOptions.timeLimit;
       if (this.timer) clearInterval(this.timer);
       const container = document.getElementById('game-container');
       container.innerHTML = '';
       container.classList.remove('hidden');
       const timer = document.getElementById('timer-display');
       timer.classList.remove('hidden');
-      timer.textContent = `남은 시간: ${this.timeLimit}초`;
+      timer.textContent = `남은 시간: ${this.finalOptions.timeLimit}초`;
     }
 
     cleanup() {
@@ -175,7 +185,7 @@
 
     renderBoard() {
       const container = document.getElementById('game-container');
-      container.style.gridTemplateColumns = `repeat(${this.cols}, minmax(100px, 1fr))`;
+      container.style.gridTemplateColumns = `repeat(${this.finalOptions.cols}, minmax(100px, 1fr))`;
       
       this.cards.forEach((card, index) => {
         const cardElement = document.createElement('div');
@@ -267,7 +277,12 @@
     const rows = parseInt(document.getElementById('rows').value);
     const cols = parseInt(document.getElementById('cols').value);
     const timeLimit = parseInt(document.getElementById('timer').value);
-    currentGame = new MemoryGame(rows, cols, timeLimit);
+    const opt = {
+      rows: rows,
+      cols: cols,
+      timeLimit: timeLimit,
+    }
+    currentGame = new MemoryGame(opt);
   });
 </script>
 </body>
