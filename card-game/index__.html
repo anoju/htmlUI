@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>트럼프 카드 짝 찾기</title>
+    <style>
+        .controls {
+            margin: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+        .game-container {
+            display: grid;
+            gap: 10px;
+            padding: 20px;
+            margin: 0 auto;
+            justify-content: center;
+        }
+        .card {
+            width: 100px;
+            height: 150px;
+            background: #2196F3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            color: white;
+            border-radius: 10px;
+            transition: all 0.3s;
+            position: relative;
+            box-sizing: border-box;
+        }
+        .card.flipped {
+            background: white;
+            color: black;
+            border: 2px solid #2196F3;
+        }
+        .card.matched {
+            background: #4CAF50;
+            cursor: default;
+        }
+        .card.flipped[data-suit="♥"], .card.flipped[data-suit="♦"] {
+            color: red;
+        }
+        #timer-display {
+            font-size: 20px;
+            margin: 20px;
+            text-align:center;
+        }
+        label {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <label>행:</label>
+        <input type="number" id="rows" min="2" max="6" value="4">
+        <label>열:</label>
+        <input type="number" id="cols" min="2" max="9" value="4">
+        <label>시간(초):</label>
+        <input type="number" id="timer" min="30" max="300" value="120">
+        <button id="start">게임 시작</button>
+    </div>
+    <div id="timer-display"></div>
+    <div id="game-container" class="game-container"></div>
+    
+    <script>
+        class MemoryGame {
+            constructor(rows, cols, timeLimit) {
+                this.rows = rows;
+                this.cols = cols;
+                this.timeLimit = timeLimit;
+                this.cards = [];
+                this.timer = null;
+                this.remainingTime = timeLimit;
+                this.flippedCards = [];
+                this.matchedPairs = 0;
+                this.isPlaying = false;
+            }
+
+            initializeGame() {
+                if (this.isPlaying) return;
+                this.isPlaying = true;
+                
+                const totalCards = this.rows * this.cols;
+                if (totalCards > 54 || totalCards % 2 !== 0) {
+                    alert("카드 수가 올바르지 않습니다. 짝수여야 하며 54장을 넘을 수 없습니다.");
+                    this.isPlaying = false;
+                    return;
+                }
+
+                this.resetGame();
+                const deck = this.createDeck(totalCards / 2);
+                this.cards = this.shuffleCards(deck);
+                this.renderBoard();
+                this.startTimer();
+            }
+
+            resetGame() {
+                this.matchedPairs = 0;
+                this.flippedCards = [];
+                this.remainingTime = this.timeLimit;
+                if (this.timer) clearInterval(this.timer);
+                const container = document.getElementById('game-container');
+                container.innerHTML = '';
+                document.getElementById('timer-display').textContent = `남은 시간: ${this.timeLimit}초`;
+            }
+
+            createDeck(pairCount) {
+                const suits = ['♠', '♥', '♣', '♦'];
+                const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+                let allCards = [];
+                
+                // 모든 가능한 카드 조합 생성
+                for (let suit of suits) {
+                    for (let rank of ranks) {
+                        allCards.push({
+                            suit: suit,
+                            rank: rank,
+                            display: `${suit}${rank}`
+                        });
+                    }
+                }
+                
+                // 조커 추가
+                allCards.push({ suit: '🃏', rank: '1', display: '🃏1' });
+                allCards.push({ suit: '🃏', rank: '2', display: '🃏2' });
+                
+                // 카드를 섞고 필요한 만큼만 선택
+                allCards = this.shuffleCards(allCards).slice(0, pairCount);
+                
+                // 각 카드의 쌍을 만들어 반환
+                let pairedCards = [];
+                allCards.forEach(card => {
+                    pairedCards.push({...card}, {...card});
+                });
+                
+                return pairedCards;
+            }
+
+            shuffleCards(cards) {
+                for (let i = cards.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [cards[i], cards[j]] = [cards[j], cards[i]];
+                }
+                return cards;
+            }
+
+            renderBoard() {
+                const container = document.getElementById('game-container');
+                container.style.gridTemplateColumns = `repeat(${this.cols}, 100px)`;
+                
+                this.cards.forEach((card, index) => {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'card';
+                    cardElement.dataset.index = index;
+                    cardElement.dataset.suit = card.suit;
+                    cardElement.dataset.rank = card.rank;
+                    cardElement.textContent = '?';
+                    
+                    cardElement.addEventListener('click', () => this.flipCard(cardElement, card));
+                    container.appendChild(cardElement);
+                });
+            }
+
+            flipCard(cardElement, card) {
+                if (
+                    cardElement.classList.contains('flipped') ||
+                    cardElement.classList.contains('matched') ||
+                    this.flippedCards.length >= 2
+                ) return;
+
+                cardElement.classList.add('flipped');
+                cardElement.textContent = card.display;
+                this.flippedCards.push({ element: cardElement, card: card });
+
+                if (this.flippedCards.length === 2) {
+                    setTimeout(() => this.checkMatch(), 500);
+                }
+            }
+
+            checkMatch() {
+                const [card1, card2] = this.flippedCards;
+                const isMatch = card1.card.suit === card2.card.suit && 
+                              card1.card.rank === card2.card.rank;
+
+                if (isMatch) {
+                    card1.element.classList.add('matched');
+                    card2.element.classList.add('matched');
+                    this.matchedPairs++;
+
+                    if (this.matchedPairs === this.cards.length / 2) {
+                        this.endGame('축하합니다! 모든 카드를 맞추셨습니다!');
+                    }
+                } else {
+                    card1.element.classList.remove('flipped');
+                    card2.element.classList.remove('flipped');
+                    card1.element.textContent = '?';
+                    card2.element.textContent = '?';
+                }
+
+                this.flippedCards = [];
+            }
+
+            startTimer() {
+                this.timer = setInterval(() => {
+                    this.remainingTime--;
+                    document.getElementById('timer-display').textContent = 
+                        `남은 시간: ${this.remainingTime}초`;
+                        
+                    if (this.remainingTime <= 0) {
+                        this.endGame('시간 초과!');
+                    }
+                }, 1000);
+            }
+
+            endGame(message) {
+                clearInterval(this.timer);
+                alert(message);
+                this.isPlaying = false;
+            }
+        }
+
+        // 게임 시작 버튼 이벤트 리스너
+        document.getElementById('start').addEventListener('click', () => {
+            const rows = parseInt(document.getElementById('rows').value);
+            const cols = parseInt(document.getElementById('cols').value);
+            const timeLimit = parseInt(document.getElementById('timer').value);
+            
+            const game = new MemoryGame(rows, cols, timeLimit);
+            game.initializeGame();
+        });
+    </script>
+</body>
+</html>
