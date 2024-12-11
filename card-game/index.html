@@ -133,7 +133,7 @@
       </div>
     </div>
 
-    <p class="text-center my-4">※ 행 x 열의 값이 짝수여야하며, 최대수 <span id="max"></span>를 넘어가면 안됩니다. </p>
+    <p class="text-center my-4">※ 행 x 열의 값이 최대 <span id="max"></span>를(을) 넘어가면 안됩니다. </p>
 
     <div id="cardGame"></div>
   </div>
@@ -181,8 +181,8 @@
         return;
       }
 
-      if (totalCards > max || totalCards % 2 !== 0) {
-        alert(`카드 수가 올바르지 않습니다. 짝수여야 하며 ${max}장을 넘을 수 없습니다.`);
+      if (totalCards > max) {
+        alert(`카드 수가 올바르지 않습니다. 최대 ${max}장을 넘을 수 없습니다.`);
         return;
       }
 
