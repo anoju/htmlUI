@@ -444,6 +444,18 @@
         firstShow: firstShow
       };
       currentGame = new MemoryGame(gameEl, gameOption);
+
+      const rect = gameEl.getBoundingClientRect();
+      const toTop = rect.top;
+      const documentElement = document.documentElement;
+      setTimeout(function(){
+        if(documentElement.scrollHeight > documentElement.clientHeight){
+          window.scrollTo({
+            top: toTop,
+            behavior: 'smooth'
+          });
+        }
+      });
     });
   };
 
