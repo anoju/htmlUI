@@ -96,6 +96,8 @@
       .cardimg-♦J{background-image:url(./img/d-J.png);}
       .cardimg-♦Q{background-image:url(./img/d-Q.png);}
       .cardimg-♦K{background-image:url(./img/d-K.png);}
+      .cardimg-joker1{background-image:url(./img/joker1.png);}
+      .cardimg-joker2{background-image:url(./img/joker2.png);}
   </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen">
@@ -385,8 +387,8 @@
     }
 
     // 조커 추가
-    cards.push({txt:'🃏1',useClass:false});
-    cards.push({txt:'🃏2',useClass:false});
+    cards.push({txt:'joker1',useClass:true});
+    cards.push({txt:'joker2',useClass:true});
 
     let preloadWrap = document.querySelector('.pre-load');
     if(!preloadWrap){
