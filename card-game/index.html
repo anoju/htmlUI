@@ -110,12 +110,12 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="space-y-2">
           <label class="block text-sm font-medium text-gray-700">행:</label>
-          <input type="number" id="rows" min="2" max="6" value="4"
+          <input type="number" id="rows" min="2" max="6" value=""
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
         <div class="space-y-2">
           <label class="block text-sm font-medium text-gray-700">열:</label>
-          <input type="number" id="cols" min="2" max="9" value="6"
+          <input type="number" id="cols" min="2" max="9" value=""
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
         <div class="space-y-2">
@@ -133,7 +133,7 @@
       </div>
     </div>
 
-    <p class="text-center my-4">※ 행 x 열의 값이 짝수여야하며, 최대수 108를 넘어가면 안됩니다. </p>
+    <p class="text-center my-4">※ 행 x 열의 값이 짝수여야하며, 최대수 <span id="max"></span>를 넘어가면 안됩니다. </p>
 
     <div id="cardGame"></div>
   </div>
@@ -388,6 +388,9 @@
     cards.push({txt:'joker1',useClass:true});
     cards.push({txt:'joker2',useClass:true});
 
+    let maxEl = document.querySelector('#max');
+    maxEl.textContent = cards.length * 2;
+
     let preloadWrap = document.querySelector('.pre-load');
     if(!preloadWrap){
       preloadWrap = document.createElement('div');
@@ -399,30 +402,53 @@
       preloadWrap.innerHTML = html;
       document.body.appendChild(preloadWrap);
     }
-
     return cards;
   };
-  const cards = makeCards();
+  
+  //디바이스 확인
+  function isMobileDevice() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    return /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+  }
+
+  // 모바일, pc 구분 초기세팅
+  function firstSetting(){
+    if (isMobileDevice()) {
+      document.getElementById('rows').value = 6;
+      document.getElementById('cols').value = 4;
+    } else {
+      document.getElementById('rows').value = 3;
+      document.getElementById('cols').value = 8;
+    }
+  }
 
   let currentGame = null; // 현재 실행 중인 게임 인스턴스를 추적
-  document.getElementById('start').addEventListener('click', () => {
-    // 기존 게임이 있다면 정리
-    if (currentGame) currentGame.cleanup();
+  function gameSet(){
+    firstSetting();
+    const cards = makeCards();
+    document.getElementById('start').addEventListener('click', () => {
+      // 기존 게임이 있다면 정리
+      if (currentGame) currentGame.cleanup();
 
-    const rows = parseInt(document.getElementById('rows').value);
-    const cols = parseInt(document.getElementById('cols').value);
-    const timeLimit = parseInt(document.getElementById('timer').value);
-    const firstShow = document.getElementById('first').checked;
+      const rows = parseInt(document.getElementById('rows').value);
+      const cols = parseInt(document.getElementById('cols').value);
+      const timeLimit = parseInt(document.getElementById('timer').value);
+      const firstShow = document.getElementById('first').checked;
 
-    const gameEl = document.getElementById('cardGame');
-    const gameOption = {
-      cards: cards,
-      rows: rows,
-      cols: cols,
-      timeLimit: timeLimit,
-      firstShow: firstShow
-    };
-    currentGame = new MemoryGame(gameEl, gameOption);
+      const gameEl = document.getElementById('cardGame');
+      const gameOption = {
+        cards: cards,
+        rows: rows,
+        cols: cols,
+        timeLimit: timeLimit,
+        firstShow: firstShow
+      };
+      currentGame = new MemoryGame(gameEl, gameOption);
+    });
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    gameSet()
   });
 </script>
 </body>
