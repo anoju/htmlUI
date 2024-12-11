@@ -225,9 +225,7 @@
 
     cleanup() {
       // 타이머 정리
-      if (this.timer) {
-        clearInterval(this.timer);
-      }
+      if (this.timer) clearInterval(this.timer);
 
       // 이벤트 리스너 제거
       this.cardListeners.forEach((listener, element) => {
@@ -359,7 +357,7 @@
         this.remainingTime--;
         this.timerEl.textContent = `남은 시간: ${this.remainingTime}초`;
 
-        if (this.remainingTime <= 0) {
+        if (this.remainingTime < 0) {
           this.endGame('시간 초과!');
         }
       }, 1000);
