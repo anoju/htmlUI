@@ -162,6 +162,11 @@ const pubUtil = {
       newUrl = newUrl+'?'+params.toString();
     }
     history.pushState(null, '', newUrl);
+  },
+  getMatchTextLength(str, char){
+    const regex = new RegExp(char, 'g');
+    const matches = str.match(regex);
+    return matches ? matches.length : 0;
   }
 };
 
@@ -253,6 +258,12 @@ const pubList = {
       tabIdx = parseInt(tabIdx);
       const tabBtn = document.querySelector(`.pub-nav .pub-menu > ul > li:nth-child(${tabIdx+1}) a`);
       if(tabBtn) tabBtn.click();
+    }
+    let stg = pubUtil.getUrlParams().stg;
+    if(stg){
+      stg = parseInt(stg);
+      const btn = document.querySelector(`.pub-filter-status:not(:disabled)[data-status='${stg}']`);
+      if(btn) btn.click();
     }
   },
   makeList(){
@@ -524,7 +535,7 @@ const pubList = {
     }
     
 
-    const thSelKeys = ['DEP2', 'DEP3', 'DEP4', 'DEP5', 'DEP6', 'END'];
+    const thSelKeys = ['DEP2', 'DEP3', 'DEP4', 'DEP5', 'DEP6', 'END', 'PUB', 'DGN', 'PLA'];
     const thSelList = pubList.countByMultipleKeys(dataItems, thSelKeys);
     const thSelOpts = pubList.changeSelOpt(thSelList);
     const thSelect = (idx,str) => {
@@ -612,15 +623,15 @@ const pubList = {
                 <th class="type">유형</th>
                 <th class="url">URL</th>
                 <th class="id">화면ID</th>
-                <th class="publisher">퍼블</th>
-                <th class="designer">디자인</th>
-                <th class="planner">기획</th>
-                <th class="developer">개발</th>
+                <th class="publisher">퍼블<button type="button" class="pub-th-btn" aria-pressed="false"></button></th>
+                <th class="designer">디자인<button type="button" class="pub-th-btn" aria-pressed="false"></button></th>
+                <th class="planner">기획<button type="button" class="pub-th-btn" aria-pressed="false"></button></th>
+                <th class="developer">개발<button type="button" class="pub-th-btn" aria-pressed="false"></button></th>
                 <th class="wbs">완료예정일</th>
                 <th class="status">${thSelect(5, '최종완료일')}</th>
                 <th class="modify">
                   ${modifySelect('수정이력')}
-                  <button type="button" aria-pressed="false"></button>
+                  <button type="button" class="pub-th-btn" aria-pressed="false"></button>
                 </th>
                 <th class="memo">비고</th>
               </tr>
@@ -903,12 +914,33 @@ const pubList = {
     const getModifyTd = () => {
       const txt = modify.replace(/\[/g, '').replace(/\]/g, '').trim();
       const liHtml = convertModifyList(modify);
-      return txt ? `<button type="button" aria-pressed="false"></button><ul>${liHtml}</ul>`: '';
+      const matchTextLength = pubUtil.getMatchTextLength(liHtml, '<li ');
+      let html = `<ul>${liHtml}</ul>`;
+      if(matchTextLength > 1) html = '<button type="button" aria-pressed="false"></button>' + html;
+      html = '<div class="pub-modify-list">' + html + '</div>';
+      return txt ? html : '';
     };
     const modifyTd = getModifyTd();
 
     const trHtml = document.createElement('tr');
     trHtml.className = trClassAry.join(' ');
+    
+    const userList = (str) => {
+      if(str === '' || !str) return '';
+      const strAry = str.split(',');
+      if(strAry.length === 1){
+        return `<strong>${strAry[0].trim()}</strong>`
+      }else{
+        let liHtml = ''
+        strAry.forEach((item, i) => {
+          if(i === 0) liHtml += `<li><strong>${item.trim()}</strong><li>`;
+          else liHtml += `<li><span>${item.trim()}</span><li>`;
+        });
+        return `<div class="pub-ul-list"><button type="button" aria-pressed="false"></button><ul>${liHtml}</ul></div>`;
+      }
+      
+    }
+
     const trInnerHtml = `
       <td class="no"><span>${index+1}</span></td>
       <td class="dep2">${depth2Html}</td>
@@ -920,10 +952,10 @@ const pubList = {
       ${typeTd}
       <td class="url">${url}</td>
       <td class="id">${idTd()}</td>
-      <td class="publisher">${publisher}</td>
-      <td class="designer">${designer}</td>
-      <td class="planner">${planner}</td>
-      <td class="developer">${developer}</td>
+      <td class="publisher">${userList(publisher)}</td>
+      <td class="designer">${userList(designer)}</td>
+      <td class="planner">${userList(planner)}</td>
+      <td class="developer">${userList(developer)}</td>
       <td class="wbs"><em><span>${schedule}</span>${pubUtil.getWeek(schedule)}</em></td>
       <td class="status">${statusTd()}</td>
       <td class="modify">${modifyTd}</td>
@@ -1073,27 +1105,27 @@ const pubList = {
     }
     function highlightTextNodes(node, searchText){
       const regex = new RegExp(searchText, 'gi');
-    
-      // 텍스트 노드만 처리
-      if (node.nodeType === Node.TEXT_NODE) {
-        if (node.textContent.match(regex)) {
-          // 텍스트 노드의 내용을 검색어 기준으로 분할하여 처리
+
+      //텍스트 노드만 처리
+      if(node.nodeType === Node.TEXT_NODE){
+        if(node.textContent.match(regex)){
+          // 텍스트 노드의 내용을 검색어기준으로 분할하여 처리
           const fragment = document.createDocumentFragment();
           const parts = node.textContent.split(regex);
           const matches = node.textContent.match(regex);
-          
+
           parts.forEach((part, index) => {
             // 일반 텍스트 추가
-            if (part) {
+            if(part){
               fragment.appendChild(document.createTextNode(part));
             }
-            
+
             // 매칭된 텍스트에 하이라이트 적용
-            if (matches && index < parts.length - 1) {
-              const highlight = document.createElement('span');
-              highlight.className = 'pub-highlight';
-              highlight.textContent = matches[index];
-              fragment.appendChild(highlight);
+            if(matches && index < parts.length - 1){
+              const span = document.createElement('span');
+              span.className = 'pub-highlight';
+              span.textContent = matches[index];
+              fragment.appendChild(span);
             }
           });
           
@@ -1281,6 +1313,7 @@ const pubList = {
         e.preventDefault();
         if(target.classList.contains('on')) return;
         navActive(target);
+        window.scrollTo({top:0});
       }
 
       // ID 링크 클릭
@@ -1325,11 +1358,13 @@ const pubList = {
         pubUtil.clipboardCopy(copyMsg);
       }
 
-      //수정이력 확장버튼
-      if (target.matches('th.modify button, td.modify button')){
+      //작업자, 수정이력 확장버튼
+      if (target.matches('th button[aria-pressed], td button[aria-pressed]')){
         e.preventDefault();
-        const cell = target.closest('.modify')
-        
+        const cell = target.closest('th') ? target.closest('th') : target.closest('td');
+        const cells = Array.from(target.closest('tr').children);
+        const cellIndex = cells.indexOf(cell);
+
         let setVal = null;
         if (target.ariaPressed === 'false') setVal = 'true';
         else setVal = 'false';
@@ -1337,10 +1372,12 @@ const pubList = {
 
         if(cell.tagName === 'TH'){
           const table = target.closest('.pub-table');
-          const tdBtn = table.querySelectorAll('.pub-tbody td.modify button');
-          if(tdBtn){
-            tdBtn.forEach(btn => {
-              btn.ariaPressed = setVal;
+          const tds = table.querySelectorAll(`.pub-tbody td:nth-child(${cellIndex+1})`);
+          if(tds){
+            tds.forEach(td => {
+              const btn = td.querySelector('button[aria-pressed]');
+              console.log(td, btn)
+              if(btn) btn.ariaPressed = setVal;
             });
           }
         }
@@ -1408,6 +1445,10 @@ const pubList = {
     // change 이벤트
     document.addEventListener('change', (e) => {
       const target = e.target;
+
+      if (target.matches('.pub-device-select')){
+        setViewerSize();
+      }
 
       if (target.matches('th.dep2 select, th.dep3 select, th.dep4 select, th.dep5 select, th.dep6 select, th.status select, th.modify select')) {
         const selVal = target.value;
