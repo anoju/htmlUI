@@ -393,13 +393,13 @@ html:not(#isMobile) [data-layout="index"] .pub-site .pub-table .pub-tbody tr:hov
 [data-layout="index"] .pub-site .pub-table .pub-tbody td .pub-copy:hover::before,
 [data-layout="index"] .pub-site .pub-table .pub-tbody td .pub-copy:hover::after {background-color:#fff;}
 html:not(#isMobile) [data-layout="index"] .pub-site .pub-table .pub-tbody td .pub-copy ~ span {display:inline-block;padding-right:15px;}
-[data-layout="index"] .pub-site .pub-table .modify button {display:inline-flex;align-items:center;justify-content:center;position:absolute;right:6px;top:50%;z-index:1;width:12px;height:12px;margin-top:-6px;border:1px solid #ccc;border-radius:2px;background-color:#fff;}
-[data-layout="index"] .pub-site .pub-table .modify button::before {content:"";border:solid transparent;border-width:0 3px;border-top:4px solid #111;transform:rotate(0deg);}
-[data-layout="index"] .pub-site .pub-table .modify button:hover,
-[data-layout="index"] .pub-site .pub-table .modify button[aria-pressed="true"] {border-color:#333;background-color:#333;}
-[data-layout="index"] .pub-site .pub-table .modify button:hover::before {border-top-color:#fff;}
-[data-layout="index"] .pub-site .pub-table .modify button[aria-pressed="true"]::before {border-top-color:#fff;transform:rotate(180deg);}
-[data-layout="index"] .pub-site .pub-table .pub-tbody td.modify li {display:flex;align-items:center;overflow:hidden;height:100%;min-height:31px;padding:0 12px;line-height:1;text-align:left;white-space:nowrap;cursor:help;}
+[data-layout="index"] .pub-site .pub-table td.modify button {display:inline-flex;align-items:center;justify-content:center;position:absolute;right:0;top:9px;z-index:1;width:12px;height:12px;border:1px solid #ccc;border-radius:2px;background-color:#fff;}
+[data-layout="index"] .pub-site .pub-table td.modify button::before {content:"";border:solid transparent;border-width:0 3px;border-top:4px solid #111;transform:rotate(0deg);}
+[data-layout="index"] .pub-site .pub-table td.modify button:hover,
+[data-layout="index"] .pub-site .pub-table td.modify button[aria-pressed="true"] {border-color:#333;background-color:#333;}
+[data-layout="index"] .pub-site .pub-table td.modify button:hover::before {border-top-color:#fff;}
+[data-layout="index"] .pub-site .pub-table td.modify button[aria-pressed="true"]::before {border-top-color:#fff;transform:rotate(180deg);}
+[data-layout="index"] .pub-site .pub-table .pub-tbody td.modify li {display:flex;align-items:center;overflow:hidden;height:100%;min-height:30px;padding:0 12px;line-height:1;text-align:left;white-space:nowrap;cursor:help;}
 [data-layout="index"] .pub-site .pub-table .pub-tbody td.modify li[style*="list-item"] {display:flex !important;}
 [data-layout="index"] .pub-site .pub-table .pub-tbody td.modify li.today {color:#afafaf;}
 [data-layout="index"] .pub-site .pub-table .pub-tbody td.modify li + li::after {content:"";position:absolute;left:6px;right:18px;top:0;height:1px;border-top:1px solid rgba(0,0,0,.03);}
@@ -872,3 +872,22 @@ button > *,
     transform: rotate(450deg);
   }
 }
+.pub-modify-list{position:relative;}
+.pub-ul-list{position:relative;padding-right:16px;margin-right:-8px;line-height:16px;}
+.pub-ul-list button,
+.pub-th-btn {display:inline-flex;align-items:center;justify-content:center;position:absolute;width:12px;height:12px;border:1px solid #ccc;border-radius:2px;background-color:#fff;}
+.pub-ul-list button{right:0;top:2px;z-index:1;}
+.pub-th-btn {right:0;top:50%;margin-top:-6px;}
+.pub-ul-list button::before,
+.pub-th-btn::before {content:"";border:solid transparent;border-width:0 3px;border-top:4px solid #111;transform:rotate(0deg);}
+.pub-ul-list button:hover,
+.pub-ul-list button[aria-pressed="true"],
+.pub-th-btn:hover,
+.pub-th-btn[aria-pressed="true"] {border-color:#333;background-color:#333;}
+.pub-ul-list button:hover::before,
+.pub-th-btn:hover::before {border-top-color:#fff;}
+.pub-ul-list button[aria-pressed="true"]::before,
+.pub-th-btn[aria-pressed="true"]::before {border-top-color:#fff;transform:rotate(180deg);}
+.pub-ul-list ul{list-style:none;}
+.pub-ul-list button[aria-pressed="false"] + ul li:not(:first-child){display:none;}
+.pub-ul-list span{color:#888;font-size:14px;}
