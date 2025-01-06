@@ -62,7 +62,7 @@ const pubUtil = {
   isValidDate (dateStr) {
     const regex = /^\d{4}-\d{2}-\d{2}$/;
     if (!regex.test(dateStr)) return false;
-    
+
     const date = new Date(dateStr);
     return date instanceof Date && !isNaN(date);
   },
@@ -112,6 +112,7 @@ const pubUtil = {
       if(row.COUNT){
         if (row.COUNT === '0') row.COUNT = '미사용';
         if (row.COUNT === '1') row.COUNT = '사용';
+        if (row.COUNT === '2') row.COUNT = '미사용';
       }
       if(row.STATUS){
         if (row.STATUS === '0') row.STATUS = '삭제';
@@ -264,6 +265,10 @@ const pubList = {
       stg = parseInt(stg);
       const btn = document.querySelector(`.pub-filter-status:not(:disabled)[data-status='${stg}']`);
       if(btn) btn.click();
+    }
+    let mdf = pubUtil.getUrlParams().mdf;
+    if(mdf){
+      pubEvt.filterModifyTr(mdf);
     }
   },
   makeList(){
@@ -437,6 +442,20 @@ const pubList = {
       if(num) return `<strong class="pub-alarm"><span>${num}</span></strong>`;
       else return '';
     }
+    let isModifyYesterday = false;
+    let isModifyToday = false;
+    const modifyDates = pubModify.modifyDates ? pubModify.modifyDates : pubModify.getModifyDates();
+    if(modifyDates && modifyDates.length){
+      const prevDates = pubUtil.getPrevDates();
+      const todayDate = pubUtil.getToday();
+      modifyDates.forEach(date => {
+        if(prevDates.includes(date)) isModifyYesterday = true;
+        if(date === todayDate) isModifyToday = true;
+      });
+    };
+    const modifyYesterdayHtml = isModifyYesterday ? `<li><button type="button" class="pub-modify-sel" data-date="yesterday">어제수정</button></li>` : '';
+    const modifyTodayHtml = isModifyToday ? `<li><button type="button" class="pub-modify-sel" data-date="today">오늘수정</button></li>` : '';
+
     const util2Html = `<div class="pub-label">
       <ul>
         <li>
@@ -462,6 +481,8 @@ const pubList = {
         </li>
       </ul>
       <ul>
+        ${modifyYesterdayHtml}
+        ${modifyTodayHtml}
         <li class="history">
           <button type="button" class="pub-modify-open" ${!filterData.modify.length ? `disabled="disabled"`: ''}>수정이력</button>
         </li>
@@ -470,6 +491,7 @@ const pubList = {
         </li>
       </ul>
     </div>`;
+
     const sideInnerHtml = `
       <div class="pub-side-inr">
         ${totalHtml}
@@ -486,19 +508,19 @@ const pubList = {
     const rtnObj = {};
     rtnObj.total = data; // 전체
     rtnObj.unuse = data.filter(item => parseInt(item.COUNT) === 0);
-    rtnObj.useTotal = data.filter(item => parseInt(item.COUNT) !== 0);
-    rtnObj.del = data.filter(item => parseInt(item.STATUS) === 0 && parseInt(item.COUNT) !== 0);
-    rtnObj.end = data.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) !== 0);
-    rtnObj.endDel = data.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) === 0 && parseInt(item.COUNT) !== 0);
-    rtnObj.wait = data.filter(item => parseInt(item.STATUS) === 1 && item.END.trim() === '' && parseInt(item.COUNT) !== 0);
-    rtnObj.ing = data.filter(item => parseInt(item.STATUS) === 2 && item.END.trim() === '' && parseInt(item.COUNT) !== 0);
-    rtnObj.chk = data.filter(item => parseInt(item.STATUS) === 3 && item.END.trim() === '' && parseInt(item.COUNT) !== 0);
-    rtnObj.reChk = data.filter(item => parseInt(item.STATUS) === 4 && item.END.trim() === '' && parseInt(item.COUNT) !== 0);
+    rtnObj.useTotal = data.filter(item => parseInt(item.COUNT) === 1);
+    rtnObj.del = data.filter(item => parseInt(item.STATUS) === 0 && parseInt(item.COUNT) === 1);
+    rtnObj.end = data.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) === 1);
+    rtnObj.endDel = data.filter(item => item.END.trim() !== '' && parseInt(item.STATUS) === 0 && parseInt(item.COUNT) === 1);
+    rtnObj.wait = data.filter(item => parseInt(item.STATUS) === 1 && item.END.trim() === '' && parseInt(item.COUNT) === 1);
+    rtnObj.ing = data.filter(item => parseInt(item.STATUS) === 2 && item.END.trim() === '' && parseInt(item.COUNT) === 1);
+    rtnObj.chk = data.filter(item => parseInt(item.STATUS) === 3 && item.END.trim() === '' && parseInt(item.COUNT) === 1);
+    rtnObj.reChk = data.filter(item => parseInt(item.STATUS) === 4 && item.END.trim() === '' && parseInt(item.COUNT) === 1);
     rtnObj.modify = data.filter(item => {
-      return item.MODIFY.replace(/\[/g, '').replace(/\]/g, '').trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) !== 0
+      return item.MODIFY.replace(/\[/g, '').replace(/\]/g, '').trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) === 1
     });
     rtnObj.delay = data.filter(item => {
-      return item.WBS.trim() !== '' && new Date(item.WBS.trim()) > new Date() && item.END.trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) !== 0
+      return item.WBS.trim() !== '' && new Date(item.WBS.trim()) > new Date() && item.END.trim() !== '' && parseInt(item.STATUS) !== 0 && parseInt(item.COUNT) === 1
     });
     return rtnObj;
   },
@@ -508,7 +530,7 @@ const pubList = {
 
     const dataItems = data.items;
     const fragment = document.createDocumentFragment();
-    const allModifyDateAry = new Set(); 
+    const allModifyDateAry = new Set();
     dataItems.forEach((item, i) => {
       const row = pubList.createTableRow(item, i);
       const tr = row.querySelector('tr');
@@ -533,7 +555,7 @@ const pubList = {
       }
       return rtnVal;
     }
-    
+
 
     const thSelKeys = ['DEP2', 'DEP3', 'DEP4', 'DEP5', 'DEP6', 'END', 'PUB', 'DGN', 'PLA'];
     const thSelList = pubList.countByMultipleKeys(dataItems, thSelKeys);
@@ -786,6 +808,8 @@ const pubList = {
     const trClassAry = ['tr'];
     if(count === 0) {
       trClassAry.push('unuse');
+    }else if(count === 2){
+      trClassAry.push('nocount');
     }else{
       if(end){
         if(status === 0) {
@@ -848,7 +872,7 @@ const pubList = {
         if(prevDates.includes(end)) isStateYesterday = true;
         if(end === todayDate) isStateToday = true;
         rtnVal = `<em><span>${end}</span>${pubUtil.getWeek(end)}</em>`;
-      }else if(count !== 0){
+      }else if(count === 1){
         if(status === 2) rtnVal = '<em>퍼블중</em>';
         else if(status === 3) rtnVal = '<em>검토중</em>';
         else if(status === 4) rtnVal = '<em>재검토중</em>';
@@ -866,7 +890,7 @@ const pubList = {
         const date = new Date(dateStr);
         return date instanceof Date && !isNaN(date);
       };
-  
+
       // 모든 매칭을 객체 배열로 변환
       const matches = Array.from(htmlString.matchAll(/\[(\d{4}-\d{2}-\d{2}) (.*?)\]/g))
         .map(([match, date, content]) => ({
@@ -875,13 +899,13 @@ const pubList = {
           timestamp: new Date(date).getTime()
         }))
         .filter(item => isValidDate(item.date)); // 유효한 날짜만 필터링
-  
+
       // 날짜별 중복 체크
       const duplicates = matches.reduce((acc, item) => {
         acc[item.date] = (acc[item.date] || 0) + 1;
         return acc;
       }, {});
-  
+
       // 중복 날짜 경고
       Object.entries(duplicates)
         .filter(([date, count]) => count > 1)
@@ -890,25 +914,31 @@ const pubList = {
           // console.warn(`경고: ${id}항목의 ${date} 날짜가 ${count}번 중복되었습니다.`);
           alert(`경고: ${id}항목의 수정이력 날짜 ${date}가 ${count}번 중복되었습니다.`);
         });
-  
+
       // 타임스탬프로 정렬 (내림차순)
       const sortedMatches = matches.sort((a, b) => b.timestamp - a.timestamp);
-  
+
       // HTML 생성
       const result = sortedMatches.map(({ date, content }) => {
         const weekday = pubUtil.getWeek(date);
-        if(prevDates.includes(date)) isModifyYesterday = true;
-        if(date === todayDate) isModifyToday = true;
+        if(prevDates.includes(date)) {
+          trClassAry.push('tr-modify_yesterday');
+          isModifyYesterday = true;
+        }
+        if(date === todayDate) {
+          trClassAry.push('tr-modify_today');
+          isModifyToday = true;
+        }
         const dateWithoutHyphen = date.replace(/-/g, '');
         modifyDateAry.push(dateWithoutHyphen);
         trClassAry.push('tr-modify_' + dateWithoutHyphen);
 
         return `<li title="${date} ${content}"><em><span>${date}</span>${weekday}</em><p>${content}</p></li>`;
       }).join('');
-  
+
       // 처리된 항목 수 반환 (디버깅용)
       // console.log(`총 ${sortedMatches.length}개 항목 처리됨`);
-      
+
       return result;
     };
     const getModifyTd = () => {
@@ -924,7 +954,7 @@ const pubList = {
 
     const trHtml = document.createElement('tr');
     trHtml.className = trClassAry.join(' ');
-    
+
     const userList = (str) => {
       if(str === '' || !str) return '';
       const strAry = str.split(',');
@@ -938,7 +968,7 @@ const pubList = {
         });
         return `<div class="pub-ul-list"><button type="button" aria-pressed="false"></button><ul>${liHtml}</ul></div>`;
       }
-      
+
     }
 
     const trInnerHtml = `
@@ -982,242 +1012,11 @@ const pubList = {
     return fragment;
   },
   action(){
-    function toggleAllTr(isShow){
-      const trs = document.querySelectorAll('.tr');
-      if(trs){
-        // if(isShow) trs.forEach(tr => tr.style.removeProperty('display'));
-        // else trs.forEach(tr => tr.style.display = 'none');
-        trs.forEach(tr => tr.classList.toggle('d-none', !isShow));
-      }
-    }
-    function showStateTr(str){
-      const num = typeof str === 'string' ? Number(str) : str;
-      let className = null;
-      if(num === 0) className = '.del'
-      else if(num === 1) className = '.wait'
-      else if(num === 2) className = '.ing'
-      else if(num === 3) className = '.chk'
-      if(!className) return;
-      const trs = document.querySelectorAll('.tr'+className);
-      // if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
-      if(trs) trs.forEach(tr => tr.classList.remove('d-none'));
-    }
-    function toggleAllTable(isShow){
-      const tables = document.querySelectorAll('.pub-table');
-      if(tables){
-        // if(isShow) tables.forEach(table => table.style.removeProperty('display'));
-        // else tables.forEach(table => table.style.display = 'none');
-        tables.forEach(table => table.classList.toggle('d-none', !isShow));
-      }
-    }
-    function toggleTableTr(target, isShow){
-      const wrap = target.closest('.pub-site');
-      const trs = wrap.querySelectorAll('.tr');
-      if(trs){
-        // if(isShow) trs.forEach(tr => tr.style.removeProperty('display'));
-        // else trs.forEach(tr => tr.style.display = 'none');
-        trs.forEach(tr => tr.classList.toggle('d-none', !isShow));
-      }
-    }
-    function showTableTr(target, className){
-      const wrap = target.closest('.pub-site');
-      const trs = wrap.querySelectorAll(className);
-      // if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
-      if(trs) trs.forEach(tr => tr.classList.remove('d-none'));
-    }
-    function tableSelectReset(target){
-      let selects = null;
-      if(target){
-        const wrap = target.closest('.pub-site');
-        selects = wrap.querySelectorAll('.pub-thead select');
-      }else{
-        selects = document.querySelectorAll('.pub-thead select');
-      }
-      if(!selects) return;
-      selects.forEach(sel => {
-        if(sel !== target) {
-          sel.value = '';
-          sel.classList.remove('on');
-        }
-      });
-    }
-    function buttonReset(){
-      const onBtns = document.querySelectorAll('.pub-label button.on');;
-      if(onBtns) onBtns.forEach(btn => btn.class.remove('on'));
-
-      const pressedBtns = document.querySelectorAll('button[aria-pressed="true"]');;
-      if(pressedBtns) pressedBtns.forEach(btn => btn.ariaPressed = 'false');
-    }
-    function navActive(el){
-      const href = el.getAttribute('href');
-      const navBtns = document.querySelectorAll('.pub-nav a');
-      navBtns.forEach(btn => btn.classList.remove('on'));
-      el.classList.add('on');
-      const pubSites = document.querySelectorAll('.pub-site');
-      if(href === '#all'){
-        // if(pubSites) pubSites.forEach(el => el.style.removeProperty('display'));
-        if(pubSites) pubSites.forEach(el => el.classList.remove('d-none'));
-        pubUtil.setUrlParams(false);
-      }else{
-        const showSite = document.querySelector(href+'.pub-site');
-        if(pubSites && showSite) {
-          // pubSites.forEach(el => el.style.display = 'none');
-          // showSite.style.removeProperty('display');
-          pubSites.forEach(el => el.classList.add('d-none'));
-          showSite.classList.remove('d-none');
-        }
-        const idx = parseInt(href.replace(/\D/g, ''));
-        pubUtil.setUrlParams('tab', idx);
-      }
-
-      window.dispatchEvent(new Event('scroll'));
-    }
-    function navReset(){
-      const tab = document.querySelector('.pub-nav .pub-all a');
-      navActive(tab);
-    }
-    let isSearch = false;
-    function searchRemove(){
-      // 이전 하이라이트 제거
-      const highlighted = document.querySelectorAll('.pub-highlight');
-      highlighted.forEach(el => {
-        // highlight 태그의 내용만 추출하여 부모 노드에 직접 삽입
-        const text = el.textContent;
-        el.outerHTML = text;
-      });
-    }
-    function searchResult(str){
-      searchRemove();
-
-      // 검색어가 비어있으면 하이라이트 제거만 하고 종료
-      if (!str.trim()) return;
-
-      // 각 td를 순회하며 검색어 강조
-      const cells = document.querySelectorAll('tr.tr td');
-      cells.forEach(cell => {
-        const hasMatch = highlightTextNodes(cell, str);
-        if (hasMatch) {
-          const tr = cell.closest('tr');
-          // tr.style.removeProperty('display');
-          tr.classList.remove('d-none');
-        }
-      });
-    }
-    function highlightTextNodes(node, searchText){
-      const regex = new RegExp(searchText, 'gi');
-
-      //텍스트 노드만 처리
-      if(node.nodeType === Node.TEXT_NODE){
-        if(node.textContent.match(regex)){
-          // 텍스트 노드의 내용을 검색어기준으로 분할하여 처리
-          const fragment = document.createDocumentFragment();
-          const parts = node.textContent.split(regex);
-          const matches = node.textContent.match(regex);
-
-          parts.forEach((part, index) => {
-            // 일반 텍스트 추가
-            if(part){
-              fragment.appendChild(document.createTextNode(part));
-            }
-
-            // 매칭된 텍스트에 하이라이트 적용
-            if(matches && index < parts.length - 1){
-              const span = document.createElement('span');
-              span.className = 'pub-highlight';
-              span.textContent = matches[index];
-              fragment.appendChild(span);
-            }
-          });
-          
-          node.replaceWith(fragment);
-          return true;
-        }
-        return false;
-      }
-
-      let hasMatch = false;
-      const childNodes = [...node.childNodes];
-      childNodes.forEach(child => {
-        const result = highlightTextNodes(child, searchText);
-        hasMatch = hasMatch || result;
-      });
-
-      return hasMatch;
-    }
-    function searchInit(){
-      const inp = document.querySelector('.pub-search-inp');
-      const inpVal = inp.value.trim();
-      if(inpVal.length === 1){
-        pubUtil.toastPop('2글자 이상 입력해주세요.');
-      }else{
-        if(inpVal !== '') {
-          isSearch = true;
-          toggleAllTr(false);
-        }else if(isSearch) {
-          isSearch = false;
-          tableSelectReset()
-          navReset();
-          toggleAllTr(true);
-        }
-        searchResult(inpVal);
-      }
-    }
-    function searchReset(){
-      searchRemove();
-      const inp = document.querySelector('.pub-search-inp');
-      inp.value = '';
-    }
-    const viewer = document.querySelector('.pub-mobile-frame');
-    function toggleViewer(isShow, isOn){
-      if(!viewer) return;
-      const className = 'show';
-      if(isShow){
-        viewer.classList.add(className);
-        setViewerSize();
-      }else{
-        if(viewer.classList.contains('on')) viewer.classList.remove('on');
-        viewer.classList.remove(className);
-      }
-    }
-    function toggleViewerOn(){
-      if(viewer.classList.contains('on')) viewer.classList.remove('on');
-      else viewer.classList.add('on');
-    }
-    function setViewerSize(){
-      const select = viewer.querySelector('.pub-device-select');
-      const value = select.value;
-      const sizes = value.split('*');
-      const width = sizes[0];
-      const height = sizes[1];
-      viewer.style.setProperty('--iframe-width', `${width}px`);
-      viewer.style.setProperty('--iframe-height', `${height}px`);
-    }
-    function setViewerIframe(target){
-      const href = target.getAttribute('href');
-      const text = target.textContent;
-      const linkHtml = '<a href="'+href+'" target="_blank"><strong>'+text+'</strong></a>';
-      viewer.querySelector('.link').innerHTML = linkHtml;
-      let iframe = viewer.querySelector('iframe');
-      if(iframe){
-        iframe.src = href;
-      }else{
-        iframe = document.createElement('iframe');
-        iframe.src = href;
-        iframe.frameborder = '0;'
-        viewer.querySelector('.pub-iframe').appendChild(iframe);
-      }
-    }
-    function resetTDlink(){
-      const links = document.querySelectorAll('.td-link.active');
-      if(links) links.forEach(link => link.classList.remove('active'));
-    }
-    
-
     let beforeTarget = null;
     // 클릭 이벤트
     document.addEventListener('click', (e) => {
       const target = e.target;
-      
+
       //진척률 툴팁
       const pubSide = document.querySelector('.pub-side');
       if (target.matches('.pub-button-detail')) {
@@ -1237,19 +1036,19 @@ const pubList = {
       //초기화 pub-reset
       if(target.matches('.pub-reset')){
         e.preventDefault();
-        toggleAllTable(true);
-        toggleAllTr(true);
-        tableSelectReset();
-        buttonReset();
-        navReset();
-        searchReset();
-        toggleViewer(false);
+        pubEvt.toggleAllTable(true);
+        pubEvt.toggleAllTr(true);
+        pubEvt.tableSelectReset();
+        pubEvt.buttonReset();
+        pubEvt.navReset();
+        pubEvt.searchReset();
+        pubEvt.toggleViewer(false);
       }
 
       // 검색버튼
       if(target.matches('.pub-search-btn')){
         e.preventDefault();
-        searchInit();
+        pubEvt.searchInit();
       }
 
       // 모바일 뷰어
@@ -1257,15 +1056,15 @@ const pubList = {
         e.preventDefault();
         if(target.ariaPressed === 'false'){
           target.ariaPressed = 'true';
-          toggleViewer(true);
+          pubEvt.toggleViewer(true);
         }else{
           target.ariaPressed = 'false';
-          toggleViewer(false);
+          pubEvt.toggleViewer(false);
         }
       }
       if(target.matches('.pub-frame-toggle')){
         e.preventDefault();
-        toggleViewerOn();
+        pubEvt.toggleViewerOn();
       }
 
       //토글버튼 pub-toggle
@@ -1273,12 +1072,12 @@ const pubList = {
         e.preventDefault();
         if(target.ariaPressed === 'false'){
           target.ariaPressed = 'true';
-          tableSelectReset();
+          pubEvt.tableSelectReset();
           navReset();
-          toggleAllTable(false);
+          pubEvt.toggleAllTable(false);
         }else{
           target.ariaPressed = 'false';
-          toggleAllTable(true);
+          pubEvt.toggleAllTable(true);
         }
       }
 
@@ -1287,10 +1086,10 @@ const pubList = {
         e.preventDefault();
         if(target.classList.contains('on')){
           target.classList.remove('on');
-          toggleAllTr(true);
+          pubEvt.toggleAllTr(true);
         }else{
           target.classList.add('on');
-          toggleAllTr(false);
+          pubEvt.toggleAllTr(false);
         }
       }
 
@@ -1300,25 +1099,32 @@ const pubList = {
         const status = target.dataset.status;
         if(target.classList.contains('on')){
           target.classList.remove('on');
-          toggleAllTr(true);
+          pubEvt.toggleAllTr(true);
         }else{
           target.classList.add('on');
-          toggleAllTr(false);
-          showStateTr(status);;
+          pubEvt.toggleAllTr(false);
+          pubEvt.showStateTr(status);;
         }
+      }
+
+      // 수정날짜 버튼
+      if(target.matches('.pub-modify-sel')){
+        e.preventDefault();
+        const btnDate = target.dataset.date;
+        pubEvt.filterModifyTr(btnDate);
       }
 
       //nav
       if(target.matches('.pub-nav a')){
         e.preventDefault();
         if(target.classList.contains('on')) return;
-        navActive(target);
+        pubEvt.navActive(target);
         window.scrollTo({top:0});
       }
 
       // ID 링크 클릭
       if(target.matches('.td-link')){
-        resetTDlink();
+        pubEvt.resetTDlink();
         target.classList.add('active');
         if(target.matches('.winpop')){
           e.preventDefault();
@@ -1330,7 +1136,7 @@ const pubList = {
           window.open($href, $name, 'width=' + $width + ', height=' + $height);
         }else if(viewer.classList.contains('on')){
           e.preventDefault();
-          setViewerIframe(target);
+          pubEvt.setViewerIframe(target);
         }
       }
 
@@ -1428,7 +1234,7 @@ const pubList = {
         pubModify.loadMoreDates();
       }
       //수정이력 관련 action: e
-      
+
 
       if (target.matches('.pub-copy-code')){
         e.preventDefault();
@@ -1447,17 +1253,17 @@ const pubList = {
       const target = e.target;
 
       if (target.matches('.pub-device-select')){
-        setViewerSize();
+        pubEvt.setViewerSize();
       }
 
       if (target.matches('th.dep2 select, th.dep3 select, th.dep4 select, th.dep5 select, th.dep6 select, th.status select, th.modify select')) {
         const selVal = target.value;
         if (selVal === '') {
-          toggleTableTr(target, true);
+          pubEvt.toggleTableTr(target, true);
           target.classList.remove('on');
         } else {
-          tableSelectReset(target);
-          toggleTableTr(target, false);
+          pubEvt.tableSelectReset(target);
+          pubEvt.toggleTableTr(target, false);
           target.classList.add('on');
           let className = null;
           if(target.closest('th[class^="dep"]')){
@@ -1468,9 +1274,9 @@ const pubList = {
           }else if(target.closest('th.modify')){
             className = '.tr-modify_'+selVal;
           }
-          if(className) showTableTr(target, className);
+          if(className) pubEvt.showTableTr(target, className);
         }
-      }  
+      }
 
       //수정이력 관련
       if (target.matches('[name="view-option"]')){
@@ -1479,7 +1285,7 @@ const pubList = {
       if (target.matches('.pub-modify-select')){
         pubModify.changeList(e);
       }
-      
+
 
       if(beforeTarget !== target) beforeTarget = target;
     });
@@ -1490,14 +1296,263 @@ const pubList = {
       const key = e.key;
       const keyCode = e.keyCode || e.which;
       // console.log(key,keyCode);
-      
+
       if(target.matches('.pub-search-inp') && (key === 'Enter' || keyCode === 13)){
         e.preventDefault();
-        searchInit();
+        pubEvt.searchInit();
       }
 
       if(beforeTarget !== target) beforeTarget = target;
     });
+  }
+}
+
+const pubEvt = {
+  toggleAllTr(isShow){
+    const trs = document.querySelectorAll('.tr');
+    if(trs){
+      // if(isShow) trs.forEach(tr => tr.style.removeProperty('display'));
+      // else trs.forEach(tr => tr.style.display = 'none');
+      trs.forEach(tr => tr.classList.toggle('d-none', !isShow));
+    }
+  },
+  showStateTr(str){
+    const num = typeof str === 'string' ? Number(str) : str;
+    let className = null;
+    if(num === 0) className = '.del'
+    else if(num === 1) className = '.wait'
+    else if(num === 2) className = '.ing'
+    else if(num === 3) className = '.chk'
+    if(!className) return;
+    const trs = document.querySelectorAll('.tr'+className);
+    // if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
+    if(trs) trs.forEach(tr => tr.classList.remove('d-none'));
+  },
+  filterModifyTr(str){
+    const className = '.tr-modify_'+str;
+    const trs = document.querySelectorAll('.tr'+className);
+    if(trs.length) {
+      pubEvt.toggleAllTr(false);
+      trs.forEach(tr => tr.classList.remove('d-none'));
+    }
+  },
+  toggleAllTable(isShow){
+    const tables = document.querySelectorAll('.pub-table');
+    if(tables){
+      // if(isShow) tables.forEach(table => table.style.removeProperty('display'));
+      // else tables.forEach(table => table.style.display = 'none');
+      tables.forEach(table => table.classList.toggle('d-none', !isShow));
+    }
+  },
+  toggleTableTr(target, isShow){
+    const wrap = target.closest('.pub-site');
+    const trs = wrap.querySelectorAll('.tr');
+    if(trs){
+      // if(isShow) trs.forEach(tr => tr.style.removeProperty('display'));
+      // else trs.forEach(tr => tr.style.display = 'none');
+      trs.forEach(tr => tr.classList.toggle('d-none', !isShow));
+    }
+  },
+  showTableTr(target, className){
+    const wrap = target.closest('.pub-site');
+    const trs = wrap.querySelectorAll(className);
+    // if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
+    if(trs) trs.forEach(tr => tr.classList.remove('d-none'));
+  },
+  tableSelectReset(target){
+    let selects = null;
+    if(target){
+      const wrap = target.closest('.pub-site');
+      selects = wrap.querySelectorAll('.pub-thead select');
+    }else{
+      selects = document.querySelectorAll('.pub-thead select');
+    }
+    if(!selects) return;
+    selects.forEach(sel => {
+      if(sel !== target) {
+        sel.value = '';
+        sel.classList.remove('on');
+      }
+    });
+  },
+  buttonReset(){
+    const onBtns = document.querySelectorAll('.pub-label button.on');;
+    if(onBtns) onBtns.forEach(btn => btn.class.remove('on'));
+
+    const pressedBtns = document.querySelectorAll('button[aria-pressed="true"]');;
+    if(pressedBtns) pressedBtns.forEach(btn => btn.ariaPressed = 'false');
+  },
+  navActive(el){
+    const href = el.getAttribute('href');
+    const navBtns = document.querySelectorAll('.pub-nav a');
+    navBtns.forEach(btn => btn.classList.remove('on'));
+    el.classList.add('on');
+    const pubSites = document.querySelectorAll('.pub-site');
+    if(href === '#all'){
+      // if(pubSites) pubSites.forEach(el => el.style.removeProperty('display'));
+      if(pubSites) pubSites.forEach(el => el.classList.remove('d-none'));
+      pubUtil.setUrlParams(false);
+    }else{
+      const showSite = document.querySelector(href+'.pub-site');
+      if(pubSites && showSite) {
+        // pubSites.forEach(el => el.style.display = 'none');
+        // showSite.style.removeProperty('display');
+        pubSites.forEach(el => el.classList.add('d-none'));
+        showSite.classList.remove('d-none');
+      }
+      const idx = parseInt(href.replace(/\D/g, ''));
+      pubUtil.setUrlParams('tab', idx);
+    }
+
+    window.dispatchEvent(new Event('scroll'));
+  },
+  navReset(){
+    const tab = document.querySelector('.pub-nav .pub-all a');
+    pubEvt.navActive(tab);
+  },
+  isSearch: false,
+  searchRemove(){
+    // 이전 하이라이트 제거
+    const highlighted = document.querySelectorAll('.pub-highlight');
+    highlighted.forEach(el => {
+      // highlight 태그의 내용만 추출하여 부모 노드에 직접 삽입
+      const text = el.textContent;
+      el.outerHTML = text;
+    });
+  },
+  searchResult(str){
+    pubEvt.searchRemove();
+
+    // 검색어가 비어있으면 하이라이트 제거만 하고 종료
+    if (!str.trim()) return;
+
+    // 각 td를 순회하며 검색어 강조
+    const cells = document.querySelectorAll('tr.tr td');
+    cells.forEach(cell => {
+      const hasMatch = pubEvt.highlightTextNodes(cell, str);
+      if (hasMatch) {
+        const tr = cell.closest('tr');
+        // tr.style.removeProperty('display');
+        tr.classList.remove('d-none');
+      }
+    });
+  },
+  highlightTextNodes(node, searchText){
+    const regex = new RegExp(searchText, 'gi');
+
+    //텍스트 노드만 처리
+    if(node.nodeType === Node.TEXT_NODE){
+      if(node.textContent.match(regex)){
+        // 텍스트 노드의 내용을 검색어기준으로 분할하여 처리
+        const fragment = document.createDocumentFragment();
+        const parts = node.textContent.split(regex);
+        const matches = node.textContent.match(regex);
+
+        parts.forEach((part, index) => {
+          // 일반 텍스트 추가
+          if(part){
+            fragment.appendChild(document.createTextNode(part));
+          }
+
+          // 매칭된 텍스트에 하이라이트 적용
+          if(matches && index < parts.length - 1){
+            const span = document.createElement('span');
+            span.className = 'pub-highlight';
+            span.textContent = matches[index];
+            fragment.appendChild(span);
+          }
+        });
+
+        node.replaceWith(fragment);
+        return true;
+      }
+      return false;
+    }
+
+    let hasMatch = false;
+    const childNodes = [...node.childNodes];
+    childNodes.forEach(child => {
+      const result = pubEvt.highlightTextNodes(child, searchText);
+      hasMatch = hasMatch || result;
+    });
+
+    return hasMatch;
+  },
+  searchInit(){
+    const inp = document.querySelector('.pub-search-inp');
+    const inpVal = inp.value.trim();
+    if(inpVal.length === 1){
+      pubUtil.toastPop('2글자 이상 입력해주세요.');
+    }else{
+      if(inpVal !== '') {
+        pubEvt.isSearch = true;
+        pubEvt.toggleAllTr(false);
+      }else if(pubEvt.isSearch) {
+        pubEvt.isSearch = false;
+        pubEvt.tableSelectReset()
+        navReset();
+        pubEvt.toggleAllTr(true);
+      }
+      pubEvt.searchResult(inpVal);
+    }
+  },
+  searchReset(){
+    pubEvt.searchRemove();
+    const inp = document.querySelector('.pub-search-inp');
+    inp.value = '';
+  },
+  viewer(){
+    return document.querySelector('.pub-mobile-frame');
+  },
+  toggleViewer(isShow, isOn){
+    const viewer = pubEvt.viewer();
+    if(!viewer) return;
+    const className = 'show';
+    if(isShow){
+      viewer.classList.add(className);
+      pubEvt.setViewerSize();
+    }else{
+      if(viewer.classList.contains('on')) viewer.classList.remove('on');
+      viewer.classList.remove(className);
+    }
+  },
+  toggleViewerOn(){
+    const viewer = pubEvt.viewer();
+    if(!viewer) return;
+    if(viewer.classList.contains('on')) viewer.classList.remove('on');
+    else viewer.classList.add('on');
+  },
+  setViewerSize(){
+    const viewer = pubEvt.viewer();
+    if(!viewer) return;
+    const select = viewer.querySelector('.pub-device-select');
+    const value = select.value;
+    const sizes = value.split('*');
+    const width = sizes[0];
+    const height = sizes[1];
+    viewer.style.setProperty('--iframe-width', `${width}px`);
+    viewer.style.setProperty('--iframe-height', `${height}px`);
+  },
+  setViewerIframe(target){
+    const viewer = pubEvt.viewer();
+    if(!viewer) return;
+    const href = target.getAttribute('href');
+    const text = target.textContent;
+    const linkHtml = '<a href="'+href+'" target="_blank"><strong>'+text+'</strong></a>';
+    viewer.querySelector('.link').innerHTML = linkHtml;
+    let iframe = viewer.querySelector('iframe');
+    if(iframe){
+      iframe.src = href;
+    }else{
+      iframe = document.createElement('iframe');
+      iframe.src = href;
+      iframe.frameborder = '0;'
+      viewer.querySelector('.pub-iframe').appendChild(iframe);
+    }
+  },
+  resetTDlink(){
+    const links = document.querySelectorAll('.td-link.active');
+    if(links) links.forEach(link => link.classList.remove('active'));
   }
 }
 
@@ -1521,7 +1576,7 @@ const pubModify = {
     const div = document.createElement('div');
     div.className = 'pub-modify';
     div.style.display = 'block';
-    
+
     div.innerHTML = `
       <div class="pub-radio">
         <span>
@@ -1561,8 +1616,8 @@ const pubModify = {
     const modifyList = wrap.querySelector('.pub-modify-list');
 
     // 날짜별 수정이력 데이터 가져오기
-    const dates = this.getModifyDates();
-    
+    const dates = pubModify.modifyDates ? pubModify.modifyDates : pubModify.getModifyDates();
+
     const prevDates = pubUtil.getPrevDates();
     const todayDate = pubUtil.getToday();
 
@@ -1605,7 +1660,7 @@ const pubModify = {
     const selVal = select.value;
     if(selVal) return;
     const modifyList = wrap.querySelector('.pub-modify-list');
-    
+
     // 메뉴별 데이터 가져오기
     const menus = this.getMenuData();
 
@@ -1670,7 +1725,7 @@ const pubModify = {
     const content = section.innerText;
     pubUtil.clipboardCopy(titTxt+content);
   },
-
+  modifyDates : null,
   getModifyDates() {
     // pubJSON 데이터에서 수정이력이 있는 항목들의 날짜를 추출
     const dates = [];
@@ -1688,7 +1743,8 @@ const pubModify = {
       }
     });
     // 날짜 내림차순 정렬
-    return dates.sort((a, b) => new Date(b) - new Date(a));
+    pubModify.modifyDates = dates.sort((a, b) => new Date(b) - new Date(a));
+    return pubModify.modifyDates;
   },
 
   getMenuData() {
@@ -1714,7 +1770,7 @@ const pubModify = {
       const modifiedItems = pubJSON.filter(item => {
         return item.MODIFY && item.MODIFY.includes(`[${date}`);
       });
-  
+
       // DEP1, DEP2 기준으로 그룹화
       const groupedItems = modifiedItems.reduce((acc, item) => {
         const key = `${item.DEP1}_${item.DEP2}`;
@@ -1728,7 +1784,7 @@ const pubModify = {
         acc[key].items.push(item);
         return acc;
       }, {});
-  
+
       // 그룹별 HTML 생성
       const groupsHTML = Object.values(groupedItems).map(group => {
         const itemsInGroup = group.items.map(item => {
@@ -1749,7 +1805,7 @@ const pubModify = {
             <br>
           `;
         }).join('');
-  
+
         return `
           <div class="mb2-list">
             <em>[${group.DEP1} > ${group.DEP2}]<button type="button" class="pub-modify-copy2"></button></em><br>
@@ -1757,7 +1813,7 @@ const pubModify = {
           </div>
         `;
       }).join('');
-  
+
       return `
         <div class="list mb-${date.replace(/-/g, '')}">
           <mark class="list-tit"><strong>${date}</strong></mark><br>
@@ -1782,7 +1838,7 @@ const pubModify = {
       // 날짜별 수정이력 HTML 생성
       let datesHTML = sortedDates.map(date => {
         const dateItems = menu.items.filter(item => item.MODIFY.includes(`[${date}`));
-        
+
         return `
           <div class="mb2-list">
             <em>${date}<button type="button" class="pub-modify-copy2"></button></em><br>
