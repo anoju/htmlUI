@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>parseDataset</title>
+</head>
+<body>
+  <div data-option="slidesPerView:auto,loop:true,pagination:{el:  .control .swiper-pagination,clickable:true},navigation:{nextEl:.swiper-button-next,prevEl:.swiper-button-prev}">data-option</div>
+<script>
+const testTxt = `"slidesPerView": "auto","loop": true,"pagination": {"el": ".swiper-pagination","clickable": true},"navigation": {"nextEl": ".swiper-button-next","prevEl": ".swiper-button-prev"}`;
+// const testParse = JSON.parse(`{${testTxt}}`);
+const testParse = parseDataOption(testTxt);
+console.log(testParse);
+
+function parseDataOption(optionStr) {
+  const processedStr = optionStr
+    .replace(/\s*([:{},])\s*/g, '$1') // :, { } 기호 앞뒤 공백 제거
+    .replace(/['"]/g, '') // 쌍따옴표와 홑따옴표 제거
+    .replace(/,\s*,/g, ',') // 연속된 쉼표를 하나로 수정
+    .replace(/,\s*([{}\[\]:])/g, '$1') // 괄호나 콜론 앞의 쉼표 제거
+    .replace(/:\s*,/g, ':') // 콜론 뒤의 쉼표 제거
+    .replace(/(\w+):/g, '"$1":')
+    .replace(/:\s*([^{},\s][^,}]*)/g, (match, p1) => {
+      if (p1 === 'true' || p1 === 'false' || !isNaN(p1)) return `: ${p1}`;
+      else return `: "${p1}"`;
+    });
+    console.log(processedStr)
+  try {
+    return JSON.parse(`{${processedStr}}`);
+  } catch (error) {
+    console.error('파싱 에러:', error);
+    return null;
+  }
+}
+
+const dataOption = document.querySelector('[data-option]').dataset.option;
+const result = parseDataOption(dataOption);
+console.log(result);
+</script>
+</body>
+</html>

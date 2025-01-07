@@ -79,37 +79,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.3/swiper-bundle.min.js" integrity="sha512-ILrDRgEiIojcsKyBy12ZU7MtOf78F2fj3vve/AN5i94iXLQ8PZN7IJYPphmAGdwZmTv4N+OzY3trvqGIEY87VA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <!-- Initialize Swiper -->
-  <div data-option="slidesPerView:auto,loop:true,pagination:{el:.swiper-pagination,clickable:true},navigation:{nextEl:.swiper-button-next,prevEl:.swiper-button-prev}"></div>
 <script>
-const testTxt = `"slidesPerView": "auto","loop": true,"pagination": {"el": ".swiper-pagination","clickable": true},"navigation": {"nextEl": ".swiper-button-next","prevEl": ".swiper-button-prev"}`;
-const test = JSON.parse(`{${testTxt}}`);
-
-function parseDataOption(optionStr) {
-  const processedStr = optionStr
-    .replace(/(\w+):/g, '"$1":')
-    // .replace(/{([^}]+)}/g, (match, p1) => {
-    //   return '{' + p1.replace(/([a-zA-Z0-9]+):/g, '"$1":') + '}';
-    // })
-    .replace(/:\s*([^{},\s][^,}]*)/g, (match, p1) => {
-      if (p1 === 'true' || p1 === 'false' || !isNaN(p1)) {
-        return `: ${p1}`;
-      }
-      return `: "${p1}"`;
-    });
-
-  try {
-    return JSON.parse(`{${processedStr}}`);
-  } catch (error) {
-    console.error('파싱 에러:', error);
-    return null;
-  }
-}
-
-const dataOption = document.querySelector('[data-option]').dataset.option;
-const result = parseDataOption(dataOption);
-console.log(test);
-console.log(result);
-
     var swiper = new Swiper(".mySwiper", {
       observer: true,
       observeParents: true,
