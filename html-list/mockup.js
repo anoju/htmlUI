@@ -157,11 +157,13 @@ const pubUtil = {
   setUrlParams(key, value){
     const currentUrl = new URL(window.location.href);
     const params = new URLSearchParams(currentUrl.search);
-    let newUrl = currentUrl.pathname;
-    if(key){
+    if(value === false || value === null || value === undefined){
+      params.delete(key);
+    } else {
       params.set(key, value);
-      newUrl = newUrl+'?'+params.toString();
     }
+
+    const newUrl = params.toString() ? `${currentUrl.pathname}?${params.toString()}` : currentUrl.pathname;
     history.pushState(null, '', newUrl);
   },
   getMatchTextLength(str, char){
@@ -268,7 +270,7 @@ const pubList = {
     }
     let mdf = pubUtil.getUrlParams().mdf;
     if(mdf){
-      pubEvt.filterModifyTr(mdf);
+      pubEvt.filterModifyTr(mdf, false);
     }
   },
   makeList(){
@@ -445,16 +447,45 @@ const pubList = {
     let isModifyYesterday = false;
     let isModifyToday = false;
     const modifyDates = pubModify.modifyDates ? pubModify.modifyDates : pubModify.getModifyDates();
+    const todayDate = pubUtil.getToday();
+    const prevDates = pubUtil.getPrevDates();
     if(modifyDates && modifyDates.length){
-      const prevDates = pubUtil.getPrevDates();
-      const todayDate = pubUtil.getToday();
       modifyDates.forEach(date => {
         if(prevDates.includes(date)) isModifyYesterday = true;
         if(date === todayDate) isModifyToday = true;
       });
     };
-    const modifyYesterdayHtml = isModifyYesterday ? `<li><button type="button" class="pub-modify-sel" data-date="yesterday">어제수정</button></li>` : '';
-    const modifyTodayHtml = isModifyToday ? `<li><button type="button" class="pub-modify-sel" data-date="today">오늘수정</button></li>` : '';
+    const modifyListBtn = () => {
+      let rtnVal = '';
+      if(modifyDates.length > 1){
+        const modifyDateBtns = modifyDates.map(date => {
+          const $date = date.replace(/-/g, '');
+          const addClass = prevDates.includes(date)? ' yesterday' : date === todayDate? ' today' : '';
+          return `<button type="button" class="pub-modify-sel${addClass}" data-date="${$date}">${date}</button>`;
+        }).join('');
+
+        const modifyUtilBtns = () => {
+          let utilHtml = '';
+          if(isModifyYesterday || isModifyToday){
+            utilHtml += '<div>';
+            if(isModifyToday) utilHtml += '<button type="button" class="pub-modify-sel today" data-date="today">오늘</button>';
+            if(isModifyYesterday) utilHtml += '<button type="button" class="pub-modify-sel yesterday" data-date="yesterday">어제</button>';
+            utilHtml += '</div>';
+          }
+          return utilHtml;
+        };
+
+        rtnVal = `<li>
+          <button type="button" class="pub-modify-sel-btn" aria-pressed="false">수정일</button>
+          <div class="pub-modify-sel-list">
+            <div><button type="button" class="pub-modify-sel" data-date="all">전체</button></div>
+            ${modifyUtilBtns()}
+            <div>${modifyDateBtns}</div>
+          </div>
+        </li>`;
+      }
+      return rtnVal;
+    };
 
     const util2Html = `<div class="pub-label">
       <ul>
@@ -481,8 +512,7 @@ const pubList = {
         </li>
       </ul>
       <ul>
-        ${modifyYesterdayHtml}
-        ${modifyTodayHtml}
+        ${modifyListBtn()}
         <li class="history">
           <button type="button" class="pub-modify-open" ${!filterData.modify.length ? `disabled="disabled"`: ''}>수정이력</button>
         </li>
@@ -1036,13 +1066,7 @@ const pubList = {
       //초기화 pub-reset
       if(target.matches('.pub-reset')){
         e.preventDefault();
-        pubEvt.toggleAllTable(true);
-        pubEvt.toggleAllTr(true);
-        pubEvt.tableSelectReset();
-        pubEvt.buttonReset();
-        pubEvt.navReset();
-        pubEvt.searchReset();
-        pubEvt.toggleViewer(false);
+        pubEvt.allReset();
       }
 
       // 검색버튼
@@ -1108,10 +1132,28 @@ const pubList = {
       }
 
       // 수정날짜 버튼
+      const modifySelBtn = document.querySelector('.pub-modify-sel-btn');
+      if (target.matches('.pub-modify-sel-btn')){
+        e.preventDefault();
+        if(target.ariaPressed === 'false'){
+          target.ariaPressed = 'true';
+        }else{
+          target.ariaPressed = 'false';
+        }
+      }else{
+        if(modifySelBtn.ariaPressed === 'true') modifySelBtn.ariaPressed = 'false';
+      }
+
       if(target.matches('.pub-modify-sel')){
         e.preventDefault();
         const btnDate = target.dataset.date;
-        pubEvt.filterModifyTr(btnDate);
+        if(btnDate === 'all') {
+          pubEvt.toggleAllTr(true);
+          pubUtil.setUrlParams('mdf', null);
+        } else {
+          pubEvt.filterModifyTr(btnDate);
+        }
+        modifySelBtn.ariaPressed = 'false';
       }
 
       //nav
@@ -1143,7 +1185,7 @@ const pubList = {
       //메뉴 복사
       if(target.matches('.pub-copy')){
         e.preventDefault();
-        const depAry = []
+        const depAry = [];
         const tr = target.closest('tr');
         const dep1El = target.closest('.pub-site').querySelector('.pub-site-title h2 > span');
         const dep2El = tr.querySelector('td.dep2');
@@ -1235,7 +1277,6 @@ const pubList = {
       }
       //수정이력 관련 action: e
 
-
       if (target.matches('.pub-copy-code')){
         e.preventDefault();
         const prevEl = target.previousElementSibling;
@@ -1286,7 +1327,6 @@ const pubList = {
         pubModify.changeList(e);
       }
 
-
       if(beforeTarget !== target) beforeTarget = target;
     });
 
@@ -1308,6 +1348,15 @@ const pubList = {
 }
 
 const pubEvt = {
+  allReset(){
+    pubEvt.toggleAllTable(true);
+    pubEvt.toggleAllTr(true);
+    pubEvt.tableSelectReset();
+    pubEvt.buttonReset();
+    pubEvt.navReset();
+    pubEvt.searchReset();
+    pubEvt.toggleViewer(false);
+  },
   toggleAllTr(isShow){
     const trs = document.querySelectorAll('.tr');
     if(trs){
@@ -1328,12 +1377,15 @@ const pubEvt = {
     // if(trs) trs.forEach(tr => tr.style.removeProperty('display'));
     if(trs) trs.forEach(tr => tr.classList.remove('d-none'));
   },
-  filterModifyTr(str){
+  filterModifyTr(str, isSetParam = true){
     const className = '.tr-modify_'+str;
     const trs = document.querySelectorAll('.tr'+className);
     if(trs.length) {
       pubEvt.toggleAllTr(false);
       trs.forEach(tr => tr.classList.remove('d-none'));
+    }
+    if(isSetParam){
+      pubUtil.setUrlParams('mdf', str);
     }
   },
   toggleAllTable(isShow){
@@ -1391,7 +1443,7 @@ const pubEvt = {
     if(href === '#all'){
       // if(pubSites) pubSites.forEach(el => el.style.removeProperty('display'));
       if(pubSites) pubSites.forEach(el => el.classList.remove('d-none'));
-      pubUtil.setUrlParams(false);
+      pubUtil.setUrlParams('tab', null);
     }else{
       const showSite = document.querySelector(href+'.pub-site');
       if(pubSites && showSite) {
