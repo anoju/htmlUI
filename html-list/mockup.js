@@ -157,7 +157,7 @@ const pubUtil = {
   setUrlParams(key, value){
     const currentUrl = new URL(window.location.href);
     const params = new URLSearchParams(currentUrl.search);
-    if(value === false || value === null || value === undefined){
+    if(value === null || value === undefined){
       params.delete(key);
     } else {
       params.set(key, value);
@@ -209,8 +209,8 @@ const pubList = {
       docEl.id = 'isMobile';
     } else {
       docEl.removeAttribute('id');
-      // document.body.class.remove('pub-nav-up');
-      // document.body.class.add('pub-nav-down');
+      // document.body.classList.remove('pub-nav-up');
+      // document.body.classList.add('pub-nav-down');
     }
   },
   makeGuideMenu(){
@@ -266,12 +266,10 @@ const pubList = {
     if(stg){
       stg = parseInt(stg);
       const btn = document.querySelector(`.pub-filter-status:not(:disabled)[data-status='${stg}']`);
-      if(btn) btn.click();
+      if(btn) pubEvt.filterState(btn, false);
     }
-    let mdf = pubUtil.getUrlParams().mdf;
-    if(mdf){
-      pubEvt.filterModifyTr(mdf, false);
-    }
+    const mdf = pubUtil.getUrlParams().mdf;
+    if(mdf) pubEvt.filterModifyTr(mdf, false);
   },
   makeList(){
     return new Promise((resolve) => {
@@ -1120,15 +1118,7 @@ const pubList = {
       //status 버튼
       if(target.matches('.pub-filter-status')){
         e.preventDefault();
-        const status = target.dataset.status;
-        if(target.classList.contains('on')){
-          target.classList.remove('on');
-          pubEvt.toggleAllTr(true);
-        }else{
-          target.classList.add('on');
-          pubEvt.toggleAllTr(false);
-          pubEvt.showStateTr(status);;
-        }
+        pubEvt.filterState(target);
       }
 
       // 수정날짜 버튼
@@ -1141,7 +1131,7 @@ const pubList = {
           target.ariaPressed = 'false';
         }
       }else{
-        if(modifySelBtn.ariaPressed === 'true') modifySelBtn.ariaPressed = 'false';
+        if(modifySelBtn && modifySelBtn.ariaPressed === 'true') modifySelBtn.ariaPressed = 'false';
       }
 
       if(target.matches('.pub-modify-sel')){
@@ -1161,10 +1151,11 @@ const pubList = {
         e.preventDefault();
         if(target.classList.contains('on')) return;
         pubEvt.navActive(target);
-        window.scrollTo({top:0});
+        window.scrollTo({left:0, top:0});
       }
 
       // ID 링크 클릭
+      const viewer = pubEvt.viewer();
       if(target.matches('.td-link')){
         pubEvt.resetTDlink();
         target.classList.add('active');
@@ -1280,6 +1271,7 @@ const pubList = {
       if (target.matches('.pub-copy-code')){
         e.preventDefault();
         const prevEl = target.previousElementSibling;
+        console.log(prevEl)
         if(prevEl && prevEl.classList.contains('pub-pre')){
           const code = prevEl.innerText;
           pubUtil.clipboardCopy(code);
@@ -1356,6 +1348,12 @@ const pubEvt = {
     pubEvt.navReset();
     pubEvt.searchReset();
     pubEvt.toggleViewer(false);
+
+    const stg = pubUtil.getUrlParams().stg;
+    if(stg) pubUtil.setUrlParams('stg', null);
+
+    const mdf = pubUtil.getUrlParams().mdf;
+    if(mdf) pubUtil.setUrlParams('mdf', null);
   },
   toggleAllTr(isShow){
     const trs = document.querySelectorAll('.tr');
@@ -1364,6 +1362,18 @@ const pubEvt = {
       // else trs.forEach(tr => tr.style.display = 'none');
       trs.forEach(tr => tr.classList.toggle('d-none', !isShow));
     }
+  },
+  filterState(target, isSetParam = true){
+    const status = target.dataset.status;
+    if(target.classList.contains('on')){
+      target.classList.remove('on');
+      pubEvt.toggleAllTr(true);
+    }else{
+      target.classList.add('on');
+      pubEvt.toggleAllTr(false);
+      pubEvt.showStateTr(status);;
+    }
+    if(isSetParam) pubUtil.setUrlParams('stg', status);
   },
   showStateTr(str){
     const num = typeof str === 'string' ? Number(str) : str;
@@ -1384,9 +1394,7 @@ const pubEvt = {
       pubEvt.toggleAllTr(false);
       trs.forEach(tr => tr.classList.remove('d-none'));
     }
-    if(isSetParam){
-      pubUtil.setUrlParams('mdf', str);
-    }
+    if(isSetParam) pubUtil.setUrlParams('mdf', str);
   },
   toggleAllTable(isShow){
     const tables = document.querySelectorAll('.pub-table');
@@ -1429,7 +1437,7 @@ const pubEvt = {
   },
   buttonReset(){
     const onBtns = document.querySelectorAll('.pub-label button.on');;
-    if(onBtns) onBtns.forEach(btn => btn.class.remove('on'));
+    if(onBtns) onBtns.forEach(btn => btn.classList.remove('on'));
 
     const pressedBtns = document.querySelectorAll('button[aria-pressed="true"]');;
     if(pressedBtns) pressedBtns.forEach(btn => btn.ariaPressed = 'false');
