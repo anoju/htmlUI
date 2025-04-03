@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    h1 {
+      background:rgb(253, 127, 127);
+      color:#000;
+      font-size:16px;
+      line-height:1.5;
+    }
+    .cap{
+      /* 피그마에서 제공하는 css (근데 안먹힘) */
+      leading-trim: both;
+      text-edge: cap;
+
+      /* 위를 대처하는 다른 css */
+      text-box-trim: trim-both;
+      text-box-edge: cap alphabetic;
+    }
+  </style>
+</head>
+<body>
+  <p>현재 제공 받은 피그마 디자인을 보면 다수 텍스트 박스의 높이값 이슈가 있습니다다</p>
+  <p>예를 들어 3줄 텍스트 박스 영역인데 <br>
+  폰트사이즈 16px, 줄간격 150%로  설정되어있다고 가정하자<br>
+  그렇게 퍼블리싱 했을때 1줄당 크기가 16px * 1.5 = 24px 이기때문에 전체 텍스트 박스의 크기는 72px이 나와야한다<br>
+  하지만 피그마 디자인상에는 그보다 훨씬 작은 60px로 되어있습니다.
+  </p>
+  <p>이때 피그마에서 텍스트 박스 주변 간격을 그대로 css에 적용하면 디자인과 전혀 다른 간격을 갖은 결과물이 나옵니다. <br>
+  이를 확인하고자 피그마의 Dev Mode를 확인하니 'text-edge' css가 적용되어있었습니다.
+  </p>
+  <br>
+  <br>
+  <h1>일반 text</h1>
+  <h1 class="cap">text-edge:cap</h1>
+  <hr>
+  <h1>일반 text<br>3줄일때<br>3줄일때</h1>
+  <h1 class="cap">text-edge:cap<br>3줄일때<br>3줄일때</h1>
+  <br>
+  <br>
+  <p>피그마에서 Dev Mode 에서 제공하는 'text-edge' css는 해당 css는 최신 css로 현재 크롬 최신버전에서도 지원하지 않습니다..</p>
+  <p>'text-box-edge' 라는 다른 css로 대처하였으나 여전히 브라우저저 호환성이 떨어집니다.</p>
+  <p>결론, 텍스트박스의 height가 line-height 크기에 맞게 떨어져야 퍼블리싱할때 이슈가 없습니다..</p>
+</body>
+</html>
