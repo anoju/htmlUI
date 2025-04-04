@@ -14,12 +14,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
 
 <style>
+  body{
+    background-color:#f1f1f1;
+  }
 #wrap {
   padding: 20px;
+  max-width: 360px;
+  background:#fff;
+  min-height: 100vh;
+  margin:0 auto;
 }
 .input {
   width: 100%;
   height: 40px;
+  padding: 0 10px;
+  font-size: 16px;
   line-height: 38px;
   border: 1px solid #ddd;
   -webkit-appearance: none;
@@ -27,6 +36,11 @@
 }
 .input + .input {
   margin-top: 10px;
+}
+.input.ellipsis{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
 <script>
@@ -49,12 +63,27 @@ $(function() {
 
 <body>
 <div id="wrap">
+  <input type="text" class="input" placeholder="일반 text">
+  <br>
+  <br>
+  <input type="text" class="input ellipsis" placeholder="짤리면 말줄임">
+  <br>
+  <br>
+  <br>
+  <br>
   <input type="date" class="input" name="" id="">
-  <div></div>
+  <br>
+  <br>
+  <br>
   <br>
   <input type="text" class="input" placeholder="maxlength 5설정" maxlength="5">
   <br>
+  <br>
   <input type="text" class="input maxlength" placeholder="maxlength 5설정(별도 js 처리)" maxlength="5">
+  <br>
+  <br>
+  <br>
+  
 </div>
 </body>
 </html>
