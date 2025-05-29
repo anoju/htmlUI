@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body{
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 16px;
+      color: #333;
+      background-color: #f4f4f4;
+    }
+    body, html{
+      height: 100%;
+    }
+    .wrap{
+      width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .table{
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table th, .table td{
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    .table th{
+      background-color: #eee;
+    }
+    .table tr:nth-child(even){
+      background-color: #f9f9f9;
+    }
+    .btn{
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn:hover{
+      background-color: #0056b3;
+    }
+    .tbl-tbody{
+      height: 300px; overflow-y: auto;
+      border-bottom:1px solid #ddd;
+    }
+    .tbl-tbody .table tr:first-child *{border-top-width:0;}
+    .tbl-tbody .table tr:last-child *{border-bottom-width:0;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- 헤더용 테이블 -->
+    <div class="tbl-thead">
+      <table class="table">
+        <colgroup>
+          <col style="width: 250px;">
+          <col style="width: 250px;">
+          <col style="width: 250px;">
+          <col style="width: auto;">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>이름</th>
+            <th>나이</th>
+            <th>직업</th>
+            <th>삭제</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <!-- 본문용 테이블 -->
+    <div class="tbl-tbody">
+      <table class="table">
+        <colgroup>
+          <col style="width: 250px;">
+          <col style="width: 250px;">
+          <col style="width: 250px;">
+          <col style="width: auto;">
+        </colgroup>
+        <tbody>
+          <tr>
+            <td>홍길동</td>
+            <td>30</td>
+            <td>개발자</td>
+            <td><button class="btn">삭제</button></td>
+          </tr>
+          <tr>
+            <td>김철수</td>
+            <td>25</td>
+            <td>디자이너</td>
+            <td><button class="btn">삭제</button></td>
+          </tr>
+          <tr>
+            <td>이영희</td>
+            <td>28</td>
+            <td>기획자</td>
+            <td><button class="btn">삭제</button></td>
+          </tr>
+          <tr>
+            <td>홍길동</td>
+            <td>30</td>
+            <td>개발자</td>
+            <td><button class="btn">삭제</button></td>
+          </tr>
+          <tr>
+            <td>김철수</td>
+            <td>25</td>
+            <td>디자이너</td>
+            <td><button class="btn">삭제</button></td>
+          </tr>
+          <tr>
+            <td>이영희</td>
+            <td>28</td>
+            <td>기획자</td>
+            <td><button class="btn">삭제</button></td>
+          </tr>
+          <tr>
+            <td>홍길동</td>
+            <td>30</td>
+            <td>개발자</td>
+            <td><button class="btn">삭제</button></td>
+          </tr>
+          <tr>
+            <td>김철수</td>
+            <td>25</td>
+            <td>디자이너</td>
+            <td><button class="btn">삭제</button></td>
+          </tr>
+          <tr>
+            <td>이영희</td>
+            <td>28</td>
+            <td>기획자</td>
+            <td><button class="btn">삭제</button></td>
+          </tr>
+          <tr>
+            <td>홍길동</td>
+            <td>30</td>
+            <td>개발자</td>
+            <td><button class="btn">삭제</button></td>
+          </tr>
+          <tr>
+            <td>김철수</td>
+            <td>25</td>
+            <td>디자이너</td>
+            <td><button class="btn">삭제</button></td>
+          </tr>
+          <tr>
+            <td>이영희</td>
+            <td>28</td>
+            <td>기획자</td>
+            <td><button class="btn">삭제</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    //삭제버튼 클릭시 tr 삭제
+    document.querySelectorAll('.btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const row = this.closest('tr');
+        row.parentNode.removeChild(row);
+      });
+    });
+  </script>
+</body>
+</html>
