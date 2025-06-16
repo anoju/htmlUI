@@ -279,10 +279,10 @@
             <div class="page page-home">
                 <div class="container">
                     <nav class="nav">
-                        <a href="/home" class="nav-link active" data-page="home">홈</a>
-                        <a href="/about" class="nav-link" data-page="about">회사소개</a>
-                        <a href="/services" class="nav-link" data-page="services">서비스</a>
-                        <a href="/contact" class="nav-link" data-page="contact">연락처</a>
+                        <a href="#/home" class="nav-link active" data-page="home">홈</a>
+                        <a href="#/about" class="nav-link" data-page="about">회사소개</a>
+                        <a href="#/services" class="nav-link" data-page="services">서비스</a>
+                        <a href="#/contact" class="nav-link" data-page="contact">연락처</a>
                     </nav>
 
                     <div class="page-content">
@@ -314,10 +314,10 @@
             <div class="page page-about">
                 <div class="container">
                     <nav class="nav">
-                        <a href="/home" class="nav-link" data-page="home">홈</a>
-                        <a href="/about" class="nav-link active" data-page="about">회사소개</a>
-                        <a href="/services" class="nav-link" data-page="services">서비스</a>
-                        <a href="/contact" class="nav-link" data-page="contact">연락처</a>
+                        <a href="#/home" class="nav-link" data-page="home">홈</a>
+                        <a href="#/about" class="nav-link active" data-page="about">회사소개</a>
+                        <a href="#/services" class="nav-link" data-page="services">서비스</a>
+                        <a href="#/contact" class="nav-link" data-page="contact">연락처</a>
                     </nav>
 
                     <div class="page-content">
@@ -348,10 +348,10 @@
             <div class="page page-services">
                 <div class="container">
                     <nav class="nav">
-                        <a href="/home" class="nav-link" data-page="home">홈</a>
-                        <a href="/about" class="nav-link" data-page="about">회사소개</a>
-                        <a href="/services" class="nav-link active" data-page="services">서비스</a>
-                        <a href="/contact" class="nav-link" data-page="contact">연락처</a>
+                        <a href="#/home" class="nav-link" data-page="home">홈</a>
+                        <a href="#/about" class="nav-link" data-page="about">회사소개</a>
+                        <a href="#/services" class="nav-link active" data-page="services">서비스</a>
+                        <a href="#/contact" class="nav-link" data-page="contact">연락처</a>
                     </nav>
 
                     <div class="page-content">
@@ -425,6 +425,17 @@
                 // 초기 페이지 위치 설정
                 this.initializePages();
 
+                // Hash 변경 감지
+                window.addEventListener('hashchange', (e) => {
+                    if (!this.isTransitioning) {
+                        const hash = window.location.hash;
+                        const targetPage = hash.replace('#/', '') || 'home';
+                        if (this.pages.includes(targetPage) && targetPage !== this.currentPage) {
+                            this.transitionToPage(targetPage, null, false);
+                        }
+                    }
+                });
+
                 // 네비게이션 이벤트 리스너
                 document.addEventListener('click', (e) => {
                     const link = e.target.closest('.nav-link');
@@ -439,15 +450,15 @@
                     }
                 });
 
-                // 브라우저 뒤로/앞으로 버튼 처리
-                window.addEventListener('popstate', (e) => {
-                    if (e.state && e.state.page && !this.isTransitioning) {
-                        this.transitionToPage(e.state.page, null, false);
-                    }
-                });
-
-                // 초기 상태 설정
-                history.replaceState({ page: 'home' }, '', '/home');
+                // 초기 상태 설정 - Hash 기반
+                const initialPage = window.location.hash.replace('#/', '') || 'home';
+                if (this.pages.includes(initialPage)) {
+                    this.currentPage = initialPage;
+                    this.initializePages();
+                    this.updateUrlDisplay(initialPage);
+                } else {
+                    window.location.hash = '#/home';
+                }
             }
 
             initializePages() {
@@ -465,15 +476,14 @@
                 });
             }
 
-            async transitionToPage(targetPage, url, pushState = true) {
+            async transitionToPage(targetPage, url, updateHash = true) {
                 if (this.isTransitioning || targetPage === this.currentPage) return;
                 
                 this.isTransitioning = true;
 
-                // URL 업데이트
-                if (pushState) {
-                    const newUrl = url || `/${targetPage}`;
-                    history.pushState({ page: targetPage }, '', newUrl);
+                // Hash 업데이트
+                if (updateHash) {
+                    window.location.hash = `#/${targetPage}`;
                 }
                 
                 // URL 표시 업데이트
@@ -530,7 +540,7 @@
 
             updateUrlDisplay(page) {
                 const urlDisplay = document.getElementById('urlDisplay');
-                urlDisplay.textContent = `🌐 /${page}`;
+                urlDisplay.textContent = `🌐 #/${page}`;
             }
         }
 
