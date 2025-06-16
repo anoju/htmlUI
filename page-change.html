@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accenture 스타일 페이지 전환</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.8s ease;
+        }
+
+        /* 페이지 전환 오버레이 */
+        .transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .transition-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .transition-overlay::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .transition-overlay.active::before {
+            width: 200vmax;
+            height: 200vmax;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 1001;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 메인 컨테이너 - Swup에서 교체되는 부분 */
+        #swup {
+            min-height: 100vh;
+            transition: all 0.5s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 네비게이션 */
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+
+        .nav-link {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: white;
+        }
+
+        /* 페이지 콘텐츠 */
+        .page-content {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 400px;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-content h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .page-content p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 0.4s ease forwards;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .feature-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-card h3 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* URL 표시 */
+        .url-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 999;
+        }
+
+        /* 페이지별 배경 스타일 */
+        .page-home { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .page-about { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .page-services { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .page-contact { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+
+        /* 기술 설명 섹션 */
+        .tech-explanation {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tech-explanation h2 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            color: #a8e6cf;
+            font-size: 0.9rem;
+            margin: 15px 0;
+            border-left: 4px solid #4facfe;
+            overflow-x: auto;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-content h1 {
+                font-size: 2rem;
+            }
+
+            .url-display {
+                top: 10px;
+                right: 10px;
+                font-size: 10px;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body class="page-home">
+    <!-- URL 표시 -->
+    <div class="url-display" id="urlDisplay">
+        🌐 /home
+    </div>
+
+    <!-- 페이지 전환 오버레이 -->
+    <div class="transition-overlay" id="transitionOverlay">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Swup 컨테이너 - 이 부분이 교체됩니다 -->
+    <div id="swup">
+        <div class="container">
+            <nav class="nav">
+                <a href="/home" class="nav-link active" data-page="home">홈</a>
+                <a href="/about" class="nav-link" data-page="about">회사소개</a>
+                <a href="/services" class="nav-link" data-page="services">서비스</a>
+                <a href="/contact" class="nav-link" data-page="contact">연락처</a>
+            </nav>
+
+            <div class="page-content">
+                <h1>Accenture 스타일 실제 페이지 전환</h1>
+                <p>이 데모는 실제 URL이 변경되면서 발생하는 페이지 전환 효과를 보여줍니다.</p>
+                <p>Swup.js, Barba.js, 또는 View Transition API와 같은 기술로 구현 가능합니다.</p>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>🔗 실제 URL 변경</h3>
+                        <p>브라우저 주소창의 URL이 실제로 변경됩니다</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>⚡ PJAX 기술</h3>
+                        <p>pushState + AJAX로 전체 페이지 리로드 없이 전환</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🎨 부드러운 애니메이션</h3>
+                        <p>CSS 트랜지션과 JavaScript 조합으로 자연스러운 효과</p>
+                    </div>
+                </div>
+
+                <div class="tech-explanation">
+                    <h2>💡 핵심 구현 기술</h2>
+                    <p>Accenture와 같은 기업 웹사이트는 다음과 같은 방식으로 구현됩니다:</p>
+                    
+                    <div class="code-block">
+// History API로 URL 실제 변경
+history.pushState({ page: 'about' }, '', '/about');
+
+// 뒤로/앞으로 버튼 처리
+window.addEventListener('popstate', handleNavigation);
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class CustomPageTransition {
+            constructor() {
+                this.currentPage = 'home';
+                this.isTransitioning = false;
+                this.cache = new Map();
+                this.init();
+            }
+
+            init() {
+                // 네비게이션 링크들에 이벤트 리스너 추가
+                this.attachLinkListeners();
+                
+                // 브라우저 뒤로/앞으로 버튼 처리
+                window.addEventListener('popstate', (e) => {
+                    if (e.state && e.state.page) {
+                        this.transitionToPage(e.state.page, false);
+                    }
+                });
+
+                // 초기 상태를 history에 추가
+                history.replaceState({ page: 'home' }, '', '/home');
+            }
+
+            attachLinkListeners() {
+                document.addEventListener('click', (e) => {
+                    const link = e.target.closest('.nav-link');
+                    if (link && !this.isTransitioning) {
+                        e.preventDefault();
+                        const targetPage = link.dataset.page;
+                        const url = link.getAttribute('href');
+                        
+                        if (targetPage !== this.currentPage) {
+                            this.transitionToPage(targetPage, true, url);
+                        }
+                    }
+                });
+            }
+
+            async transitionToPage(targetPage, pushState = true, url = null) {
+                if (this.isTransitioning) return;
+                
+                this.isTransitioning = true;
+                
+                // URL 업데이트 (pushState가 true일 때만)
+                if (pushState) {
+                    const newUrl = url || `/${targetPage}`;
+                    history.pushState({ page: targetPage }, '', newUrl);
+                }
+                
+                // URL 표시 업데이트
+                this.updateUrlDisplay(targetPage);
+                
+                // 페이지 전환 애니메이션 시작
+                await this.showTransitionOverlay();
+                
+                // 페이지 콘텐츠 업데이트
+                await this.updatePageContent(targetPage);
+                
+                // Body 클래스 변경 (배경색 변경용)
+                this.updateBodyClass(targetPage);
+                
+                // 네비게이션 상태 업데이트
+                this.updateNavigation(targetPage);
+                
+                // 전환 완료
+                await this.hideTransitionOverlay();
+                
+                this.currentPage = targetPage;
+                this.isTransitioning = false;
+            }
+
+            updateUrlDisplay(page) {
+                const urlDisplay = document.getElementById('urlDisplay');
+                urlDisplay.textContent = `🌐 /${page}`;
+            }
+
+            updateBodyClass(page) {
+                document.body.className = `page-${page}`;
+            }
+
+            async showTransitionOverlay() {
+                const overlay = document.getElementById('transitionOverlay');
+                overlay.classList.add('active');
+                return new Promise(resolve => setTimeout(resolve, 300));
+            }
+
+            async hideTransitionOverlay() {
+                const overlay = document.getElementById('transitionOverlay');
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        overlay.classList.remove('active');
+                        resolve();
+                    }, 300);
+                });
+            }
+
+            async updatePageContent(targetPage) {
+                const swupContainer = document.getElementById('swup');
+                const newContent = this.getPageContent(targetPage);
+                
+                // 페이드 아웃
+                swupContainer.style.opacity = '0';
+                swupContainer.style.transform = 'translateY(20px)';
+                
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                // 콘텐츠 교체
+                swupContainer.innerHTML = newContent;
+                
+                // 새 네비게이션에 이벤트 리스너 재연결
+                this.attachLinkListeners();
+                
+                // 페이드 인
+                swupContainer.style.opacity = '1';
+                swupContainer.style.transform = 'translateY(0)';
+            }
+
+            updateNavigation(targetPage) {
+                const navLinks = document.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.dataset.page === targetPage) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            getPageContent(page) {
+                const pageContents = {
+                    home: `
+                        <div class="container">
+                            <nav class="nav">
+                                <a href="/home" class="nav-link ${page === 'home' ? 'active' : ''}" data-page="home">홈</a>
+                                <a href="/about" class="nav-link ${page === 'about' ? 'active' : ''}" data-page="about">회사소개</a>
+                                <a href="/services" class="nav-link ${page === 'services' ? 'active' : ''}" data-page="services">서비스</a>
+                                <a href="/contact" class="nav-link ${page === 'contact' ? 'active' : ''}" data-page="contact">연락처</a>
+                            </nav>
+                            <div class="page-content">
+                                <h1>Accenture 스타일 실제 페이지 전환</h1>
+                                <p>이 데모는 실제 URL이 변경되면서 발생하는 페이지 전환 효과를 보여줍니다.</p>
+                                <p>Swup.js, Barba.js, 또는 View Transition API와 같은 기술로 구현 가능합니다.</p>
+                                <div class="feature-grid">
+                                    <div class="feature-card">
+                                        <h3>🔗 실제 URL 변경</h3>
+                                        <p>브라우저 주소창의 URL이 실제로 변경됩니다</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h3>⚡ PJAX 기술</h3>
+                                        <p>pushState + AJAX로 전체 페이지 리로드 없이 전환</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h3>🎨 부드러운 애니메이션</h3>
+                                        <p>CSS 트랜지션과 JavaScript 조합으로 자연스러운 효과</p>
+                                    </div>
+                                </div>
+                                <div class="tech-explanation">
+                                    <h2>💡 핵심 구현 기술</h2>
+                                    <p>Accenture와 같은 기업 웹사이트는 다음과 같은 방식으로 구현됩니다:</p>
+                                    <div class="code-block">
+// History API로 URL 실제 변경
+history.pushState({ page: 'about' }, '', '/about');
+
+// 뒤로/앞으로 버튼 처리
+window.addEventListener('popstate', handleNavigation);
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    about: `
+                        <div class="container">
+                            <nav class="nav">
+                                <a href="/home" class="nav-link ${page === 'home' ? 'active' : ''}" data-page="home">홈</a>
+                                <a href="/about" class="nav-link ${page === 'about' ? 'active' : ''}" data-page="about">회사소개</a>
+                                <a href="/services" class="nav-link ${page === 'services' ? 'active' : ''}" data-page="services">서비스</a>
+                                <a href="/contact" class="nav-link ${page === 'contact' ? 'active' : ''}" data-page="contact">연락처</a>
+                            </nav>
+                            <div class="page-content">
+                                <h1>페이지 전환 기술 소개</h1>
+                                <p>실제 기업 웹사이트에서 사용되는 페이지 전환 기술들을 알아보세요.</p>
+                                <div class="feature-grid">
+                                    <div class="feature-card">
+                                        <h3>📚 Swup.js</h3>
+                                        <p>서버 렌더링 웹사이트용 다재다능한 페이지 전환 라이브러리</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h3>🚀 Barba.js</h3>
+                                        <p>유연하고 확장 가능한 페이지 전환 라이브러리</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h3>🌟 View Transition API</h3>
+                                        <p>브라우저 네이티브 API로 구현하는 최신 전환 기술</p>
+                                    </div>
+                                </div>
+                                <div class="tech-explanation">
+                                    <h2>🔧 Swup.js 구현 예시</h2>
+                                    <p>가장 인기 있는 페이지 전환 라이브러리 중 하나입니다:</p>
+                                    <div class="code-block">
+// Swup.js 기본 설정
+import Swup from 'swup';
+import SwupSlideTheme from '@swup/slide-theme';
+
+const swup = new Swup({
+  plugins: [new SwupSlideTheme()]
+});
+
+// HTML 구조
+&lt;main id="swup"&gt;
+  &lt;!-- 이 부분이 교체됩니다 --&gt;
+&lt;/main&gt;
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    services: `
+                        <div class="container">
+                            <nav class="nav">
+                                <a href="/home" class="nav-link ${page === 'home' ? 'active' : ''}" data-page="home">홈</a>
+                                <a href="/about" class="nav-link ${page === 'about' ? 'active' : ''}" data-page="about">회사소개</a>
+                                <a href="/services" class="nav-link ${page === 'services' ? 'active' : ''}" data-page="services">서비스</a>
+                                <a href="/contact" class="nav-link ${page === 'contact' ? 'active' : ''}" data-page="contact">연락처</a>
+                            </nav>
+                            <div class="page-content">
+                                <h1>구현 서비스</h1>
+                                <p>다양한 페이지 전환 효과를 구현하는 서비스를 제공합니다.</p>
+                                <div class="feature-grid">
+                                    <div class="feature-card">
+                                        <h3>🎨 커스텀 애니메이션</h3>
+                                        <p>브랜드에 맞는 독특한 페이지 전환 효과 개발</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h3>⚡ 성능 최적화</h3>
+                                        <p>빠른 로딩과 부드러운 애니메이션을 위한 최적화</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h3>📱 반응형 디자인</h3>
+                                        <p>모든 디바이스에서 완벽하게 동작하는 전환 효과</p>
+                                    </div>
+                                </div>
+                                <div class="tech-explanation">
+                                    <h2>⚡ Barba.js 구현 예시</h2>
+                                    <p>GSAP와 함께 사용하면 강력한 애니메이션을 만들 수 있습니다:</p>
+                                    <div class="code-block">
+// Barba.js + GSAP 설정
+barba.init({
+  transitions: [{
+    name: 'slide',
+    leave(data) {
+      return gsap.to(data.current.container, {
+        duration: 0.5,
+        x: '-100%'
+      });
+    },
+    enter(data) {
+      return gsap.from(data.next.container, {
+        duration: 0.5,
+        x: '100%'
+      });
+    }
+  }]
+});
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    contact: `
+                        <div class="container">
+                            <nav class="nav">
+                                <a href="/home" class="nav-link ${page === 'home' ? 'active' : ''}" data-page="home">홈</a>
+                                <a href="/about" class="nav-link ${page === 'about' ? 'active' : ''}" data-page="about">회사소개</a>
+                                <a href="/services" class="nav-link ${page === 'services' ? 'active' : ''}" data-page="services">서비스</a>
+                                <a href="/contact" class="nav-link ${page === 'contact' ? 'active' : ''}" data-page="contact">연락처</a>
+                            </nav>
+                            <div class="page-content">
+                                <h1>연락처 및 구현 방법</h1>
+                                <p>실제 구현 시 고려해야 할 핵심 요소들입니다.</p>
+                                <div class="feature-grid">
+                                    <div class="feature-card">
+                                        <h3>🔄 History API</h3>
+                                        <p>pushState/popState로 브라우저 히스토리 관리</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h3>🌐 AJAX 통신</h3>
+                                        <p>서버에서 새로운 콘텐츠를 비동기로 가져오기</p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <h3>💫 사용자 경험</h3>
+                                        <p>로딩 상태와 피드백을 통한 향상된 UX</p>
+                                    </div>
+                                </div>
+                                <div class="tech-explanation">
+                                    <h2>🌟 View Transition API (최신)</h2>
+                                    <p>Chrome 126+에서 지원하는 브라우저 네이티브 API입니다:</p>
+                                    <div class="code-block">
+// View Transition API 사용법
+if (document.startViewTransition) {
+  document.startViewTransition(() => {
+    // DOM 업데이트 로직
+    updatePageContent();
+  });
+} else {
+  // 폴백: 일반 DOM 업데이트
+  updatePageContent();
+}
+
+// CSS로 애니메이션 정의
+::view-transition-old(root) {
+  animation: slide-out 0.3s ease-out;
+}
+
+::view-transition-new(root) {
+  animation: slide-in 0.3s ease-out;
+}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                };
+
+                return pageContents[page] || pageContents.home;
+            }
+        }
+
+        // 페이지 로드 완료 후 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            new CustomPageTransition();
+        });
+    </script>
+</body>
+</html>
