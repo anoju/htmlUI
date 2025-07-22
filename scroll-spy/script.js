@@ -6,14 +6,9 @@ class MobileScrollSpy {
         this.activeSection = null;
         this.isScrolling = false;
         this.isClickScrolling = false; // 클릭으로 인한 스크롤인지 구분
-        this.isMobile = this.checkMobile();
         this.sectionPositions = [];
         
         this.init();
-    }
-
-    checkMobile() {
-        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     }
 
     init() {
@@ -52,7 +47,7 @@ class MobileScrollSpy {
         );
         
         // 스크롤이 마지막에 도달했는지 체크 (조기 종료)
-        if (scrollTop + windowHeight >= documentHeight - 5) {
+        if (scrollTop + windowHeight >= documentHeight - 5 && this.isClickScrolling) {
             return; // 조기 종료
         }
         
@@ -173,12 +168,10 @@ class MobileScrollSpy {
                     // 클릭으로 즉시 해당 탭 활성화
                     this.setActiveTab(targetId);
                     
-                    // iOS에서 더 긴 대기 시간
-                    const waitTime = this.isMobile ? 1200 : 800;
                     setTimeout(() => {
                         this.isScrolling = false;
                         this.isClickScrolling = false; // 클릭 스크롤 종료
-                    }, waitTime);
+                    }, 1500);
                 }
             });
         });

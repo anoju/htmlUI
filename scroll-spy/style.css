@@ -51,10 +51,6 @@ body {
     position: relative;
 }
 
-.tab-link:hover {
-    color: #007bff;
-}
-
 .tab-link.active {
     color: #007bff;
     border-bottom-color: #007bff;
