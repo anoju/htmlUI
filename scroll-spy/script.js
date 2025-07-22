@@ -104,35 +104,16 @@ class MobileScrollSpy {
         const handleScroll = () => {
             this.isScrolling = true;
             
-            // requestAnimationFrame으로 부드러운 업데이트
-            cancelAnimationFrame(rafId);
-            rafId = requestAnimationFrame(() => {
-                this.setActiveTabByScrollPosition();
-            });
-            
             // 스크롤 종료 감지
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 this.isScrolling = false;
                 this.setActiveTabByScrollPosition();
-            }, this.isMobile ? 150 : 100);
+            }, 100);
         };
         
         // 패시브 리스너로 성능 최적화
         window.addEventListener('scroll', handleScroll, { passive: true });
-        
-        // 모바일에서 터치 이벤트 추가
-        if (this.isMobile) {
-            let touchEndTimeout;
-            
-            document.addEventListener('touchend', () => {
-                clearTimeout(touchEndTimeout);
-                touchEndTimeout = setTimeout(() => {
-                    this.isScrolling = false;
-                    this.setActiveTabByScrollPosition();
-                }, 200);
-            }, { passive: true });
-        }
     }
 
     setActiveTab(sectionId) {
