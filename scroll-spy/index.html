@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Scroll Spy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 스티키 탭 네비게이션 -->
+    <nav class="sticky-tabs" id="tabNav">
+        <ul class="tab-list">
+            <li><a href="#section1" class="tab-link active" data-target="section1">섹션 1</a></li>
+            <li><a href="#section2" class="tab-link" data-target="section2">섹션 2</a></li>
+            <li><a href="#section3" class="tab-link" data-target="section3">섹션 3</a></li>
+            <li><a href="#section4" class="tab-link" data-target="section4">섹션 4</a></li>
+        </ul>
+    </nav>
+
+    <!-- 컨텐츠 섹션들 -->
+    <main class="content-container">
+        <section id="section1" class="content-section">
+            <h2>섹션 1</h2>
+            <p>이곳은 첫 번째 섹션입니다. 높이가 다른 컨텐츠가 들어갑니다.</p>
+            <div style="height: 400px; background: #f0f0f0; margin: 20px 0;"></div>
+        </section>
+
+        <section id="section2" class="content-section">
+            <h2>섹션 2</h2>
+            <p>두 번째 섹션으로 더 긴 컨텐츠를 가지고 있습니다.</p>
+            <div style="height: 800px; background: #e0e0e0; margin: 20px 0;"></div>
+        </section>
+
+        <section id="section3" class="content-section">
+            <h2>섹션 3</h2>
+            <p>세 번째 섹션입니다.</p>
+            <div style="height: 300px; background: #d0d0d0; margin: 20px 0;"></div>
+        </section>
+
+        <section id="section4" class="content-section">
+            <h2>섹션 4</h2>
+            <p>마지막 섹션으로 가장 긴 컨텐츠를 포함합니다.</p>
+            <div style="height: 100px; background: #c0c0c0; margin: 20px 0;"></div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
