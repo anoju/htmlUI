@@ -46,9 +46,11 @@ class MobileScrollSpy {
             document.documentElement.scrollHeight
         );
         
-        // 클릭 스크롤이 마지막에 도달했는지 체크 (조기 종료)
-        if (scrollTop + windowHeight >= documentHeight - 5 && this.isClickScrolling) {
-            return; // 조기 종료
+        // 마지막에 도달했을때 마지막 탭 활성화
+        if (scrollTop + windowHeight >= documentHeight - 5) {
+            const lastSection = this.sections[this.sections.length - 1];
+            this.setActiveTab(lastSection.id);
+            return;
         }
         
         // 스크롤이 맨 위에 있을 때 첫 번째 섹션 활성화
