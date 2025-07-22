@@ -46,7 +46,7 @@ class MobileScrollSpy {
             document.documentElement.scrollHeight
         );
         
-        // 스크롤이 마지막에 도달했는지 체크 (조기 종료)
+        // 클릭 스크롤이 마지막에 도달했는지 체크 (조기 종료)
         if (scrollTop + windowHeight >= documentHeight - 5 && this.isClickScrolling) {
             return; // 조기 종료
         }
@@ -98,13 +98,18 @@ class MobileScrollSpy {
         
         const handleScroll = () => {
             this.isScrolling = true;
-            
+            if(!this.isClickScrolling) this.setActiveTabByScrollPosition();
+
             // 스크롤 종료 감지
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 this.isScrolling = false;
-                this.setActiveTabByScrollPosition();
+                if(this.isClickScrolling){
+                  this.isClickScrolling = false;
+                }
+                // this.setActiveTabByScrollPosition();
             }, 100);
+            
         };
         
         // 패시브 리스너로 성능 최적화
@@ -167,11 +172,6 @@ class MobileScrollSpy {
                     
                     // 클릭으로 즉시 해당 탭 활성화
                     this.setActiveTab(targetId);
-                    
-                    setTimeout(() => {
-                        this.isScrolling = false;
-                        this.isClickScrolling = false; // 클릭 스크롤 종료
-                    }, 1500);
                 }
             });
         });
