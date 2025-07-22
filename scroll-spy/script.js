@@ -3,10 +3,11 @@ class MobileScrollSpy {
         this.tabNav = document.getElementById('tabNav');
         this.tabLinks = document.querySelectorAll('.tab-link');
         this.sections = document.querySelectorAll('.content-section');
-        this.observer = null;
         this.activeSection = null;
         this.isScrolling = false;
+        this.isClickScrolling = false; // 클릭으로 인한 스크롤인지 구분
         this.isMobile = this.checkMobile();
+        this.sectionPositions = [];
         
         this.init();
     }
@@ -16,49 +17,32 @@ class MobileScrollSpy {
     }
 
     init() {
-        this.setupIntersectionObserver();
+        this.calculateSectionPositions();
         this.bindEvents();
-        this.observeSections();
         this.setupScrollListener();
-    }
-
-    setupIntersectionObserver() {
-        const tabHeight = this.tabNav.offsetHeight;
         
-        const options = {
-            root: null,
-            rootMargin: `-${tabHeight}px 0px -50% 0px`,
-            threshold: [0, 0.1, 0.3, 0.5, 0.7, 1.0] // 더 세밀한 임계값
-        };
-
-        this.observer = new IntersectionObserver((entries) => {
-            this.handleIntersection(entries);
-        }, options);
-    }
-
-    handleIntersection(entries) {
-        if (this.isScrolling) return;
-        
-        // 현재 뷰포트에서 가장 많이 보이는 섹션 찾기
-        let maxVisibility = 0;
-        let mostVisibleSection = null;
-        
-        entries.forEach(entry => {
-            if (entry.isIntersecting && entry.intersectionRatio > maxVisibility) {
-                maxVisibility = entry.intersectionRatio;
-                mostVisibleSection = entry.target;
-            }
-        });
-        
-        if (mostVisibleSection) {
-            this.setActiveTab(mostVisibleSection.id);
-        } else {
-            // 대안: 스크롤 위치 기반으로 활성 탭 결정
+        // 초기 활성 탭 설정
+        setTimeout(() => {
             this.setActiveTabByScrollPosition();
-        }
+        }, 100);
+    }
+
+    calculateSectionPositions() {
+        this.sectionPositions = [];
+        this.sections.forEach(section => {
+            this.sectionPositions.push({
+                id: section.id,
+                top: section.offsetTop,
+                bottom: section.offsetTop + section.offsetHeight,
+                height: section.offsetHeight
+            });
+        });
     }
 
     setActiveTabByScrollPosition() {
+        // 클릭으로 스크롤 중일 때는 탭 활성화 제외
+        if (this.isClickScrolling) return;
+        
         const tabHeight = this.tabNav.offsetHeight;
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const windowHeight = window.innerHeight;
@@ -67,35 +51,45 @@ class MobileScrollSpy {
             document.documentElement.scrollHeight
         );
         
-        // 스크롤이 마지막에 도달했는지 체크 (5px 여유분 포함)
+        // 스크롤이 마지막에 도달했는지 체크 (조기 종료)
         if (scrollTop + windowHeight >= documentHeight - 5) {
             return; // 조기 종료
         }
         
-        const triggerPoint = scrollTop + tabHeight + 50;
+        // 스크롤이 맨 위에 있을 때 첫 번째 섹션 활성화
+        if (scrollTop < 100) {
+            this.setActiveTab(this.sections[0].id);
+            return;
+        }
         
+        // 탭 하단과 섹션이 만나는 지점 계산
+        const triggerPoint = scrollTop + tabHeight;
         let activeSection = null;
+        let bestMatch = null;
+        let minDistance = Infinity;
         
-        // 각 섹션의 위치를 확인하여 가장 가까운 섹션 찾기
-        this.sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionBottom = sectionTop + section.offsetHeight;
-            
-            if (triggerPoint >= sectionTop && triggerPoint < sectionBottom) {
+        // 각 섹션과의 거리 계산
+        this.sectionPositions.forEach(section => {
+            // 트리거 포인트가 섹션 영역 내에 있는 경우
+            if (triggerPoint >= section.top && triggerPoint < section.bottom) {
                 activeSection = section.id;
+                return;
+            }
+            
+            // 가장 가까운 섹션 찾기 (백업용)
+            const distanceToTop = Math.abs(triggerPoint - section.top);
+            const distanceToCenter = Math.abs(triggerPoint - (section.top + section.height / 2));
+            const distance = Math.min(distanceToTop, distanceToCenter);
+            
+            if (distance < minDistance) {
+                minDistance = distance;
+                bestMatch = section.id;
             }
         });
         
-        // 스크롤이 맨 아래에 있을 때 마지막 섹션 활성화
-        if (!activeSection && 
-            scrollTop + window.innerHeight >= document.documentElement.scrollHeight) {
-            const lastSection = this.sections[this.sections.length - 1];
-            activeSection = lastSection.id;
-        }
-        
-        // 스크롤이 맨 위에 있을 때 첫 번째 섹션 활성화
-        if (!activeSection && scrollTop < 100) {
-            activeSection = this.sections[0].id;
+        // 정확한 매치가 없으면 가장 가까운 섹션 사용
+        if (!activeSection) {
+            activeSection = bestMatch;
         }
         
         if (activeSection) {
@@ -105,20 +99,40 @@ class MobileScrollSpy {
 
     setupScrollListener() {
         let scrollTimeout;
+        let rafId;
         
         const handleScroll = () => {
             this.isScrolling = true;
+            
+            // requestAnimationFrame으로 부드러운 업데이트
+            cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(() => {
+                this.setActiveTabByScrollPosition();
+            });
             
             // 스크롤 종료 감지
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 this.isScrolling = false;
                 this.setActiveTabByScrollPosition();
-            }, this.isMobile ? 150 : 100); // iOS에서 더 긴 대기 시간
+            }, this.isMobile ? 150 : 100);
         };
         
         // 패시브 리스너로 성능 최적화
         window.addEventListener('scroll', handleScroll, { passive: true });
+        
+        // 모바일에서 터치 이벤트 추가
+        if (this.isMobile) {
+            let touchEndTimeout;
+            
+            document.addEventListener('touchend', () => {
+                clearTimeout(touchEndTimeout);
+                touchEndTimeout = setTimeout(() => {
+                    this.isScrolling = false;
+                    this.setActiveTabByScrollPosition();
+                }, 200);
+            }, { passive: true });
+        }
     }
 
     setActiveTab(sectionId) {
@@ -145,7 +159,6 @@ class MobileScrollSpy {
         const listRect = tabList.getBoundingClientRect();
         
         if (tabRect.left < listRect.left || tabRect.right > listRect.right) {
-            // iOS에서 더 부드러운 스크롤
             activeTab.scrollIntoView({
                 behavior: this.isMobile ? 'auto' : 'smooth',
                 block: 'nearest',
@@ -159,7 +172,8 @@ class MobileScrollSpy {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 
-                // 클릭 시 스크롤 감지 일시 중단
+                // 클릭으로 인한 스크롤임을 표시
+                this.isClickScrolling = true;
                 this.isScrolling = true;
                 
                 const targetId = link.getAttribute('data-target');
@@ -175,29 +189,23 @@ class MobileScrollSpy {
                         behavior: 'smooth'
                     });
                     
-                    // 즉시 해당 탭 활성화
+                    // 클릭으로 즉시 해당 탭 활성화
                     this.setActiveTab(targetId);
                     
                     // iOS에서 더 긴 대기 시간
                     const waitTime = this.isMobile ? 1200 : 800;
                     setTimeout(() => {
                         this.isScrolling = false;
+                        this.isClickScrolling = false; // 클릭 스크롤 종료
                     }, waitTime);
                 }
             });
         });
 
         window.addEventListener('resize', this.debounce(() => {
-            this.observer.disconnect();
-            this.setupIntersectionObserver();
-            this.observeSections();
+            this.calculateSectionPositions();
+            this.setActiveTabByScrollPosition();
         }, 250));
-    }
-
-    observeSections() {
-        this.sections.forEach(section => {
-            this.observer.observe(section);
-        });
     }
 
     debounce(func, wait) {
@@ -213,10 +221,14 @@ class MobileScrollSpy {
     }
 
     refresh() {
-        this.observer.disconnect();
+        this.calculateSectionPositions();
+        this.setActiveTabByScrollPosition();
+    }
+
+    updateSections() {
         this.sections = document.querySelectorAll('.content-section');
-        this.setupIntersectionObserver();
-        this.observeSections();
+        this.calculateSectionPositions();
+        this.setActiveTabByScrollPosition();
     }
 }
 
