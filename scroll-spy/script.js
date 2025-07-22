@@ -6,8 +6,13 @@ class MobileScrollSpy {
         this.observer = null;
         this.activeSection = null;
         this.isScrolling = false;
+        this.isMobile = this.checkMobile();
         
         this.init();
+    }
+
+    checkMobile() {
+        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     }
 
     init() {
@@ -22,9 +27,8 @@ class MobileScrollSpy {
         
         const options = {
             root: null,
-            // 탭 바로 아래에서 감지하도록 수정
             rootMargin: `-${tabHeight}px 0px -50% 0px`,
-            threshold: 0
+            threshold: [0, 0.1, 0.3, 0.5, 0.7, 1.0] // 더 세밀한 임계값
         };
 
         this.observer = new IntersectionObserver((entries) => {
@@ -56,9 +60,12 @@ class MobileScrollSpy {
 
     setActiveTabByScrollPosition() {
         const tabHeight = this.tabNav.offsetHeight;
-        const scrollTop = window.pageYOffset;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
+        const documentHeight = Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight
+        );
         
         // 스크롤이 마지막에 도달했는지 체크 (5px 여유분 포함)
         if (scrollTop + windowHeight >= documentHeight - 5) {
@@ -99,16 +106,19 @@ class MobileScrollSpy {
     setupScrollListener() {
         let scrollTimeout;
         
-        window.addEventListener('scroll', () => {
+        const handleScroll = () => {
             this.isScrolling = true;
             
-            // 스크롤이 멈춘 후 활성 탭 업데이트
+            // 스크롤 종료 감지
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
                 this.isScrolling = false;
                 this.setActiveTabByScrollPosition();
-            }, 100);
-        });
+            }, this.isMobile ? 150 : 100); // iOS에서 더 긴 대기 시간
+        };
+        
+        // 패시브 리스너로 성능 최적화
+        window.addEventListener('scroll', handleScroll, { passive: true });
     }
 
     setActiveTab(sectionId) {
@@ -135,8 +145,9 @@ class MobileScrollSpy {
         const listRect = tabList.getBoundingClientRect();
         
         if (tabRect.left < listRect.left || tabRect.right > listRect.right) {
+            // iOS에서 더 부드러운 스크롤
             activeTab.scrollIntoView({
-                behavior: 'smooth',
+                behavior: this.isMobile ? 'auto' : 'smooth',
                 block: 'nearest',
                 inline: 'center'
             });
@@ -167,10 +178,11 @@ class MobileScrollSpy {
                     // 즉시 해당 탭 활성화
                     this.setActiveTab(targetId);
                     
-                    // 스크롤 완료 후 감지 재개
+                    // iOS에서 더 긴 대기 시간
+                    const waitTime = this.isMobile ? 1200 : 800;
                     setTimeout(() => {
                         this.isScrolling = false;
-                    }, 800);
+                    }, waitTime);
                 }
             });
         });
