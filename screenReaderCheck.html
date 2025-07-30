@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>screen reader check</title>
+
+</head>
+
+<body>
+<div class="console"></div>
+
+<!-- Initialize Swiper -->
+<script>
+function isScreenReaderActive() {
+  return window.speechSynthesis &&
+    window.speechSynthesis.speaking;
+}
+
+function checkScreenReader() {
+  const consoleDiv = document.querySelector('.console');
+  if (isScreenReaderActive()) {
+    consoleDiv.textContent = '스크린 리더가 활성화되어 있습니다.';
+  } else {
+    consoleDiv.textContent = '스크린 리더가 비활성화되어 있습니다.';
+  }
+}
+
+// 터치할때 마다 확인합니다.
+checkScreenReader();
+document.addEventListener('touchstart', checkScreenReader);
+document.addEventListener('click', checkScreenReader);
+</script>
+</body>
+
+</html>
