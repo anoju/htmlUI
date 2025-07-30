@@ -2,49 +2,342 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
-<title>screen reader check</title>
+<title>모바일 스크린 리더 감지</title>
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 20px;
+  line-height: 1.6;
+}
 
+.console {
+  background: #f5f5f5;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+  border-left: 4px solid #007acc;
+}
+
+.score {
+  font-weight: bold;
+  color: #007acc;
+}
+
+.test-button {
+  background: #007acc;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+.test-button:hover {
+  background: #005a9e;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.test-aria {
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+}
+</style>
 </head>
 
 <body>
-<div class="console"></div>
+<h1>모바일 스크린 리더 감지 테스트</h1>
 
-<!-- Initialize Swiper -->
+<div class="console" id="console">
+  <p>감지 결과가 여기에 표시됩니다...</p>
+</div>
+
+<button class="test-button" onclick="runFullDetection()">다시 테스트</button>
+
+<!-- 스크린 리더 테스트용 숨겨진 요소들 -->
+<div aria-live="polite" aria-atomic="true" class="sr-only" id="announcer"></div>
+<div class="test-aria" id="testElement" tabindex="-1">테스트 요소</div>
+
 <script>
-function isScreenReaderActive() {
-  return window.speechSynthesis &&
-    window.speechSynthesis.speaking;
+let touchStartTime = 0;
+let touchCount = 0;
+let detectionScore = 0;
+
+// 1. Media Queries를 통한 접근성 설정 감지
+function checkAccessibilityPreferences() {
+  const checks = {
+    reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    highContrast: window.matchMedia('(prefers-contrast: high)').matches,
+    reducedTransparency: window.matchMedia('(prefers-reduced-transparency: reduce)').matches,
+    reducedData: window.matchMedia('(prefers-reduced-data: reduce)').matches
+  };
+
+  let score = 0;
+  if (checks.reducedMotion) score += 25;
+  if (checks.highContrast) score += 20;
+  if (checks.reducedTransparency) score += 15;
+  if (checks.reducedData) score += 10;
+
+  return {
+    checks,
+    score
+  };
 }
 
-function checkScreenReader() {
-  const consoleDiv = document.querySelector('.console');
-  const speechSynthesis = window.speechSynthesis;
+// 2. Speech Synthesis API 종합 분석
+function analyzeSpeechSynthesis() {
+  if (!window.speechSynthesis) {
+    return {
+      available: false,
+      score: 0,
+      details: {}
+    };
+  }
 
-  // 프로토타입 체인의 속성들까지 확인
-  const speechInfo = [];
-  for (let prop in speechSynthesis) {
-    try {
-      speechInfo.push(`${prop}: ${speechSynthesis[prop]}`);
-    } catch (e) {
-      speechInfo.push(`${prop}: [접근 불가]`);
+  const synthesis = window.speechSynthesis;
+  const voices = synthesis.getVoices();
+
+  const details = {
+    speaking: synthesis.speaking,
+    pending: synthesis.pending,
+    paused: synthesis.paused,
+    voiceCount: voices.length,
+    hasLocalVoices: voices.some(voice => voice.localService),
+    hasSystemVoices: voices.some(voice => voice.name.includes('System') || voice.name.includes('Samsung') || voice.name.includes('Apple'))
+  };
+
+  let score = 0;
+  if (details.speaking) score += 30;
+  if (details.pending) score += 20;
+  if (details.voiceCount > 10) score += 15;
+  if (details.hasSystemVoices) score += 25;
+
+  return {
+    available: true,
+    score,
+    details
+  };
+}
+
+// 3. 사용자 에이전트 및 플랫폼 분석
+function analyzeUserAgent() {
+  const ua = navigator.userAgent.toLowerCase();
+  const platform = navigator.platform.toLowerCase();
+
+  const indicators = {
+    isMobile: /mobile|android|iphone|ipad|ipod/.test(ua),
+    isAndroid: /android/.test(ua),
+    isIOS: /iphone|ipad|ipod/.test(ua),
+    hasTalkback: /talkback/.test(ua),
+    hasVoiceOver: /voiceover/.test(ua),
+    hasAccessibility: /accessibility|a11y/.test(ua)
+  };
+
+  let score = 0;
+  if (indicators.hasTalkback || indicators.hasVoiceOver) score += 50;
+  if (indicators.hasAccessibility) score += 30;
+  if (indicators.isMobile) score += 10;
+
+  return {
+    indicators,
+    score
+  };
+}
+
+// 4. 터치 패턴 분석
+function analyzeTouchPatterns() {
+  // 스크린 리더 사용자의 특별한 터치 패턴 감지
+  let score = 0;
+
+  // 짧은 시간 내 연속 터치 (더블 탭)
+  if (touchCount > 1 && Date.now() - touchStartTime < 500) {
+    score += 20;
+  }
+
+  return {
+    score,
+    touchCount,
+    lastTouchTime: touchStartTime
+  };
+}
+
+// 5. 포커스 및 접근성 API 테스트
+function testAccessibilityFeatures() {
+  let score = 0;
+  const results = {};
+
+  // Document에 접근성 관련 속성이 있는지 확인
+  if (document.documentElement.hasAttribute('role')) score += 10;
+  if (document.querySelector('[aria-live]')) score += 15;
+
+  // 포커스 관리 테스트
+  try {
+    const testElement = document.getElementById('testElement');
+    if (testElement) {
+      testElement.focus();
+      if (document.activeElement === testElement) {
+        score += 10;
+        results.focusManagement = true;
+      }
     }
+  } catch (e) {
+    // 포커스 설정 실패
   }
 
-  const message = '<br/>window.speechSynthesis 속성들: {' + speechInfo.join(', ') + '}' +
-    '<br/>window.speechSynthesis.speaking: ' + speechSynthesis.speaking;
+  return {
+    score,
+    results
+  };
+}
 
-  if (isScreenReaderActive()) {
-    consoleDiv.innerHTML = '스크린 리더가 활성화되어 있습니다. ' + message;
+// 6. 종합 감지 함수
+function detectScreenReader() {
+  detectionScore = 0;
+  const results = {};
+
+  // 각 테스트 실행
+  results.accessibility = checkAccessibilityPreferences();
+  results.speechSynthesis = analyzeSpeechSynthesis();
+  results.userAgent = analyzeUserAgent();
+  results.touchPatterns = analyzeTouchPatterns();
+  results.accessibilityFeatures = testAccessibilityFeatures();
+
+  // 총 점수 계산
+  detectionScore =
+    results.accessibility.score +
+    results.speechSynthesis.score +
+    results.userAgent.score +
+    results.touchPatterns.score +
+    results.accessibilityFeatures.score;
+
+  return {
+    detectionScore,
+    results
+  };
+}
+
+// 결과 표시 함수
+function displayResults(detection) {
+  const console = document.getElementById('console');
+  const {
+    detectionScore,
+    results
+  } = detection;
+
+  let status = '';
+  let confidence = '';
+
+  if (detectionScore >= 70) {
+    status = '🟢 스크린 리더가 활성화되어 있을 가능성이 높습니다';
+    confidence = '높음';
+  } else if (detectionScore >= 40) {
+    status = '🟡 스크린 리더가 활성화되어 있을 수 있습니다';
+    confidence = '중간';
   } else {
-    consoleDiv.innerHTML = '스크린 리더가 비활성화되어 있습니다. ' + message;
+    status = '🔴 스크린 리더가 비활성화되어 있을 가능성이 높습니다';
+    confidence = '낮음';
+  }
+
+  const html = `
+    <h3>${status}</h3>
+    <p><span class="score">감지 점수: ${detectionScore}/200</span> (신뢰도: ${confidence})</p>
+    
+    <h4>상세 분석:</h4>
+    <ul>
+      <li><strong>접근성 설정:</strong> ${results.accessibility.score}점
+        <br>• 움직임 감소: ${results.accessibility.checks.reducedMotion ? '✓' : '✗'}
+        <br>• 고대비: ${results.accessibility.checks.highContrast ? '✓' : '✗'}
+        <br>• 투명도 감소: ${results.accessibility.checks.reducedTransparency ? '✓' : '✗'}
+      </li>
+      
+      <li><strong>음성 합성 API:</strong> ${results.speechSynthesis.score}점
+        <br>• 사용 가능: ${results.speechSynthesis.available ? '✓' : '✗'}
+        ${results.speechSynthesis.available ? `
+        <br>• 현재 말하는 중: ${results.speechSynthesis.details.speaking ? '✓' : '✗'}
+        <br>• 음성 개수: ${results.speechSynthesis.details.voiceCount}개
+        <br>• 시스템 음성: ${results.speechSynthesis.details.hasSystemVoices ? '✓' : '✗'}
+        ` : ''}
+      </li>
+      
+      <li><strong>사용자 에이전트:</strong> ${results.userAgent.score}점
+        <br>• 모바일: ${results.userAgent.indicators.isMobile ? '✓' : '✗'}
+        <br>• Android: ${results.userAgent.indicators.isAndroid ? '✓' : '✗'}
+        <br>• iOS: ${results.userAgent.indicators.isIOS ? '✓' : '✗'}
+        <br>• 토크백/보이스오버 힌트: ${results.userAgent.indicators.hasTalkback || results.userAgent.indicators.hasVoiceOver ? '✓' : '✗'}
+      </li>
+      
+      <li><strong>터치 패턴:</strong> ${results.touchPatterns.score}점
+        <br>• 터치 횟수: ${results.touchPatterns.touchCount}회
+      </li>
+      
+      <li><strong>접근성 기능:</strong> ${results.accessibilityFeatures.score}점</li>
+    </ul>
+    
+    <p><small>💡 더 정확한 감지를 위해 화면을 여러 번 터치해보세요.</small></p>
+  `;
+
+  console.innerHTML = html;
+}
+
+// 전체 감지 실행
+function runFullDetection() {
+  const detection = detectScreenReader();
+  displayResults(detection);
+
+  // aria-live로 결과 안내
+  const announcer = document.getElementById('announcer');
+  if (detection.detectionScore >= 70) {
+    announcer.textContent = '스크린 리더가 감지되었습니다.';
+  } else {
+    announcer.textContent = '스크린 리더 감지 테스트가 완료되었습니다.';
   }
 }
 
-// 터치할때 마다 확인합니다.
-checkScreenReader();
-document.addEventListener('touchstart', checkScreenReader);
-document.addEventListener('click', checkScreenReader);
+// 터치 이벤트 리스너
+document.addEventListener('touchstart', function(e) {
+  const currentTime = Date.now();
+  if (currentTime - touchStartTime < 1000) {
+    touchCount++;
+  } else {
+    touchCount = 1;
+  }
+  touchStartTime = currentTime;
+
+  // 터치할 때마다 재감지
+  setTimeout(runFullDetection, 100);
+});
+
+// 클릭 이벤트 리스너 (데스크톱 테스트용)
+document.addEventListener('click', function(e) {
+  touchCount++;
+  runFullDetection();
+});
+
+// 페이지 로드 시 초기 감지
+window.addEventListener('load', function() {
+  // Speech Synthesis API가 준비될 때까지 잠시 대기
+  setTimeout(runFullDetection, 1000);
+});
+
+// 음성 목록이 변경될 때 재감지
+if (window.speechSynthesis) {
+  window.speechSynthesis.addEventListener('voiceschanged', runFullDetection);
+}
 </script>
 </body>
-
 </html>
