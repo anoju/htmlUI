@@ -18,10 +18,25 @@ function isScreenReaderActive() {
 
 function checkScreenReader() {
   const consoleDiv = document.querySelector('.console');
+  const speechSynthesis = window.speechSynthesis;
+
+  // 프로토타입 체인의 속성들까지 확인
+  const speechInfo = [];
+  for (let prop in speechSynthesis) {
+    try {
+      speechInfo.push(`${prop}: ${speechSynthesis[prop]}`);
+    } catch (e) {
+      speechInfo.push(`${prop}: [접근 불가]`);
+    }
+  }
+
+  const message = '<br/>window.speechSynthesis 속성들: {' + speechInfo.join(', ') + '}' +
+    '<br/>window.speechSynthesis.speaking: ' + speechSynthesis.speaking;
+
   if (isScreenReaderActive()) {
-    consoleDiv.textContent = '스크린 리더가 활성화되어 있습니다.';
+    consoleDiv.innerHTML = '스크린 리더가 활성화되어 있습니다. ' + message;
   } else {
-    consoleDiv.textContent = '스크린 리더가 비활성화되어 있습니다.';
+    consoleDiv.innerHTML = '스크린 리더가 비활성화되어 있습니다. ' + message;
   }
 }
 
