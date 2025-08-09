@@ -31,7 +31,8 @@ class hiDatepicker {
     this.showPrevNextMonthDays = options.showPrevNextMonthDays || false;
     this.fixedWeekRows = options.fixedWeekRows || false;
     this.showWeekToggle = options.showWeekToggle || false;
-    this.weeklyView = false;
+    this.weeklyViewDefault = options.weeklyViewDefault || false;
+    this.weeklyView = this.weeklyViewDefault;
     this.range = options.range || false;
     this.rangeStartDate = null;
     this.rangeEndDate = null;
@@ -150,6 +151,13 @@ class hiDatepicker {
     _this.makeHeader();
     _this.makeBody();
     _this.headerBtnEvent();
+    
+    // weeklyViewDefault가 true면 초기에 주별 보기 적용
+    if (_this.weeklyViewDefault && _this.type === 'day' && _this.showWeekToggle) {
+      setTimeout(() => {
+        _this.updateWeeklyView();
+      }, 10);
+    }
   }
 
   targetInputInit() {
@@ -208,6 +216,16 @@ class hiDatepicker {
       if (_this.weeklyView && _this.type === 'day') {
         setTimeout(() => {
           _this.updateWeeklyView();
+        }, 10);
+      } else if (_this.showWeekToggle && _this.type === 'day') {
+        // 주별 토글 버튼이 있고 주별 모드가 아닐 때도 버튼 텍스트 업데이트
+        setTimeout(() => {
+          const $toggleBtn = _this.wrap.querySelector('.' + _this.className.weekToggle);
+          if ($toggleBtn) {
+            const $toggleText = _this.weeklyView ? '펼치기' : '접기';
+            $toggleBtn.textContent = $toggleText;
+            $toggleBtn.setAttribute('aria-label', `주별 보기 ${$toggleText}`);
+          }
         }, 10);
       }
 
