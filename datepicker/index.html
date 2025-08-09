@@ -9,6 +9,7 @@
   border: 1px solid #ddd;
   height: 32px;
   padding: 0 10px;
+  width: 150px
 }
 .datepicker.hi-datepicker {
   padding-right: 40px;
@@ -48,20 +49,23 @@
 <link rel="stylesheet" href="./css/hiDatepicker.min.css">
 </head>
 <body>
-<p><input type="text" class="datepicker" id="datepicker1" placeholder="기본"></p>
-<p><input type="text" class="datepicker" id="datepicker2" placeholder="모바일모드, yyyy.mm.dd"></p>
+<p><input type="text" class="datepicker" id="datepicker1" placeholder="default"> 기본</p>
+<p><input type="text" class="datepicker" id="datepicker2" placeholder="mobile"> 모바일모드</p>
 <p><input type="text" class="datepicker" id="datepicker3" placeholder="monthpicker"></p>
 <p><input type="text" class="datepicker" id="datepicker4" placeholder="yearpicker"></p>
+<p><input type="text" class="datepicker" id="datepicker16" placeholder="yyyy.mm.dd"> 날짜 사이 마크변경(format 변경?)</p>
 <p><input type="text" class="datepicker" id="datepicker5" placeholder="min, max 설정"></p>
-<p><input type="text" class="datepicker" id="datepicker6" placeholder="holidays(공휴일 설정)"></p>
-<p><input type="text" class="datepicker" id="datepicker7" placeholder="disabledDays(날짜별 비활성화)"></p>
-<p><input type="text" class="datepicker" id="datepicker8" placeholder="disabledWeek(요일별 비활성화)"></p>
-<p><input type="text" class="datepicker" id="datepicker9" placeholder="showSetValue(달력뜰때 바로 value 세팅)"></p>
-<p><input type="text" class="datepicker" id="datepicker11" placeholder="이전달/다음달 표시"></p>
-<p><input type="text" class="datepicker" id="datepicker12" placeholder="고정 6주 표시(월 바뀌어도 고정높이)"></p>
+<p><input type="text" class="datepicker" id="datepicker6" placeholder="holidays"> 공휴일 설정(공휴일 날짜가 배열로 있어야함)</p>
+<p><input type="text" class="datepicker" id="datepicker7" placeholder="disabledDays"> 날짜별 비활성화</p>
+<p><input type="text" class="datepicker" id="datepicker8" placeholder="disabledWeek"> 요일별 비활성화</p>
+<p><input type="text" class="datepicker" id="datepicker9" placeholder="showSetValue"> 달력뜰때 바로 value 세팅</p>
+<p><input type="text" class="datepicker" id="datepicker11" placeholder="showPrevNextMonthDays"> 이전달/다음달 표시</p>
+<p><input type="text" class="datepicker" id="datepicker12" placeholder="fixedWeekRows"> 고정 6주 표시, 월 바뀌어도 달력이 고정높이라 덜컥거리지 않음</p>
 <p><input type="text" class="datepicker" id="datepicker13" placeholder="이전달/다음달 + 고정 6주"></p>
-<p><input type="text" class="datepicker" id="datepicker14" placeholder="주별 보기"></p>
-<p><input type="text" class="datepicker" id="datepicker15" placeholder="range picker"></p>
+<p><input type="text" class="datepicker" id="datepicker14" placeholder="showWeekToggle"> 주별 보기 토글버튼</p>
+<p><input type="text" class="datepicker" id="datepicker17" placeholder="weeklyViewDefault"> 주별 보기 토글버튼 + 처음부터 주별 모드(showWeekToggle가 true 여야만 쓸수 있음)</p>
+<p><input type="text" class="datepicker" id="datepicker15" placeholder="range picker"> (일 기준) 기간설정</p>
+
 <br>
 <p>달력 집어넣기</p>
 <div id="datepicker10" style="max-width: 500px;"></div>
@@ -71,8 +75,7 @@
 <script>
 const $calendar1 = new hiDatepicker('#datepicker1');
 const $calendar2 = new hiDatepicker('#datepicker2', {
-  mobile: true,
-  valueUnit: '.'
+  mobile: true
 });
 const $calendar3 = new hiDatepicker('#datepicker3', {
   type: 'month'
@@ -137,12 +140,19 @@ const $calendar13 = new hiDatepicker('#datepicker13', {
 });
 
 const $calendar14 = new hiDatepicker('#datepicker14', {
+  showWeekToggle: true
+});
+
+const $calendar17 = new hiDatepicker('#datepicker17', {
   showWeekToggle: true,
   weeklyViewDefault: true
 });
 
 const $calendar15 = new hiDatepicker('#datepicker15', {
   range: true
+});
+const $calendar16 = new hiDatepicker('#datepicker16', {
+  valueUnit: '.'
 });
 </script>
 </body>
