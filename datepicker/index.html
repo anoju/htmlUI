@@ -27,6 +27,10 @@
 <p><input type="text" class="datepicker" id="datepicker7" placeholder="disabledDays"></p>
 <p><input type="text" class="datepicker" id="datepicker8" placeholder="disabledWeek"></p>
 <p><input type="text" class="datepicker" id="datepicker9" placeholder="showSetValue"></p>
+<p><input type="text" class="datepicker" id="datepicker11" placeholder="이전달/다음달 날짜 표시"></p>
+<p><input type="text" class="datepicker" id="datepicker12" placeholder="고정 6주 표시"></p>
+<p><input type="text" class="datepicker" id="datepicker13" placeholder="이전달/다음달 + 고정 6주"></p>
+<p><input type="text" class="datepicker" id="datepicker14" placeholder="주별 보기 토글 버튼"></p>
 <br>
 <p>달력 집어넣기</p>
 <div id="datepicker10" style="max-width: 500px;"></div>
@@ -69,6 +73,23 @@ const $calendar9 = new hiDatepicker('#datepicker9', {
 const $calendar10 = new hiDatepicker('#datepicker10');
 $calendar10.seletedClick(function(e) {
   console.log(e.value);
+});
+
+const $calendar11 = new hiDatepicker('#datepicker11', {
+  showPrevNextMonthDays: true
+});
+
+const $calendar12 = new hiDatepicker('#datepicker12', {
+  fixedWeekRows: true
+});
+
+const $calendar13 = new hiDatepicker('#datepicker13', {
+  showPrevNextMonthDays: true,
+  fixedWeekRows: true
+});
+
+const $calendar14 = new hiDatepicker('#datepicker14', {
+  showWeekToggle: true
 });
 </script>
 </body>

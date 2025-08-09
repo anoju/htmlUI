@@ -78,16 +78,16 @@ $selected-txt-color: #fff;
       opacity: 0.4;
     }
 
-    &.prev-year {
+    &.first {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' width='256' height='256' viewBox='0 0 256 256' xml:space='preserve'%3E%3Cdefs%3E%3C/defs%3E%3Cg style='stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;' transform='translate(254.59340659340654 254.59340659340654) rotate(180) scale(2.81 2.81) matrix(1 0 0 -1 0 90)'%3E%3Cpath d='M 33.25 90 c -0.384 0 -0.768 -0.146 -1.061 -0.439 c -0.586 -0.586 -0.586 -1.535 0 -2.121 L 74.629 45 L 32.189 2.561 c -0.586 -0.585 -0.586 -1.536 0 -2.121 c 0.586 -0.586 1.535 -0.586 2.121 0 l 43.5 43.5 c 0.586 0.585 0.586 1.536 0 2.121 l -43.5 43.5 C 34.018 89.854 33.634 90 33.25 90 z' style='stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(29,29,27); fill-rule: nonzero; opacity: 1;' transform=' matrix(1 0 0 1 0 0) ' stroke-linecap='round'/%3E%3Cpath d='M 13.25 90 c -0.384 0 -0.768 -0.146 -1.061 -0.439 c -0.586 -0.586 -0.586 -1.535 0 -2.121 L 54.629 45 L 12.189 2.561 c -0.586 -0.585 -0.586 -1.536 0 -2.121 c 0.586 -0.586 1.535 -0.586 2.121 0 l 43.5 43.5 c 0.586 0.585 0.586 1.536 0 2.121 l -43.5 43.5 C 14.018 89.854 13.634 90 13.25 90 z' style='stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(29,29,27); fill-rule: nonzero; opacity: 1;' transform=' matrix(1 0 0 1 0 0) ' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E");
     }
-    &.prev-month {
+    &.prev {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' width='256' height='256' viewBox='0 0 256 256' xml:space='preserve'%3E%3Cdefs%3E%3C/defs%3E%3Cg style='stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;' transform='translate(254.59340659340654 254.59340659340654) rotate(180) scale(2.81 2.81) matrix(1 0 0 -1 0 90)'%3E%3Cpath d='M 23.25 90 c -0.384 0 -0.768 -0.146 -1.061 -0.439 c -0.586 -0.586 -0.586 -1.535 0 -2.121 L 64.629 45 L 22.189 2.561 c -0.586 -0.585 -0.586 -1.536 0 -2.121 c 0.586 -0.586 1.535 -0.586 2.121 0 l 43.5 43.5 c 0.586 0.585 0.586 1.536 0 2.121 l -43.5 43.5 C 24.018 89.854 23.634 90 23.25 90 z' style='stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(29,29,27); fill-rule: nonzero; opacity: 1;' transform=' matrix(1 0 0 1 0 0) ' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E");
     }
-    &.next-month {
+    &.next {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' width='256' height='256' viewBox='0 0 256 256' xml:space='preserve'%3E%3Cdefs%3E%3C/defs%3E%3Cg style='stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;' transform='translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)'%3E%3Cpath d='M 23.25 90 c -0.384 0 -0.768 -0.146 -1.061 -0.439 c -0.586 -0.586 -0.586 -1.535 0 -2.121 L 64.629 45 L 22.189 2.561 c -0.586 -0.585 -0.586 -1.536 0 -2.121 c 0.586 -0.586 1.535 -0.586 2.121 0 l 43.5 43.5 c 0.586 0.585 0.586 1.536 0 2.121 l -43.5 43.5 C 24.018 89.854 23.634 90 23.25 90 z' style='stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(29,29,27); fill-rule: nonzero; opacity: 1;' transform=' matrix(1 0 0 1 0 0) ' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E");
     }
-    &.next-year {
+    &.last {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' width='256' height='256' viewBox='0 0 256 256' xml:space='preserve'%3E%3Cdefs%3E%3C/defs%3E%3Cg style='stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;' transform='translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)'%3E%3Cpath d='M 33.25 90 c -0.384 0 -0.768 -0.146 -1.061 -0.439 c -0.586 -0.586 -0.586 -1.535 0 -2.121 L 74.629 45 L 32.189 2.561 c -0.586 -0.585 -0.586 -1.536 0 -2.121 c 0.586 -0.586 1.535 -0.586 2.121 0 l 43.5 43.5 c 0.586 0.585 0.586 1.536 0 2.121 l -43.5 43.5 C 34.018 89.854 33.634 90 33.25 90 z' style='stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(29,29,27); fill-rule: nonzero; opacity: 1;' transform=' matrix(1 0 0 1 0 0) ' stroke-linecap='round'/%3E%3Cpath d='M 13.25 90 c -0.384 0 -0.768 -0.146 -1.061 -0.439 c -0.586 -0.586 -0.586 -1.535 0 -2.121 L 54.629 45 L 12.189 2.561 c -0.586 -0.585 -0.586 -1.536 0 -2.121 c 0.586 -0.586 1.535 -0.586 2.121 0 l 43.5 43.5 c 0.586 0.585 0.586 1.536 0 2.121 l -43.5 43.5 C 14.018 89.854 13.634 90 13.25 90 z' style='stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(29,29,27); fill-rule: nonzero; opacity: 1;' transform=' matrix(1 0 0 1 0 0) ' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E");
     }
   }
@@ -164,6 +164,25 @@ $selected-txt-color: #fff;
     &:disabled {
       opacity: 0.4;
       background: none;
+    }
+    // 이전달/다음달 날짜 스타일
+    &.prev-month-day,
+    &.next-month-day {
+      opacity: 0.5;
+      color: #999;
+    }
+  }
+  
+  // 주별 보기 토글 버튼
+  .#{$pre}-datepicker-week-toggle {
+    padding: 5px 15px;
+    background-color: $list-btn-color;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    &:hover {
+      background-color: #e0e0e0;
     }
   }
   .#{$pre}-datepicker-list {
