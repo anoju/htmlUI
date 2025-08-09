@@ -312,6 +312,10 @@ class hiDatepicker {
     const $tableBtns = $wrap.querySelectorAll('.' + _this.className.tableBtn)
     $tableBtns.forEach(function($btn) {
       $btn.addEventListener('click', _this.tableBtnClickEvent.bind(_this));
+      if (_this.range && _this.type === 'day') {
+        $btn.addEventListener('mouseenter', _this.rangeHoverEvent.bind(_this));
+        $btn.addEventListener('mouseleave', _this.rangeHoverLeaveEvent.bind(_this));
+      }
     });
     const $listBtns = $wrap.querySelectorAll('.' + _this.className.listBtn)
     $listBtns.forEach(function($btn) {
@@ -329,6 +333,10 @@ class hiDatepicker {
     const $tableBtns = $wrap.querySelectorAll('.' + _this.className.tableBtn)
     $tableBtns.forEach(function($btn) {
       $btn.removeEventListener('click', _this.tableBtnClickEvent.bind(_this));
+      if (_this.range && _this.type === 'day') {
+        $btn.removeEventListener('mouseenter', _this.rangeHoverEvent.bind(_this));
+        $btn.removeEventListener('mouseleave', _this.rangeHoverLeaveEvent.bind(_this));
+      }
     });
     const $listBtns = $wrap.querySelectorAll('.' + _this.className.listBtn)
     $listBtns.forEach(function($btn) {
@@ -816,8 +824,9 @@ class hiDatepicker {
           const $prevTodayClass = $prevToday ? ' today' : '';
           const $prevSelectedClass = $prevSelected ? ' selected' : '';
           const $prevTitle = _this.getButtonTitle($prevFullday, $prevToday, $prevSelected);
+          const $prevAriaPressed = _this.getAriaPressed($prevFullday, $prevSelected);
 
-          $tbodyHtml += `<td data-week-idx="${$weekIdx}"${prevHolidayClass}><button type="button" class="${_this.className.tableBtn} prev-month-day${$prevTodayClass}${$prevSelectedClass}" data-day="${$prevDay}" data-full-day="${$prevFullday}" title="${$prevTitle}" aria-label="${$prevTitle}"${$prevDisabled}>${$prevDay}</button></td>`;
+          $tbodyHtml += `<td data-week-idx="${$weekIdx}"${prevHolidayClass}><button type="button" class="${_this.className.tableBtn} prev-month-day${$prevTodayClass}${$prevSelectedClass}" data-day="${$prevDay}" data-full-day="${$prevFullday}" title="${$prevTitle}" aria-label="${$prevTitle}" aria-pressed="${$prevAriaPressed}"${$prevDisabled}>${$prevDay}</button></td>`;
         } else {
           $tbodyHtml += `<td data-week-idx="${$weekIdx}"></td>`;
         }
@@ -836,8 +845,9 @@ class hiDatepicker {
           const $nextTodayClass = $nextToday ? ' today' : '';
           const $nextSelectedClass = $nextSelected ? ' selected' : '';
           const $nextTitle = _this.getButtonTitle($nextFullday, $nextToday, $nextSelected);
+          const $nextAriaPressed = _this.getAriaPressed($nextFullday, $nextSelected);
 
-          $tbodyHtml += `<td data-week-idx="${$weekIdx}"${nextHolidayClass}><button type="button" class="${_this.className.tableBtn} next-month-day${$nextTodayClass}${$nextSelectedClass}" data-day="${$nextDay}" data-full-day="${$nextFullday}" title="${$nextTitle}" aria-label="${$nextTitle}"${$nextDisabled}>${$nextDay}</button></td>`;
+          $tbodyHtml += `<td data-week-idx="${$weekIdx}"${nextHolidayClass}><button type="button" class="${_this.className.tableBtn} next-month-day${$nextTodayClass}${$nextSelectedClass}" data-day="${$nextDay}" data-full-day="${$nextFullday}" title="${$nextTitle}" aria-label="${$nextTitle}" aria-pressed="${$nextAriaPressed}"${$nextDisabled}>${$nextDay}</button></td>`;
         } else {
           $tbodyHtml += `<td data-week-idx="${$weekIdx}"></td>`;
         }
@@ -855,8 +865,9 @@ class hiDatepicker {
         const $notDisabled = Number(_this.minDate) <= Number($fullday) && Number($fullday) <= Number(_this.maxDate);
         const $disabled = (!$notDisabled || $isDisableddays || $isDisabledWeek) ? ' disabled' : '';
         const $title = _this.getButtonTitle($fullday, $today, $selected);
+        const $ariaPressed = _this.getAriaPressed($fullday, $selected);
 
-        $tbodyHtml += `<td data-week-idx="${$weekIdx}"${holidayClass}><button type="button" class="${_this.className.tableBtn}${$todayClass}${$selectedClass}" data-day="${$day}" data-full-day="${$fullday}" title="${$title}" aria-label="${$title}"${$disabled}>${$day}</button></td>`;
+        $tbodyHtml += `<td data-week-idx="${$weekIdx}"${holidayClass}><button type="button" class="${_this.className.tableBtn}${$todayClass}${$selectedClass}" data-day="${$day}" data-full-day="${$fullday}" title="${$title}" aria-label="${$title}" aria-pressed="${$ariaPressed}"${$disabled}>${$day}</button></td>`;
       }
 
       if ($weekIdx === 6) $tbodyHtml += '</tr>';
@@ -909,7 +920,8 @@ class hiDatepicker {
       const $today = $isToday ? ' today' : '';
       const $selected = $isSelected ? ' selected' : '';
       const $title = _this.getMonthButtonTitle($fullmonth, $isToday, $isSelected);
-      $btnHtml += `<li><button type="button" class="${_this.className.listBtn} month${$today}${$selected}" data-month="${$month}" data-full-month="${$fullmonth}" title="${$title}" aria-label="${$title}"${$disabled}><small>${$year}</small>${_this.headerSuffix}${$month}</button></li>`;
+      const $ariaPressed = $isSelected ? 'true' : 'false';
+      $btnHtml += `<li><button type="button" class="${_this.className.listBtn} month${$today}${$selected}" data-month="${$month}" data-full-month="${$fullmonth}" title="${$title}" aria-label="${$title}" aria-pressed="${$ariaPressed}"${$disabled}><small>${$year}</small>${_this.headerSuffix}${$month}</button></li>`;
     }
     // const $html = `<div class="${_this.className.list} ${_this.className.panelPre}month"><p class="${_this.className.list}-tit"><strong>${$year}</strong></p><ul>${$btnHtml}</ul></div>`;
     const $html = `<div class="${_this.className.list} ${_this.className.panelPre}month"><ul>${$btnHtml}</ul></div>`;
@@ -931,7 +943,8 @@ class hiDatepicker {
       const $isSelected = $year === $valYear;
       const $selected = $isSelected ? ' selected' : '';
       const $title = _this.getYearButtonTitle($year, $isToday, $isSelected);
-      $btnHtml += `<li><button type="button" class="${_this.className.listBtn} year${$today}${$selected}" data-year="${$year}" title="${$title}" aria-label="${$title}"${$disabled}>${$year}</button></li>`;
+      const $ariaPressed = $isSelected ? 'true' : 'false';
+      $btnHtml += `<li><button type="button" class="${_this.className.listBtn} year${$today}${$selected}" data-year="${$year}" title="${$title}" aria-label="${$title}" aria-pressed="${$ariaPressed}"${$disabled}>${$year}</button></li>`;
     }
     const $html = `<div class="${_this.className.list} ${_this.className.panelPre}year"><ul>${$btnHtml}</ul></div>`;
     return $html;
@@ -1001,6 +1014,70 @@ class hiDatepicker {
     });
   }
 
+  rangeHoverEvent(e) {
+    const _this = this;
+    const $target = e.target;
+    const hoverDate = $target.dataset.fullDay;
+    
+    if (!_this.rangeStartDate || _this.rangeEndDate) return;
+    
+    _this.updateRangeHoverDisplay(hoverDate);
+  }
+
+  rangeHoverLeaveEvent(e) {
+    const _this = this;
+    
+    if (!_this.rangeStartDate || _this.rangeEndDate) return;
+    
+    _this.clearRangeHoverDisplay();
+  }
+
+  updateRangeHoverDisplay(hoverDate) {
+    const _this = this;
+    const $wrap = _this.wrap;
+    const $tableBtns = $wrap.querySelectorAll('.' + _this.className.tableBtn);
+    
+    _this.clearRangeHoverDisplay();
+    
+    const startDate = _this.rangeStartDate;
+    const endDate = hoverDate;
+    const actualStart = startDate <= endDate ? startDate : endDate;
+    const actualEnd = startDate <= endDate ? endDate : startDate;
+    
+    $tableBtns.forEach(function($btn) {
+      const btnDate = $btn.dataset.fullDay;
+      
+      if (btnDate === actualStart) {
+        $btn.classList.add('range-hover-start');
+      }
+      
+      if (btnDate === actualEnd) {
+        $btn.classList.add('range-hover-end');
+      }
+      
+      if (btnDate > actualStart && btnDate < actualEnd) {
+        $btn.classList.add('range-hover-between');
+      }
+      
+      if (actualStart === actualEnd) {
+        $btn.classList.remove('range-hover-start', 'range-hover-end');
+        if (btnDate === actualStart) {
+          $btn.classList.add('range-hover-start', 'range-hover-end');
+        }
+      }
+    });
+  }
+
+  clearRangeHoverDisplay() {
+    const _this = this;
+    const $wrap = _this.wrap;
+    const $tableBtns = $wrap.querySelectorAll('.' + _this.className.tableBtn);
+    
+    $tableBtns.forEach(function($btn) {
+      $btn.classList.remove('range-hover-start', 'range-hover-end', 'range-hover-between');
+    });
+  }
+
   // get 
   getStartYaer() {
     const _this = this
@@ -1043,9 +1120,39 @@ class hiDatepicker {
 
     let title = this.getDateLabel(year, month, day);
     if (isToday) title += ' 오늘';
-    if (isSelected) title += ' 선택됨';
+    
+    if (this.range) {
+      if (this.rangeStartDate === fullDay && this.rangeEndDate === fullDay) {
+        title += ' 선택됨';
+      } else if (this.rangeStartDate === fullDay && this.rangeEndDate) {
+        title += ' 시작일';
+      } else if (this.rangeEndDate === fullDay) {
+        title += ' 마지막일';
+      } else if (this.rangeStartDate === fullDay && !this.rangeEndDate) {
+        title += ' 선택됨';
+      }
+    } else {
+      if (isSelected) title += ' 선택됨';
+    }
 
     return title;
+  }
+
+  getAriaPressed(fullDay, isSelected) {
+    if (this.range) {
+      if (this.rangeStartDate && this.rangeEndDate) {
+        // 두 개 다 선택된 경우: 시작일부터 마지막일까지 모두 true
+        return (fullDay >= this.rangeStartDate && fullDay <= this.rangeEndDate) ? 'true' : 'false';
+      } else if (this.rangeStartDate === fullDay) {
+        // 1개만 선택된 경우: 선택된 항목만 true
+        return 'true';
+      } else {
+        return 'false';
+      }
+    } else {
+      // 기본 모드: 선택된 항목만 true
+      return isSelected ? 'true' : 'false';
+    }
   }
 
   getMonthButtonTitle(fullMonth, isToday, isSelected) {
