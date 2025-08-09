@@ -190,7 +190,7 @@ class hiDatepicker {
       _this.makeBody();
       _this.headerBtnEvent(); // 헤더 이벤트 재바인딩
       _this.headerBtnControl();
-      
+
       // 포커스 복원
       if (focusTarget) {
         setTimeout(() => {
@@ -200,7 +200,7 @@ class hiDatepicker {
           }
         }, 50);
       }
-      
+
       // 주별 보기 상태라면 적용
       if (_this.weeklyView && _this.type === 'day') {
         setTimeout(() => {
@@ -251,7 +251,7 @@ class hiDatepicker {
         $btn.style.display = 'none';
       });
       $yearBtn.forEach(function($btn) {
-        $btn.style.display = 'block';
+        $btn.style.display = '';
         $btn.disabled = false;
         if ($minYear >= $monthYear && $btn.classList.contains('prev-year')) $btn.disabled = true;
         if ($maxYear <= $monthYear && $btn.classList.contains('next-year')) $btn.disabled = true;
@@ -262,7 +262,7 @@ class hiDatepicker {
         $btn.style.display = 'none';
       });
       $yearBtn.forEach(function($btn) {
-        $btn.style.display = 'block';
+        $btn.style.display = '';
         $btn.disabled = false;
         if ($minYear >= $year && $btn.classList.contains('prev-year')) $btn.disabled = true;
         if ($maxYear <= ($year + 10) && $btn.classList.contains('next-year')) $btn.disabled = true;
@@ -392,7 +392,7 @@ class hiDatepicker {
     const $isMonth = _this.showPanel === 'month';
     let $year = $isYear ? parseInt(_this.setStartYear) : parseInt(_this.setYear);
     let $month = parseInt(_this.setMonth);
-    
+
     // 포커스 타겟 식별
     let focusSelector = null;
     if ($target.classList.contains('first')) {
@@ -404,7 +404,7 @@ class hiDatepicker {
     } else if ($target.classList.contains('last')) {
       focusSelector = '.last';
     }
-    
+
     // 주별 모드에서의 특별 처리
     if (_this.weeklyView && _this.type === 'day') {
       if ($target.classList.contains('prev-week')) {
@@ -445,7 +445,7 @@ class hiDatepicker {
         return;
       }
     }
-    
+
     if ($isMonth) {
       // 월 선택 모드에서는 년 버튼으로 년도 변경
       if (!_this.setStartMonthYear) _this.setStartMonthYear = _this.setYear;
@@ -556,7 +556,7 @@ class hiDatepicker {
   weekToggleClickEvent(e) {
     const _this = this;
     _this.weeklyView = !_this.weeklyView;
-    
+
     // 전체 재구성
     _this.update();
   }
@@ -566,9 +566,9 @@ class hiDatepicker {
     const $wrap = _this.wrap;
     const $table = $wrap.querySelector('.' + _this.className.table);
     const $tbody = $table ? $table.querySelector('tbody') : null;
-    
+
     if (!$tbody) return;
-    
+
     // 토글 버튼 텍스트 업데이트
     const $toggleBtn = $wrap.querySelector('.' + _this.className.weekToggle);
     if ($toggleBtn) {
@@ -576,20 +576,20 @@ class hiDatepicker {
       $toggleBtn.textContent = $toggleText;
       $toggleBtn.setAttribute('aria-label', `주별 보기 ${$toggleText}`);
     }
-    
+
     if (_this.weeklyView) {
       // 주별 보기 - 선택된 날짜가 있는 주만 표시
       const $selectedDay = _this.value ? Number(_this.value.substr(6, 2)) : null;
       let $targetWeek = 0;
-      
+
       if ($selectedDay) {
         const $startIdx = new Date(_this.setYear, (_this.setMonth - 1), 1, 0, 0, 0, 0).getDay();
         $targetWeek = Math.floor(($startIdx + $selectedDay - 1) / 7);
       }
-      
+
       // currentWeek 저장
       _this.currentWeek = $targetWeek;
-      
+
       // 모든 주를 숨기고 해당 주만 표시
       const $rows = $tbody.querySelectorAll('tr');
       $rows.forEach((row, index) => {
@@ -610,12 +610,12 @@ class hiDatepicker {
     const $wrap = _this.wrap;
     const $table = $wrap.querySelector('.' + _this.className.table);
     const $tbody = $table ? $table.querySelector('tbody') : null;
-    
+
     if (!$tbody) return;
-    
+
     const $rows = $tbody.querySelectorAll('tr');
     let $newWeek = _this.currentWeek || 0;
-    
+
     if (isNext) {
       $newWeek += 1;
       if ($newWeek >= $rows.length) {
@@ -659,9 +659,9 @@ class hiDatepicker {
         return;
       }
     }
-    
+
     _this.currentWeek = $newWeek;
-    
+
     // 주 표시 업데이트
     $rows.forEach((row, index) => {
       row.style.display = index === $newWeek ? '' : 'none';
@@ -673,16 +673,16 @@ class hiDatepicker {
     const _this = this;
     const $wrap = _this.wrap;
     let $header = $wrap.querySelector('.' + _this.className.header);
-    
+
     // 기존 헤더가 있으면 제거
     if ($header) {
       $header.remove();
     }
-    
+
     // 새 헤더 생성
     $header = document.createElement('div');
     $header.classList.add(_this.className.header);
-    
+
     let $btnHtml = '<button type="button" class="' + _this.className.titleBtn + ' title-year"></button>';
     if (_this.type !== 'year') {
       $btnHtml += '<div class="' + _this.className.titleSuffix + '">' + _this.headerSuffix + '</div>';
@@ -704,10 +704,10 @@ class hiDatepicker {
       <button type="button" class="${_this.className.headerBtn} next next-month" aria-label="다음 달">다음 달</button>
       <button type="button" class="${_this.className.headerBtn} last next-year" aria-label="다음 년도">다음 년도</button>`;
     }
-    
+
     $header.innerHTML = $headerBtnHtml;
     $wrap.querySelector('.' + _this.className.inner).appendChild($header);
-    
+
     // 타이틀 업데이트
     const $titleYear = $header.querySelector('.title-year');
     if ($titleYear) $titleYear.innerHTML = _this.setYear;
@@ -744,12 +744,12 @@ class hiDatepicker {
     const $startIdx = new Date(_this.setYear, (_this.setMonth - 1), 1, 0, 0, 0, 0).getDay();
     const $lastIdx = $startIdx + $lastDay;
     let $endIdx = ($lastIdx) % 7 === 0 ? $lastIdx : $lastIdx + (7 - $lastIdx % 7);
-    
+
     // fixedWeekRows 옵션이 true면 6주 고정
     if (_this.fixedWeekRows) {
       $endIdx = 42; // 6주 × 7일 = 42일
     }
-    
+
     const $holidays = _this.holidays;
     const $disabledDays = _this.disabledDays;
     const $disabledWeek = _this.disabledWeek;
@@ -765,9 +765,9 @@ class hiDatepicker {
     for (let i = 0; i < $endIdx; i += 1) {
       const $weekIdx = i % 7;
       const $isDisabledWeek = $disabledWeek.includes(String($weekIdx))
-      
+
       if ($weekIdx === 0) $tbodyHtml += '<tr>';
-      
+
       if (i < $startIdx) {
         // 이전달 날짜
         if (_this.showPrevNextMonthDays) {
@@ -783,7 +783,7 @@ class hiDatepicker {
           const $prevTodayClass = $prevToday ? ' today' : '';
           const $prevSelectedClass = $prevSelected ? ' selected' : '';
           const $prevTitle = _this.getButtonTitle($prevFullday, $prevToday, $prevSelected);
-          
+
           $tbodyHtml += `<td data-week-idx="${$weekIdx}"${prevHolidayClass}><button type="button" class="${_this.className.tableBtn} prev-month-day${$prevTodayClass}${$prevSelectedClass}" data-day="${$prevDay}" data-full-day="${$prevFullday}" title="${$prevTitle}" aria-label="${$prevTitle}"${$prevDisabled}>${$prevDay}</button></td>`;
         } else {
           $tbodyHtml += `<td data-week-idx="${$weekIdx}"></td>`;
@@ -803,7 +803,7 @@ class hiDatepicker {
           const $nextTodayClass = $nextToday ? ' today' : '';
           const $nextSelectedClass = $nextSelected ? ' selected' : '';
           const $nextTitle = _this.getButtonTitle($nextFullday, $nextToday, $nextSelected);
-          
+
           $tbodyHtml += `<td data-week-idx="${$weekIdx}"${nextHolidayClass}><button type="button" class="${_this.className.tableBtn} next-month-day${$nextTodayClass}${$nextSelectedClass}" data-day="${$nextDay}" data-full-day="${$nextFullday}" title="${$nextTitle}" aria-label="${$nextTitle}"${$nextDisabled}>${$nextDay}</button></td>`;
         } else {
           $tbodyHtml += `<td data-week-idx="${$weekIdx}"></td>`;
@@ -822,10 +822,10 @@ class hiDatepicker {
         const $notDisabled = Number(_this.minDate) <= Number($fullday) && Number($fullday) <= Number(_this.maxDate);
         const $disabled = (!$notDisabled || $isDisableddays || $isDisabledWeek) ? ' disabled' : '';
         const $title = _this.getButtonTitle($fullday, $today, $selected);
-        
+
         $tbodyHtml += `<td data-week-idx="${$weekIdx}"${holidayClass}><button type="button" class="${_this.className.tableBtn}${$todayClass}${$selectedClass}" data-day="${$day}" data-full-day="${$fullday}" title="${$title}" aria-label="${$title}"${$disabled}>${$day}</button></td>`;
       }
-      
+
       if ($weekIdx === 6) $tbodyHtml += '</tr>';
     }
 
@@ -953,22 +953,22 @@ class hiDatepicker {
     const year = fullDay.substr(0, 4);
     const month = fullDay.substr(4, 2);
     const day = fullDay.substr(6, 2);
-    
+
     let title = this.getDateLabel(year, month, day);
     if (isToday) title += ' 오늘';
     if (isSelected) title += ' 선택됨';
-    
+
     return title;
   }
 
   getMonthButtonTitle(fullMonth, isToday, isSelected) {
     const year = fullMonth.substr(0, 4);
     const month = fullMonth.substr(4, 2);
-    
+
     let title = this.getDateLabel(year, month);
     if (isToday) title += ' 오늘';
     if (isSelected) title += ' 선택됨';
-    
+
     return title;
   }
 
@@ -976,7 +976,7 @@ class hiDatepicker {
     let title = this.getDateLabel(year);
     if (isToday) title += ' 오늘';
     if (isSelected) title += ' 선택됨';
-    
+
     return title;
   }
 
