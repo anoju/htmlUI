@@ -32,6 +32,9 @@ class hiDatepicker {
     this.fixedWeekRows = options.fixedWeekRows || false;
     this.showWeekToggle = options.showWeekToggle || false;
     this.weeklyView = false;
+    this.range = options.range || false;
+    this.rangeStartDate = null;
+    this.rangeEndDate = null;
 
     // 클래스네임
     this.className = {
@@ -207,6 +210,11 @@ class hiDatepicker {
           _this.updateWeeklyView();
         }, 10);
       }
+
+      // range 모드라면 범위 표시 업데이트
+      if (_this.range) {
+        _this.updateRangeDisplay();
+      }
     }, 1);
   }
 
@@ -340,7 +348,7 @@ class hiDatepicker {
     const $wrap = _this.wrap;
     const $target = _this.element;
     $wrap.classList.add(_this.className.show);
-    if (_this.showSetValue && !_this.value) {
+    if (_this.showSetValue && !$target.value.trim()) {
       const $today = _this.todayString();
       if (_this.type === 'year') _this.value = $today.substr(0, 4);
       else if (_this.type === 'month') _this.value = $today.substr(0, 6);
@@ -503,10 +511,17 @@ class hiDatepicker {
   tableBtnClickEvent(e) {
     const _this = this;
     const $target = e.target;
-    _this.value = $target.dataset.fullDay;
-    _this.update();
-    _this.targetSetValue();
-    if (_this.isLayer) _this.layerHide();
+    const clickedDate = $target.dataset.fullDay;
+    
+    if (_this.range && _this.type === 'day') {
+      _this.handleRangeSelection(clickedDate);
+    } else {
+      _this.value = clickedDate;
+      _this.update();
+      _this.targetSetValue();
+      if (_this.isLayer) _this.layerHide();
+    }
+    
     if (_this.type === 'day' && typeof _this.seletedClickCallback === 'function') {
       _this.seletedClickCallback(_this);
     }
@@ -910,8 +925,62 @@ class hiDatepicker {
     const $target = _this.element;
     if (!$target) return;
     if (_this.isLayer) {
-      $target.value = _this.dateFormat(_this.value);
+      if (_this.range && _this.rangeStartDate && _this.rangeEndDate) {
+        const startFormatted = _this.dateFormat(_this.rangeStartDate);
+        const endFormatted = _this.dateFormat(_this.rangeEndDate);
+        $target.value = startFormatted + ' ~ ' + endFormatted;
+      } else {
+        $target.value = _this.dateFormat(_this.value);
+      }
     }
+  }
+
+  handleRangeSelection(clickedDate) {
+    const _this = this;
+    
+    if (!_this.rangeStartDate) {
+      _this.rangeStartDate = clickedDate;
+      _this.rangeEndDate = null;
+    } else if (!_this.rangeEndDate) {
+      if (clickedDate < _this.rangeStartDate) {
+        _this.rangeEndDate = _this.rangeStartDate;
+        _this.rangeStartDate = clickedDate;
+      } else {
+        _this.rangeEndDate = clickedDate;
+      }
+      _this.targetSetValue();
+      if (_this.isLayer) _this.layerHide();
+    } else {
+      _this.rangeStartDate = clickedDate;
+      _this.rangeEndDate = null;
+    }
+    
+    _this.updateRangeDisplay();
+  }
+
+  updateRangeDisplay() {
+    const _this = this;
+    const $wrap = _this.wrap;
+    const $tableBtns = $wrap.querySelectorAll('.' + _this.className.tableBtn);
+    
+    $tableBtns.forEach(function($btn) {
+      $btn.classList.remove('range-start', 'range-end', 'range-between');
+      
+      const btnDate = $btn.dataset.fullDay;
+      
+      if (_this.rangeStartDate && btnDate === _this.rangeStartDate) {
+        $btn.classList.add('range-start');
+      }
+      
+      if (_this.rangeEndDate && btnDate === _this.rangeEndDate) {
+        $btn.classList.add('range-end');
+      }
+      
+      if (_this.rangeStartDate && _this.rangeEndDate && 
+          btnDate > _this.rangeStartDate && btnDate < _this.rangeEndDate) {
+        $btn.classList.add('range-between');
+      }
+    });
   }
 
   // get 
