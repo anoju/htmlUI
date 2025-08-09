@@ -183,13 +183,23 @@ class hiDatepicker {
   }
 
   // update
-  update() {
+  update(focusTarget) {
     const _this = this;
     setTimeout(function() {
       _this.makeHeader();
       _this.makeBody();
       _this.headerBtnEvent(); // 헤더 이벤트 재바인딩
       _this.headerBtnControl();
+      
+      // 포커스 복원
+      if (focusTarget) {
+        setTimeout(() => {
+          const $targetBtn = _this.wrap.querySelector(focusTarget);
+          if ($targetBtn) {
+            $targetBtn.focus();
+          }
+        }, 50);
+      }
       
       // 주별 보기 상태라면 적용
       if (_this.weeklyView && _this.type === 'day') {
@@ -236,25 +246,31 @@ class hiDatepicker {
     const $maxMonth = Number($max.substr(0, 6));
 
     if ($showPanel === 'month') {
-      $yearBtn.forEach(function($btn) {
-        $btn.disabled = true;
-      });
+      // 월 선택 모드: 월 버튼 숨김, 년 버튼만 활성화
       $monthBtn.forEach(function($btn) {
+        $btn.style.display = 'none';
+      });
+      $yearBtn.forEach(function($btn) {
+        $btn.style.display = 'block';
         $btn.disabled = false;
-        if ($minYear >= $monthYear && $btn.classList.contains('prev-month')) $btn.disabled = true;
-        if ($maxYear <= $monthYear && $btn.classList.contains('next-month')) $btn.disabled = true;
+        if ($minYear >= $monthYear && $btn.classList.contains('prev-year')) $btn.disabled = true;
+        if ($maxYear <= $monthYear && $btn.classList.contains('next-year')) $btn.disabled = true;
       });
     } else if ($showPanel === 'year') {
+      // 년 선택 모드: 월 버튼 숨김, 년 버튼만 활성화  
+      $monthBtn.forEach(function($btn) {
+        $btn.style.display = 'none';
+      });
       $yearBtn.forEach(function($btn) {
+        $btn.style.display = 'block';
         $btn.disabled = false;
         if ($minYear >= $year && $btn.classList.contains('prev-year')) $btn.disabled = true;
         if ($maxYear <= ($year + 10) && $btn.classList.contains('next-year')) $btn.disabled = true;
       });
-      $monthBtn.forEach(function($btn) {
-        $btn.disabled = true;
-      });
     } else {
+      // 일 선택 모드: 모든 버튼 표시 및 활성화
       $headerBtns.forEach(function($btn) {
+        $btn.style.display = 'block';
         $btn.disabled = false;
         if ($minMonth >= $fullmonth && $btn.classList.contains('prev-month')) $btn.disabled = true;
         if ($maxMonth <= $fullmonth && $btn.classList.contains('next-month')) $btn.disabled = true;
@@ -377,6 +393,18 @@ class hiDatepicker {
     let $year = $isYear ? parseInt(_this.setStartYear) : parseInt(_this.setYear);
     let $month = parseInt(_this.setMonth);
     
+    // 포커스 타겟 식별
+    let focusSelector = null;
+    if ($target.classList.contains('first')) {
+      focusSelector = '.first';
+    } else if ($target.classList.contains('prev')) {
+      focusSelector = '.prev';
+    } else if ($target.classList.contains('next')) {
+      focusSelector = '.next';
+    } else if ($target.classList.contains('last')) {
+      focusSelector = '.last';
+    }
+    
     // 주별 모드에서의 특별 처리
     if (_this.weeklyView && _this.type === 'day') {
       if ($target.classList.contains('prev-week')) {
@@ -395,7 +423,7 @@ class hiDatepicker {
         _this.setYear = String($year);
         _this.setMonth = _this.changeStringDay($month);
         _this.currentWeek = 0; // 첫 번째 주로 설정
-        _this.update();
+        _this.update(focusSelector);
         setTimeout(() => {
           _this.updateWeeklyView();
         }, 10);
@@ -410,7 +438,7 @@ class hiDatepicker {
         _this.setYear = String($year);
         _this.setMonth = _this.changeStringDay($month);
         _this.currentWeek = 0; // 첫 번째 주로 설정
-        _this.update();
+        _this.update(focusSelector);
         setTimeout(() => {
           _this.updateWeeklyView();
         }, 10);
@@ -419,10 +447,11 @@ class hiDatepicker {
     }
     
     if ($isMonth) {
+      // 월 선택 모드에서는 년 버튼으로 년도 변경
       if (!_this.setStartMonthYear) _this.setStartMonthYear = _this.setYear;
-      if ($target.classList.contains('prev-month')) {
+      if ($target.classList.contains('prev-year')) {
         _this.setStartMonthYear = Number(_this.setStartMonthYear) - 1;
-      } else if ($target.classList.contains('next-month')) {
+      } else if ($target.classList.contains('next-year')) {
         _this.setStartMonthYear = Number(_this.setStartMonthYear) + 1;
       }
     } else {
@@ -457,7 +486,7 @@ class hiDatepicker {
       _this.getStartYaer();
     }
     if (_this.setMonth !== $month) _this.setMonth = $month;
-    _this.update();
+    _this.update(focusSelector);
   }
 
   titleBtnClickEvent(e) {
