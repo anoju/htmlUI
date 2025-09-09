@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>계기판 대시보드</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 50px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .dashboard-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        #gaugeCanvas {
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .demo-info {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>위험도 계기판</h1>
+    
+    <div class="dashboard-container">
+        <canvas id="gaugeCanvas" width="500" height="350"></canvas>
+        <div class="demo-info">클릭하여 다음 단계로 변경</div>
+    </div>
+
+    <script src="gauge.js"></script>
+</body>
+</html>
