@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>계기판 대시보드 (CSS 버전)</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 50px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .dashboard-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .demo-info {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 400px;
+            height: 250px;
+            margin: 0 auto;
+            cursor: pointer;
+        }
+
+        .gauge-bg {
+            position: absolute;
+            width: 360px;
+            height: 200px;
+            top: 20px;
+            left: 20px;
+        }
+
+        .gauge-segment {
+            position: absolute;
+            width: 360px;
+            height: 200px;
+            top: 20px;
+            left: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .gauge-segment path {
+            transition: all 0.3s ease;
+        }
+
+        .gauge-segment.active path {
+            opacity: 1 !important;
+            /* filter: drop-shadow(0 0 15px currentColor); */
+        }
+
+        .segment-1 {
+            color: #4CAF50;
+        }
+
+        .segment-2 {
+            color: #FFC107;
+        }
+
+        .segment-3 {
+            color: #FF9800;
+        }
+
+        .segment-4 {
+            color: #F44336;
+        }
+
+        .gauge-labels {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .gauge-label {
+            position: absolute;
+            font-weight: bold;
+            font-size: 16px;
+            color: #999;
+            transition: color 0.3s ease;
+            text-align: center;
+            transform-origin: center center;
+        }
+
+        .gauge-label.active {
+            color: white;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        .label-1 {
+            top: 144px;
+            left: 63px;
+            width: 40px;
+            transform: translate(-50%, -50%) rotate(-67.5deg);
+        }
+
+        .label-2 {
+            top: 63px;
+            left: 144px;
+            width: 40px;
+            transform: translate(-50%, -50%) rotate(-22.5deg);
+        }
+
+        .label-3 {
+            top: 63px;
+            left: 256px;
+            width: 40px;
+            transform: translate(-50%, -50%) rotate(22.5deg);
+        }
+
+        .label-4 {
+            top: 144px;
+            left: 337px;
+            width: 40px;
+            transform: translate(-50%, -50%) rotate(67.5deg);
+        }
+
+        .gauge-needle {
+            position: absolute;
+            top: 80px;
+            left: 198px;
+            width: 4px;
+            height: 120px;
+            background: #333;
+            border-radius: 2px 2px 0 0;
+            transform-origin: 2px 120px;
+            transform: rotate(-67.5deg);
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 10;
+        }
+
+        .gauge-center {
+            position: absolute;
+            top: 192px;
+            left: 192px;
+            width: 16px;
+            height: 16px;
+            background: #333;
+            border-radius: 50%;
+            z-index: 11;
+        }
+
+        .gauge-scale {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .scale-mark {
+            position: absolute;
+            background: #ccc;
+            transform-origin: 0px 125px;
+            top: 75px;
+            left: 200px;
+        }
+
+        .scale-mark.major {
+            width: 2px;
+            height: 15px;
+            margin-left: -1px;
+        }
+
+        .scale-mark.minor {
+            width: 1px;
+            height: 8px;
+            margin-left: -0.5px;
+            margin-top: 7px;
+        }
+    </style>
+</head>
+<body>
+    <h1>위험도 계기판 (CSS 버전)</h1>
+    
+    <div class="dashboard-container">
+        <div class="gauge-container" id="gaugeContainer">
+            <div class="gauge-bg">
+                <svg width="360" height="200" viewBox="0 0 360 200">
+                    <!-- Background arc -->
+                    <path d="M 30 180 A 150 150 0 0 1 330 180" fill="none" stroke="#e8e8e8" stroke-width="50"/>
+                </svg>
+            </div>
+            
+            <div class="gauge-segment segment-1" id="segment1">
+                <svg width="360" height="200" viewBox="0 0 360 200">
+                    <path d="M 5 180 A 175 175 0 0 1 56.25 56.25 L 91.38 91.38 A 125 125 0 0 0 55 180 Z" fill="currentColor" opacity="0.1"/>
+                </svg>
+            </div>
+            <div class="gauge-segment segment-2" id="segment2">
+                <svg width="360" height="200" viewBox="0 0 360 200">
+                    <path d="M 56.25 56.25 A 175 175 0 0 1 180 5 L 180 55 A 125 125 0 0 0 91.38 91.38 Z" fill="currentColor" opacity="0.1"/>
+                </svg>
+            </div>
+            <div class="gauge-segment segment-3" id="segment3">
+                <svg width="360" height="200" viewBox="0 0 360 200">
+                    <path d="M 180 5 A 175 175 0 0 1 303.75 56.25 L 268.62 91.38 A 125 125 0 0 0 180 55 Z" fill="currentColor" opacity="0.1"/>
+                </svg>
+            </div>
+            <div class="gauge-segment segment-4" id="segment4">
+                <svg width="360" height="200" viewBox="0 0 360 200">
+                    <path d="M 303.75 56.25 A 175 175 0 0 1 355 180 L 305 180 A 125 125 0 0 0 268.62 91.38 Z" fill="currentColor" opacity="0.1"/>
+                </svg>
+            </div>
+            
+            <div class="gauge-labels">
+                <div class="gauge-label label-1" id="label1">관심</div>
+                <div class="gauge-label label-2" id="label2">주의</div>
+                <div class="gauge-label label-3" id="label3">경계</div>
+                <div class="gauge-label label-4" id="label4">심각</div>
+            </div>
+            
+            <div class="gauge-scale">
+                <div class="scale-mark major" style="transform: rotate(-90deg)"></div>
+                <div class="scale-mark minor" style="transform: rotate(-67.5deg)"></div>
+                <div class="scale-mark major" style="transform: rotate(-45deg)"></div>
+                <div class="scale-mark minor" style="transform: rotate(-22.5deg)"></div>
+                <div class="scale-mark major" style="transform: rotate(0deg)"></div>
+                <div class="scale-mark minor" style="transform: rotate(22.5deg)"></div>
+                <div class="scale-mark major" style="transform: rotate(45deg)"></div>
+                <div class="scale-mark minor" style="transform: rotate(67.5deg)"></div>
+                <div class="scale-mark major" style="transform: rotate(90deg)"></div>
+            </div>
+            
+            <div class="gauge-needle" id="gaugeNeedle"></div>
+            <div class="gauge-center"></div>
+        </div>
+        <div class="demo-info">클릭하여 다음 단계로 변경</div>
+    </div>
+
+    <script>
+        class CSSGauge {
+            constructor() {
+                this.currentLevel = 1;
+                this.container = document.getElementById('gaugeContainer');
+                this.needle = document.getElementById('gaugeNeedle');
+                
+                this.levels = [
+                    { name: '관심', angle: -67.5 },
+                    { name: '주의', angle: -22.5 },
+                    { name: '경계', angle: 22.5 },
+                    { name: '심각', angle: 67.5 }
+                ];
+                
+                this.init();
+            }
+            
+            init() {
+                this.container.addEventListener('click', () => {
+                    this.setLevel((this.currentLevel % 4) + 1);
+                });
+                
+                this.setLevel(1);
+            }
+            
+            setLevel(level) {
+                document.querySelectorAll('.gauge-segment').forEach(segment => {
+                    segment.classList.remove('active');
+                });
+                document.querySelectorAll('.gauge-label').forEach(label => {
+                    label.classList.remove('active');
+                });
+                
+                document.getElementById(`segment${level}`).classList.add('active');
+                document.getElementById(`label${level}`).classList.add('active');
+                
+                const needleAngle = this.levels[level - 1].angle;
+                this.needle.style.transform = `rotate(${needleAngle}deg)`;
+                
+                this.currentLevel = level;
+            }
+        }
+        
+        new CSSGauge();
+    </script>
+</body>
+</html>

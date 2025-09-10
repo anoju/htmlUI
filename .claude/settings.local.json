@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/zun57/Documents/카카오톡 받은 파일/**)",
+      "Bash(mkdir:*)",
+      "Read(//c/Users/zun57/Pictures/Screenshots/**)",
+      "mcp__browser-tools__takeScreenshot",
+      "mcp__sequential-thinking__sequentialthinking"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "sequential-thinking",
+    "browser-tools"
+  ]
+}
