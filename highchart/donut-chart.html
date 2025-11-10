@@ -6,6 +6,9 @@
     <title>Donut Chart - Highcharts 8.2.0</title>
     <script src="highcharts-8.2.0.js"></script>
     <style>
+        :root {
+            --chart-center-icon-bg: #d0d5dd;
+        }
         body {
             font-family: 'Oneshinhan Digital', sans-serif;
             margin: 20px;
@@ -29,7 +32,7 @@
             transform: translate(-50%, -50%);
             width: 44px;
             height: 44px;
-            background-color: #d0d5dd;
+            background-color: var(--chart-center-icon-bg);
             border-radius: 4px;
             display: flex;
             align-items: center;
@@ -48,6 +51,15 @@
     </div>
 
     <script>
+        // CSS 변수 값 가져오는 공통 함수
+        function getCSSVar(varName, element) {
+            element = element || document.documentElement;
+            return getComputedStyle(element).getPropertyValue(varName).trim();
+        }
+
+        // 차트 영역 요소
+        const chartElement = document.getElementById('high-chart');
+
         Highcharts.chart('high-chart', {
             chart: {
                 type: 'pie',
@@ -76,8 +88,12 @@
                         enabled: false
                     },
                     borderWidth: 0,
+                    enableMouseTracking: false,
                     states: {
                         hover: {
+                            enabled: false
+                        },
+                        inactive: {
                             enabled: false
                         }
                     }

@@ -6,6 +6,12 @@
     <title>Line Chart with Tooltip - Highcharts 8.2.0</title>
     <script src="highcharts-8.2.0.js"></script>
     <style>
+        :root {
+            --chart-label-color: #475467;
+            --chart-label-size: 12px;
+            --chart-tooltip-color: #475467;
+            --chart-tooltip-size: 12px;
+        }
         body {
             font-family: 'Oneshinhan Digital', sans-serif;
             margin: 20px;
@@ -24,6 +30,21 @@
     <div id="high-chart"></div>
 
     <script>
+        // CSS 변수 값 가져오는 공통 함수
+        function getCSSVar(varName, element) {
+            element = element || document.documentElement;
+            return getComputedStyle(element).getPropertyValue(varName).trim();
+        }
+
+        // 차트 영역 요소
+        const chartElement = document.getElementById('high-chart');
+
+        // CSS 변수 값 가져오기 (차트 영역 기준)
+        const labelColor = getCSSVar('--chart-label-color', chartElement);
+        const labelSize = getCSSVar('--chart-label-size', chartElement);
+        const tooltipColor = getCSSVar('--chart-tooltip-color', chartElement);
+        const tooltipSize = getCSSVar('--chart-tooltip-size', chartElement);
+
         Highcharts.chart('high-chart', {
             chart: {
                 type: 'spline',
@@ -49,8 +70,8 @@
                 lineWidth: 0,
                 labels: {
                     style: {
-                        color: '#475467',
-                        fontSize: '12px',
+                        color: labelColor,
+                        fontSize: labelSize,
                         fontWeight: '300'
                     }
                 }
@@ -73,7 +94,7 @@
                 shadow: false,
                 useHTML: true,
                 formatter: function() {
-                    return '<span style="color: #475467; font-size: 12px; font-weight: 500;">' +
+                    return '<span style="color: ' + tooltipColor + '; font-size: ' + tooltipSize + '; font-weight: 500;">' +
                            Highcharts.numberFormat(this.y, 0, '.', ',') + '원</span>';
                 },
                 positioner: function(labelWidth, labelHeight, point) {
@@ -90,27 +111,28 @@
                         symbol: 'circle',
                         states: {
                             hover: {
-                                enabled: true,
-                                radius: 8,
-                                lineWidth: 2,
-                                lineColor: '#5290ff',
-                                fillColor: '#ffffff'
+                                enabled: false
                             }
                         }
                     },
                     states: {
                         hover: {
-                            lineWidthPlus: 0
+                            enabled: false
                         }
                     }
                 },
                 areaspline: {
                     marker: {
                         enabled: false
+                    },
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
                     }
                 },
                 series: {
-                    enableMouseTracking: true,
+                    enableMouseTracking: false,
                     stickyTracking: false
                 }
             },
