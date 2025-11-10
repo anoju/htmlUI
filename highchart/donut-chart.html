@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donut Chart - Highcharts 8.2.0</title>
+    <script src="highcharts-8.2.0.js"></script>
+    <style>
+        body {
+            font-family: 'Oneshinhan Digital', sans-serif;
+            margin: 20px;
+            background-color: #f9fafb;
+        }
+        .chart-wrapper {
+            max-width: 200px;
+            margin: 0 auto;
+            position: relative;
+            width: 167px;
+            height: 167px;
+        }
+        #high-chart {
+            width: 100%;
+            height: 100%;
+        }
+        .center-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 44px;
+            background-color: #d0d5dd;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-wrapper">
+        <div id="high-chart"></div>
+        <div class="center-icon">
+            <!-- 이미지 영역 (회색 박스) -->
+        </div>
+    </div>
+
+    <script>
+        Highcharts.chart('high-chart', {
+            chart: {
+                type: 'pie',
+                height: 167,
+                width: 167,
+                backgroundColor: 'transparent',
+                margin: [0, 0, 0, 0],
+                spacing: [0, 0, 0, 0]
+            },
+            title: {
+                text: ''
+            },
+            credits: {
+                enabled: false
+            },
+            legend: {
+                enabled: false
+            },
+            tooltip: {
+                enabled: false
+            },
+            plotOptions: {
+                pie: {
+                    innerSize: '60%',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    borderWidth: 0,
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: '카테고리',
+                data: [
+                    {
+                        name: '파란색',
+                        y: 35,
+                        color: '#5290ff'
+                    },
+                    {
+                        name: '보라색',
+                        y: 10,
+                        color: '#9d7bff'
+                    },
+                    {
+                        name: '청록색',
+                        y: 15,
+                        color: '#00c5c5'
+                    },
+                    {
+                        name: '초록색',
+                        y: 8,
+                        color: '#2dd882'
+                    },
+                    {
+                        name: '연두색',
+                        y: 12,
+                        color: '#7dd13f'
+                    },
+                    {
+                        name: '하늘색',
+                        y: 20,
+                        color: '#4fb4e3'
+                    }
+                ]
+            }]
+        });
+    </script>
+</body>
+</html>

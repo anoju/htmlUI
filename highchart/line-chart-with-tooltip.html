@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Line Chart with Tooltip - Highcharts 8.2.0</title>
-    <script src="https://code.highcharts.com/8.2.0/highcharts.js"></script>
+    <script src="highcharts-8.2.0.js"></script>
     <style>
         body {
             font-family: 'Oneshinhan Digital', sans-serif;
             margin: 20px;
             background-color: #f9fafb;
         }
-        #container {
+        #high-chart {
             max-width: 320px;
             margin: 0 auto;
             background: white;
@@ -21,10 +21,10 @@
     </style>
 </head>
 <body>
-    <div id="container"></div>
+    <div id="high-chart"></div>
 
     <script>
-        Highcharts.chart('container', {
+        Highcharts.chart('high-chart', {
             chart: {
                 type: 'spline',
                 height: 200,
