@@ -15,15 +15,13 @@
             background-color: #f9fafb;
         }
         .chart-wrapper {
-            max-width: 200px;
-            margin: 0 auto;
             position: relative;
-            width: 167px;
-            height: 167px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         #high-chart {
-            width: 100%;
-            height: 100%;
+            height: 167px;
         }
         .center-icon {
             position: absolute;
@@ -89,6 +87,7 @@
                     },
                     borderWidth: 1,
                     borderColor: '#ffffff',
+                    center: ['50%', '50%'],
                     enableMouseTracking: false,
                     states: {
                         hover: {
