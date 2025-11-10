@@ -58,6 +58,16 @@
         // 차트 영역 요소
         const chartElement = document.getElementById('high-chart');
 
+        // 차트 데이터 배열
+        const chartValues = [35, 20, 15, 12, 10, 8];
+        const chartColors = ['#5290ff', '#4fb4e3', '#00c5c5', '#7dd13f', '#9d7bff', '#2dd882'];
+
+        // 데이터 구성
+        const chartData = chartValues.map((value, index) => ({
+            y: value,
+            color: chartColors[index]
+        }));
+
         Highcharts.chart('high-chart', {
             chart: {
                 type: 'pie',
@@ -100,39 +110,7 @@
                 }
             },
             series: [{
-                name: '카테고리',
-                data: [
-                    {
-                        name: '파란색',
-                        y: 35,
-                        color: '#5290ff'
-                    },
-                    {
-                        name: '하늘색',
-                        y: 20,
-                        color: '#4fb4e3'
-                    },
-                    {
-                        name: '청록색',
-                        y: 15,
-                        color: '#00c5c5'
-                    },
-                    {
-                        name: '연두색',
-                        y: 12,
-                        color: '#7dd13f'
-                    },
-                    {
-                        name: '보라색',
-                        y: 10,
-                        color: '#9d7bff'
-                    },
-                    {
-                        name: '초록색',
-                        y: 8,
-                        color: '#2dd882'
-                    }
-                ]
+                data: chartData
             }]
         });
     </script>
