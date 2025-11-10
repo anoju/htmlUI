@@ -18,11 +18,12 @@
             background-color: #f9fafb;
         }
         #high-chart {
-            max-width: 320px;
+            width: 100%;
             margin: 0 auto;
             background: white;
             padding: 8px;
             border-radius: 8px;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -53,7 +54,8 @@
                 spacingBottom: 10,
                 spacingLeft: 10,
                 spacingRight: 10,
-                backgroundColor: 'transparent'
+                backgroundColor: 'transparent',
+                reflow: true
             },
             title: {
                 text: ''
