@@ -1,6 +1,12 @@
 {
   "permissions": {
     "allow": [
+      "mcp__Figma__create_design_system_rules",
+      "mcp__figma__get_screenshot",
+      "mcp__figma__get_variable_defs",
+      "mcp__figma__get_metadata",
+      "mcp__figma__get_code",
+      "mcp__figma__get_design_context",
       "Read(//c/Users/zun57/Documents/카카오톡 받은 파일/**)",
       "Bash(mkdir:*)",
       "Read(//c/Users/zun57/Pictures/Screenshots/**)",
@@ -13,6 +19,13 @@
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "sequential-thinking",
-    "browser-tools"
+    "browser-tools",
+    "figma",
+    "mcp__Figma__create_design_system_rules",
+    "mcp__figma__get_screenshot",
+    "mcp__figma__get_variable_defs",
+    "mcp__figma__get_metadata",
+    "mcp__figma__get_code",
+    "mcp__figma__get_design_context"
   ]
 }

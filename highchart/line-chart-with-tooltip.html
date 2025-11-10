@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line Chart with Tooltip - Highcharts 8.2.0</title>
+    <script src="https://code.highcharts.com/8.2.0/highcharts.js"></script>
+    <style>
+        body {
+            font-family: 'Oneshinhan Digital', sans-serif;
+            margin: 20px;
+            background-color: #f9fafb;
+        }
+        #container {
+            max-width: 320px;
+            margin: 0 auto;
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+
+    <script>
+        Highcharts.chart('container', {
+            chart: {
+                type: 'spline',
+                height: 200,
+                spacingTop: 40,
+                spacingBottom: 10,
+                spacingLeft: 10,
+                spacingRight: 10,
+                backgroundColor: 'transparent'
+            },
+            title: {
+                text: ''
+            },
+            credits: {
+                enabled: false
+            },
+            legend: {
+                enabled: false
+            },
+            xAxis: {
+                categories: ['1일', '5일', '10일', '15일', '20일', '25일', '30일'],
+                tickLength: 0,
+                lineWidth: 0,
+                labels: {
+                    style: {
+                        color: '#475467',
+                        fontSize: '12px',
+                        fontWeight: '300'
+                    }
+                }
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                },
+                gridLineWidth: 0,
+                labels: {
+                    enabled: false
+                }
+            },
+            tooltip: {
+                backgroundColor: '#ffffff',
+                borderColor: '#d0d5dd',
+                borderRadius: 8,
+                borderWidth: 1,
+                padding: 8,
+                shadow: false,
+                useHTML: true,
+                formatter: function() {
+                    return '<span style="color: #475467; font-size: 12px; font-weight: 500;">' +
+                           Highcharts.numberFormat(this.y, 0, '.', ',') + '원</span>';
+                },
+                positioner: function(labelWidth, labelHeight, point) {
+                    return {
+                        x: point.plotX - labelWidth / 2 + this.chart.plotLeft,
+                        y: point.plotY - labelHeight - 20 + this.chart.plotTop
+                    };
+                }
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        enabled: false,
+                        symbol: 'circle',
+                        states: {
+                            hover: {
+                                enabled: true,
+                                radius: 8,
+                                lineWidth: 2,
+                                lineColor: '#5290ff',
+                                fillColor: '#ffffff'
+                            }
+                        }
+                    },
+                    states: {
+                        hover: {
+                            lineWidthPlus: 0
+                        }
+                    }
+                },
+                areaspline: {
+                    marker: {
+                        enabled: false
+                    }
+                },
+                series: {
+                    enableMouseTracking: true,
+                    stickyTracking: false
+                }
+            },
+            series: [{
+                name: '점선 (그라데이션 영역)',
+                type: 'areaspline',
+                data: [600000, 550000, 580000, 620000, 650000, 680000, 720000],
+                color: '#818da2',
+                lineWidth: 1.5,
+                dashStyle: 'Dash',
+                fillColor: {
+                    linearGradient: {
+                        x1: 0,
+                        y1: 0,
+                        x2: 0,
+                        y2: 1
+                    },
+                    stops: [
+                        [0, 'rgba(129, 141, 162, 0.3)'],
+                        [1, 'rgba(129, 141, 162, 0)']
+                    ]
+                },
+                zIndex: 1,
+                enableMouseTracking: false
+            }, {
+                name: '파란 실선',
+                type: 'spline',
+                data: [650000, 580000, 620000, 680000, 720000, 800000, null],
+                color: '#5290ff',
+                lineWidth: 2,
+                zIndex: 2,
+                marker: {
+                    enabled: false
+                }
+            }]
+        });
+
+        // 25일(마지막 데이터) 포인트에 마커 표시 및 툴팁 자동 표시
+        setTimeout(function() {
+            var chart = Highcharts.charts[0];
+            var series = chart.series[1]; // 파란 실선
+            var point = series.data[5]; // 25일 (index 5)
+
+            // 마커 활성화 (원형)
+            point.update({
+                marker: {
+                    enabled: true,
+                    symbol: 'circle',
+                    radius: 8,
+                    lineWidth: 2,
+                    lineColor: '#5290ff',
+                    fillColor: '#ffffff'
+                }
+            });
+
+            // 툴팁 표시
+            chart.tooltip.refresh(point);
+        }, 100);
+    </script>
+</body>
+</html>

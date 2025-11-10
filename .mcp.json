@@ -7,6 +7,12 @@
     "browser-tools": {
       "command": "npx",
       "args": ["@agentdeskai/browser-tools-mcp@1.2.0"]
+    },
+    "figma": {
+      "figma": {
+        "url": "https://mcp.figma.com/mcp",
+        "type": "http"
+      }
     }
   }
 }
