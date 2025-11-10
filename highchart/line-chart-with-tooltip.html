@@ -14,15 +14,15 @@
         }
         body {
             font-family: 'Oneshinhan Digital', sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
             background-color: #f9fafb;
         }
         #high-chart {
             width: 100%;
-            margin: 0 auto;
+            margin: 0;
             background: white;
-            padding: 8px;
-            border-radius: 8px;
+            padding: 0;
             box-sizing: border-box;
         }
     </style>
@@ -50,10 +50,8 @@
             chart: {
                 type: 'spline',
                 height: 200,
-                spacingTop: 40,
-                spacingBottom: 10,
-                spacingLeft: 10,
-                spacingRight: 10,
+                margin: [40, 0, 30, 0],
+                spacing: [0, 0, 0, 0],
                 backgroundColor: 'transparent',
                 reflow: true
             },
@@ -68,15 +66,7 @@
             },
             xAxis: {
                 categories: ['1일', '5일', '10일', '15일', '20일', '25일', '30일'],
-                tickLength: 0,
-                lineWidth: 0,
-                labels: {
-                    style: {
-                        color: labelColor,
-                        fontSize: labelSize,
-                        fontWeight: '300'
-                    }
-                }
+                visible: false
             },
             yAxis: {
                 title: {
@@ -172,7 +162,7 @@
             }]
         });
 
-        // 25일(마지막 데이터) 포인트에 마커 표시 및 툴팁 자동 표시
+        // 25일(마지막 데이터) 포인트에 마커 표시 및 툴팁 고정 표시
         setTimeout(function() {
             var chart = Highcharts.charts[0];
             var series = chart.series[1]; // 파란 실선
@@ -190,8 +180,9 @@
                 }
             });
 
-            // 툴팁 표시
+            // 툴팁을 고정으로 표시 (숨기지 않도록)
             chart.tooltip.refresh(point);
+            chart.tooltip.hide = function() {}; // hide 함수를 빈 함수로 오버라이드
         }, 100);
     </script>
 </body>
