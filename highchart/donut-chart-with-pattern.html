@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donut Chart - Highcharts 8.2.0</title>
+    <title>Donut Chart with Pattern - Highcharts 8.2.0</title>
     <script src="highcharts-8.2.0.js"></script>
     <script src="highcharts-pattern-fill-8.2.0.min.js"></script>
     <style>
@@ -20,6 +20,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-bottom: 30px;
         }
         #high-chart {
             height: 167px;
@@ -51,12 +52,23 @@
             z-index: 999;
             pointer-events: none;
         }
+        #pattern-chart {
+            height: 167px;
+        }
     </style>
 </head>
 <body>
     <div class="chart-wrapper">
         <div class="donut-bg"></div>
         <div id="high-chart"></div>
+        <div class="center-icon">
+            <!-- 이미지 영역 (회색 박스) -->
+        </div>
+    </div>
+
+    <div class="chart-wrapper">
+        <div class="donut-bg"></div>
+        <div id="pattern-chart"></div>
         <div class="center-icon">
             <!-- 이미지 영역 (회색 박스) -->
         </div>
@@ -76,43 +88,14 @@
         const chartValues = [35, 20, 15, 12, 10, 8];
         const chartColors = ['#5290ff', '#4fb4e3', '#00c5c5', '#7dd13f', '#9d7bff', '#2dd882'];
 
-        // 각 영역마다 다른 패턴 이미지 URL 배열 (30x30 PNG 이미지)
-        // 패턴이 없는 영역은 null 또는 빈 문자열로 설정
-        const patternImageUrls = [
-            'pattern1.png', // 패턴 없음 - 배경색만 적용
-            null,
-            null,
-            null,
-            null,
-            null
-        ];
+        // 기본 차트 데이터 구성
+        const chartData = chartValues.map((value, index) => ({
+            y: value,
+            color: chartColors[index]
+        }));
 
-        // 데이터 구성
-        const chartData = chartValues.map((value, index) => {
-            const patternImage = patternImageUrls[index];
-
-            // 패턴 이미지가 있으면 패턴 적용, 없으면 배경색만 적용
-            if (patternImage) {
-                return {
-                    y: value,
-                    color: {
-                        pattern: {
-                            image: patternImage,
-                            width: 10,
-                            height: 10,
-                            backgroundColor: chartColors[index]
-                        }
-                    }
-                };
-            } else {
-                return {
-                    y: value,
-                    color: chartColors[index]
-                };
-            }
-        });
-
-        const chart = Highcharts.chart('high-chart', {
+        // 첫 번째 차트 (기본)
+        Highcharts.chart('high-chart', {
             chart: {
                 type: 'pie',
                 height: 167,
@@ -156,6 +139,90 @@
             },
             series: [{
                 data: chartData
+            }]
+        });
+
+        // 각 영역마다 다른 패턴 이미지 URL 배열 (30x30 PNG 이미지)
+        // 패턴이 없는 영역은 null 또는 빈 문자열로 설정
+        const patternImageUrls = [
+            'pattern1.png',
+            'pattern2.png',
+            null, // 패턴 없음 - 배경색만 적용
+            'pattern4.png',
+            null, // 패턴 없음 - 배경색만 적용
+            'pattern6.png'
+        ];
+
+        // 패턴이 적용된 차트 데이터 구성
+        const patternChartData = chartValues.map((value, index) => {
+            const patternImage = patternImageUrls[index];
+
+            // 패턴 이미지가 있으면 패턴 적용, 없으면 배경색만 적용
+            if (patternImage) {
+                return {
+                    y: value,
+                    color: {
+                        pattern: {
+                            image: patternImage,
+                            width: 10,
+                            height: 10,
+                            backgroundColor: chartColors[index]
+                        }
+                    }
+                };
+            } else {
+                return {
+                    y: value,
+                    color: chartColors[index]
+                };
+            }
+        });
+
+        // 두 번째 차트 (패턴 적용)
+        Highcharts.chart('pattern-chart', {
+            chart: {
+                type: 'pie',
+                height: 167,
+                width: 167,
+                backgroundColor: 'transparent',
+                margin: [0, 0, 0, 0],
+                spacing: [0, 0, 0, 0]
+            },
+            title: {
+                text: ''
+            },
+            credits: {
+                enabled: false
+            },
+            legend: {
+                enabled: false
+            },
+            tooltip: {
+                enabled: false
+            },
+            plotOptions: {
+                pie: {
+                    innerSize: '60%',
+                    size: 167,
+                    dataLabels: {
+                        enabled: false
+                    },
+                    borderWidth: 1,
+                    borderColor: '#ffffff',
+                    center: ['50%', '50%'],
+                    enableMouseTracking: false,
+                    states: {
+                        hover: {
+                            enabled: false
+                        },
+                        inactive: {
+                            enabled: false
+                        }
+                    }
+                }
+            },
+            series: [{
+                data: patternChartData
             }]
         });
     </script>
