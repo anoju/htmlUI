@@ -23,6 +23,18 @@
         #high-chart {
             height: 167px;
         }
+        .donut-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 167px;
+            height: 167px;
+            background: radial-gradient(circle, transparent 45%, #F0F4FA 45%);
+            border-radius: 50%;
+            z-index: 0;
+            pointer-events: none;
+        }
         .center-icon {
             position: absolute;
             top: 50%;
@@ -42,6 +54,7 @@
 </head>
 <body>
     <div class="chart-wrapper">
+        <div class="donut-bg"></div>
         <div id="high-chart"></div>
         <div class="center-icon">
             <!-- 이미지 영역 (회색 박스) -->
@@ -68,7 +81,7 @@
             color: chartColors[index]
         }));
 
-        Highcharts.chart('high-chart', {
+        const chart = Highcharts.chart('high-chart', {
             chart: {
                 type: 'pie',
                 height: 167,
@@ -92,6 +105,7 @@
             plotOptions: {
                 pie: {
                     innerSize: '60%',
+                    size: 167,
                     dataLabels: {
                         enabled: false
                     },
