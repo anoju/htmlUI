@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카카오 주소 검색 API 샘플</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #FEE500;
+        }
+
+        input[type="text"]:read-only {
+            background-color: #f9f9f9;
+            cursor: not-allowed;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #FEE500;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #FDD835;
+        }
+
+        button:active {
+            background-color: #F9A825;
+        }
+
+        .result-box {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .result-box h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .result-item {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            width: 120px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .result-value {
+            flex: 1;
+            color: #333;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 48px;
+        }
+
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            color: #856404;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🔍</div>
+        <h1>카카오 주소 검색 API</h1>
+        <p class="description">
+            카카오 우편번호 서비스를 이용하여 주소를 검색하고<br>
+            우편번호, 주소 정보를 자동으로 입력받을 수 있습니다.
+        </p>
+
+        <form id="addressForm">
+            <div class="form-group">
+                <label for="postcode">우편번호</label>
+                <div class="input-group">
+                    <input type="text" id="postcode" name="postcode" placeholder="우편번호" readonly>
+                    <button type="button" onclick="execDaumPostcode()">주소 검색</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="address">기본주소</label>
+                <input type="text" id="address" name="address" placeholder="기본주소" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="detailAddress">상세주소</label>
+                <input type="text" id="detailAddress" name="detailAddress" placeholder="상세주소를 입력하세요">
+            </div>
+
+            <div class="form-group">
+                <label for="extraAddress">참고항목</label>
+                <input type="text" id="extraAddress" name="extraAddress" placeholder="참고항목" readonly>
+            </div>
+        </form>
+
+        <div class="result-box" id="resultBox" style="display: none;">
+            <h3>검색 결과 상세 정보</h3>
+            <div class="result-item">
+                <span class="result-label">우편번호:</span>
+                <span class="result-value" id="resultPostcode">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">도로명주소:</span>
+                <span class="result-value" id="resultRoadAddress">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">지번주소:</span>
+                <span class="result-value" id="resultJibunAddress">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">영문주소:</span>
+                <span class="result-value" id="resultEnglishAddress">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">주소타입:</span>
+                <span class="result-value" id="resultAddressType">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">건물명:</span>
+                <span class="result-value" id="resultBuildingName">-</span>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>💡 참고사항</strong><br>
+            • 주소 검색 버튼을 클릭하면 카카오 우편번호 서비스가 팝업으로 열립니다.<br>
+            • 주소를 선택하면 우편번호와 기본주소가 자동으로 입력됩니다.<br>
+            • 상세주소는 직접 입력하실 수 있습니다.
+        </div>
+    </div>
+
+    <!-- 카카오 주소 API -->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        function execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    // 우편번호
+                    document.getElementById('postcode').value = data.zonecode;
+
+                    // 기본주소
+                    var addr = ''; // 기본주소 변수
+                    var extraAddr = ''; // 참고항목 변수
+
+                    // 사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                    if (data.userSelectedType === 'R') { // 도로명 주소 선택
+                        addr = data.roadAddress;
+                    } else { // 지번 주소 선택
+                        addr = data.jibunAddress;
+                    }
+
+                    // 도로명 주소인 경우 참고항목을 조합
+                    if(data.userSelectedType === 'R'){
+                        // 법정동명이 있을 경우 추가 (법정리는 제외)
+                        if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                            extraAddr += data.bname;
+                        }
+                        // 건물명이 있고, 공동주택일 경우 추가
+                        if(data.buildingName !== '' && data.apartment === 'Y'){
+                            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                        }
+                        // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열 생성
+                        if(extraAddr !== ''){
+                            extraAddr = ' (' + extraAddr + ')';
+                        }
+                    }
+
+                    // 주소 정보를 폼에 입력
+                    document.getElementById('address').value = addr;
+                    document.getElementById('extraAddress').value = extraAddr;
+
+                    // 상세주소 입력란으로 포커스 이동
+                    document.getElementById('detailAddress').focus();
+
+                    // 결과 상세 정보 표시
+                    displayResult(data);
+                }
+            }).open();
+        }
+
+        function displayResult(data) {
+            const resultBox = document.getElementById('resultBox');
+
+            document.getElementById('resultPostcode').textContent = data.zonecode || '-';
+            document.getElementById('resultRoadAddress').textContent = data.roadAddress || '-';
+            document.getElementById('resultJibunAddress').textContent = data.jibunAddress || '-';
+            document.getElementById('resultEnglishAddress').textContent = data.addressEnglish || '-';
+            document.getElementById('resultAddressType').textContent =
+                data.userSelectedType === 'R' ? '도로명주소' : '지번주소';
+            document.getElementById('resultBuildingName').textContent = data.buildingName || '-';
+
+            resultBox.style.display = 'block';
+        }
+
+        // 상세주소 입력 시 엔터키 방지
+        document.getElementById('detailAddress').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

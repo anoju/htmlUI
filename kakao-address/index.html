@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카카오 주소 검색 API 샘플</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #FEE500 0%, #FDD835 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            color: #333;
+            font-size: 36px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .card-description {
+            color: #666;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .card-features li {
+            padding: 8px 0;
+            color: #555;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-features li:before {
+            content: "✓";
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge-popup {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .badge-layer {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #FEE500;
+            color: #000;
+            text-align: center;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: #F9A825;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #333;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 60px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🗺️</div>
+            <h1>카카오 주소 검색 API</h1>
+            <p class="subtitle">
+                다양한 방식으로 주소를 검색하고 우편번호를 자동 입력받을 수 있습니다.<br>
+                원하시는 타입을 선택해주세요.
+            </p>
+        </div>
+
+        <div class="cards">
+            <a href="popup-sample.html" class="card">
+                <div class="card-icon">🪟</div>
+                <h2 class="card-title">
+                    팝업 타입
+                    <span class="badge badge-popup">POPUP</span>
+                </h2>
+                <p class="card-description">
+                    새 창(팝업)으로 주소 검색 화면이 열립니다.<br>
+                    전통적인 방식의 UI를 제공합니다.
+                </p>
+                <ul class="card-features">
+                    <li>새 창으로 열림</li>
+                    <li>독립적인 화면</li>
+                    <li>넓은 검색 영역</li>
+                    <li>간단한 구현</li>
+                </ul>
+                <a href="popup-sample.html" class="button">팝업 타입 보기</a>
+            </a>
+
+            <a href="layer-sample.html" class="card">
+                <div class="card-icon">📍</div>
+                <h2 class="card-title">
+                    레이어 타입
+                    <span class="badge badge-layer">LAYER</span>
+                </h2>
+                <p class="card-description">
+                    현재 페이지에서 레이어로 주소 검색 화면이 나타납니다.<br>
+                    모던한 UX를 제공합니다.
+                </p>
+                <ul class="card-features">
+                    <li>페이지 이동 없음</li>
+                    <li>부드러운 전환</li>
+                    <li>모바일 친화적</li>
+                    <li>직관적인 UX</li>
+                </ul>
+                <a href="layer-sample.html" class="button">레이어 타입 보기</a>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>
+                Made with ❤️ using <a href="https://postcode.map.daum.net/guide" target="_blank">Daum 우편번호 서비스</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
