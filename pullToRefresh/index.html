@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>당기면 새로고침</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f5f5f5;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .refresh-indicator {
+      position: absolute;
+      top: -80px;
+      left: 0;
+      right: 0;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+      z-index: 10;
+    }
+
+    .refresh-indicator.visible {
+      transform: translateY(80px);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .spinner.active {
+      opacity: 1;
+    }
+
+    .refresh-icon {
+      font-size: 32px;
+      transition: transform 0.3s;
+    }
+
+    .refresh-icon.rotate {
+      transform: rotate(180deg);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .content {
+      padding: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 60px 20px 30px;
+      text-align: center;
+      margin: -20px -20px 20px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .card h3 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .card p {
+      color: #666;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .card .time {
+      color: #999;
+      font-size: 12px;
+      margin-top: 10px;
+      display: block;
+    }
+
+    .instruction {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-size: 14px;
+      animation: fadeInOut 3s ease-in-out;
+      pointer-events: none;
+    }
+
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0; }
+      10%, 90% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="refresh-indicator" id="refreshIndicator">
+      <div class="refresh-icon" id="refreshIcon">↓</div>
+      <div class="spinner" id="spinner"></div>
+    </div>
+
+    <div class="content" id="content">
+      <div class="header">
+        <h1>당기면 새로고침</h1>
+        <p>아래로 당겨서 새로운 콘텐츠를 불러오세요</p>
+      </div>
+
+      <div id="cardList">
+        <!-- 카드들이 여기에 동적으로 추가됩니다 -->
+      </div>
+    </div>
+  </div>
+
+  <div class="instruction">아래로 당겨보세요!</div>
+
+  <script>
+    class PullToRefresh {
+      constructor() {
+        this.container = document.querySelector('.container');
+        this.content = document.getElementById('content');
+        this.indicator = document.getElementById('refreshIndicator');
+        this.icon = document.getElementById('refreshIcon');
+        this.spinner = document.getElementById('spinner');
+        this.cardList = document.getElementById('cardList');
+
+        this.startY = 0;
+        this.currentY = 0;
+        this.isDragging = false;
+        this.isRefreshing = false;
+        this.threshold = 80; // 새로고침 트리거 임계값
+
+        this.init();
+        this.loadInitialContent();
+      }
+
+      init() {
+        this.container.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+        this.container.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+        this.container.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
+
+        // 마우스 이벤트도 지원 (데스크톱 테스트용)
+        this.container.addEventListener('mousedown', this.handleMouseDown.bind(this));
+        this.container.addEventListener('mousemove', this.handleMouseMove.bind(this));
+        this.container.addEventListener('mouseup', this.handleMouseUp.bind(this));
+      }
+
+      handleTouchStart(e) {
+        if (this.isRefreshing || this.container.scrollTop > 0) return;
+        this.startY = e.touches[0].pageY;
+        this.isDragging = true;
+      }
+
+      handleTouchMove(e) {
+        if (!this.isDragging || this.isRefreshing) return;
+
+        this.currentY = e.touches[0].pageY;
+        const diff = this.currentY - this.startY;
+
+        if (diff > 0 && this.container.scrollTop === 0) {
+          e.preventDefault();
+          this.updateUI(diff);
+        }
+      }
+
+      handleTouchEnd(e) {
+        if (!this.isDragging) return;
+
+        const diff = this.currentY - this.startY;
+
+        if (diff >= this.threshold) {
+          this.refresh();
+        } else {
+          this.reset();
+        }
+
+        this.isDragging = false;
+      }
+
+      handleMouseDown(e) {
+        if (this.isRefreshing || this.container.scrollTop > 0) return;
+        this.startY = e.pageY;
+        this.isDragging = true;
+      }
+
+      handleMouseMove(e) {
+        if (!this.isDragging || this.isRefreshing) return;
+
+        this.currentY = e.pageY;
+        const diff = this.currentY - this.startY;
+
+        if (diff > 0 && this.container.scrollTop === 0) {
+          e.preventDefault();
+          this.updateUI(diff);
+        }
+      }
+
+      handleMouseUp(e) {
+        if (!this.isDragging) return;
+
+        const diff = this.currentY - this.startY;
+
+        if (diff >= this.threshold) {
+          this.refresh();
+        } else {
+          this.reset();
+        }
+
+        this.isDragging = false;
+      }
+
+      updateUI(distance) {
+        const pullDistance = Math.min(distance * 0.5, this.threshold);
+        this.content.style.transform = `translateY(${pullDistance}px)`;
+
+        if (pullDistance >= this.threshold) {
+          this.icon.classList.add('rotate');
+          this.icon.textContent = '↑';
+        } else {
+          this.icon.classList.remove('rotate');
+          this.icon.textContent = '↓';
+        }
+
+        this.indicator.style.transform = `translateY(${pullDistance}px)`;
+        this.indicator.style.opacity = pullDistance / this.threshold;
+      }
+
+      async refresh() {
+        this.isRefreshing = true;
+        this.content.style.transform = `translateY(${this.threshold}px)`;
+        this.indicator.style.transform = `translateY(${this.threshold}px)`;
+        this.indicator.style.opacity = '1';
+
+        this.icon.style.display = 'none';
+        this.spinner.classList.add('active');
+
+        // 새 데이터 로드 시뮬레이션
+        await this.loadNewContent();
+
+        setTimeout(() => {
+          this.reset();
+          this.isRefreshing = false;
+        }, 500);
+      }
+
+      reset() {
+        this.content.style.transform = '';
+        this.indicator.style.transform = '';
+        this.indicator.style.opacity = '0';
+        this.icon.style.display = 'block';
+        this.spinner.classList.remove('active');
+        this.icon.classList.remove('rotate');
+        this.icon.textContent = '↓';
+      }
+
+      async loadNewContent() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            const newCards = this.generateCards(3);
+            this.cardList.innerHTML = newCards + this.cardList.innerHTML;
+            resolve();
+          }, 1500);
+        });
+      }
+
+      loadInitialContent() {
+        const cards = this.generateCards(5);
+        this.cardList.innerHTML = cards;
+      }
+
+      generateCards(count) {
+        const titles = [
+          '새로운 기능 업데이트',
+          '디자인 개선 소식',
+          '성능 최적화 완료',
+          '사용자 경험 향상',
+          '버그 수정 안내',
+          '새로운 콘텐츠 추가',
+          '시스템 안정화',
+          '보안 강화 업데이트'
+        ];
+
+        const contents = [
+          '사용자 여러분의 소중한 의견을 반영하여 새로운 기능을 추가했습니다.',
+          '더욱 직관적이고 아름다운 인터페이스로 개선되었습니다.',
+          '로딩 속도가 2배 빨라졌습니다. 더욱 쾌적한 환경을 경험하세요.',
+          '사용자 피드백을 바탕으로 전반적인 UX를 개선했습니다.',
+          '발견된 문제들을 신속하게 해결했습니다.',
+          '다양한 새로운 콘텐츠를 만나보세요.',
+          '시스템 안정성이 크게 향상되었습니다.',
+          '보안 취약점을 해결하여 더욱 안전해졌습니다.'
+        ];
+
+        let html = '';
+        for (let i = 0; i < count; i++) {
+          const randomIndex = Math.floor(Math.random() * titles.length);
+          const time = new Date(Date.now() - Math.random() * 3600000).toLocaleString('ko-KR');
+
+          html += `
+            <div class="card">
+              <h3>${titles[randomIndex]}</h3>
+              <p>${contents[randomIndex]}</p>
+              <span class="time">${time}</span>
+            </div>
+          `;
+        }
+        return html;
+      }
+    }
+
+    // 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+      new PullToRefresh();
+    });
+  </script>
+</body>
+</html>
