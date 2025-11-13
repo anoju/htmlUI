@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>계층형 체크박스</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .c-checkbox {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .c-checkbox input[type="checkbox"] {
+            display: none;
+        }
+
+        .icon-check {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .icon-check rect {
+            width: 20px;
+            height: 20px;
+            x: 2;
+            y: 2;
+            rx: 4;
+            fill: white;
+            stroke: #ddd;
+            stroke-width: 2;
+        }
+
+        .icon-check path {
+            fill: none;
+            stroke: white;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0;
+        }
+
+        .c-checkbox input:checked + .icon-check rect {
+            fill: #0066ff;
+            stroke: #0066ff;
+        }
+
+        .c-checkbox input:checked + .icon-check path {
+            opacity: 1;
+        }
+
+        .title-medium {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .text-brand {
+            color: #0066ff;
+        }
+
+        .blind {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+        }
+
+        ul {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .accordion-area {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            padding: 12px;
+        }
+
+        .dsp-flex {
+            display: flex;
+            align-items: center;
+        }
+
+        .justify-content-between {
+            justify-content: space-between;
+        }
+
+        .acco-title-wrap {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .arrow {
+            transition: transform 0.3s;
+        }
+
+        .accordion-area.on .arrow {
+            transform: rotate(180deg);
+        }
+
+        .acco-content-wrap {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-area.on .acco-content-wrap {
+            max-height: 1000px;
+        }
+
+        .acco-content {
+            padding-top: 16px;
+        }
+
+        .logo-checkmark-wrap ul {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 16px;
+            margin-top: 0;
+        }
+
+        .c-checkmark {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .c-checkmark input[type="checkbox"] {
+            display: none;
+        }
+
+        .c-checkmark .icon-check {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .c-checkmark .c-label {
+            position: relative;
+            text-align: center;
+        }
+
+        .icon-box {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .icon-box.size-56 {
+            width: 56px;
+            height: 56px;
+        }
+
+        .icon-box.pd-spacing-sm {
+            padding: 4px;
+        }
+
+        .icon-box-inr {
+            width: 100%;
+            height: 100%;
+        }
+
+        .icon-box-inr img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .c-checkmark p {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .logo-checkmark .icon-check rect {
+            width: 16px;
+            height: 16px;
+            x: 2;
+            y: 2;
+        }
+
+        .logo-checkmark .icon-check path {
+            stroke-width: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <label class="c-checkbox js-check-parent">
+                <input type="checkbox" />
+                <svg class="icon-check" viewBox="0 0 24 24">
+                    <rect />
+                    <path d="M6.51172 11.625L10.2617 15.375L17.7617 7.875" />
+                </svg>
+
+                <span class="c-label"><span class="title-medium">전체선택</span></span>
+            </label>
+        </div>
+        <ul class="js-check-group">
+            <li class="accordion-area on js-check-group">
+                <div class="dsp-flex justify-content-between">
+                    <label class="c-checkbox js-check-parent">
+                        <input type="checkbox" />
+                        <svg class="icon-check" viewBox="0 0 24 24">
+                            <rect />
+                            <path d="M6.51172 11.625L10.2617 15.375L17.7617 7.875" />
+                        </svg>
+
+                        <span class="c-label"
+                            ><span class="title-medium"
+                                >은행 <span class="text-brand">2</span></span
+                            ></span
+                        >
+                    </label>
+
+                    <button type="button" class="acco-title-wrap">
+                        <div class="blind">은행항목 상세보기</div>
+                        <div class="arrow">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="21"
+                                height="20"
+                                viewBox="0 0 21 20"
+                                fill="none">
+                                <path
+                                    d="M5.49609 6.87905L10.5002 11.8831L15.5042 6.87905L16.3294 7.70424L10.5002 13.5335L4.6709 7.70424L5.49609 6.87905Z"
+                                    fill="#818DA2" />
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+                <div class="acco-content-wrap">
+                    <div class="acco-content">
+                        <div class="logo-checkmark-wrap">
+                            <ul class="js-check-children">
+                                <li>
+                                    <label class="c-checkmark logo-checkmark">
+                                        <input type="checkbox" />
+                                        <svg class="icon-check" viewBox="0 0 24 24">
+                                            <rect />
+                                            <path
+                                                d="M6.51172 11.625L10.2617 15.375L17.7617 7.875" />
+                                        </svg>
+                                        <div class="c-label">
+                                            <div class="icon-box size-56 pd-spacing-sm">
+                                                <div class="icon-box-inr">
+                                                    <img
+                                                        src="https://devnsol.shinhan.com/images/orgci/orgci_088.png"
+                                                        alt="" />
+                                                </div>
+                                            </div>
+                                            <p>신한은행</p>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="c-checkmark logo-checkmark">
+                                        <input type="checkbox" />
+                                        <svg class="icon-check" viewBox="0 0 24 24">
+                                            <rect />
+                                            <path
+                                                d="M6.51172 11.625L10.2617 15.375L17.7617 7.875" />
+                                        </svg>
+                                        <div class="c-label">
+                                            <div class="icon-box size-56 pd-spacing-sm">
+                                                <div class="icon-box-inr">
+                                                    <img
+                                                        src="https://devnsol.shinhan.com/images/orgci/orgci_004.png"
+                                                        alt="" />
+                                                </div>
+                                            </div>
+                                            <p>KB국민은행</p>
+                                        </div>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="accordion-area js-check-group">
+                <div class="dsp-flex justify-content-between">
+                    <label class="c-checkbox js-check-parent">
+                        <input type="checkbox" />
+                        <svg class="icon-check" viewBox="0 0 24 24">
+                            <rect />
+                            <path d="M6.51172 11.625L10.2617 15.375L17.7617 7.875" />
+                        </svg>
+
+                        <span class="c-label"
+                            ><span class="title-medium"
+                                >증권 <span class="text-brand">2</span></span
+                            ></span
+                        >
+                    </label>
+
+                    <button type="button" class="acco-title-wrap">
+                        <div class="blind">증권항목 상세보기</div>
+                        <div class="arrow">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="21"
+                                height="20"
+                                viewBox="0 0 21 20"
+                                fill="none">
+                                <path
+                                    d="M5.49609 6.87905L10.5002 11.8831L15.5042 6.87905L16.3294 7.70424L10.5002 13.5335L4.6709 7.70424L5.49609 6.87905Z"
+                                    fill="#818DA2" />
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+                <div class="acco-content-wrap">
+                    <div class="acco-content">
+                        <div class="logo-checkmark-wrap">
+                            <ul class="js-check-children">
+                                <li>
+                                    <label class="c-checkmark logo-checkmark">
+                                        <input type="checkbox" />
+                                        <svg class="icon-check" viewBox="0 0 24 24">
+                                            <rect />
+                                            <path
+                                                d="M6.51172 11.625L10.2617 15.375L17.7617 7.875" />
+                                        </svg>
+                                        <div class="c-label">
+                                            <div class="icon-box size-56 pd-spacing-sm">
+                                                <div class="icon-box-inr">
+                                                    <img
+                                                        src="https://devnsol.shinhan.com/images/orgci/orgci_088.png"
+                                                        alt="" />
+                                                </div>
+                                            </div>
+                                            <p>신한투자증권</p>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="c-checkmark logo-checkmark">
+                                        <input type="checkbox" />
+                                        <svg class="icon-check" viewBox="0 0 24 24">
+                                            <rect />
+                                            <path
+                                                d="M6.51172 11.625L10.2617 15.375L17.7617 7.875" />
+                                        </svg>
+                                        <div class="c-label">
+                                            <div class="icon-box size-56 pd-spacing-sm">
+                                                <div class="icon-box-inr">
+                                                    <img
+                                                        src="https://devnsol.shinhan.com/images/orgci/orgci_004.png"
+                                                        alt="" />
+                                                </div>
+                                            </div>
+                                            <p>KB증권</p>
+                                        </div>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        /**
+         * 계층형 체크박스 시스템
+         *
+         * 스크립트 전용 클래스:
+         * - js-check-parent: 하위 항목을 가진 부모 체크박스
+         * - js-check-group: 부모와 자식을 포함하는 그룹 컨테이너
+         * - js-check-children: 자식 체크박스들의 컨테이너
+         *
+         * 동작:
+         * 1. 부모 체크 → 하위 전체 체크
+         * 2. 부모 해제 → 하위 전체 해제
+         * 3. 하위 전체 체크 → 부모 자동 체크
+         * 4. 하위 하나라도 해제 → 부모 자동 해제
+         */
+        class AllCheckboxUI {
+            constructor(container) {
+                this.container = container;
+                this.selectors = {
+                    checkbox: 'input[type="checkbox"]',
+                    parent: '.js-check-parent',
+                    group: '.js-check-group',
+                    children: '.js-check-children',
+                    accordion: '.acco-title-wrap'
+                };
+                this.init();
+            }
+
+            init() {
+                this.bindCheckboxEvents();
+                this.bindAccordionEvents();
+            }
+
+            /**
+             * 체크박스 이벤트 바인딩
+             */
+            bindCheckboxEvents() {
+                const checkboxes = this.container.querySelectorAll(this.selectors.checkbox);
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', (e) => this.handleCheckboxChange(e.target));
+                });
+            }
+
+            /**
+             * 아코디언 이벤트 바인딩
+             */
+            bindAccordionEvents() {
+                const accordionBtns = this.container.querySelectorAll(this.selectors.accordion);
+                accordionBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => this.toggleAccordion(e.target));
+                });
+            }
+
+            /**
+             * 아코디언 토글
+             */
+            toggleAccordion(element) {
+                const accordion = element.closest('.accordion-area');
+                if (accordion) {
+                    accordion.classList.toggle('on');
+                }
+            }
+
+            /**
+             * 체크박스 변경 핸들러
+             */
+            handleCheckboxChange(checkbox) {
+                const label = checkbox.closest('label');
+                const isParent = label?.classList.contains('js-check-parent');
+
+                if (isParent) {
+                    this.updateChildCheckboxes(label, checkbox.checked);
+                }
+
+                this.updateParentCheckboxes(checkbox);
+            }
+
+            /**
+             * 자식 체크박스들을 부모 상태에 맞춰 업데이트
+             */
+            updateChildCheckboxes(parentLabel, checked) {
+                const childCheckboxes = this.getChildCheckboxes(parentLabel);
+                childCheckboxes.forEach(cb => cb.checked = checked);
+            }
+
+            /**
+             * 부모 라벨로부터 하위 체크박스들 가져오기
+             */
+            getChildCheckboxes(parentLabel) {
+                const parentGroup = parentLabel.closest(this.selectors.group);
+
+                if (parentGroup) {
+                    // 그룹 내의 하위 체크박스들
+                    return Array.from(
+                        parentGroup.querySelectorAll(`${this.selectors.children} ${this.selectors.checkbox}`)
+                    );
+                }
+
+                // 최상위 전체선택인 경우
+                const nextSibling = parentLabel.parentElement.nextElementSibling;
+                if (nextSibling?.classList.contains('js-check-group')) {
+                    return Array.from(nextSibling.querySelectorAll(this.selectors.checkbox));
+                }
+
+                return [];
+            }
+
+            /**
+             * 부모 체크박스들을 자식 상태에 맞춰 업데이트
+             */
+            updateParentCheckboxes(checkbox) {
+                // 중간 레벨 부모 업데이트
+                this.updateMiddleParent(checkbox);
+
+                // 최상위 전체선택 업데이트
+                this.updateTopParent();
+            }
+
+            /**
+             * 중간 레벨 부모 체크박스 업데이트 (카테고리 레벨)
+             */
+            updateMiddleParent(checkbox) {
+                const childrenContainer = checkbox.closest(this.selectors.children);
+                if (!childrenContainer) return;
+
+                const parentGroup = childrenContainer.closest(this.selectors.group);
+                if (!parentGroup) return;
+
+                const parentCheckbox = parentGroup.querySelector(
+                    `:scope > * ${this.selectors.parent} ${this.selectors.checkbox}`
+                );
+
+                if (!parentCheckbox) return;
+
+                const childCheckboxes = Array.from(
+                    childrenContainer.querySelectorAll(this.selectors.checkbox)
+                );
+
+                if (childCheckboxes.length === 0) return;
+
+                const checkedCount = childCheckboxes.filter(cb => cb.checked).length;
+                parentCheckbox.checked = (checkedCount === childCheckboxes.length);
+            }
+
+            /**
+             * 최상위 전체선택 체크박스 업데이트
+             */
+            updateTopParent() {
+                const topCheckbox = this.getTopCheckbox();
+                if (!topCheckbox) return;
+
+                const middleParents = this.getMiddleParentCheckboxes();
+                if (middleParents.length === 0) return;
+
+                const checkedCount = middleParents.filter(cb => cb.checked).length;
+                topCheckbox.checked = (checkedCount === middleParents.length);
+            }
+
+            /**
+             * 최상위 체크박스 가져오기
+             */
+            getTopCheckbox() {
+                const topParent = this.container.querySelector(
+                    `:scope > * > ${this.selectors.parent}`
+                );
+                return topParent?.querySelector(this.selectors.checkbox);
+            }
+
+            /**
+             * 중간 레벨 부모 체크박스들 가져오기
+             */
+            getMiddleParentCheckboxes() {
+                const topGroup = this.container.querySelector(`:scope > ${this.selectors.group}`);
+                if (!topGroup) return [];
+
+                return Array.from(
+                    topGroup.querySelectorAll(
+                        `:scope > ${this.selectors.group} > * ${this.selectors.parent} ${this.selectors.checkbox}`
+                    )
+                );
+            }
+        }
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.container');
+            if (container) {
+                new AllCheckboxUI(container);
+            }
+        });
+    </script>
+</body>
+</html>
