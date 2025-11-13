@@ -220,7 +220,7 @@
 </head>
 <body>
     <div class="container">
-        <div>
+        <div class="js-check-group">
             <label class="c-checkbox js-check-parent">
                 <input type="checkbox" />
                 <svg class="icon-check" viewBox="0 0 24 24">
@@ -230,8 +230,7 @@
 
                 <span class="c-label"><span class="title-medium">전체선택</span></span>
             </label>
-        </div>
-        <ul class="js-check-group">
+            <ul class="js-check-children">
             <li class="accordion-area on js-check-group">
                 <div class="dsp-flex justify-content-between">
                     <label class="c-checkbox js-check-parent">
@@ -394,7 +393,8 @@
                     </div>
                 </div>
             </li>
-        </ul>
+            </ul>
+        </div>
     </div>
 
     <script>
@@ -406,26 +406,31 @@
          * - js-check-group: 부모와 자식을 포함하는 그룹 컨테이너
          * - js-check-children: 자식 체크박스들의 컨테이너
          *
-         * 계층 구조:
-         * 컨테이너
-         * ├─ .js-check-parent (최상위: 전체선택)
+         * 계층 구조 (모든 레벨 동일한 구조):
+         * container
          * └─ .js-check-group (최상위 그룹)
-         *     ├─ .js-check-group (카테고리 1)
-         *     │   ├─ .js-check-parent (중간: 은행)
-         *     │   └─ .js-check-children
-         *     │       ├─ checkbox (신한은행)
-         *     │       └─ checkbox (KB은행)
-         *     └─ .js-check-group (카테고리 2)
-         *         ├─ .js-check-parent (중간: 증권)
-         *         └─ .js-check-children
-         *             ├─ checkbox (신한투자증권)
-         *             └─ checkbox (KB증권)
+         *     ├─ .js-check-parent (전체선택)
+         *     └─ .js-check-children
+         *         ├─ .js-check-group (은행 그룹)
+         *         │   ├─ .js-check-parent (은행)
+         *         │   └─ .js-check-children
+         *         │       ├─ checkbox (신한은행) ← js-check-parent 없음
+         *         │       └─ checkbox (KB은행)
+         *         └─ .js-check-group (증권 그룹)
+         *             ├─ .js-check-parent (증권)
+         *             └─ .js-check-children
+         *                 ├─ checkbox (신한투자증권)
+         *                 └─ checkbox (KB증권)
          *
-         * 동작:
-         * 1. 부모 체크 → 하위 전체 체크
-         * 2. 부모 해제 → 하위 전체 해제
-         * 3. 하위 전체 체크 → 부모 자동 체크
-         * 4. 하위 하나라도 해제 → 부모 자동 해제
+         * 동작 원리:
+         * 1. 하향식(부모 → 자식)
+         *    - 부모 체크 → 모든 하위 체크박스 체크
+         *    - 부모 해제 → 모든 하위 체크박스 해제
+         *
+         * 2. 상향식(자식 → 부모)
+         *    - 하위 전체 체크 → 부모 자동 체크
+         *    - 하위 하나라도 해제 → 부모 자동 해제
+         *    - while 루프로 최하위부터 최상위까지 순차적으로 업데이트
          */
         class AllCheckboxUI {
             constructor(container) {
@@ -501,125 +506,120 @@
              * 부모 라벨로부터 하위 체크박스들 가져오기
              */
             getChildCheckboxes(parentLabel) {
-                // 1. 부모가 속한 그룹 찾기
+                // 부모가 속한 그룹의 직계 자식 컨테이너(js-check-children) 찾기
                 const parentGroup = parentLabel.closest(this.selectors.group);
+                if (!parentGroup) return [];
 
-                if (parentGroup) {
-                    // 그룹 내의 js-check-children 안의 모든 체크박스
-                    return Array.from(
-                        parentGroup.querySelectorAll(`${this.selectors.children} ${this.selectors.checkbox}`)
-                    );
-                }
+                // 그룹의 직계 js-check-children 안의 모든 체크박스
+                const childrenContainers = Array.from(
+                    parentGroup.querySelectorAll(this.selectors.children)
+                );
 
-                // 2. 최상위 전체선택인 경우 - 모든 js-check-group 내 체크박스
-                return Array.from(
-                    this.container.querySelectorAll(`${this.selectors.group} ${this.selectors.checkbox}`)
+                // 직계 자식만 (중첩된 그룹의 children 제외)
+                const directChildren = childrenContainers.filter(children => {
+                    const closestGroup = children.closest(this.selectors.group);
+                    return closestGroup === parentGroup;
+                });
+
+                if (directChildren.length === 0) return [];
+
+                // 직계 children의 모든 체크박스
+                return directChildren.flatMap(children =>
+                    Array.from(children.querySelectorAll(this.selectors.checkbox))
                 );
             }
 
             /**
              * 부모 체크박스들을 자식 상태에 맞춰 업데이트
+             * 하위에서 상위로 재귀적으로 업데이트
              */
             updateParentCheckboxes(checkbox) {
-                // 중간 레벨 부모 업데이트
-                this.updateMiddleParent(checkbox);
+                let currentCheckbox = checkbox;
 
-                // 최상위 전체선택 업데이트
-                this.updateTopParent();
+                // 하위부터 상위로 올라가면서 모든 부모 업데이트
+                while (true) {
+                    const parentInfo = this.findParentCheckbox(currentCheckbox);
+                    if (!parentInfo) break;
+
+                    const { parentCheckbox, childCheckboxes } = parentInfo;
+
+                    // 자식들의 체크 상태 확인
+                    const checkedCount = childCheckboxes.filter(cb => cb.checked).length;
+                    parentCheckbox.checked = (checkedCount === childCheckboxes.length);
+
+                    // 다음 상위 레벨로
+                    currentCheckbox = parentCheckbox;
+                }
             }
 
             /**
-             * 중간 레벨 부모 체크박스 업데이트 (카테고리 레벨)
+             * 현재 체크박스의 부모 체크박스와 형제 체크박스들 찾기
              */
-            updateMiddleParent(checkbox) {
-                // 1. 체크박스가 속한 js-check-children 찾기
+            findParentCheckbox(checkbox) {
+                // 1. js-check-children 안에 있는 경우 (최하위 체크박스)
                 const childrenContainer = checkbox.closest(this.selectors.children);
-                if (!childrenContainer) return;
+                if (childrenContainer) {
+                    const parentGroup = childrenContainer.closest(this.selectors.group);
+                    if (!parentGroup) return null;
 
-                // 2. js-check-children이 속한 js-check-group 찾기
-                const parentGroup = childrenContainer.closest(this.selectors.group);
-                if (!parentGroup) return;
+                    const parentCheckbox = this.getDirectParentCheckbox(parentGroup);
+                    if (!parentCheckbox) return null;
 
-                // 3. 해당 그룹의 직계 js-check-parent 찾기
-                const allParentsInGroup = Array.from(
-                    parentGroup.querySelectorAll(this.selectors.parent)
-                );
+                    const childCheckboxes = Array.from(
+                        childrenContainer.querySelectorAll(this.selectors.checkbox)
+                    );
 
-                const directParent = allParentsInGroup.find(parent =>
-                    parent.closest(this.selectors.group) === parentGroup
-                );
+                    return { parentCheckbox, childCheckboxes };
+                }
 
-                if (!directParent) return;
+                // 2. js-check-parent 안에 있는 경우 (중간/상위 레벨 체크박스)
+                const parentLabel = checkbox.closest(this.selectors.parent);
+                if (!parentLabel) return null;
 
-                const parentCheckbox = directParent.querySelector(this.selectors.checkbox);
-                if (!parentCheckbox) return;
+                const currentGroup = parentLabel.closest(this.selectors.group);
+                if (!currentGroup) return null;
 
-                // 4. js-check-children 내의 모든 체크박스
-                const childCheckboxes = Array.from(
-                    childrenContainer.querySelectorAll(this.selectors.checkbox)
-                );
+                // 현재 그룹을 포함하는 상위 js-check-children 찾기
+                const upperChildren = currentGroup.parentElement.closest(this.selectors.children);
+                if (!upperChildren) return null; // 최상위 도달
 
-                if (childCheckboxes.length === 0) return;
+                // 상위 children이 속한 그룹 찾기
+                const upperGroup = upperChildren.closest(this.selectors.group);
+                if (!upperGroup) return null;
 
-                // 5. 모두 체크되었을 때만 부모 체크
-                const checkedCount = childCheckboxes.filter(cb => cb.checked).length;
-                parentCheckbox.checked = (checkedCount === childCheckboxes.length);
+                // 상위 그룹의 부모 체크박스 찾기
+                const upperParentCheckbox = this.getDirectParentCheckbox(upperGroup);
+                if (!upperParentCheckbox) return null;
+
+                // 같은 레벨의 모든 형제 그룹들 (upperChildren 직계 자식 그룹들)
+                const siblingGroups = Array.from(
+                    upperChildren.querySelectorAll(this.selectors.group)
+                ).filter(group => {
+                    const closestChildren = group.parentElement.closest(this.selectors.children);
+                    return closestChildren === upperChildren;
+                });
+
+                // 형제 그룹들의 부모 체크박스들
+                const siblingCheckboxes = siblingGroups
+                    .map(group => this.getDirectParentCheckbox(group))
+                    .filter(cb => cb);
+
+                return { parentCheckbox: upperParentCheckbox, childCheckboxes: siblingCheckboxes };
             }
 
             /**
-             * 최상위 전체선택 체크박스 업데이트
+             * 그룹의 직계 부모 체크박스 가져오기
              */
-            updateTopParent() {
-                const topCheckbox = this.getTopCheckbox();
-                if (!topCheckbox) return;
-
-                const middleParents = this.getMiddleParentCheckboxes();
-                if (middleParents.length === 0) return;
-
-                const checkedCount = middleParents.filter(cb => cb.checked).length;
-                topCheckbox.checked = (checkedCount === middleParents.length);
-            }
-
-            /**
-             * 최상위 체크박스 가져오기
-             */
-            getTopCheckbox() {
-                // js-check-group에 속하지 않은 최상위 js-check-parent의 체크박스
-                const allParents = Array.from(
-                    this.container.querySelectorAll(this.selectors.parent)
+            getDirectParentCheckbox(group) {
+                const parents = Array.from(
+                    group.querySelectorAll(this.selectors.parent)
                 );
 
-                const topParent = allParents.find(parent =>
-                    !parent.closest(this.selectors.group)
+                const directParent = parents.find(parent =>
+                    parent.closest(this.selectors.group) === group
                 );
 
-                return topParent?.querySelector(this.selectors.checkbox);
-            }
-
-            /**
-             * 중간 레벨 부모 체크박스들 가져오기
-             */
-            getMiddleParentCheckboxes() {
-                // 모든 js-check-group의 직계 js-check-parent 체크박스들
-                const allGroups = Array.from(
-                    this.container.querySelectorAll(this.selectors.group)
-                );
-
-                return allGroups
-                    .map(group => {
-                        // 각 그룹의 직계 자식 중 js-check-parent 찾기
-                        const parents = Array.from(
-                            group.querySelectorAll(this.selectors.parent)
-                        );
-
-                        // 해당 그룹에 직접 속한 parent만 (중첩된 그룹의 parent 제외)
-                        return parents.find(parent =>
-                            parent.closest(this.selectors.group) === group
-                        );
-                    })
-                    .filter(parent => parent)
-                    .map(parent => parent.querySelector(this.selectors.checkbox))
-                    .filter(checkbox => checkbox);
+                return directParent?.querySelector(this.selectors.checkbox);
             }
         }
 
