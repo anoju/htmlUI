@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Column Chart - Highcharts 8.2.0</title>
+    <script src="highcharts-8.2.0.js"></script>
+    <style>
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            margin: 20px;
+            background-color: #f9fafb;
+        }
+        #singleColumnChart {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="singleColumnChart"></div>
+
+    <script>
+        const chartfontFamily = "'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif";
+
+        function singleColumnChartInit(elementId, options) {
+            const { categories, data, colorChangeIndex = 2, yAxis: yAxisOptions = {} } = options;
+            // yAxis 설정
+            const { min, max, tickInterval, tickPositions, plotLineValue = 0, unit = "" } = yAxisOptions;
+            // 고정된 색상 팔레트
+            const colors = ["#818DA2", "#5290FF"];
+            // 데이터에 색상 자동 할당
+            const dataWithColors = data.map((value, index) => ({
+                y: value,
+                color: index < colorChangeIndex ? colors[0] : colors[1],
+            }));
+            const chartOptions = {
+                chart: {
+                    type: "column",
+                    backgroundColor: "#FFFFFF",
+                    style: {
+                        fontFamily: chartfontFamily,
+                    },
+                },
+                title: {
+                    text: null,
+                },
+                subtitle: {
+                    text: null,
+                },
+                xAxis: {
+                    categories: categories,
+                    lineColor: "#D0D5DD",
+                    lineWidth: 0,
+                    tickLength: 0,
+                    labels: {
+                        style: {
+                            color: "#475467",
+                            fontSize: "11px",
+                            fontWeight: "300",
+                            fontFamily: chartfontFamily,
+                            lineHeight: "18px",
+                            letterSpacing: "-0.22px",
+                        },
+                        y: 24,
+                    },
+                },
+                yAxis: {
+                    ...(min !== undefined && { min }),
+                    ...(max !== undefined && { max }),
+                    ...(tickInterval !== undefined && { tickInterval }),
+                    ...(tickPositions !== undefined && { tickPositions }),
+                    title: {
+                        text: null,
+                    },
+                    gridLineColor: "#E5E7EB",
+                    gridLineWidth: 1,
+                    gridLineDashStyle: "Dash",
+                    plotLines: [
+                        {
+                            value: plotLineValue,
+                            color: "#E5E7EB",
+                            width: 1,
+                            dashStyle: "Solid",
+                            zIndex: 5,
+                        },
+                    ],
+                    labels: {
+                        align: "right",
+                        x: -4,
+                        y: 4,
+                        style: {
+                            color: "#475467",
+                            fontSize: "11px",
+                            fontWeight: "300",
+                            fontFamily: chartfontFamily,
+                            lineHeight: "18px",
+                            letterSpacing: "-0.22px",
+                        },
+                        formatter: function () {
+                            return this.value.toLocaleString() + unit;
+                        },
+                    },
+                    offset: 0,
+                },
+                legend: {
+                    enabled: false,
+                },
+                tooltip: {
+                    enabled: true,
+                    backgroundColor: "rgba(0, 0, 0, 0.85)",
+                    borderColor: "transparent",
+                    borderRadius: 8,
+                    style: {
+                        color: "#FFFFFF",
+                        fontSize: "12px",
+                        fontFamily: chartfontFamily,
+                    },
+                    formatter: function () {
+                        return "<b>" + this.x + "</b><br/>" + this.y.toLocaleString() + unit;
+                    },
+                },
+                plotOptions: {
+                    column: {
+                        grouping: true,
+                        pointPadding: 0,
+                        borderWidth: 0,
+                        borderRadius: 4,
+                        groupPadding: 0.15,
+                        pointWidth: 16,
+                    },
+                },
+                series: [
+                    {
+                        data: dataWithColors,
+                    },
+                ],
+                credits: {
+                    enabled: false,
+                },
+                exporting: {
+                    enabled: false,
+                },
+            };
+            return Highcharts.chart(elementId, chartOptions);
+        }
+
+        // 차트 초기화
+        singleColumnChartInit("singleColumnChart", {
+            categories: ["20.12", "21.12", "22.12", "23.12", "24.12"],
+            data: [3200, 5000, 4539, 5100, 5400],
+            colorChangeIndex: 2,
+            yAxis: {
+                min: 2000,
+                max: 7000,
+                tickInterval: 1000,
+                plotLineValue: 2000,
+            },
+        });
+    </script>
+</body>
+</html>
