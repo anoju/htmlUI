@@ -6,6 +6,10 @@
     <title>Single Column Chart - Highcharts 8.2.0</title>
     <script src="highcharts-8.2.0.js"></script>
     <style>
+        :root {
+            --chart-tooltip-color: #475467;
+            --chart-tooltip-size: 12px;
+        }
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
             margin: 20px;
@@ -109,17 +113,23 @@
                 },
                 tooltip: {
                     enabled: true,
-                    backgroundColor: "rgba(0, 0, 0, 0.85)",
-                    borderColor: "transparent",
+                    backgroundColor: '#ffffff',
+                    borderColor: '#d0d5dd',
                     borderRadius: 8,
-                    style: {
-                        color: "#FFFFFF",
-                        fontSize: "12px",
-                        fontFamily: chartfontFamily,
-                    },
+                    borderWidth: 1,
+                    padding: 8,
+                    shadow: false,
+                    useHTML: true,
                     formatter: function () {
-                        return "<b>" + this.x + "</b><br/>" + this.y.toLocaleString() + unit;
+                        return '<span style="color: #475467; font-size: 12px; font-weight: 500;">' +
+                               this.y.toLocaleString() + unit + '</span>';
                     },
+                    positioner: function(labelWidth, labelHeight, point) {
+                        return {
+                            x: point.plotX - labelWidth / 2 + this.chart.plotLeft,
+                            y: point.plotY - labelHeight - 10 + this.chart.plotTop
+                        };
+                    }
                 },
                 plotOptions: {
                     column: {
@@ -143,7 +153,20 @@
                     enabled: false,
                 },
             };
-            return Highcharts.chart(elementId, chartOptions);
+
+            const chart = Highcharts.chart(elementId, chartOptions);
+
+            // colorChangeIndex 이후 첫 번째 막대에 툴팁 고정 표시
+            setTimeout(function() {
+                const series = chart.series[0];
+                const point = series.data[colorChangeIndex]; // 첫 번째 파란색 막대
+
+                // 툴팁을 고정으로 표시 (숨기지 않도록)
+                chart.tooltip.refresh(point);
+                chart.tooltip.hide = function() {}; // hide 함수를 빈 함수로 오버라이드
+            }, 100);
+
+            return chart;
         }
 
         // 차트 초기화
