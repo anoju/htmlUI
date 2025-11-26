@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Up Down Column Chart - Highcharts 8.2.0</title>
+    <script src="highcharts-8.2.0.js"></script>
+    <style>
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            margin: 20px;
+            background-color: #f9fafb;
+        }
+        #upDownColumnChart {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="upDownColumnChart"></div>
+
+    <script>
+        const chartfontFamily = "'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif";
+
+        function upDownColumnChartInit(elementId, options) {
+            const { categories, seriesData, yAxis: yAxisOptions = {} } = options;
+            // yAxis 설정
+            const { min, max, tickInterval, tickPositions, plotLineValue = 0, unit = "" } = yAxisOptions;
+            // 고정된 색상 팔레트 (시리즈 순서대로 자동 할당)
+            const colorPalette = ["#818DA2", "#8585FF", "#009BDB", "#5290FF"];
+
+            // 시리즈에 색상 자동 할당
+            const seriesWithColors = seriesData.map((series, index) => ({
+                ...series,
+                color: colorPalette[index % colorPalette.length],
+            }));
+
+            const chartOptions = {
+                chart: {
+                    type: "column",
+                    backgroundColor: "#FFFFFF",
+                    style: {
+                        fontFamily: chartfontFamily,
+                    },
+                },
+                title: {
+                    text: null,
+                },
+                subtitle: {
+                    text: null,
+                },
+                xAxis: {
+                    categories: categories,
+                    lineColor: "#D0D5DD",
+                    lineWidth: 0,
+                    tickLength: 0,
+                    labels: {
+                        style: {
+                            color: "#475467",
+                            fontSize: "11px",
+                            fontWeight: "300",
+                            fontFamily: chartfontFamily,
+                            lineHeight: "18px",
+                            letterSpacing: "-0.22px",
+                        },
+                        y: 24,
+                    },
+                },
+                yAxis: {
+                    ...(min !== undefined && { min }),
+                    ...(max !== undefined && { max }),
+                    ...(tickInterval !== undefined && { tickInterval }),
+                    ...(tickPositions !== undefined && { tickPositions }),
+                    title: {
+                        text: null,
+                    },
+                    gridLineColor: "#E5E7EB",
+                    gridLineWidth: 1,
+                    gridLineDashStyle: "Dash",
+                    plotLines: [
+                        {
+                            value: plotLineValue,
+                            color: "#E5E7EB",
+                            width: 1,
+                            dashStyle: "Solid",
+                            zIndex: 5,
+                        },
+                    ],
+                    labels: {
+                        align: "right",
+                        x: -4,
+                        y: 4,
+                        style: {
+                            color: "#475467",
+                            fontSize: "11px",
+                            fontWeight: "300",
+                            fontFamily: chartfontFamily,
+                            lineHeight: "18px",
+                            letterSpacing: "-0.22px",
+                        },
+                        formatter: function () {
+                            return this.value + unit;
+                        },
+                    },
+                    offset: 0,
+                },
+                legend: {
+                    enabled: false,
+                },
+                tooltip: {
+                    shared: false,
+                    backgroundColor: "rgba(0, 0, 0, 0.85)",
+                    borderColor: "transparent",
+                    borderRadius: 8,
+                    style: {
+                        color: "#FFFFFF",
+                        fontSize: "12px",
+                        fontFamily: chartfontFamily,
+                    },
+                    formatter: function () {
+                        return (
+                            "<b>" +
+                            this.series.name +
+                            "</b><br/>" +
+                            this.x +
+                            ": <b>" +
+                            this.y +
+                            unit +
+                            "</b>"
+                        );
+                    },
+                },
+                plotOptions: {
+                    column: {
+                        grouping: true,
+                        pointPadding: 0.125,
+                        borderWidth: 0,
+                        borderRadius: 4,
+                        groupPadding: 0.8,
+                        pointWidth: 8,
+                    },
+                },
+                series: seriesWithColors.reverse(),
+                credits: {
+                    enabled: false,
+                },
+                exporting: {
+                    enabled: false,
+                },
+            };
+            return Highcharts.chart(elementId, chartOptions);
+        }
+
+        // 차트 초기화
+        upDownColumnChartInit("upDownColumnChart", {
+            categories: ["20.12", "22.12", "22.12", "23.12", "24.12"],
+            seriesData: [
+                {
+                    name: "순영업현금흐름",
+                    data: [48, 58, 32, 27, 65],
+                },
+                {
+                    name: "순투자현금흐름",
+                    data: [-39, -33, -44, -15, -63],
+                },
+                {
+                    name: "순재무현금흐름",
+                    data: [-1, -18, -19, -7, -8],
+                },
+                {
+                    name: "FCF(잉여현금흐름)",
+                    data: [28, 17, 13, -13, 13],
+                },
+            ],
+            yAxis: {
+                min: -90,
+                max: 90,
+                tickInterval: 45,
+                tickPositions: [-90, -45, 0, 45, 90],
+                plotLineValue: 0,
+                unit: "조",
+            },
+        });
+    </script>
+</body>
+</html>
