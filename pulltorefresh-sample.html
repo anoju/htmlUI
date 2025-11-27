@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pull to Refresh Sample</title>
+    <!-- pulltorefreshjs CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/pulltorefreshjs@0.1.22/dist/index.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #0046ff;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .item {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .item-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .item-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .item-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        /* PullToRefresh 스타일 */
+        .sv-pulltorefresh--ptr {
+            box-shadow: none !important;
+        }
+
+        /* 새로고침 진행 중 */
+        .sv-pulltorefresh--ptr.sv-pulltorefresh--refresh {
+            background: #f5f5f5;
+        }
+
+        /* 새로고침 준비 */
+        .sv-pulltorefresh--ptr.sv-pulltorefresh--release {
+            background: #f5f5f5;
+        }
+
+        .sv-pulltorefresh--content {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sv-pulltorefresh--icon {
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 4px 0 0;
+            width: 16px;
+            height: 16px;
+            color: #333;
+        }
+
+        .sv-pulltorefresh--icon .icon {
+            display: block;
+            width: 16px;
+            height: 16px;
+            animation: refresh 1s 0.2s linear infinite;
+        }
+
+        .sv-pulltorefresh--icon .icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .sv-pulltorefresh--text {
+            margin-top: 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+        }
+
+        /* Pull 상태일 때는 애니메이션 멈춤 */
+        .sv-pulltorefresh--ptr.sv-pulltorefresh--pull .sv-pulltorefresh--content .sv-pulltorefresh--icon .icon {
+            animation-play-state: paused;
+        }
+
+        @keyframes refresh {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .info-box p {
+            font-size: 14px;
+            color: #1976d2;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            Pull to Refresh Sample
+        </div>
+
+        <div id="PullToRefreshContainer">
+            <div class="content">
+                <div class="info-box">
+                    <p>👇 화면을 아래로 당겨서 새로고침 할 수 있습니다.</p>
+                </div>
+
+                <div id="itemList">
+                    <!-- 아이템 리스트가 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Pull to Refresh 초기화 함수
+         * @param {string|HTMLElement} element - 대상 엘리먼트 (선택자 또는 DOM 객체)
+         * @param {Object} options - 옵션 설정
+         * @param {string} options.pullMessage - Pull 메시지
+         * @param {string} options.releaseMessage - Release 메시지
+         * @param {string} options.refreshMessage - Refresh 메시지
+         * @param {number} options.refreshTimeout - 새로고침 타임아웃 (ms)
+         * @param {number} options.distThreshold - 새로고침 트리거 거리
+         * @param {number} options.yPosition - Y 포지션 체크 기준
+         * @param {Function} callbackEvent - 새로고침 콜백 함수 (close 함수를 인자로 받음)
+         * @returns {Object} - PullToRefresh 인스턴스 및 제어 함수
+         */
+        function pullToRefreshInit(element, options = {}, callbackEvent) {
+            // 기본 옵션 설정
+            const defaultOptions = {
+                pullMessage: '정보를 불러오고 있어요.',
+                releaseMessage: '정보를 불러오고 있어요.',
+                refreshMessage: '정보를 불러오고 있어요.',
+                refreshTimeout: 5000,
+                distThreshold: 60,
+                yPosition: 0
+            };
+
+            // 옵션 병합
+            const config = { ...defaultOptions, ...options };
+
+            // 아이콘 SVG
+            const svg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.9676 8.96757H19.6313V3.30381H21.0317V10.368H13.9676V8.96757Z" fill="currentColor"/>
+                <path d="M10.1285 3.19632C12.2245 2.75086 14.4105 3.0685 16.2936 4.09085C18.1768 5.11334 19.634 6.77394 20.402 8.77445L19.0944 9.2764C18.4458 7.5871 17.2158 6.18475 15.6256 5.32132C14.0354 4.45795 12.1895 4.19022 10.4196 4.56644C8.64966 4.94265 7.07193 5.93762 5.97034 7.37308C4.8688 8.80864 4.31517 10.5905 4.40979 12.3975C4.5045 14.2046 5.24131 15.9189 6.48694 17.2315C7.73257 18.5441 9.40605 19.3695 11.2057 19.5586C13.0051 19.7476 14.8132 19.2885 16.3043 18.2637C17.7957 17.2387 18.8721 15.7148 19.3405 13.9668L20.693 14.3291C20.1384 16.399 18.8633 18.2033 17.0973 19.417C15.3314 20.6307 13.1903 21.1751 11.0592 20.9512C8.92806 20.7272 6.9464 19.7497 5.47132 18.1953C3.99622 16.6409 3.12448 14.6107 3.01233 12.4707C2.90027 10.331 3.55476 8.22146 4.85901 6.52152C6.16355 4.82142 8.03244 3.64186 10.1285 3.19632Z" fill="currentColor"/>
+            </svg>`;
+
+            // DOM 생성 함수
+            function generateDom(str) {
+                return `<span class="txt">${str}</span>`;
+            }
+
+            // 엘리먼트 선택자 처리
+            const targetElement = typeof element === 'string' ? element : element;
+
+            // 내부 상태 관리
+            let ptrInstance = null;
+            let timeout = null;
+
+            // Timeout 정리 함수
+            function cleanupTimeout() {
+                if (timeout) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                }
+            }
+
+            // PullToRefresh 초기화
+            ptrInstance = PullToRefresh.init({
+                mainElement: targetElement,
+                triggerElement: targetElement,
+                distThreshold: config.distThreshold,
+                refreshTimeout: 300,
+                instructionsPullToRefresh: generateDom(config.pullMessage),
+                instructionsReleaseToRefresh: generateDom(config.refreshMessage),
+                instructionsRefreshing: generateDom(config.releaseMessage),
+                ptrElement: '.sv-pulltorefresh',
+                classPrefix: 'sv-pulltorefresh--',
+                iconArrow: '<span class="icon">' + svg + '</span>',
+                iconRefreshing: '<span class="icon">' + svg + '</span>',
+
+                // 새로고침 실행 함수
+                onRefresh: function(closeRefresh) {
+                    console.log('Refreshing...');
+
+                    // 타임아웃 설정
+                    timeout = setTimeout(function() {
+                        cleanupTimeout();
+                        closeRefresh();
+                    }, config.refreshTimeout);
+
+                    // close 함수 래핑
+                    const close = function() {
+                        cleanupTimeout();
+                        closeRefresh();
+                    };
+
+                    // 콜백 실행
+                    if (typeof callbackEvent === 'function') {
+                        callbackEvent(close);
+                    } else {
+                        close();
+                    }
+                },
+
+                // 초기화 콜백
+                onInit: function() {
+                    console.log('PullToRefresh initialized');
+                },
+
+                // 새로고침 가능 여부 체크
+                shouldPullToRefresh: function() {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+                    return scrollTop <= (config.yPosition || 50);
+                }
+            });
+
+            // 인스턴스 제어 함수 반환
+            return {
+                instance: ptrInstance,
+                destroy: function() {
+                    if (ptrInstance) {
+                        ptrInstance.destroy();
+                        ptrInstance = null;
+                    }
+                    cleanupTimeout();
+                },
+                getConfig: function() {
+                    return config;
+                }
+            };
+        }
+
+        // ============================================
+        // 사용 예제
+        // ============================================
+
+        // 샘플 데이터 생성
+        function generateItems(count = 10) {
+            const items = [];
+            const now = Date.now();
+
+            for (let i = 0; i < count; i++) {
+                items.push({
+                    id: i + 1,
+                    title: `아이템 ${i + 1}`,
+                    description: `이것은 ${i + 1}번째 샘플 아이템입니다. Pull to Refresh를 테스트하기 위한 더미 데이터입니다.`,
+                    time: new Date(now - i * 3600000).toLocaleString('ko-KR')
+                });
+            }
+
+            return items;
+        }
+
+        // 아이템 렌더링
+        function renderItems(items) {
+            const itemList = document.getElementById('itemList');
+            itemList.innerHTML = items.map(item => `
+                <div class="item">
+                    <div class="item-title">${item.title}</div>
+                    <div class="item-desc">${item.description}</div>
+                    <div class="item-time">${item.time}</div>
+                </div>
+            `).join('');
+        }
+
+        // 초기 아이템 렌더링
+        renderItems(generateItems());
+
+        // Pull to Refresh 초기화 - 함수 사용 예제
+        const ptrController = pullToRefreshInit(
+            '#PullToRefreshContainer',
+            {
+                pullMessage: '정보를 불러오고 있어요.',
+                releaseMessage: '정보를 불러오고 있어요.',
+                refreshMessage: '정보를 불러오고 있어요.',
+                refreshTimeout: 5000,
+                distThreshold: 60,
+                yPosition: 0
+            },
+            function(close) {
+                // 새로고침 콜백
+                console.log('Refresh callback executed!');
+
+                // 실제 데이터 로드 시뮬레이션 (2초 후 완료)
+                setTimeout(function() {
+                    // 새로운 데이터로 업데이트
+                    const newItems = generateItems();
+                    renderItems(newItems);
+
+                    console.log('Refresh completed!');
+
+                    // 새로고침 종료
+                    close();
+                }, 2000);
+            }
+        );
+
+        // 페이지 언로드 시 정리
+        window.addEventListener('beforeunload', function() {
+            ptrController.destroy();
+        });
+    </script>
+</body>
+</html>
