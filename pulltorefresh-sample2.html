@@ -333,7 +333,8 @@
                     this.boundHandlers = {
                         touchStart: this._handleTouchStart.bind(this),
                         touchMove: this._handleTouchMove.bind(this),
-                        touchEnd: this._handleTouchEnd.bind(this)
+                        touchEnd: this._handleTouchEnd.bind(this),
+                        touchCancel: this._handleTouchCancel.bind(this)
                     };
                 }
 
@@ -341,6 +342,7 @@
                 this.container.addEventListener('touchstart', this.boundHandlers.touchStart, options);
                 this.container.addEventListener('touchmove', this.boundHandlers.touchMove, options);
                 this.container.addEventListener('touchend', this.boundHandlers.touchEnd, options);
+                this.container.addEventListener('touchcancel', this.boundHandlers.touchCancel, options);
             }
 
             _handleTouchStart(e) {
@@ -379,6 +381,14 @@
             }
 
             _handleTouchEnd() {
+                this._finishTouch();
+            }
+
+            _handleTouchCancel() {
+                this._finishTouch();
+            }
+
+            _finishTouch() {
                 if (this.state.isRefreshing || this.state.isDisabled) return;
 
                 if (this.pullDistance >= this.options.distThreshold) {
@@ -568,6 +578,7 @@
                 this.container.removeEventListener('touchstart', this.boundHandlers.touchStart);
                 this.container.removeEventListener('touchmove', this.boundHandlers.touchMove);
                 this.container.removeEventListener('touchend', this.boundHandlers.touchEnd);
+                this.container.removeEventListener('touchcancel', this.boundHandlers.touchCancel);
                 this.boundHandlers = null;
             }
 
