@@ -334,7 +334,9 @@
                         touchStart: this._handleTouchStart.bind(this),
                         touchMove: this._handleTouchMove.bind(this),
                         touchEnd: this._handleTouchEnd.bind(this),
-                        touchCancel: this._handleTouchCancel.bind(this)
+                        touchCancel: this._handleTouchCancel.bind(this),
+                        contextMenu: this._handleContextMenu.bind(this),
+                        visibilityChange: this._handleVisibilityChange.bind(this)
                     };
                 }
 
@@ -343,6 +345,10 @@
                 this.container.addEventListener('touchmove', this.boundHandlers.touchMove, options);
                 this.container.addEventListener('touchend', this.boundHandlers.touchEnd, options);
                 this.container.addEventListener('touchcancel', this.boundHandlers.touchCancel, options);
+                this.container.addEventListener('contextmenu', this.boundHandlers.contextMenu, options);
+
+                // Document 레벨 이벤트
+                document.addEventListener('visibilitychange', this.boundHandlers.visibilityChange);
             }
 
             _handleTouchStart(e) {
@@ -394,6 +400,20 @@
                 if (this.pullDistance >= this.options.distThreshold) {
                     this._triggerRefresh();
                 } else {
+                    this._resetPull();
+                }
+            }
+
+            _handleContextMenu(e) {
+                // Pull 중일 때 컨텍스트 메뉴 방지
+                if (this.state.isPulling || this.state.isReleasing) {
+                    e.preventDefault();
+                }
+            }
+
+            _handleVisibilityChange() {
+                // 페이지가 숨겨질 때 Pull 상태 초기화
+                if (document.hidden && (this.state.isPulling || this.state.isReleasing)) {
                     this._resetPull();
                 }
             }
@@ -579,6 +599,11 @@
                 this.container.removeEventListener('touchmove', this.boundHandlers.touchMove);
                 this.container.removeEventListener('touchend', this.boundHandlers.touchEnd);
                 this.container.removeEventListener('touchcancel', this.boundHandlers.touchCancel);
+                this.container.removeEventListener('contextmenu', this.boundHandlers.contextMenu);
+
+                // Document 레벨 이벤트 제거
+                document.removeEventListener('visibilitychange', this.boundHandlers.visibilityChange);
+
                 this.boundHandlers = null;
             }
 
