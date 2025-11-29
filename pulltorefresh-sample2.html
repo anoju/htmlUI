@@ -105,6 +105,10 @@
             transition: opacity 0.1s ease, transform 0.1s ease;
         }
 
+        .sv-pull-to-refresh.is-closing .sv-pull-to-refresh--content {
+            display: none;
+        }
+
         .sv-pull-to-refresh--icon {
             display: block;
             width: 40px;
@@ -187,345 +191,390 @@
          * Pull to Refresh 클래스
          */
         class PullToRefresh {
+            // 기본 옵션
+            static DEFAULT_OPTIONS = {
+                pullText: null,
+                releaseText: null,
+                refreshText: null,
+                refreshTimeout: 3000,
+                scrollElement: null,
+                distThreshold: 100,
+                distMax: 130,
+                scrollThreshold: 20,
+                onRefresh: null,
+                onProgress: null
+            };
+
+            // 상태 상수
+            static STATE = {
+                IDLE: 'idle',
+                PULLING: 'pulling',
+                RELEASING: 'releasing',
+                REFRESHING: 'refreshing',
+                CLOSING: 'closing'
+            };
+
+            // 애니메이션 시간
+            static ANIMATION_DURATION = 300;
+
             constructor(containerElement, options = {}) {
-                // 기본 옵션
-                this.options = {
-                    pullText: '정보를 불러오고 있어요.',
-                    releaseText: '정보를 불러오고 있어요.',
-                    refreshText: '정보를 불러오고 있어요.',
-                    refreshTimeout: 3000,
-                    scrollElement: null, // window 또는 HTMLElement
-                    distThreshold: 100,
-                    distMax: 130,
-                    scrollThreshold: 20,
-                    onRefresh: null,
-                    onProgress: null,
-                    ...options
-                };
-
-                // 컨테이너 설정
-                this.container = typeof containerElement === 'string'
-                    ? document.querySelector(containerElement)
-                    : containerElement;
-
-                if (!this.container) {
-                    throw new Error('Container element not found');
-                }
-
-                // 상태 변수
-                this.isPulling = false;
-                this.isReleasing = false;
-                this.isRefreshing = false;
-                this.isClosing = false;
-                this.pullDistance = 0;
-                this.touchStartY = 0;
-                this.touchStartScrollTop = 0;
-                this.isDisabled = false;
-                this.closeTimeout = null;
-
-                // Pull Indicator 엘리먼트
-                this.indicatorElement = null;
-                this.contentElement = null;
-                this.circleElement = null;
-                this.textElement = null;
-
-                // 초기화
+                this.options = { ...PullToRefresh.DEFAULT_OPTIONS, ...options };
+                this.container = this._getContainerElement(containerElement);
+                this._initializeState();
+                this._initializeElements();
                 this.init();
             }
 
+            _getContainerElement(element) {
+                const container = typeof element === 'string'
+                    ? document.querySelector(element)
+                    : element;
+
+                if (!container) {
+                    throw new Error('Container element not found');
+                }
+
+                return container;
+            }
+
+            _initializeState() {
+                this.state = {
+                    isPulling: false,
+                    isReleasing: false,
+                    isRefreshing: false,
+                    isClosing: false,
+                    isDisabled: false
+                };
+
+                this.touch = {
+                    startY: 0,
+                    startScrollTop: 0
+                };
+
+                this.pullDistance = 0;
+                this.closeTimeout = null;
+                this.boundHandlers = null;
+            }
+
+            _initializeElements() {
+                this.elements = {
+                    indicator: null,
+                    content: null,
+                    circle: null,
+                    text: null
+                };
+            }
+
             init() {
-                // 이미 초기화된 경우 방지
-                if (this.indicatorElement) {
+                if (this.elements.indicator) {
                     console.warn('PullToRefresh already initialized');
                     return;
                 }
 
-                // Pull Indicator 생성 및 prepend
-                this.createIndicator();
-
-                // 이벤트 리스너 등록
-                this.attachEventListeners();
+                this._createIndicator();
+                this._attachEventListeners();
             }
 
-            createIndicator() {
-                // Indicator HTML 생성
-                this.indicatorElement = document.createElement('div');
-                this.indicatorElement.className = 'sv-pull-to-refresh';
+            _createIndicator() {
+                this.elements.indicator = this._createElement('div', 'sv-pull-to-refresh');
+                this.elements.content = this._createElement('div', 'sv-pull-to-refresh--content');
 
-                this.contentElement = document.createElement('div');
-                this.contentElement.className = 'sv-pull-to-refresh--content';
+                const icon = this._createIcon();
+                this.elements.text = this._createElement('span', 'sv-pull-to-refresh--text');
 
-                const iconSpan = document.createElement('span');
-                iconSpan.className = 'sv-pull-to-refresh--icon';
+                this.elements.content.appendChild(icon);
+                this.elements.content.appendChild(this.elements.text);
+                this.elements.indicator.appendChild(this.elements.content);
 
-                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                svg.setAttribute('class', 'sv-pull-to-refresh--circle');
-                svg.setAttribute('viewBox', '25 25 50 50');
-                svg.setAttribute('width', '40');
-                svg.setAttribute('height', '40');
+                this.container.parentNode.insertBefore(this.elements.indicator, this.container);
+            }
 
-                this.circleElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                this.circleElement.setAttribute('cx', '50');
-                this.circleElement.setAttribute('cy', '50');
-                this.circleElement.setAttribute('r', '20');
-                this.circleElement.setAttribute('fill', 'none');
-                this.circleElement.setAttribute('stroke', 'currentColor');
-                this.circleElement.setAttribute('stroke-width', '5');
-                this.circleElement.setAttribute('stroke-miterlimit', '10');
-                this.circleElement.setAttribute('stroke-linecap', 'round');
+            _createElement(tag, className) {
+                const element = document.createElement(tag);
+                element.className = className;
+                return element;
+            }
 
-                svg.appendChild(this.circleElement);
+            _createIcon() {
+                const iconSpan = this._createElement('span', 'sv-pull-to-refresh--icon');
+                const svg = this._createSVGElement('svg', {
+                    class: 'sv-pull-to-refresh--circle',
+                    viewBox: '25 25 50 50',
+                    width: '40',
+                    height: '40'
+                });
+
+                this.elements.circle = this._createSVGElement('circle', {
+                    cx: '50',
+                    cy: '50',
+                    r: '20',
+                    fill: 'none',
+                    stroke: 'currentColor',
+                    'stroke-width': '5',
+                    'stroke-miterlimit': '10',
+                    'stroke-linecap': 'round'
+                });
+
+                svg.appendChild(this.elements.circle);
                 iconSpan.appendChild(svg);
-
-                this.textElement = document.createElement('span');
-                this.textElement.className = 'sv-pull-to-refresh--text';
-
-                this.contentElement.appendChild(iconSpan);
-                this.contentElement.appendChild(this.textElement);
-                this.indicatorElement.appendChild(this.contentElement);
-
-                // Container 바로 앞에 삽입 (형제 요소로)
-                this.container.parentNode.insertBefore(this.indicatorElement, this.container);
+                return iconSpan;
             }
 
-            attachEventListeners() {
-                // 이벤트 핸들러 바인딩 (중복 방지를 위해 한 번만 바인딩)
+            _createSVGElement(tag, attributes) {
+                const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
+                Object.entries(attributes).forEach(([key, value]) => {
+                    element.setAttribute(key, value);
+                });
+                return element;
+            }
+
+            _attachEventListeners() {
                 if (!this.boundHandlers) {
                     this.boundHandlers = {
-                        touchStart: this.handleTouchStart.bind(this),
-                        touchMove: this.handleTouchMove.bind(this),
-                        touchEnd: this.handleTouchEnd.bind(this)
+                        touchStart: this._handleTouchStart.bind(this),
+                        touchMove: this._handleTouchMove.bind(this),
+                        touchEnd: this._handleTouchEnd.bind(this)
                     };
                 }
 
-                // 이벤트 리스너 등록
-                this.container.addEventListener('touchstart', this.boundHandlers.touchStart, { passive: false });
-                this.container.addEventListener('touchmove', this.boundHandlers.touchMove, { passive: false });
-                this.container.addEventListener('touchend', this.boundHandlers.touchEnd, { passive: false });
+                const options = { passive: false };
+                this.container.addEventListener('touchstart', this.boundHandlers.touchStart, options);
+                this.container.addEventListener('touchmove', this.boundHandlers.touchMove, options);
+                this.container.addEventListener('touchend', this.boundHandlers.touchEnd, options);
             }
 
-            handleTouchStart(e) {
-                if (this.isRefreshing || this.isDisabled) return;
+            _handleTouchStart(e) {
+                if (this.state.isRefreshing || this.state.isDisabled) return;
 
-                this.touchStartY = e.touches[0].clientY;
-
-                // 스크롤 대상에 따라 scrollTop 값 가져오기
-                const targetElement = this.options.scrollElement;
-                this.touchStartScrollTop = targetElement?.scrollTop ??
-                    window.pageYOffset ??
-                    document.documentElement.scrollTop ??
-                    0;
+                this.touch.startY = e.touches[0].clientY;
+                this.touch.startScrollTop = this._getScrollTop();
             }
 
-            handleTouchMove(e) {
-                if (this.isRefreshing || this.isDisabled) return;
+            _handleTouchMove(e) {
+                if (this.state.isRefreshing || this.state.isDisabled) return;
 
-                const touchY = e.touches[0].clientY;
-                const touchDiff = touchY - this.touchStartY;
+                const touchDiff = e.touches[0].clientY - this.touch.startY;
 
                 if (touchDiff <= 0) {
-                    // 위로 스크롤
-                    this.resetPull();
+                    this._resetPull();
                     return;
                 }
 
-                if (!this.shouldPullToRefresh()) {
-                    return;
+                if (!this._shouldPullToRefresh()) return;
+
+                if (!this.state.isPulling && touchDiff > 0) {
+                    this.state.isPulling = true;
                 }
 
-                // Pull 시작
-                if (!this.isPulling && touchDiff > 0) {
-                    this.isPulling = true;
-                }
-
-                // 저항 함수 적용
-                const resistedDistance = touchDiff * this.resistance(touchDiff / this.options.distThreshold);
+                const resistedDistance = touchDiff * this._calculateResistance(touchDiff / this.options.distThreshold);
                 this.pullDistance = Math.min(resistedDistance, this.options.distMax);
 
-                // UI 업데이트
-                this.updateIndicator();
+                this._updateIndicator();
+                this._emitProgress();
+                this._updateReleaseState();
 
-                // Progress 이벤트 emit
-                const currentProgress = Math.min(this.pullDistance / this.options.distThreshold, 1);
-                if (this.options.onProgress) {
-                    this.options.onProgress({
-                        progress: currentProgress,
-                        distance: this.pullDistance,
-                        isPulling: this.isPulling,
-                        isReleasing: this.pullDistance >= this.options.distThreshold
-                    });
-                }
-
-                // Release 상태 체크
-                if (this.pullDistance >= this.options.distThreshold) {
-                    if (!this.isReleasing) {
-                        this.isReleasing = true;
-                    }
-                } else {
-                    this.isReleasing = false;
-                }
-
-                // 기본 스크롤 방지
-                if (this.touchStartScrollTop <= this.options.scrollThreshold) {
+                if (this.touch.startScrollTop <= this.options.scrollThreshold) {
                     e.preventDefault();
                 }
             }
 
-            handleTouchEnd() {
-                if (this.isRefreshing || this.isDisabled) return;
+            _handleTouchEnd() {
+                if (this.state.isRefreshing || this.state.isDisabled) return;
 
                 if (this.pullDistance >= this.options.distThreshold) {
-                    // 새로고침 트리거
-                    this.triggerRefresh();
+                    this._triggerRefresh();
                 } else {
-                    // 원위치
-                    this.resetPull();
+                    this._resetPull();
                 }
             }
 
-            shouldPullToRefresh() {
-                if (this.isDisabled) return false;
-                return this.touchStartScrollTop <= this.options.scrollThreshold;
+            _getScrollTop() {
+                const element = this.options.scrollElement;
+                return element?.scrollTop ?? window.pageYOffset ?? document.documentElement.scrollTop ?? 0;
             }
 
-            resistance(t) {
-                return Math.min(1, t / 2.5);
+            _shouldPullToRefresh() {
+                return !this.state.isDisabled && this.touch.startScrollTop <= this.options.scrollThreshold;
             }
 
-            updateIndicator() {
-                if (!this.indicatorElement) return;
+            _calculateResistance(ratio) {
+                return Math.min(1, ratio / 2.5);
+            }
 
-                const height = Math.min(this.pullDistance, this.options.distMax);
+            _emitProgress() {
+                if (!this.options.onProgress) return;
 
-                // display 제어 - pulling 시작할 때만 visible 추가
-                if (this.pullDistance > 0 && !this.indicatorElement.classList.contains('is-visible')) {
-                    this.indicatorElement.classList.add('is-visible');
-                }
-
-                this.indicatorElement.style.height = `${height}px`;
-
-                // Content 스타일 업데이트
                 const progress = Math.min(this.pullDistance / this.options.distThreshold, 1);
-                const contentOpacity = 0.3 + progress * 0.7;
+                this.options.onProgress({
+                    progress,
+                    distance: this.pullDistance,
+                    isPulling: this.state.isPulling,
+                    isReleasing: this.pullDistance >= this.options.distThreshold
+                });
+            }
+
+            _updateReleaseState() {
+                const shouldRelease = this.pullDistance >= this.options.distThreshold;
+                this.state.isReleasing = shouldRelease;
+            }
+
+            _updateIndicator() {
+                if (!this.elements.indicator) return;
+
+                this._updateVisibility();
+                this._updateHeight();
+                this._updateContentStyle();
+                this._updateCircleStyle();
+                this._updateMessage();
+                this._updateClasses();
+            }
+
+            _updateVisibility() {
+                if (this.pullDistance > 0 && !this.elements.indicator.classList.contains('is-visible')) {
+                    this.elements.indicator.classList.add('is-visible');
+                }
+            }
+
+            _updateHeight() {
+                const height = Math.min(this.pullDistance, this.options.distMax);
+                this.elements.indicator.style.height = `${height}px`;
+            }
+
+            _updateContentStyle() {
+                const progress = this._getProgress();
+                const opacity = 0.3 + progress * 0.7;
                 const scale = 0.3 + progress * 0.7;
 
-                this.contentElement.style.opacity = contentOpacity;
-                this.contentElement.style.transform = `scale(${scale})`;
-
-                // Circle 스타일 업데이트
-                if (!this.isRefreshing) {
-                    const dashLength = 1 + progress * 122;
-                    this.circleElement.style.strokeDasharray = `${dashLength}, 200`;
-                    this.circleElement.style.strokeDashoffset = '0';
-                }
-
-                // 텍스트 업데이트
-                this.updateMessage();
-
-                // 클래스 업데이트
-                this.updateClasses();
+                this.elements.content.style.opacity = opacity;
+                this.elements.content.style.transform = `scale(${scale})`;
             }
 
-            updateMessage() {
+            _updateCircleStyle() {
+                if (this.state.isRefreshing) return;
+
+                const progress = this._getProgress();
+                const dashLength = 1 + progress * 122;
+
+                this.elements.circle.style.strokeDasharray = `${dashLength}, 200`;
+                this.elements.circle.style.strokeDashoffset = '0';
+            }
+
+            _updateMessage() {
                 let message = '';
-                if (this.isRefreshing) {
+
+                if (this.state.isRefreshing) {
                     message = this.options.refreshText;
-                } else if (this.isReleasing) {
+                } else if (this.state.isReleasing) {
                     message = this.options.releaseText;
-                } else if (this.isPulling) {
+                } else if (this.state.isPulling) {
                     message = this.options.pullText;
                 }
-                this.textElement.textContent = message;
+
+                this.elements.text.textContent = message;
             }
 
-            updateClasses() {
-                this.indicatorElement.classList.toggle('is-pulling', this.isPulling);
-                this.indicatorElement.classList.toggle('is-releasing', this.isReleasing);
-                this.indicatorElement.classList.toggle('is-refreshing', this.isRefreshing);
-                this.indicatorElement.classList.toggle('is-closing', this.isClosing);
+            _updateClasses() {
+                const { indicator } = this.elements;
+                const { isPulling, isReleasing, isRefreshing, isClosing } = this.state;
 
-                const svgElement = this.indicatorElement.querySelector('.sv-pull-to-refresh--circle');
+                indicator.classList.toggle('is-pulling', isPulling);
+                indicator.classList.toggle('is-releasing', isReleasing);
+                indicator.classList.toggle('is-refreshing', isRefreshing);
+                indicator.classList.toggle('is-closing', isClosing);
+
+                const svgElement = indicator.querySelector('.sv-pull-to-refresh--circle');
                 if (svgElement) {
-                    svgElement.classList.toggle('is-refreshing', this.isRefreshing);
+                    svgElement.classList.toggle('is-refreshing', isRefreshing);
                 }
             }
 
-            triggerRefresh() {
-                this.isPulling = false;
-                this.isReleasing = false;
-                this.isRefreshing = true;
+            _getProgress() {
+                return Math.min(this.pullDistance / this.options.distThreshold, 1);
+            }
+
+            _triggerRefresh() {
+                this.state.isPulling = false;
+                this.state.isReleasing = false;
+                this.state.isRefreshing = true;
                 this.pullDistance = this.options.distThreshold;
 
-                this.updateIndicator();
+                this._updateIndicator();
 
-                const close = () => {
-                    this.isRefreshing = false;
-                    this.resetPull();
-                    if (this.closeTimeout) {
-                        clearTimeout(this.closeTimeout);
-                        this.closeTimeout = null;
-                    }
-                };
+                const close = this._createCloseHandler();
 
                 if (this.options.onRefresh) {
                     this.options.onRefresh(close);
                 }
 
-                // 자동 닫기 타임아웃
-                if (this.options.refreshTimeout) {
-                    this.closeTimeout = setTimeout(() => {
-                        if (this.isRefreshing) {
-                            close();
-                        }
-                    }, this.options.refreshTimeout);
-                }
+                this._setAutoCloseTimeout(close);
             }
 
-            resetPull() {
-                // Closing 상태로 전환
-                this.isClosing = true;
-                this.isPulling = false;
-                this.isReleasing = false;
-                this.isRefreshing = false;
-
-                // 클래스 먼저 업데이트
-                this.updateClasses();
-
-                // height를 0으로 애니메이션
-                this.indicatorElement.style.height = '0px';
-
-                // transition 완료 후 상태 초기화 및 display none
-                setTimeout(() => {
-                    this.isClosing = false;
-                    this.pullDistance = 0;
-                    this.indicatorElement.classList.remove('is-visible');
-                    this.updateClasses();
-                }, 300); // transition 시간과 동일
+            _createCloseHandler() {
+                return () => {
+                    this.state.isRefreshing = false;
+                    this._resetPull();
+                    this._clearTimeout();
+                };
             }
 
-            disabled(val) {
-                this.isDisabled = val;
+            _setAutoCloseTimeout(closeHandler) {
+                if (!this.options.refreshTimeout) return;
+
+                this.closeTimeout = setTimeout(() => {
+                    if (this.state.isRefreshing) {
+                        closeHandler();
+                    }
+                }, this.options.refreshTimeout);
             }
 
-            destroy() {
-                // 이벤트 리스너 제거
-                if (this.boundHandlers) {
-                    this.container.removeEventListener('touchstart', this.boundHandlers.touchStart);
-                    this.container.removeEventListener('touchmove', this.boundHandlers.touchMove);
-                    this.container.removeEventListener('touchend', this.boundHandlers.touchEnd);
-                    this.boundHandlers = null;
-                }
-
-                // Indicator 제거
-                if (this.indicatorElement && this.indicatorElement.parentNode) {
-                    this.indicatorElement.parentNode.removeChild(this.indicatorElement);
-                    this.indicatorElement = null;
-                }
-
-                // Timeout 정리
+            _clearTimeout() {
                 if (this.closeTimeout) {
                     clearTimeout(this.closeTimeout);
                     this.closeTimeout = null;
+                }
+            }
+
+            _resetPull() {
+                this.state.isClosing = true;
+                this.state.isPulling = false;
+                this.state.isReleasing = false;
+                this.state.isRefreshing = false;
+
+                this._updateClasses();
+                this.elements.indicator.style.height = '0px';
+
+                setTimeout(() => {
+                    this.state.isClosing = false;
+                    this.pullDistance = 0;
+                    this.elements.indicator.classList.remove('is-visible');
+                    this._updateClasses();
+                }, PullToRefresh.ANIMATION_DURATION);
+            }
+
+            // Public API
+            disabled(isDisabled) {
+                this.state.isDisabled = isDisabled;
+            }
+
+            destroy() {
+                this._removeEventListeners();
+                this._removeIndicator();
+                this._clearTimeout();
+            }
+
+            _removeEventListeners() {
+                if (!this.boundHandlers) return;
+
+                this.container.removeEventListener('touchstart', this.boundHandlers.touchStart);
+                this.container.removeEventListener('touchmove', this.boundHandlers.touchMove);
+                this.container.removeEventListener('touchend', this.boundHandlers.touchEnd);
+                this.boundHandlers = null;
+            }
+
+            _removeIndicator() {
+                if (this.elements.indicator?.parentNode) {
+                    this.elements.indicator.parentNode.removeChild(this.elements.indicator);
+                    this.elements.indicator = null;
                 }
             }
         }
