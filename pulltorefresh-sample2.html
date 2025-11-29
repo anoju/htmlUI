@@ -234,6 +234,12 @@
             }
 
             init() {
+                // 이미 초기화된 경우 방지
+                if (this.indicatorElement) {
+                    console.warn('PullToRefresh already initialized');
+                    return;
+                }
+
                 // Pull Indicator 생성 및 prepend
                 this.createIndicator();
 
@@ -278,18 +284,24 @@
                 this.contentElement.appendChild(this.textElement);
                 this.indicatorElement.appendChild(this.contentElement);
 
-                // Container 앞에 prepend
-                this.container.insertBefore(this.indicatorElement, this.container.firstChild);
+                // Container 바로 앞에 삽입 (형제 요소로)
+                this.container.parentNode.insertBefore(this.indicatorElement, this.container);
             }
 
             attachEventListeners() {
-                this.handleTouchStart = this.handleTouchStart.bind(this);
-                this.handleTouchMove = this.handleTouchMove.bind(this);
-                this.handleTouchEnd = this.handleTouchEnd.bind(this);
+                // 이벤트 핸들러 바인딩 (중복 방지를 위해 한 번만 바인딩)
+                if (!this.boundHandlers) {
+                    this.boundHandlers = {
+                        touchStart: this.handleTouchStart.bind(this),
+                        touchMove: this.handleTouchMove.bind(this),
+                        touchEnd: this.handleTouchEnd.bind(this)
+                    };
+                }
 
-                this.container.addEventListener('touchstart', this.handleTouchStart, { passive: false });
-                this.container.addEventListener('touchmove', this.handleTouchMove, { passive: false });
-                this.container.addEventListener('touchend', this.handleTouchEnd, { passive: false });
+                // 이벤트 리스너 등록
+                this.container.addEventListener('touchstart', this.boundHandlers.touchStart, { passive: false });
+                this.container.addEventListener('touchmove', this.boundHandlers.touchMove, { passive: false });
+                this.container.addEventListener('touchend', this.boundHandlers.touchEnd, { passive: false });
             }
 
             handleTouchStart(e) {
@@ -497,13 +509,17 @@
 
             destroy() {
                 // 이벤트 리스너 제거
-                this.container.removeEventListener('touchstart', this.handleTouchStart);
-                this.container.removeEventListener('touchmove', this.handleTouchMove);
-                this.container.removeEventListener('touchend', this.handleTouchEnd);
+                if (this.boundHandlers) {
+                    this.container.removeEventListener('touchstart', this.boundHandlers.touchStart);
+                    this.container.removeEventListener('touchmove', this.boundHandlers.touchMove);
+                    this.container.removeEventListener('touchend', this.boundHandlers.touchEnd);
+                    this.boundHandlers = null;
+                }
 
                 // Indicator 제거
                 if (this.indicatorElement && this.indicatorElement.parentNode) {
                     this.indicatorElement.parentNode.removeChild(this.indicatorElement);
+                    this.indicatorElement = null;
                 }
 
                 // Timeout 정리
