@@ -617,13 +617,9 @@
 
         // Pull to Refresh 초기화
         const pullToRefresh = new PullToRefresh('#PullToRefreshContainer', {
-            pullText: '정보를 불러오고 있어요.',
-            releaseText: '정보를 불러오고 있어요.',
-            refreshText: '정보를 불러오고 있어요.',
-            refreshTimeout: 5000,
-            distThreshold: 100,
-            distMax: 130,
-            scrollThreshold: 20,
+            pullText: '당겨서 새로고침',
+            releaseText: '놓아서 새로고침',
+            refreshText: '새로고침 중...',
             onRefresh: function(close) {
                 console.log('Refresh callback executed!');
 
