@@ -49,7 +49,7 @@
 
         .shortcuts-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 30px;
         }
 
@@ -111,6 +111,18 @@
             background: linear-gradient(135deg, #007ACC, #0066B3);
         }
 
+        .system-card {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+        }
+
+        .system-card h2 {
+            color: #ff6f00;
+        }
+
+        .system-card .platform {
+            background: linear-gradient(135deg, #ff8f00, #ff6f00);
+        }
+
         .footer {
             text-align: center;
             margin-top: 50px;
@@ -145,15 +157,29 @@
         </div>
 
         <div class="shortcuts-list">
-            <a href="mac_vscode.html" class="shortcut-card vscode-card">
+            <a href="mac.html" class="shortcut-card system-card">
                 <div class="shortcut-card-icon">🍎</div>
+                <h2>macOS</h2>
+                <p>시스템 단축키</p>
+                <span class="platform">macOS</span>
+            </a>
+
+            <a href="win.html" class="shortcut-card system-card">
+                <div class="shortcut-card-icon">🪟</div>
+                <h2>Windows</h2>
+                <p>시스템 단축키</p>
+                <span class="platform">Windows</span>
+            </a>
+
+            <a href="mac_vscode.html" class="shortcut-card vscode-card">
+                <div class="shortcut-card-icon">💻</div>
                 <h2>VS Code</h2>
                 <p>Visual Studio Code 단축키</p>
                 <span class="platform">macOS</span>
             </a>
 
             <a href="windows_vscode.html" class="shortcut-card vscode-card">
-                <div class="shortcut-card-icon">🪟</div>
+                <div class="shortcut-card-icon">💻</div>
                 <h2>VS Code</h2>
                 <p>Visual Studio Code 단축키</p>
                 <span class="platform">Windows</span>
