@@ -87,6 +87,7 @@
             justify-content: center;
             overflow: hidden;
             height: 0;
+            pointer-events: none;
         }
 
         .sv-pull-to-refresh.is-visible {
@@ -118,7 +119,6 @@
 
         .sv-pull-to-refresh--circle {
             color: #0046ff;
-            transform: rotate(-90deg);
         }
 
         .sv-pull-to-refresh--circle circle {
@@ -143,11 +143,8 @@
         }
 
         @keyframes sv-ptr-rotate {
-            0% {
-                transform: rotate(-90deg);
-            }
             100% {
-                transform: rotate(270deg);
+                transform: rotate(360deg);
             }
         }
 
@@ -196,11 +193,12 @@
                 pullText: null,
                 releaseText: null,
                 refreshText: null,
-                refreshTimeout: 3000,
+                refreshTimeout: 5000,
                 scrollElement: null,
                 distThreshold: 100,
-                distMax: 130,
+                distMax: 140,
                 scrollThreshold: 20,
+                enableMouse: false,
                 onRefresh: null,
                 onProgress: null
             };
@@ -243,7 +241,8 @@
                     isReleasing: false,
                     isRefreshing: false,
                     isClosing: false,
-                    isDisabled: false
+                    isDisabled: false,
+                    isMouseDown: false
                 };
 
                 this.touch = {
@@ -312,7 +311,8 @@
                     stroke: 'currentColor',
                     'stroke-width': '5',
                     'stroke-miterlimit': '10',
-                    'stroke-linecap': 'round'
+                    'stroke-linecap': 'round',
+                    transform: 'rotate(-90 50 50)'
                 });
 
                 svg.appendChild(this.elements.circle);
@@ -341,11 +341,21 @@
                 }
 
                 const options = { passive: false };
+
+                // Touch 이벤트
                 this.container.addEventListener('touchstart', this.boundHandlers.touchStart, options);
                 this.container.addEventListener('touchmove', this.boundHandlers.touchMove, options);
                 this.container.addEventListener('touchend', this.boundHandlers.touchEnd, options);
                 this.container.addEventListener('touchcancel', this.boundHandlers.touchCancel, options);
                 this.container.addEventListener('contextmenu', this.boundHandlers.contextMenu, options);
+
+                // Mouse 이벤트 (옵션이 활성화된 경우에만)
+                if (this.options.enableMouse) {
+                    this.container.addEventListener('mousedown', this.boundHandlers.touchStart, options);
+                    this.container.addEventListener('mousemove', this.boundHandlers.touchMove, options);
+                    this.container.addEventListener('mouseup', this.boundHandlers.touchEnd, options);
+                    this.container.addEventListener('mouseleave', this.boundHandlers.touchEnd, options);
+                }
 
                 // Document 레벨 이벤트
                 document.addEventListener('visibilitychange', this.boundHandlers.visibilityChange);
@@ -354,14 +364,25 @@
             _handleTouchStart(e) {
                 if (this.state.isRefreshing || this.state.isDisabled) return;
 
-                this.touch.startY = e.touches[0].clientY;
+                // 마우스 이벤트인 경우 드래그 상태 활성화
+                if (e instanceof MouseEvent) {
+                    this.state.isMouseDown = true;
+                }
+
+                this.touch.startY = 'touches' in e ? e.touches[0].clientY : e.clientY;
                 this.touch.startScrollTop = this._getScrollTop();
             }
 
             _handleTouchMove(e) {
                 if (this.state.isRefreshing || this.state.isDisabled) return;
 
-                const touchDiff = e.touches[0].clientY - this.touch.startY;
+                // 마우스 이벤트인 경우 mousedown 상태가 아니면 무시
+                if (e instanceof MouseEvent && !this.state.isMouseDown) {
+                    return;
+                }
+
+                const touchY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+                const touchDiff = touchY - this.touch.startY;
 
                 if (touchDiff <= 0) {
                     this._resetPull();
@@ -396,6 +417,9 @@
 
             _finishTouch() {
                 if (this.state.isRefreshing || this.state.isDisabled) return;
+
+                // 마우스 드래그 상태 해제
+                this.state.isMouseDown = false;
 
                 if (this.pullDistance >= this.options.distThreshold) {
                     this._triggerRefresh();
@@ -595,11 +619,20 @@
             _removeEventListeners() {
                 if (!this.boundHandlers) return;
 
+                // Touch 이벤트 제거
                 this.container.removeEventListener('touchstart', this.boundHandlers.touchStart);
                 this.container.removeEventListener('touchmove', this.boundHandlers.touchMove);
                 this.container.removeEventListener('touchend', this.boundHandlers.touchEnd);
                 this.container.removeEventListener('touchcancel', this.boundHandlers.touchCancel);
                 this.container.removeEventListener('contextmenu', this.boundHandlers.contextMenu);
+
+                // Mouse 이벤트 제거
+                if (this.options.enableMouse) {
+                    this.container.removeEventListener('mousedown', this.boundHandlers.touchStart);
+                    this.container.removeEventListener('mousemove', this.boundHandlers.touchMove);
+                    this.container.removeEventListener('mouseup', this.boundHandlers.touchEnd);
+                    this.container.removeEventListener('mouseleave', this.boundHandlers.touchEnd);
+                }
 
                 // Document 레벨 이벤트 제거
                 document.removeEventListener('visibilitychange', this.boundHandlers.visibilityChange);
@@ -656,6 +689,7 @@
             pullText: '당겨서 새로고침',
             releaseText: '놓아서 새로고침',
             refreshText: '새로고침 중...',
+            enableMouse: true,
             onRefresh: function(close) {
                 console.log('Refresh callback executed!');
 
@@ -669,7 +703,7 @@
 
                     // 새로고침 종료
                     close();
-                }, 2000);
+                }, 4000);
             },
             onProgress: function(data) {
                 // console.log('Progress:', data);
