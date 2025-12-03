@@ -129,7 +129,7 @@
         }
 
         .sv-pull-to-refresh--circle.is-refreshing circle {
-            stroke-dasharray: 1, 200;
+            stroke-dasharray: 1, 160;
             stroke-dashoffset: 0;
             transition: none;
             animation: sv-ptr-dash 2s ease-in-out infinite;
@@ -153,16 +153,16 @@
 
         @keyframes sv-ptr-dash {
             0% {
-                stroke-dasharray: 1, 200;
+                stroke-dasharray: 1, 160;
                 stroke-dashoffset: 0;
             }
             50% {
-                stroke-dasharray: 89, 200;
-                stroke-dashoffset: -35px;
+                stroke-dasharray: 71, 160;
+                stroke-dashoffset: -28px;
             }
             100% {
-                stroke-dasharray: 89, 200;
-                stroke-dashoffset: -124px;
+                stroke-dasharray: 71, 160;
+                stroke-dashoffset: -99px;
             }
         }
     </style>
@@ -301,21 +301,21 @@
                 const iconSpan = this._createElement('span', 'sv-pull-to-refresh--icon');
                 const svg = this._createSVGElement('svg', {
                     class: 'sv-pull-to-refresh--circle',
-                    viewBox: '25 25 50 50',
+                    viewBox: '0 0 40 40',
                     width: '40',
                     height: '40'
                 });
 
                 this.elements.circle = this._createSVGElement('circle', {
-                    cx: '50',
-                    cy: '50',
-                    r: '20',
+                    cx: '20',
+                    cy: '20',
+                    r: '16',
                     fill: 'none',
                     stroke: 'currentColor',
                     'stroke-width': '5',
                     'stroke-miterlimit': '10',
                     'stroke-linecap': 'round',
-                    transform: 'rotate(-90 50 50)'
+                    transform: 'rotate(-90 20 20)'
                 });
 
                 svg.appendChild(this.elements.circle);
@@ -510,9 +510,9 @@
                 if (this.state.isRefreshing) return;
 
                 const progress = this._getProgress();
-                const dashLength = 1 + progress * 122;
+                const dashLength = 1 + progress * 98;
 
-                this.elements.circle.style.strokeDasharray = `${dashLength}, 200`;
+                this.elements.circle.style.strokeDasharray = `${dashLength}, 160`;
                 this.elements.circle.style.strokeDashoffset = '0';
             }
 
