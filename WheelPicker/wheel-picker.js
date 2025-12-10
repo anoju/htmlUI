@@ -127,13 +127,15 @@ class WheelPicker {
   }
 
   updateOptions(options, columnIndex = null) {
-    this.config.options = options;
-    this.isMultiColumn = Array.isArray(options[0]);
-    this.normalizedOptions = this.isMultiColumn ? options : [options];
-
     if (columnIndex !== null && this.columns[columnIndex]) {
+      // 특정 컬럼만 업데이트하는 경우
+      this.normalizedOptions[columnIndex] = options;
       this.columns[columnIndex].updateOptions(options);
     } else {
+      // 전체 옵션 업데이트
+      this.config.options = options;
+      this.isMultiColumn = Array.isArray(options[0]);
+      this.normalizedOptions = this.isMultiColumn ? options : [options];
       this.destroy();
       this._init();
     }
