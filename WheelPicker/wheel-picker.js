@@ -400,7 +400,8 @@ class WheelPickerColumn {
   }
 
   _handleDragMove(e) {
-    if (!this.dragging && !this.container.contains(e.target) && e.target !== this.container) {
+    // dragging 상태가 아니면 무시
+    if (!this.dragging) {
       return;
     }
 
