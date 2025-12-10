@@ -456,22 +456,34 @@ class WheelPickerColumn {
 
     if ((isDragging || isTargetValid) && e.cancelable) {
       e.preventDefault();
-      this._finalizeDragAndStartInertiaScroll();
+      this._finalizeDragAndStartInertiaScroll(e);
     }
   }
 
-  _finalizeDragAndStartInertiaScroll() {
+  _finalizeDragAndStartInertiaScroll(event) {
     try {
       if (this.dragController) {
         this.dragController.abort();
         this.dragController = null;
       }
 
+      // 드래그 상태를 먼저 false로 설정하여 클릭 이벤트 방지
       this.dragging = false;
 
       if (this.touchData.isClick) {
-        const currentScroll = this.touchData.touchScroll ?? this.scroll;
-        this._selectByScroll(currentScroll);
+        // 모바일에서 preventDefault로 클릭 이벤트가 발생하지 않는 이슈로 여기서 클릭 이벤트 처리
+        if (event && event.changedTouches) {
+          const touch = event.changedTouches[0];
+          if (touch) {
+            // 터치 이벤트에서 클릭된 아이템 찾기
+            const element = document.elementFromPoint(touch.clientX, touch.clientY);
+            const listItem = element?.closest('.wheel-picker__options-item');
+            if (listItem && listItem.dataset.index) {
+              const clickedIndex = parseInt(listItem.dataset.index);
+              this._handleItemClick({ currentTarget: listItem });
+            }
+          }
+        }
         return;
       }
 
@@ -501,11 +513,14 @@ class WheelPickerColumn {
   }
 
   _handleItemClick(e) {
+    // 드래그 중이거나 드래그 이동이 있었다면 무시
     if (this.dragging || (this.touchData.totalMovement && this.touchData.totalMovement > 5)) {
       return;
     }
 
     const itemIndex = parseInt(e.currentTarget.dataset.index);
+    if (isNaN(itemIndex)) return;
+
     this._cancelAnimation();
     this._animateScroll(this.scroll, itemIndex, 0.3, () => {
       this._selectByScroll(itemIndex);
