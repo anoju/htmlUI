@@ -224,6 +224,14 @@ class WheelPickerColumn {
 
     this.dragController = null;
 
+    // 바인딩된 이벤트 핸들러 저장
+    this.boundHandlers = {
+      itemClick: null,
+      prevClick: null,
+      nextClick: null,
+      sliderInput: null
+    };
+
     this._init();
   }
 
@@ -303,12 +311,12 @@ class WheelPickerColumn {
     }
 
     const template = `
-      <div class="wheel-picker__options" style="-webkit-clip-path:${clipPath};clip-path:${clipPath};">
+      <div class="wheel-picker__options" style="-webkit-clip-path:${clipPath};clip-path:${clipPath};" aria-hidden="true">
         <ul class="wheel-picker__options-list" role="listbox">
           ${wheelItemsHTML}
         </ul>
       </div>
-      <div class="${highlightClass}" style="height: ${this.config.height}px; line-height: ${this.config.height}px;">
+      <div class="${highlightClass}" style="height: ${this.config.height}px; line-height: ${this.config.height}px;" aria-hidden="true">
         <ul class="wheel-picker__highlight-list" style="top: ${this.config.infinite ? -this.config.height : 0}px;">
           ${highlightItemsHTML}
         </ul>
@@ -346,13 +354,8 @@ class WheelPickerColumn {
 
     this.container.addEventListener('touchstart', this._handleDragStart, { passive: false });
     this.container.addEventListener('touchend', this._handleDragEnd, { passive: false });
-
-    // 이벤트 다중실행 방지: document 이벤트는 한 번만 등록
-    if (!this._documentEventsAttached) {
-      document.addEventListener('mousedown', this._handleDragStart, { passive: false });
-      document.addEventListener('mouseup', this._handleDragEnd, { passive: false });
-      this._documentEventsAttached = true;
-    }
+    document.addEventListener('mousedown', this._handleDragStart, { passive: false });
+    document.addEventListener('mouseup', this._handleDragEnd, { passive: false });
 
     this.elements.wheelItems.forEach(item => {
       item.addEventListener('click', this._handleItemClick);
@@ -360,14 +363,19 @@ class WheelPickerColumn {
 
     if (this.config.showButtons) {
       if (this.elements.prevButton) {
-        this.elements.prevButton.addEventListener('click', () => this._selectPreviousItem());
+        this.boundHandlers.prevClick = () => this._selectPreviousItem();
+        this.elements.prevButton.addEventListener('click', this.boundHandlers.prevClick);
       }
       if (this.elements.nextButton) {
-        this.elements.nextButton.addEventListener('click', () => this._selectNextItem());
+        this.boundHandlers.nextClick = () => this._selectNextItem();
+        this.elements.nextButton.addEventListener('click', this.boundHandlers.nextClick);
       }
     }
 
-    this.elements.slider.addEventListener('input', (e) => this._handleSliderInput(e));
+    if (this.elements.slider) {
+      this.boundHandlers.sliderInput = (e) => this._handleSliderInput(e);
+      this.elements.slider.addEventListener('input', this.boundHandlers.sliderInput);
+    }
   }
 
   _handleDragStart(e) {
@@ -766,17 +774,43 @@ class WheelPickerColumn {
   destroy() {
     this._cancelAnimation();
 
+    // 드래그 이벤트 제거
     this.container.removeEventListener('touchstart', this._handleDragStart);
     this.container.removeEventListener('touchend', this._handleDragEnd);
     document.removeEventListener('mousedown', this._handleDragStart);
     document.removeEventListener('mouseup', this._handleDragEnd);
 
+    // wheelItems 클릭 이벤트 제거
+    if (this.elements && this.elements.wheelItems) {
+      this.elements.wheelItems.forEach(item => {
+        item.removeEventListener('click', this._handleItemClick);
+      });
+    }
+
+    // 버튼 이벤트 제거
+    if (this.config.showButtons) {
+      if (this.elements.prevButton && this.boundHandlers.prevClick) {
+        this.elements.prevButton.removeEventListener('click', this.boundHandlers.prevClick);
+      }
+      if (this.elements.nextButton && this.boundHandlers.nextClick) {
+        this.elements.nextButton.removeEventListener('click', this.boundHandlers.nextClick);
+      }
+    }
+
+    // 슬라이더 이벤트 제거
+    if (this.elements.slider && this.boundHandlers.sliderInput) {
+      this.elements.slider.removeEventListener('input', this.boundHandlers.sliderInput);
+    }
+
+    // dragController 정리
     if (this.dragController) {
       this.dragController.abort();
+      this.dragController = null;
     }
 
     this.container.innerHTML = '';
     this.elements = null;
     this.normalizedOptions = null;
+    this.boundHandlers = null;
   }
 }

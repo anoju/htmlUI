@@ -173,19 +173,47 @@
       label: `${i + 1}월`
     }));
 
-    const dayOptions = Array.from({ length: 31 }, (_, i) => ({
-      value: i + 1,
-      label: `${i + 1}일`
-    }));
+    // 해당 년/월의 마지막 일수를 계산하는 함수
+    function getDaysInMonth(year, month) {
+      return new Date(year, month, 0).getDate();
+    }
+
+    // 일 옵션을 생성하는 함수
+    function createDayOptions(year, month) {
+      const daysInMonth = getDaysInMonth(year, month);
+      return Array.from({ length: daysInMonth }, (_, i) => ({
+        value: i + 1,
+        label: `${i + 1}일`
+      }));
+    }
+
+    const initialDayOptions = createDayOptions(currentYear, 1);
 
     const pickerDate = new WheelPicker({
       el: '#picker-date',
-      options: [yearOptions, monthOptions, dayOptions],
+      options: [yearOptions, monthOptions, initialDayOptions],
       value: [currentYear, 1, 1],
       ariaLabels: ['년도 선택', '월 선택', '일 선택'],
       onChange: (values, columnIndex, selected) => {
         document.getElementById('result-date').textContent =
           `${values[0]}년 ${values[1]}월 ${values[2]}일 (컬럼 ${columnIndex}: ${selected.label})`;
+
+        // 년도나 월이 변경되면 일 옵션을 업데이트
+        if (columnIndex === 0 || columnIndex === 1) {
+          const year = values[0];
+          const month = values[1];
+          const currentDay = values[2];
+          const newDayOptions = createDayOptions(year, month);
+          const maxDay = getDaysInMonth(year, month);
+
+          // 현재 선택된 일이 새로운 월의 최대 일수를 초과하면 마지막 날로 조정
+          const newDay = currentDay > maxDay ? maxDay : currentDay;
+
+          pickerDate.updateOptions(newDayOptions, 2);
+          if (newDay !== currentDay) {
+            pickerDate.select(newDay, 2);
+          }
+        }
       }
     });
 
@@ -230,14 +258,33 @@
     });
 
     // Demo 5: API 테스트
+    const initialApiDayOptions = createDayOptions(currentYear, 1);
+
     const pickerApi = new WheelPicker({
       el: '#picker-api',
-      options: [yearOptions, monthOptions, dayOptions],
+      options: [yearOptions, monthOptions, initialApiDayOptions],
       value: [currentYear, 1, 1],
       ariaLabels: ['년도 선택', '월 선택', '일 선택'],
-      onChange: (values) => {
+      onChange: (values, columnIndex) => {
         document.getElementById('result-api').textContent =
           `${values[0]}년 ${values[1]}월 ${values[2]}일`;
+
+        // 년도나 월이 변경되면 일 옵션을 업데이트
+        if (columnIndex === 0 || columnIndex === 1) {
+          const year = values[0];
+          const month = values[1];
+          const currentDay = values[2];
+          const newDayOptions = createDayOptions(year, month);
+          const maxDay = getDaysInMonth(year, month);
+
+          // 현재 선택된 일이 새로운 월의 최대 일수를 초과하면 마지막 날로 조정
+          const newDay = currentDay > maxDay ? maxDay : currentDay;
+
+          pickerApi.updateOptions(newDayOptions, 2);
+          if (newDay !== currentDay) {
+            pickerApi.select(newDay, 2);
+          }
+        }
       }
     });
 
