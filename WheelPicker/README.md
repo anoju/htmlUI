@@ -6,7 +6,7 @@ Vue WheelPicker 컴포넌트와 scroll-selector.js를 참고하여 제작한 HTM
 
 ```
 WheelPicker/
-├── wheel-picker.js      # 메인 자바스크립트 파일
+├── wheel-picker.js      # 메인 자바스크립트 파일 (단일/다중 컬럼 지원)
 ├── wheel-picker.css     # 스타일시트
 ├── index.html          # 데모 페이지
 └── README.md           # 문서
@@ -49,13 +49,16 @@ const picker = new WheelPicker({
 | 옵션 | 타입 | 기본값 | 설명 |
 |------|------|--------|------|
 | `el` | String \| Element | `null` | 컨테이너 엘리먼트 (필수) |
-| `options` | Array | `[]` | 옵션 배열 `{value: xx, label: xx}` (필수) |
-| `value` | String \| Number | `null` | 초기 선택 값 |
+| `options` | Array \| Array[] | `[]` | 옵션 배열 또는 2차원 배열 `{value: xx, label: xx}` (필수) |
+| `value` | Any \| Array | `null` | 초기 선택 값 (단일 또는 배열) |
 | `infinite` | Boolean | `false` | 무한 스크롤 여부 |
 | `height` | Number | `40` | 각 아이템 높이 (px) |
 | `count` | Number | `5` | 보이는 아이템 개수 (홀수 권장) |
 | `onChange` | Function | `null` | 값 변경 콜백 함수 |
 | `sensitivity` | Number | `3` | 스크롤 감도 (낮을수록 빠름) |
+| `classNames` | Array | `[]` | 각 컬럼별 클래스명 (다중 컬럼용) |
+| `ariaLabels` | Array | `[]` | 각 컬럼별 aria-label (다중 컬럼용) |
+| `showButtons` | Boolean | `false` | 이전/다음 버튼 표시 여부 |
 
 ## API 메소드
 
@@ -134,42 +137,45 @@ const infinitePicker = new WheelPicker({
 });
 ```
 
-### 다중 피커 (날짜 선택)
+### 다중 컬럼 (날짜 선택)
 
 ```javascript
-const yearPicker = new WheelPicker({
-  el: '#yearPicker',
-  options: [
-    { value: 2023, label: '2023년' },
-    { value: 2024, label: '2024년' },
-    { value: 2025, label: '2025년' }
-  ]
-});
+const yearOptions = Array.from({ length: 10 }, (_, i) => ({
+  value: 2020 + i,
+  label: `${2020 + i}년`
+}));
 
-const monthPicker = new WheelPicker({
-  el: '#monthPicker',
-  options: Array.from({ length: 12 }, (_, i) => ({
-    value: i + 1,
-    label: `${i + 1}월`
-  }))
-});
+const monthOptions = Array.from({ length: 12 }, (_, i) => ({
+  value: i + 1,
+  label: `${i + 1}월`
+}));
 
-const dayPicker = new WheelPicker({
-  el: '#dayPicker',
-  options: Array.from({ length: 31 }, (_, i) => ({
-    value: i + 1,
-    label: `${i + 1}일`
-  }))
+const dayOptions = Array.from({ length: 31 }, (_, i) => ({
+  value: i + 1,
+  label: `${i + 1}일`
+}));
+
+const datePicker = new WheelPicker({
+  el: '#datePicker',
+  options: [yearOptions, monthOptions, dayOptions],
+  value: [2024, 1, 1],
+  ariaLabels: ['년도 선택', '월 선택', '일 선택'],
+  onChange: (values, columnIndex, selected) => {
+    console.log('선택된 날짜:', values); // [2024, 1, 1]
+    console.log('변경된 컬럼:', columnIndex); // 0, 1, 2
+    console.log('변경된 값:', selected); // {value: 2024, label: '2024년'}
+  }
 });
 ```
 
 ## 특징
 
+- ✅ 단일 컬럼 및 다중 컬럼 지원 (1개의 인스턴스로 관리)
 - ✅ 터치 및 마우스 드래그 지원
 - ✅ 관성 스크롤
 - ✅ 무한 스크롤 옵션
 - ✅ 접근성 지원 (키보드, 스크린 리더)
-- ✅ 다중 피커 조합 가능
+- ✅ 이벤트 다중실행 방지
 - ✅ 모바일 친화적
 - ✅ 커스터마이징 가능한 스타일
 

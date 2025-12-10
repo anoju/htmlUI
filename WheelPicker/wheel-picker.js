@@ -1,18 +1,21 @@
 /**
- * WheelPicker - HTML + JS Wheel Picker Component
+ * WheelPicker - HTML + JS Wheel Picker Component (Multi-column support)
  * Vue WheelPicker와 scroll-selector.js를 참고하여 제작
  */
 class WheelPicker {
   constructor(options) {
     const defaults = {
       el: null,                    // 컨테이너 엘리먼트
-      options: [],                 // 옵션 배열 {value: xx, label: xx}
-      value: null,                 // 초기 선택 값
+      options: [],                 // 옵션 배열 또는 2차원 배열
+      value: null,                 // 초기 선택 값 (단일 또는 배열)
       infinite: false,             // 무한 스크롤 여부
       height: 40,                  // 각 아이템 높이
       count: 5,                    // 보이는 아이템 개수 (홀수 권장)
       onChange: null,              // 값 변경 콜백
       sensitivity: 3,              // 스크롤 감도 (낮을수록 빠름)
+      classNames: [],              // 각 컬럼별 클래스명
+      ariaLabels: [],              // 각 컬럼별 aria-label
+      showButtons: false,          // 이전/다음 버튼 표시 여부
     };
 
     this.config = Object.assign({}, defaults, options);
@@ -24,6 +27,164 @@ class WheelPicker {
       console.error('WheelPicker - Invalid Element');
       return;
     }
+
+    // 다중 컬럼 여부 판단
+    this.isMultiColumn = Array.isArray(this.config.options[0]);
+    this.normalizedOptions = this.isMultiColumn
+      ? this.config.options
+      : [this.config.options];
+
+    // 다중 값 정규화
+    this.normalizedValue = Array.isArray(this.config.value)
+      ? this.config.value
+      : [this.config.value];
+
+    // 컬럼 인스턴스들
+    this.columns = [];
+
+    this._init();
+  }
+
+  _init() {
+    if (!this.normalizedOptions.length || !this.normalizedOptions[0].length) {
+      console.warn('WheelPicker - No options provided');
+      return;
+    }
+
+    this._createMarkup();
+    this._createColumns();
+  }
+
+  _createMarkup() {
+    this.container.classList.add('wheel-picker');
+    this.container.innerHTML = '';
+  }
+
+  _createColumns() {
+    this.normalizedOptions.forEach((columnOptions, index) => {
+      const initialValue = this.normalizedValue[index] !== undefined
+        ? this.normalizedValue[index]
+        : columnOptions[0]?.value;
+
+      const column = new WheelPickerColumn({
+        container: this.container,
+        options: columnOptions,
+        value: initialValue,
+        infinite: this.config.infinite,
+        height: this.config.height,
+        count: this.config.count,
+        sensitivity: this.config.sensitivity,
+        ariaLabel: this.config.ariaLabels[index] || `${index + 1}번째 항목 선택`,
+        showButtons: this.config.showButtons,
+        className: this.config.classNames[index],
+        isFirstChild: index === 0,
+        isLastChild: index === this.normalizedOptions.length - 1,
+        onChange: (selected) => this._handleColumnChange(index, selected)
+      });
+
+      this.columns.push(column);
+    });
+  }
+
+  _handleColumnChange(columnIndex, selected) {
+    this.normalizedValue[columnIndex] = selected.value;
+
+    if (this.config.onChange) {
+      const returnValue = this.isMultiColumn
+        ? [...this.normalizedValue]
+        : this.normalizedValue[0];
+
+      this.config.onChange(returnValue, columnIndex, selected);
+    }
+  }
+
+  // Public API
+  getValue() {
+    return this.isMultiColumn ? [...this.normalizedValue] : this.normalizedValue[0];
+  }
+
+  getSelected() {
+    const selected = this.columns.map(col => col.getSelected());
+    return this.isMultiColumn ? selected : selected[0];
+  }
+
+  select(value, columnIndex = 0) {
+    if (this.isMultiColumn && Array.isArray(value)) {
+      value.forEach((val, idx) => {
+        if (this.columns[idx]) {
+          this.columns[idx].select(val);
+        }
+      });
+    } else if (this.isMultiColumn) {
+      if (this.columns[columnIndex]) {
+        this.columns[columnIndex].select(value);
+      }
+    } else {
+      if (this.columns[0]) {
+        this.columns[0].select(value);
+      }
+    }
+  }
+
+  updateOptions(options, columnIndex = null) {
+    this.config.options = options;
+    this.isMultiColumn = Array.isArray(options[0]);
+    this.normalizedOptions = this.isMultiColumn ? options : [options];
+
+    if (columnIndex !== null && this.columns[columnIndex]) {
+      this.columns[columnIndex].updateOptions(options);
+    } else {
+      this.destroy();
+      this._init();
+    }
+  }
+
+  destroy() {
+    this.columns.forEach(col => col.destroy());
+    this.columns = [];
+    this.container.classList.remove('wheel-picker');
+    this.container.innerHTML = '';
+  }
+}
+
+/**
+ * WheelPickerColumn - 단일 컬럼 처리
+ */
+class WheelPickerColumn {
+  constructor(options) {
+    const defaults = {
+      container: null,
+      options: [],
+      value: null,
+      infinite: false,
+      height: 40,
+      count: 5,
+      onChange: null,
+      sensitivity: 3,
+      ariaLabel: '옵션 선택',
+      showButtons: false,
+      className: '',
+      isFirstChild: false,
+      isLastChild: false
+    };
+
+    this.config = Object.assign({}, defaults, options);
+    this.parentContainer = this.config.container;
+
+    if (!this.parentContainer) {
+      console.error('WheelPickerColumn - Invalid Container');
+      return;
+    }
+
+    // wheel-picker__items 엘리먼트 생성
+    this.container = document.createElement('div');
+    this.container.className = 'wheel-picker__items';
+
+    if (this.config.className) {
+      this.container.classList.add(this.config.className);
+    }
+
+    this.parentContainer.appendChild(this.container);
 
     // 상수
     this.RESISTANCE = 0.3;
@@ -61,7 +222,6 @@ class WheelPicker {
       slider: null
     };
 
-    // 이벤트 컨트롤러
     this.dragController = null;
 
     this._init();
@@ -69,7 +229,7 @@ class WheelPicker {
 
   _init() {
     if (!this.config.options.length) {
-      console.warn('WheelPicker - No options provided');
+      console.warn('WheelPickerColumn - No options provided');
       return;
     }
 
@@ -85,7 +245,6 @@ class WheelPicker {
       return;
     }
 
-    // infinite일 때 옵션을 충분히 반복
     const result = [];
     while (result.length < this.half) {
       result.push(...this.config.options);
@@ -104,7 +263,6 @@ class WheelPicker {
       wheelItemsHTML += `<li class="wheel-picker__options-item" data-index="${index}">${option.label}</li>`;
     });
 
-    // infinite일 때 앞뒤에 아이템 추가
     if (this.config.infinite) {
       const optLength = this.normalizedOptions.length;
       for (let i = 0; i < this.half; i++) {
@@ -130,36 +288,46 @@ class WheelPicker {
       highlightItemsHTML += `<li class="wheel-picker__highlight-item">${firstItem.label}</li>`;
     }
 
-    const template = `
-      <div class="wheel-picker__items" style="height: ${this.containerHeight}px;">
-        <div class="wheel-picker__options" style="-webkit-clip-path:${clipPath};clip-path:${clipPath};">
-          <ul class="wheel-picker__options-list" role="listbox">
-            ${wheelItemsHTML}
-          </ul>
-        </div>
-        <div class="wheel-picker__highlight" style="height: ${this.config.height}px; line-height: ${this.config.height}px;">
-          <ul class="wheel-picker__highlight-list" style="top: ${this.config.infinite ? -this.config.height : 0}px;">
-            ${highlightItemsHTML}
-          </ul>
-        </div>
+    const buttonsHTML = this.config.showButtons ? `
         <button class="wheel-picker__prev-button" type="button" aria-label="이전 항목 선택"></button>
-        <input
-          type="range"
-          class="wheel-picker__slider"
-          min="0"
-          max="${this.normalizedOptions.length - 1}"
-          value="0"
-          style="height: ${this.config.height}px;"
-          aria-label="옵션 선택"
-        />
         <button class="wheel-picker__next-button" type="button" aria-label="다음 항목 선택"></button>
+    ` : '';
+
+    // radius 클래스 추가
+    let highlightClass = 'wheel-picker__highlight';
+    if (this.config.isFirstChild) {
+      highlightClass += ' wheel-picker__highlight--first';
+    }
+    if (this.config.isLastChild) {
+      highlightClass += ' wheel-picker__highlight--last';
+    }
+
+    const template = `
+      <div class="wheel-picker__options" style="-webkit-clip-path:${clipPath};clip-path:${clipPath};">
+        <ul class="wheel-picker__options-list" role="listbox">
+          ${wheelItemsHTML}
+        </ul>
       </div>
+      <div class="${highlightClass}" style="height: ${this.config.height}px; line-height: ${this.config.height}px;">
+        <ul class="wheel-picker__highlight-list" style="top: ${this.config.infinite ? -this.config.height : 0}px;">
+          ${highlightItemsHTML}
+        </ul>
+      </div>
+      ${buttonsHTML}
+      <input
+        type="range"
+        class="wheel-picker__slider"
+        min="0"
+        max="${this.normalizedOptions.length - 1}"
+        value="0"
+        style="height: ${this.config.height}px;"
+        aria-label="${this.config.ariaLabel}"
+      />
     `;
 
-    this.container.classList.add('wheel-picker');
+    this.container.style.height = `${this.containerHeight}px`;
     this.container.innerHTML = template;
 
-    // DOM 요소 저장
     this.elements.wheelList = this.container.querySelector('.wheel-picker__options-list');
     this.elements.wheelItems = this.container.querySelectorAll('.wheel-picker__options-item');
     this.elements.highlight = this.container.querySelector('.wheel-picker__highlight');
@@ -171,7 +339,6 @@ class WheelPicker {
   }
 
   _bindEvents() {
-    // 터치/마우스 이벤트
     this._handleDragStart = this._handleDragStart.bind(this);
     this._handleDragMove = this._handleDragMove.bind(this);
     this._handleDragEnd = this._handleDragEnd.bind(this);
@@ -179,19 +346,27 @@ class WheelPicker {
 
     this.container.addEventListener('touchstart', this._handleDragStart, { passive: false });
     this.container.addEventListener('touchend', this._handleDragEnd, { passive: false });
-    document.addEventListener('mousedown', this._handleDragStart, { passive: false });
-    document.addEventListener('mouseup', this._handleDragEnd, { passive: false });
 
-    // 아이템 클릭 이벤트
+    // 이벤트 다중실행 방지: document 이벤트는 한 번만 등록
+    if (!this._documentEventsAttached) {
+      document.addEventListener('mousedown', this._handleDragStart, { passive: false });
+      document.addEventListener('mouseup', this._handleDragEnd, { passive: false });
+      this._documentEventsAttached = true;
+    }
+
     this.elements.wheelItems.forEach(item => {
       item.addEventListener('click', this._handleItemClick);
     });
 
-    // 접근성 버튼
-    this.elements.prevButton.addEventListener('click', () => this._selectPreviousItem());
-    this.elements.nextButton.addEventListener('click', () => this._selectNextItem());
+    if (this.config.showButtons) {
+      if (this.elements.prevButton) {
+        this.elements.prevButton.addEventListener('click', () => this._selectPreviousItem());
+      }
+      if (this.elements.nextButton) {
+        this.elements.nextButton.addEventListener('click', () => this._selectNextItem());
+      }
+    }
 
-    // 슬라이더
     this.elements.slider.addEventListener('input', (e) => this._handleSliderInput(e));
   }
 
@@ -361,7 +536,6 @@ class WheelPicker {
         const distance = this._calculateDistance(itemIndex, normalizedScroll);
         const isVisible = distance <= this.half;
 
-        // 각 아이템의 위치와 스타일 설정
         item.style.top = `${-this.config.height / 2}px`;
         item.style.height = `${this.config.height}px`;
         item.style.lineHeight = `${this.config.height}px`;
@@ -540,11 +714,10 @@ class WheelPicker {
     }
   }
 
-  // Public API
   select(value) {
     const index = this.normalizedOptions.findIndex(opt => opt.value === value);
     if (index === -1) {
-      console.warn(`WheelPicker - Cannot select value: ${value}`);
+      console.warn(`WheelPickerColumn - Cannot select value: ${value}`);
       return;
     }
 
@@ -577,7 +750,6 @@ class WheelPicker {
   destroy() {
     this._cancelAnimation();
 
-    // 이벤트 제거
     this.container.removeEventListener('touchstart', this._handleDragStart);
     this.container.removeEventListener('touchend', this._handleDragEnd);
     document.removeEventListener('mousedown', this._handleDragStart);
@@ -587,10 +759,7 @@ class WheelPicker {
       this.dragController.abort();
     }
 
-    // DOM 정리
-    this.container.classList.remove('wheel-picker');
     this.container.innerHTML = '';
-
     this.elements = null;
     this.normalizedOptions = null;
   }
