@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WheelPicker Demo</title>
+  <link rel="stylesheet" href="wheel-picker.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .demo-section {
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .demo-section h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #555;
+    }
+
+    .picker-wrapper {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .picker-container {
+      flex: 1;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .result strong {
+      color: #333;
+    }
+
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .controls button {
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .controls button:hover {
+      background: #0056b3;
+    }
+
+    .controls button:active {
+      background: #004085;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>WheelPicker Component Demo</h1>
+
+    <!-- Single Picker Demo -->
+    <div class="demo-section">
+      <h2>1. 단일 선택 (Single Picker)</h2>
+      <div class="picker-container" id="picker1"></div>
+      <div class="result">
+        선택된 값: <strong id="result1">-</strong>
+      </div>
+    </div>
+
+    <!-- Multiple Pickers Demo -->
+    <div class="demo-section">
+      <h2>2. 다중 선택 (Multiple Pickers) - 날짜 선택</h2>
+      <div class="picker-wrapper">
+        <div class="picker-container" id="picker-year"></div>
+        <div class="picker-container" id="picker-month"></div>
+        <div class="picker-container" id="picker-day"></div>
+      </div>
+      <div class="result">
+        선택된 날짜: <strong id="result-date">-</strong>
+      </div>
+    </div>
+
+    <!-- Infinite Loop Demo -->
+    <div class="demo-section">
+      <h2>3. 무한 스크롤 (Infinite Loop)</h2>
+      <div class="picker-container" id="picker-infinite"></div>
+      <div class="result">
+        선택된 값: <strong id="result-infinite">-</strong>
+      </div>
+    </div>
+
+    <!-- API Test Demo -->
+    <div class="demo-section">
+      <h2>4. API 테스트</h2>
+      <div class="picker-container" id="picker-api"></div>
+      <div class="controls">
+        <button onclick="selectValue('apple')">사과 선택</button>
+        <button onclick="selectValue('banana')">바나나 선택</button>
+        <button onclick="selectValue('orange')">오렌지 선택</button>
+        <button onclick="updateOptions()">옵션 변경</button>
+        <button onclick="destroyPicker()">파괴</button>
+        <button onclick="recreatePicker()">재생성</button>
+      </div>
+      <div class="result">
+        선택된 값: <strong id="result-api">-</strong>
+      </div>
+    </div>
+  </div>
+
+  <script src="wheel-picker.js"></script>
+  <script>
+    // Demo 1: 단일 선택
+    const picker1 = new WheelPicker({
+      el: '#picker1',
+      options: [
+        { value: 'mon', label: '월요일' },
+        { value: 'tue', label: '화요일' },
+        { value: 'wed', label: '수요일' },
+        { value: 'thu', label: '목요일' },
+        { value: 'fri', label: '금요일' },
+        { value: 'sat', label: '토요일' },
+        { value: 'sun', label: '일요일' }
+      ],
+      value: 'wed',
+      onChange: (selected) => {
+        document.getElementById('result1').textContent = `${selected.label} (${selected.value})`;
+      }
+    });
+
+    // Demo 2: 다중 선택 - 날짜
+    const currentYear = new Date().getFullYear();
+    const yearOptions = Array.from({ length: 10 }, (_, i) => ({
+      value: currentYear - 5 + i,
+      label: `${currentYear - 5 + i}년`
+    }));
+
+    const monthOptions = Array.from({ length: 12 }, (_, i) => ({
+      value: i + 1,
+      label: `${i + 1}월`
+    }));
+
+    const dayOptions = Array.from({ length: 31 }, (_, i) => ({
+      value: i + 1,
+      label: `${i + 1}일`
+    }));
+
+    let selectedDate = {
+      year: currentYear,
+      month: 1,
+      day: 1
+    };
+
+    const updateDateResult = () => {
+      document.getElementById('result-date').textContent =
+        `${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일`;
+    };
+
+    const pickerYear = new WheelPicker({
+      el: '#picker-year',
+      options: yearOptions,
+      value: currentYear,
+      onChange: (selected) => {
+        selectedDate.year = selected.value;
+        updateDateResult();
+      }
+    });
+
+    const pickerMonth = new WheelPicker({
+      el: '#picker-month',
+      options: monthOptions,
+      value: 1,
+      onChange: (selected) => {
+        selectedDate.month = selected.value;
+        updateDateResult();
+      }
+    });
+
+    const pickerDay = new WheelPicker({
+      el: '#picker-day',
+      options: dayOptions,
+      value: 1,
+      onChange: (selected) => {
+        selectedDate.day = selected.value;
+        updateDateResult();
+      }
+    });
+
+    updateDateResult();
+
+    // Demo 3: 무한 스크롤
+    const pickerInfinite = new WheelPicker({
+      el: '#picker-infinite',
+      options: [
+        { value: 'red', label: '빨강' },
+        { value: 'orange', label: '주황' },
+        { value: 'yellow', label: '노랑' },
+        { value: 'green', label: '초록' },
+        { value: 'blue', label: '파랑' },
+        { value: 'purple', label: '보라' }
+      ],
+      infinite: true,
+      onChange: (selected) => {
+        document.getElementById('result-infinite').textContent = `${selected.label} (${selected.value})`;
+      }
+    });
+
+    // Demo 4: API 테스트
+    let pickerApi = new WheelPicker({
+      el: '#picker-api',
+      options: [
+        { value: 'apple', label: '사과' },
+        { value: 'banana', label: '바나나' },
+        { value: 'orange', label: '오렌지' },
+        { value: 'grape', label: '포도' },
+        { value: 'melon', label: '멜론' }
+      ],
+      onChange: (selected) => {
+        document.getElementById('result-api').textContent = `${selected.label} (${selected.value})`;
+      }
+    });
+
+    function selectValue(value) {
+      if (pickerApi) {
+        pickerApi.select(value);
+      }
+    }
+
+    function updateOptions() {
+      if (pickerApi) {
+        pickerApi.updateOptions([
+          { value: 'car', label: '자동차' },
+          { value: 'bus', label: '버스' },
+          { value: 'train', label: '기차' },
+          { value: 'airplane', label: '비행기' }
+        ]);
+      }
+    }
+
+    function destroyPicker() {
+      if (pickerApi) {
+        pickerApi.destroy();
+        pickerApi = null;
+        document.getElementById('result-api').textContent = '파괴됨';
+      }
+    }
+
+    function recreatePicker() {
+      if (!pickerApi) {
+        pickerApi = new WheelPicker({
+          el: '#picker-api',
+          options: [
+            { value: 'apple', label: '사과' },
+            { value: 'banana', label: '바나나' },
+            { value: 'orange', label: '오렌지' },
+            { value: 'grape', label: '포도' },
+            { value: 'melon', label: '멜론' }
+          ],
+          onChange: (selected) => {
+            document.getElementById('result-api').textContent = `${selected.label} (${selected.value})`;
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>
