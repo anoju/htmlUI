@@ -243,16 +243,16 @@
   }
 }
 .card_wrap.spin {
-  animation: spinDiagonal 2s ease-out forwards;
-  transform-style: preserve-3d;
-  perspective: 1000px;
+  animation: spinDiagonal 2s cubic-bezier(0.22, 1, 0.36, 1);
+  /* transform-style: preserve-3d;
+  perspective: 1000px; */
 }
 @keyframes spinDiagonal {
   0% {
     transform: rotate3d(0.53, 0.85, 0, 0deg);
   }
   100% {
-    transform: rotate3d(0.53, 0.85, 0, 1080deg);
+    transform: rotate3d(0.53, 0.85, 0, 720deg);
   }
 }
 .card_turn {
@@ -314,6 +314,11 @@ $('.card_turn>button').eq(0).click(function() {
 
 $('.card_turn>button').eq(1).click(function() {
   const $cardWrap = $('.card_wrap');
+
+  if ($cardWrap.hasClass('spin')) {
+    return;
+  }
+
   $cardWrap.addClass('spin');
 
   setTimeout(function() {
