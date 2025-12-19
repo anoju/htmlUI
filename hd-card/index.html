@@ -242,6 +242,19 @@
     opacity: 0;
   }
 }
+.card_wrap.spin {
+  animation: spinDiagonal 2s ease-out forwards;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+@keyframes spinDiagonal {
+  0% {
+    transform: rotate3d(0.53, 0.85, 0, 0deg);
+  }
+  100% {
+    transform: rotate3d(0.53, 0.85, 0, 1080deg);
+  }
+}
 .card_turn {
   position: relative;
   z-index: 2;
@@ -283,11 +296,12 @@
     </div>
     <p class="card_turn">
       <button>뒷면보기</button>
+      <button>회전</button>
     </p>
   </div>
 </div>
 <script>
-$('.card_turn>button').click(function() {
+$('.card_turn>button').eq(0).click(function() {
   const $this = $(this);
   if ($('.card_wrap').hasClass('on')) {
     $('.card_wrap').removeClass("on");
@@ -297,10 +311,20 @@ $('.card_turn>button').click(function() {
     $this.text('앞면보기');
   }
 });
+
+$('.card_turn>button').eq(1).click(function() {
+  const $cardWrap = $('.card_wrap');
+  $cardWrap.addClass('spin');
+
+  setTimeout(function() {
+    $cardWrap.removeClass('spin');
+  }, 2000);
+});
+
 $('.wrap').mouseleave(function() {
   if ($('.card_wrap').hasClass('on')) {
     $('.card_wrap').removeClass("on");
-    $('.card_turn>button').text('뒷면보기');
+    $('.card_turn>button').eq(0).text('뒷면보기');
   }
 })
 </script>
