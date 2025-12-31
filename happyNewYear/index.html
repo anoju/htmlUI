@@ -19,14 +19,7 @@
 	
 	/* body{overflow:hidden;} */
 	body{background-color:#f9f7fa;font-family: 'Nanum Pen Script';}
-	.wrap{
-		display: flex;
-		flex-direction: column;
-		width:100%;
-		height: 100vh;
-	}
-	.wrap > div{width:100%;}
-	.text-wrap{display:flex;justify-content: center;align-items: flex-start;overflow-x:hidden;overflow-y:auto;background:#F3B592 url(./img/bg.png) no-repeat center bottom;background-size:25% auto;text-align:center;text-shadow: 2px 2px 5px #fff, -2px -2px 5px #fff;padding:40px;box-sizing:border-box;height:100%;}
+	.text-wrap{background:#F3B592 url(./img/bg.png) no-repeat center bottom;background-size:25% auto;text-align:center;text-shadow: 2px 2px 5px #fff, -2px -2px 5px #fff;padding:40px;box-sizing:border-box;height:70vh;padding-bottom:25%;min-height: 950px;}
 	
 	.audiojs{position:absolute;left:10px;bottom:46px;}
 	.text-wrap p{font-size:38px;line-height:1.5;}
@@ -240,7 +233,8 @@
 		const to = urlParams.get('to');
 
 		// javascript
-		if(to)$('#wrap > div').prepend('<p>To. '+to+'</p>');
+		console.log(to)
+		if(to)$('.text-wrap > div').prepend('<p>To. '+to+'</p>');
 	</script>
 </body>
 </html>
