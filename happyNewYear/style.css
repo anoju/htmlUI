@@ -1,7 +1,8 @@
-html,body{margin:0;padding:0;height:100%;font-family: 'Nanum Myeongjo', serif;}
+html,body{margin:0;padding:0;font-family: 'Nanum Myeongjo', serif;}
 .world_wrap {
     background: #fff;
     height:30vh;
+    min-height:360px;
     overflow: hidden;
     display: flex;
     justify-content: center;

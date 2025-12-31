@@ -19,10 +19,17 @@
 	
 	/* body{overflow:hidden;} */
 	body{background-color:#f9f7fa;font-family: 'Nanum Pen Script';}
-	#wrap{display:flex;justify-content: center;align-items: flex-start;height:70vh;overflow:hidden;background:#F3B592 url(./img/bg.png) no-repeat center bottom;background-size:25% auto;text-align:center;text-shadow: 2px 2px 7px #fff, -2px -2px 7px #fff;padding:40px;box-sizing:border-box;}
+	.wrap{
+		display: flex;
+		flex-direction: column;
+		width:100%;
+		height: 100vh;
+	}
+	.wrap > div{width:100%;}
+	.text-wrap{display:flex;justify-content: center;align-items: flex-start;overflow-x:hidden;overflow-y:auto;background:#F3B592 url(./img/bg.png) no-repeat center bottom;background-size:25% auto;text-align:center;text-shadow: 2px 2px 5px #fff, -2px -2px 5px #fff;padding:40px;box-sizing:border-box;height:100%;}
 	
 	.audiojs{position:absolute;left:10px;bottom:46px;}
-	#wrap p{font-size:38px;line-height:1.5;}
+	.text-wrap p{font-size:38px;line-height:1.5;}
 
 
 </style>
@@ -33,6 +40,7 @@
 </head>
 
 <body>
+	<div class="wrap">
 <div class="world_wrap">
 <div class="world">
 	<div class="sunset">
@@ -173,7 +181,7 @@
 	</div>
   </div>
 </div>
-	<div id="wrap">
+	<div class="text-wrap">
 		<div>
 			<p><span class="before-year"></span>년 지난 한해도<br>치열하게 사느라 고생많았습니다.<br><br>
 				<span class="year"></span>년에는 원하는 목표~<br>모두 이루길 바라고<br>
@@ -184,6 +192,7 @@
 			<p>From. 안효주</p>
 			<!-- <audio src="./Abba-Happy_New_Year.mp3" loop="loop"></audio> -->
 		</div>
+	</div>
 	</div>
 	<script>
 		// Viewport 관리 함수
