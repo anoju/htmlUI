@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>새해복많이 받으세요</title>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<meta name="viewport" content="width=700">
+<meta id="viewport-meta" name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 
 <meta property="og:image" content="https://anoju.synology.me:8080/happyNewYear/img/bg.png" />
 <meta name="title" content="새해복많이 받으세요">
@@ -186,16 +186,49 @@
 		</div>
 	</div>
 	<script>
+		// Viewport 관리 함수
+		(function() {
+			const MIN_WIDTH = 560;
+			const meta = document.getElementById("viewport-meta");
+			let currentMode = null;
+
+			const updateViewport = () => {
+				const newMode = window.screen.width < MIN_WIDTH ? 0 : 1;
+				if (currentMode === newMode) return;
+
+				currentMode = newMode;
+
+				if (meta) {
+					meta.content = newMode
+						? "width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
+						: `width=${MIN_WIDTH},user-scalable=no,viewport-fit=cover`;
+				}
+			};
+
+			// 초기 실행
+			updateViewport();
+
+			// 이벤트 리스너 등록
+			window.addEventListener("resize", updateViewport);
+			window.addEventListener("orientationchange", updateViewport);
+		})();
+
 		const $date = new Date();
     const $dateYear = $date.getFullYear();
-		$('.year').text($dateYear); 
-		$('.before-year').text($dateYear-1); 
+		const $dateMonth = $date.getMonth() + 1;
+
+		if ($dateMonth === 12) {
+			$('.year').text($dateYear + 1);
+			$('.before-year').text($dateYear);
+		} else {
+			$('.year').text($dateYear);
+			$('.before-year').text($dateYear - 1);
+		} 
 
 		const urlStr = location.href;
 		const url = new URL(urlStr);
 		const urlParams = url.searchParams;
 		const to = urlParams.get('to');
-		const man = urlParams.get('man');
 
 		// javascript
 		if(to)$('#wrap > div').prepend('<p>To. '+to+'</p>');
