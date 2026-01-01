@@ -1,0 +1,404 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+h2 {
+    color: #555;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+h3 {
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+/* 규칙 버튼 */
+.rules-button-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.btn-rules {
+    padding: 10px 20px;
+    font-size: 14px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-rules:hover {
+    background: #5568d3;
+    transform: translateY(-1px);
+}
+
+/* 모달 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.3s;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 20px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+}
+
+.rules-section {
+    margin-bottom: 25px;
+}
+
+.rules-section h3 {
+    color: #667eea;
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 8px;
+}
+
+.rules-section ul {
+    margin-left: 20px;
+    line-height: 1.8;
+}
+
+.rules-section li {
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.piece-rule {
+    background: #f8f9fa;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.piece-rule strong {
+    color: #333;
+    font-size: 1.1em;
+}
+
+.piece-rule ul {
+    margin-top: 8px;
+    margin-left: 20px;
+}
+
+.piece-rule li {
+    font-size: 0.95em;
+}
+
+/* 설정 패널 */
+.settings-panel {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.setting-group {
+    margin-bottom: 20px;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 500;
+}
+
+.setting-group select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.setting-group select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.setting-group input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+/* 버튼 */
+.btn-primary, .btn-secondary {
+    padding: 12px 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+/* 게임 정보 */
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.info-item {
+    font-size: 16px;
+    color: #555;
+    font-weight: 500;
+}
+
+#gameStatus {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+/* 체스 보드 */
+.chess-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    border: 4px solid #333;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.square {
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+    user-select: none;
+}
+
+.square.light {
+    background-color: #f0d9b5;
+}
+
+.square.dark {
+    background-color: #b58863;
+}
+
+.square:hover {
+    opacity: 0.8;
+}
+
+.square.selected {
+    background-color: #7fc97f !important;
+    box-shadow: inset 0 0 10px rgba(0, 100, 0, 0.5);
+}
+
+.square.last-move {
+    background-color: #baca44 !important;
+}
+
+.square.last-move.light {
+    background-color: #cdd26a !important;
+}
+
+.square.last-move.dark {
+    background-color: #aaa23a !important;
+}
+
+.square.valid-move {
+    background-color: #90ee90 !important;
+}
+
+.square.valid-move::after {
+    content: '';
+    position: absolute;
+    width: 30%;
+    height: 30%;
+    background-color: rgba(0, 128, 0, 0.5);
+    border-radius: 50%;
+}
+
+.square.valid-move.has-piece::after {
+    width: 90%;
+    height: 90%;
+    background-color: transparent;
+    border: 4px solid rgba(255, 0, 0, 0.6);
+    border-radius: 50%;
+}
+
+.square.in-check {
+    background-color: #ff6b6b !important;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* 획득한 기물 */
+.captured-pieces {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.captured-section {
+    flex: 1;
+    text-align: center;
+}
+
+.captured-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    min-height: 40px;
+    margin-top: 10px;
+}
+
+.captured-piece {
+    font-size: 1.5em;
+    opacity: 0.6;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .square {
+        font-size: 2em;
+    }
+
+    .game-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .captured-pieces {
+        flex-direction: column;
+        gap: 15px;
+    }
+}

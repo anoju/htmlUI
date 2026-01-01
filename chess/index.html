@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>체스 게임</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>체스 게임</h1>
+
+        <!-- 규칙 버튼 -->
+        <div class="rules-button-container">
+            <button id="rulesButton" class="btn-rules">게임 규칙 보기</button>
+        </div>
+
+        <!-- 게임 설정 패널 -->
+        <div id="settingsPanel" class="settings-panel">
+            <h2>게임 설정</h2>
+
+            <div class="setting-group">
+                <label>게임 모드:</label>
+                <select id="gameMode">
+                    <option value="2player">2인용</option>
+                    <option value="1player">1인용 (vs AI)</option>
+                </select>
+            </div>
+
+            <div class="setting-group" id="colorSelection">
+                <label>플레이어 색상:</label>
+                <select id="playerColor">
+                    <option value="white">백 (흰색)</option>
+                    <option value="black">흑 (검은색)</option>
+                </select>
+            </div>
+
+            <div class="setting-group" id="difficultySelection" style="display: none;">
+                <label>AI 난이도:</label>
+                <select id="aiDifficulty">
+                    <option value="beginner">초급</option>
+                    <option value="intermediate">중급</option>
+                    <option value="advanced">상급</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label>
+                    <input type="checkbox" id="beginnerMode">
+                    가이드 모드 (이동 가능 영역 표시)
+                </label>
+            </div>
+
+            <button id="startButton" class="btn-primary">게임 시작</button>
+        </div>
+
+        <!-- 게임 보드 -->
+        <div id="gameContainer" style="display: none;">
+            <div class="game-info">
+                <div class="info-item">
+                    <span id="currentPlayer">현재 차례: 백</span>
+                </div>
+                <div class="info-item">
+                    <span id="gameStatus"></span>
+                </div>
+                <button id="resetButton" class="btn-secondary">새 게임</button>
+            </div>
+
+            <div id="chessBoard" class="chess-board"></div>
+
+            <div class="captured-pieces">
+                <div class="captured-section">
+                    <h3>백 획득</h3>
+                    <div id="capturedBlack" class="captured-list"></div>
+                </div>
+                <div class="captured-section">
+                    <h3>흑 획득</h3>
+                    <div id="capturedWhite" class="captured-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 규칙 팝업 -->
+    <div id="rulesModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>체스 게임 규칙</h2>
+
+            <div class="rules-section">
+                <h3>기본 규칙</h3>
+                <ul>
+                    <li><strong>게임 시작:</strong> 백(흰색)이 항상 먼저 시작합니다.</li>
+                    <li><strong>턴 방식:</strong> 백과 흑이 번갈아가며 한 번씩 이동합니다.</li>
+                    <li><strong>목표:</strong> 상대의 킹을 체크메이트 상태로 만드는 것입니다.</li>
+                </ul>
+            </div>
+
+            <div class="rules-section">
+                <h3>기물별 이동 방법</h3>
+                <div class="piece-rule">
+                    <strong>♔ 킹 (King):</strong> 모든 방향으로 한 칸씩 이동 가능
+                </div>
+                <div class="piece-rule">
+                    <strong>♕ 퀸 (Queen):</strong> 모든 방향으로 원하는 만큼 이동 가능 (가장 강력한 기물)
+                </div>
+                <div class="piece-rule">
+                    <strong>♖ 룩 (Rook):</strong> 직선(가로/세로)으로 원하는 만큼 이동 가능
+                </div>
+                <div class="piece-rule">
+                    <strong>♗ 비숍 (Bishop):</strong> 대각선으로 원하는 만큼 이동 가능
+                </div>
+                <div class="piece-rule">
+                    <strong>♘ 나이트 (Knight):</strong> 'ㄱ'자 모양으로 이동 (2칸 직선 + 1칸 수직). 다른 기물을 뛰어넘을 수 있는 유일한 기물
+                </div>
+                <div class="piece-rule">
+                    <strong>♙ 폰 (Pawn):</strong>
+                    <ul>
+                        <li>앞으로 한 칸 전진 (첫 이동 시 두 칸 가능)</li>
+                        <li>대각선 앞으로 한 칸 이동하여 상대 기물 공격</li>
+                        <li>맨 끝 줄에 도달하면 퀸으로 승격</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="rules-section">
+                <h3>승패 조건</h3>
+                <ul>
+                    <li><strong>체크 (Check):</strong> 상대 킹이 공격받는 상태. 킹을 안전한 곳으로 이동해야 합니다.</li>
+                    <li><strong>체크메이트 (Checkmate):</strong> 킹이 체크 상태이고 어떤 방법으로도 빠져나올 수 없을 때. 체크메이트를 당한 쪽이 패배합니다.</li>
+                    <li><strong>스테일메이트 (Stalemate):</strong> 자신의 차례인데 합법적인 이동이 하나도 없고, 킹이 체크 상태가 아닐 때. 무승부로 처리됩니다.</li>
+                </ul>
+            </div>
+
+            <div class="rules-section">
+                <h3>중요한 규칙</h3>
+                <ul>
+                    <li>자신의 킹을 체크 상태로 만드는 이동은 할 수 없습니다.</li>
+                    <li>기물은 다른 기물을 뛰어넘을 수 없습니다 (나이트 제외).</li>
+                    <li>한 칸에는 하나의 기물만 있을 수 있습니다.</li>
+                    <li>상대 기물이 있는 칸으로 이동하면 그 기물을 잡습니다.</li>
+                </ul>
+            </div>
+
+            <div class="rules-section">
+                <h3>가이드 모드</h3>
+                <p>가이드 모드를 활성화하면 기물을 선택했을 때 이동 가능한 모든 칸이 녹색으로 표시됩니다. 처음 체스를 배우는 분들에게 추천합니다!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="chess.js"></script>
+</body>
+</html>
