@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glass Wave Ripple Effect</title>
+  <style>
+    :root {
+      /* ========== 커스터마이징 변수 ========== */
+      --ripple-size: 100px;           /* 물결 최대 크기 */
+      --ripple-duration: 2.5s;        /* 애니메이션 시간 */
+      --wave-gap: 0.25s;              /* 물결 간 시간 간격 */
+      --wave-count: 4;                /* 물결 개수 */
+      
+      /* 투명도 설정 (0~1 사이 값, 낮을수록 더 투명) */
+      --opacity-1: 0.08;
+      --opacity-2: 0.05;
+      --opacity-3: 0.03;
+      --opacity-4: 0.02;
+      
+      /* 블러 강도 */
+      --blur-1: 10px;
+      --blur-2: 8px;
+      --blur-3: 6px;
+      --blur-4: 4px;
+      
+      /* 테두리 투명도 */
+      --border-opacity-1: 0.25;
+      --border-opacity-2: 0.18;
+      --border-opacity-3: 0.12;
+      --border-opacity-4: 0.08;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+    }
+
+    .ripple-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+      cursor: pointer;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .content h1 {
+      font-size: clamp(2rem, 8vw, 4rem);
+      margin-bottom: 1rem;
+      font-weight: 800;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .content p {
+      font-size: clamp(1rem, 4vw, 1.5rem);
+      opacity: 0.95;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .glass-ripple {
+      position: fixed;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .wave {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: translate(-50%, -50%);
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+    }
+
+    .wave-1 {
+      background: rgba(255, 255, 255, var(--opacity-1));
+      backdrop-filter: blur(var(--blur-1));
+      -webkit-backdrop-filter: blur(var(--blur-1));
+      border: 2px solid rgba(255, 255, 255, var(--border-opacity-1));
+      box-shadow: 
+        0 4px 16px 0 rgba(31, 38, 135, 0.2),
+        inset 0 0 20px rgba(255, 255, 255, 0.08);
+      animation: ripple-wave var(--ripple-duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    .wave-2 {
+      background: rgba(255, 255, 255, var(--opacity-2));
+      backdrop-filter: blur(var(--blur-2));
+      -webkit-backdrop-filter: blur(var(--blur-2));
+      border: 2px solid rgba(255, 255, 255, var(--border-opacity-2));
+      box-shadow: 
+        0 4px 16px 0 rgba(31, 38, 135, 0.15),
+        inset 0 0 15px rgba(255, 255, 255, 0.06);
+      animation: ripple-wave var(--ripple-duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      animation-delay: calc(var(--wave-gap) * 1);
+    }
+
+    .wave-3 {
+      background: rgba(255, 255, 255, var(--opacity-3));
+      backdrop-filter: blur(var(--blur-3));
+      -webkit-backdrop-filter: blur(var(--blur-3));
+      border: 1px solid rgba(255, 255, 255, var(--border-opacity-3));
+      box-shadow: 
+        0 4px 16px 0 rgba(31, 38, 135, 0.1),
+        inset 0 0 12px rgba(255, 255, 255, 0.04);
+      animation: ripple-wave var(--ripple-duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      animation-delay: calc(var(--wave-gap) * 2);
+    }
+
+    .wave-4 {
+      background: rgba(255, 255, 255, var(--opacity-4));
+      backdrop-filter: blur(var(--blur-4));
+      -webkit-backdrop-filter: blur(var(--blur-4));
+      border: 1px solid rgba(255, 255, 255, var(--border-opacity-4));
+      box-shadow: 
+        0 4px 16px 0 rgba(31, 38, 135, 0.08),
+        inset 0 0 10px rgba(255, 255, 255, 0.03);
+      animation: ripple-wave var(--ripple-duration) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      animation-delay: calc(var(--wave-gap) * 3);
+    }
+
+    @keyframes ripple-wave {
+      0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      40% {
+        opacity: 0.7;
+      }
+      70% {
+        opacity: 0.3;
+      }
+      100% {
+        width: var(--ripple-size);
+        height: var(--ripple-size);
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+    }
+
+    /* 설정 패널 */
+    .settings {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      border-radius: 12px;
+      color: white;
+      font-size: 14px;
+      z-index: 100;
+      max-width: 250px;
+    }
+
+    .settings h3 {
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .setting-item {
+      margin-bottom: 12px;
+    }
+
+    .setting-item label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .setting-item input[type="range"] {
+      width: 100%;
+    }
+
+    .setting-item .value {
+      float: right;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      .settings {
+        top: 10px;
+        right: 10px;
+        padding: 15px;
+        max-width: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ripple-container" id="container">
+    <div class="content">
+      <h1>Glass Wave Effect</h1>
+      <p>클릭/터치하면 투명한 물결 효과가 나타납니다</p>
+    </div>
+  </div>
+
+  <div class="settings">
+    <h3>⚙️ 설정</h3>
+    
+    <div class="setting-item">
+      <label>
+        크기 <span class="value" id="size-value">100px</span>
+      </label>
+      <input type="range" id="size" min="50" max="500" value="100" step="10">
+    </div>
+
+    <div class="setting-item">
+      <label>
+        간격 <span class="value" id="gap-value">0.25s</span>
+      </label>
+      <input type="range" id="gap" min="0" max="1" value="0.25" step="0.05">
+    </div>
+
+    <div class="setting-item">
+      <label>
+        속도 <span class="value" id="speed-value">2.5s</span>
+      </label>
+      <input type="range" id="speed" min="1" max="5" value="2.5" step="0.1">
+    </div>
+  </div>
+
+  <script>
+    const container = document.getElementById('container');
+    const root = document.documentElement;
+
+    // 설정 값 업데이트
+    document.getElementById('size').addEventListener('input', (e) => {
+      const value = e.target.value;
+      root.style.setProperty('--ripple-size', value + 'px');
+      document.getElementById('size-value').textContent = value + 'px';
+    });
+
+    document.getElementById('gap').addEventListener('input', (e) => {
+      const value = e.target.value;
+      root.style.setProperty('--wave-gap', value + 's');
+      document.getElementById('gap-value').textContent = value + 's';
+    });
+
+    document.getElementById('speed').addEventListener('input', (e) => {
+      const value = e.target.value;
+      root.style.setProperty('--ripple-duration', value + 's');
+      document.getElementById('speed-value').textContent = value + 's';
+    });
+
+    // 물결 생성 함수
+    function createRipple(x, y) {
+      const ripple = document.createElement('div');
+      ripple.className = 'glass-ripple';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+
+      // 4개의 물결 생성
+      for (let i = 1; i <= 4; i++) {
+        const wave = document.createElement('div');
+        wave.className = `wave wave-${i}`;
+        ripple.appendChild(wave);
+      }
+
+      container.appendChild(ripple);
+
+      // 애니메이션 완료 후 제거
+      const duration = parseFloat(getComputedStyle(root).getPropertyValue('--ripple-duration')) * 1000;
+      const gap = parseFloat(getComputedStyle(root).getPropertyValue('--wave-gap')) * 1000;
+      setTimeout(() => {
+        ripple.remove();
+      }, duration + gap * 4);
+    }
+
+    // 클릭 이벤트
+    container.addEventListener('click', function(e) {
+      createRipple(e.clientX, e.clientY);
+    });
+
+    // 터치 이벤트 (모바일)
+    container.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      createRipple(touch.clientX, touch.clientY);
+    });
+  </script>
+</body>
+</html>
