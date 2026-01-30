@@ -16,7 +16,7 @@
         --bg-color: #1a1a2e;
         --card-width: 300px;
         --card-height: 450px;
-        --transition-speed: 0.8s;
+        --transition-speed: 0.6s; /* Slightly faster for snappier feel */
       }
 
       body {
@@ -36,22 +36,49 @@
           Arial,
           sans-serif;
         overflow: hidden;
-        perspective: 1000px; /* Essential for 3D effect */
+        perspective: 1000px;
       }
 
       .scene {
         width: var(--card-width);
         height: var(--card-height);
-        perspective: 1500px; /* Depth of the 3D space */
+        perspective: 1500px;
       }
 
+      /* 
+         * Wrapper to handle the Z-axis movement (zoom/scale effect) separate from rotation.
+         * This ensures the card moves "in and out" of the screen while flipping.
+         */
+      .card-wrapper {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+      }
+
+      .card-wrapper.zooming {
+        animation: zoom-in-out var(--transition-speed) ease-in-out;
+      }
+
+      @keyframes zoom-in-out {
+        0% {
+          transform: translateZ(0) scale(1);
+        }
+        50% {
+          transform: translateZ(-200px) scale(0.85);
+        } /* Move back and shrink slightly */
+        100% {
+          transform: translateZ(0) scale(1);
+        }
+      }
+
+      /* The actual rotating card */
       .card {
         width: 100%;
         height: 100%;
         position: relative;
-        transform-style: preserve-3d; /* Children are positioned in 3D space */
-        transition: transform var(--transition-speed)
-          cubic-bezier(0.4, 0, 0.2, 1); /* Smooth easing */
+        transform-style: preserve-3d;
+        transition: transform var(--transition-speed) ease-in-out;
         cursor: pointer;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         border-radius: 20px;
@@ -61,7 +88,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        backface-visibility: hidden; /* Hide the back of the element */
+        backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
         border-radius: 20px;
         display: flex;
@@ -78,19 +105,13 @@
 
       .card__face--front {
         background: var(--primary-gradient);
-        /* z-index: 2; Optional, logic handles visibility */
       }
 
-      /* 
-         * The back face is rotated 180deg initially so it faces opposite to the front. 
-         * When the parent (.card) rotates 180deg, this face will become 360deg (0deg) and visible.
-         */
       .card__face--back {
         background: var(--secondary-gradient);
         transform: rotateY(180deg);
       }
 
-      /* Decorative elements */
       .icon {
         font-size: 4rem;
         margin-bottom: 20px;
@@ -106,7 +127,7 @@
 
       .instruction {
         position: absolute;
-        bottom: -50px;
+        bottom: -60px;
         left: 50%;
         transform: translateX(-50%);
         color: white;
@@ -120,30 +141,45 @@
   </head>
   <body>
     <div class="scene">
-      <div class="card" id="card">
-        <div class="card__face card__face--front">
-          <div class="icon">🚀</div>
-          <div class="label">Front Side</div>
-        </div>
-        <div class="card__face card__face--back">
-          <div class="icon">✨</div>
-          <div class="label">Back Side</div>
+      <!-- Wrapper for Z-axis animation -->
+      <div class="card-wrapper" id="cardWrapper">
+        <!-- Rotating element -->
+        <div class="card" id="card">
+          <div class="card__face card__face--front">
+            <div class="icon">🚀</div>
+            <div class="label">Front Side</div>
+          </div>
+          <div class="card__face card__face--back">
+            <div class="icon">✨</div>
+            <div class="label">Back Side</div>
+          </div>
         </div>
       </div>
-      <div class="instruction">Click the card to flip</div>
+      <div class="instruction">Click the card to flip with 3D effect</div>
     </div>
 
     <script>
       const card = document.getElementById("card");
+      const wrapper = document.getElementById("cardWrapper");
       let currentRotation = 0;
 
       card.addEventListener("click", () => {
-        // Increment rotation by 180 degrees
+        // 1. Calculate rotation (One-way)
         currentRotation += 180;
 
-        // Apply the rotation
-        // We use standard string concatenation for compatibility, though template literals are fine
-        card.style.transform = `rotateY(-${currentRotation}deg)`; // Negative for natural flip direction (right-to-left) or positive for left-to-right
+        // 2. Apply Rotation
+        card.style.transform = `rotateY(-${currentRotation}deg)`;
+
+        // 3. Trigger Zoom/Scale Animation
+        // Reset animation by removing class, forcing reflow, then adding it back
+        wrapper.classList.remove("zooming");
+        void wrapper.offsetWidth; // Trigger reflow
+        wrapper.classList.add("zooming");
+      });
+
+      // Optional: Clean up class after animation ends (though reflow logic handles re-clicks)
+      wrapper.addEventListener("animationend", () => {
+        wrapper.classList.remove("zooming");
       });
     </script>
   </body>
