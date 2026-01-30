@@ -16,7 +16,7 @@
         --bg-color: #1a1a2e;
         --card-width: 300px;
         --card-height: 450px;
-        --transition-speed: 0.6s; /* Slightly faster for snappier feel */
+        --transition-speed: 0.6s; /* 약간 더 빠른 속도로 경쾌한 느낌 제공 */
       }
 
       body {
@@ -36,18 +36,18 @@
           Arial,
           sans-serif;
         overflow: hidden;
-        perspective: 1000px;
+        perspective: 1000px; /* 3D 효과를 위한 필수 속성 */
       }
 
       .scene {
         width: var(--card-width);
         height: var(--card-height);
-        perspective: 1500px;
+        perspective: 1500px; /* 3D 공간의 깊이감 */
       }
 
       /* 
-         * Wrapper to handle the Z-axis movement (zoom/scale effect) separate from rotation.
-         * This ensures the card moves "in and out" of the screen while flipping.
+         * 회전과는 별도로 Z축 이동(줌/축소 효과)을 처리하기 위한 래퍼.
+         * 뒤집히는 동안 카드가 화면 안팎으로 이동하는 효과를 줌.
          */
       .card-wrapper {
         width: 100%;
@@ -66,13 +66,13 @@
         }
         50% {
           transform: translateZ(-200px) scale(0.85);
-        } /* Move back and shrink slightly */
+        } /* 뒤로 이동하며 약간 축소 */
         100% {
           transform: translateZ(0) scale(1);
         }
       }
 
-      /* The actual rotating card */
+      /* 실제 회전하는 카드 */
       .card {
         width: 100%;
         height: 100%;
@@ -88,7 +88,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        backface-visibility: hidden;
+        backface-visibility: hidden; /* 요소의 뒷면 숨김 */
         -webkit-backface-visibility: hidden;
         border-radius: 20px;
         display: flex;
@@ -137,13 +137,18 @@
         text-align: center;
         pointer-events: none;
       }
+
+      /* 리셋 중에 트랜지션을 비활성화하기 위한 유틸리티 클래스 */
+      .no-transition {
+        transition: none !important;
+      }
     </style>
   </head>
   <body>
     <div class="scene">
-      <!-- Wrapper for Z-axis animation -->
+      <!-- Z축 애니메이션을 위한 래퍼 -->
       <div class="card-wrapper" id="cardWrapper">
-        <!-- Rotating element -->
+        <!-- 회전하는 요소 -->
         <div class="card" id="card">
           <div class="card__face card__face--front">
             <div class="icon">🚀</div>
@@ -162,22 +167,51 @@
       const card = document.getElementById("card");
       const wrapper = document.getElementById("cardWrapper");
       let currentRotation = 0;
+      let isAnimating = false;
 
       card.addEventListener("click", () => {
-        // 1. Calculate rotation (One-way)
+        if (isAnimating) return; // 애니메이션 중 클릭 방지
+        isAnimating = true;
+
+        // 1. 다음 회전 각도 계산
         currentRotation += 180;
 
-        // 2. Apply Rotation
+        // 2. 회전 적용
         card.style.transform = `rotateY(-${currentRotation}deg)`;
 
-        // 3. Trigger Zoom/Scale Animation
-        // Reset animation by removing class, forcing reflow, then adding it back
+        // 3. 줌/축소 애니메이션 실행
         wrapper.classList.remove("zooming");
-        void wrapper.offsetWidth; // Trigger reflow
+        void wrapper.offsetWidth; // 리플로우 강제 (애니메이션 재시작 위함)
         wrapper.classList.add("zooming");
       });
 
-      // Optional: Clean up class after animation ends (though reflow logic handles re-clicks)
+      // 4. 트랜지션 종료 후 리셋 로직
+      card.addEventListener("transitionend", () => {
+        // 완전히 한 바퀴 돌았을 경우(앞면), 0도로 조용히 초기화
+        if (currentRotation % 360 === 0) {
+          // 클래스를 사용하여 일시적으로 트랜지션 비활성화
+          card.classList.add("no-transition");
+
+          requestAnimationFrame(() => {
+            // 값 초기화
+            currentRotation = 0;
+            card.style.transform = `rotateY(0deg)`;
+
+            // 애니메이션 없이 즉시 변경되도록 리플로우 강제
+            void card.offsetWidth;
+
+            requestAnimationFrame(() => {
+              // 클래스 제거로 트랜지션 복원
+              card.classList.remove("no-transition");
+              isAnimating = false;
+            });
+          });
+        } else {
+          isAnimating = false;
+        }
+      });
+
+      // 래퍼 애니메이션 클래스 정리
       wrapper.addEventListener("animationend", () => {
         wrapper.classList.remove("zooming");
       });
