@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D One-Way Flip Card</title>
+    <style>
+      :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(
+          135deg,
+          #ff9a9e 0%,
+          #fecfef 99%,
+          #fecfef 100%
+        );
+        --bg-color: #1a1a2e;
+        --card-width: 300px;
+        --card-height: 450px;
+        --transition-speed: 0.8s;
+      }
+
+      body {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: var(--bg-color);
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        overflow: hidden;
+        perspective: 1000px; /* Essential for 3D effect */
+      }
+
+      .scene {
+        width: var(--card-width);
+        height: var(--card-height);
+        perspective: 1500px; /* Depth of the 3D space */
+      }
+
+      .card {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d; /* Children are positioned in 3D space */
+        transition: transform var(--transition-speed)
+          cubic-bezier(0.4, 0, 0.2, 1); /* Smooth easing */
+        cursor: pointer;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        border-radius: 20px;
+      }
+
+      .card__face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden; /* Hide the back of the element */
+        -webkit-backface-visibility: hidden;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
+        font-weight: bold;
+        color: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        user-select: none;
+      }
+
+      .card__face--front {
+        background: var(--primary-gradient);
+        /* z-index: 2; Optional, logic handles visibility */
+      }
+
+      /* 
+         * The back face is rotated 180deg initially so it faces opposite to the front. 
+         * When the parent (.card) rotates 180deg, this face will become 360deg (0deg) and visible.
+         */
+      .card__face--back {
+        background: var(--secondary-gradient);
+        transform: rotateY(180deg);
+      }
+
+      /* Decorative elements */
+      .icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+      }
+
+      .label {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .instruction {
+        position: absolute;
+        bottom: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        opacity: 0.6;
+        font-size: 0.9rem;
+        width: 100%;
+        text-align: center;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="scene">
+      <div class="card" id="card">
+        <div class="card__face card__face--front">
+          <div class="icon">🚀</div>
+          <div class="label">Front Side</div>
+        </div>
+        <div class="card__face card__face--back">
+          <div class="icon">✨</div>
+          <div class="label">Back Side</div>
+        </div>
+      </div>
+      <div class="instruction">Click the card to flip</div>
+    </div>
+
+    <script>
+      const card = document.getElementById("card");
+      let currentRotation = 0;
+
+      card.addEventListener("click", () => {
+        // Increment rotation by 180 degrees
+        currentRotation += 180;
+
+        // Apply the rotation
+        // We use standard string concatenation for compatibility, though template literals are fine
+        card.style.transform = `rotateY(-${currentRotation}deg)`; // Negative for natural flip direction (right-to-left) or positive for left-to-right
+      });
+    </script>
+  </body>
+</html>
