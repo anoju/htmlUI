@@ -1,182 +1,615 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comprehensive JavaScript Array Methods</title>
-</head>
-<body>
-    <h1>Comprehensive JavaScript Array Methods</h1>
-    <div id="output"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript Array API 정복하기</title>
+    <style>
+      :root {
+        --bg-color: #0f172a; /* Slate 900 */
+        --card-bg: #1e293b; /* Slate 800 */
+        --text-primary: #f8fafc; /* Slate 50 */
+        --text-secondary: #94a3b8; /* Slate 400 */
+        --accent-color: #38bdf8; /* Sky 400 */
+        --accent-hover: #0ea5e9; /* Sky 500 */
+        --code-bg: #020617; /* Slate 950 */
+        --border-color: #334155; /* Slate 700 */
+
+        --badge-mutating: #f43f5e; /* Rose 500 */
+        --badge-immutable: #10b981; /* Emerald 500 */
+        --badge-read: #8b5cf6; /* Violet 500 */
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          "Pretendard",
+          -apple-system,
+          BlinkMacSystemFont,
+          system-ui,
+          Roboto,
+          sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-primary);
+        line-height: 1.6;
+        padding-bottom: 4rem;
+      }
+
+      header {
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(12px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        padding: 1.5rem 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 2rem;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+      }
+
+      .subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+      }
+
+      .nav-tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+
+      .nav-tag {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+
+      .nav-tag:hover {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+      }
+
+      main {
+        display: grid;
+        gap: 3rem;
+      }
+
+      section {
+        scroll-margin-top: 120px;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-primary);
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 0.5rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        border-color: var(--accent-color);
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+      }
+
+      .method-name {
+        font-family: "Fira Code", monospace;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--accent-color);
+      }
+
+      .badge {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .badge.mutating {
+        background: rgba(244, 63, 94, 0.2);
+        color: var(--badge-mutating);
+      }
+
+      .badge.immutable {
+        background: rgba(16, 185, 129, 0.2);
+        color: var(--badge-immutable);
+      }
+
+      .badge.read {
+        background: rgba(139, 92, 246, 0.2);
+        color: var(--badge-read);
+      }
+
+      .card-desc {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+        flex-grow: 1;
+      }
+
+      .code-block {
+        background: var(--code-bg);
+        padding: 1rem;
+        border-radius: 8px;
+        font-family: "Fira Code", monospace;
+        font-size: 0.85rem;
+        overflow-x: auto;
+        border: 1px solid var(--border-color);
+      }
+
+      .code-line {
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+
+      .comment {
+        color: #64748b;
+      }
+      .keyword {
+        color: #c4b5fd;
+      }
+      .string {
+        color: #86efac;
+      }
+      .number {
+        color: #fca5a5;
+      }
+      .function {
+        color: #93c5fd;
+      }
+
+      .new-tag {
+        display: inline-block;
+        background: linear-gradient(90deg, #ff8a00, #e52e71);
+        color: white;
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+
+      @media (max-width: 768px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>JS Array API Master</h1>
+        <p class="subtitle">
+          자바스크립트 배열 메서드 완벽 정리 (ES6+ 및 최신 ES2023 포함)
+        </p>
+        <div class="nav-tags">
+          <a href="#add-remove" class="nav-tag">추가/삭제</a>
+          <a href="#search" class="nav-tag">검색/조회</a>
+          <a href="#iterate" class="nav-tag">순회/변형</a>
+          <a href="#sort" class="nav-tag">정렬/순서</a>
+          <a href="#transform" class="nav-tag">구조 변환</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- 1. 요소 추가/삭제 -->
+      <section id="add-remove">
+        <h2 class="section-title">📦 요소 조작 (추가/삭제)</h2>
+        <div class="grid" id="grid-add-remove"></div>
+      </section>
+
+      <!-- 2. 검색 및 조회 -->
+      <section id="search">
+        <h2 class="section-title">🔍 검색 및 조회</h2>
+        <div class="grid" id="grid-search"></div>
+      </section>
+
+      <!-- 3. 순회 및 변형 -->
+      <section id="iterate">
+        <h2 class="section-title">🔄 순회 및 데이터 변형</h2>
+        <div class="grid" id="grid-iterate"></div>
+      </section>
+
+      <!-- 4. 정렬 및 순서 -->
+      <section id="sort">
+        <h2 class="section-title">🔢 정렬 및 순서 변경</h2>
+        <div class="grid" id="grid-sort"></div>
+      </section>
+
+      <!-- 5. 구조 변환 및 기타 -->
+      <section id="transform">
+        <h2 class="section-title">🛠 구조 변환 및 유틸리티</h2>
+        <div class="grid" id="grid-transform"></div>
+      </section>
+    </main>
 
     <script>
-        const output = document.getElementById('output');
-        let fruits = ['apple', 'banana', 'orange', 'grape', 'kiwi'];
+      // 데이터 정의
+      const apiData = [
+        // 1. 요소 조작 (추가/삭제)
+        {
+          category: "add-remove",
+          name: "push",
+          desc: "배열의 <strong>끝</strong>에 하나 이상의 요소를 추가하고, 변경된 배열의 길이를 반환합니다.",
+          type: "mutating",
+          code: `const arr = ['🍎', '🍌'];
+arr.push('🍊');
+// arr: ['🍎', '🍌', '🍊']`,
+        },
+        {
+          category: "add-remove",
+          name: "pop",
+          desc: "배열의 <strong>마지막</strong> 요소를 제거하고 그 요소를 반환합니다.",
+          type: "mutating",
+          code: `const arr = ['🍎', '🍌'];
+const last = arr.pop();
+// last: '🍌', arr: ['🍎']`,
+        },
+        {
+          category: "add-remove",
+          name: "unshift",
+          desc: "배열의 <strong>앞</strong>에 하나 이상의 요소를 추가하고, 새로운 길이를 반환합니다.",
+          type: "mutating",
+          code: `const arr = ['🍌'];
+arr.unshift('🍎');
+// arr: ['🍎', '🍌']`,
+        },
+        {
+          category: "add-remove",
+          name: "shift",
+          desc: "배열의 <strong>첫 번째</strong> 요소를 제거하고 그 요소를 반환합니다.",
+          type: "mutating",
+          code: `const arr = ['🍎', '🍌'];
+const first = arr.shift();
+// first: '🍎', arr: ['🍌']`,
+        },
+        {
+          category: "add-remove",
+          name: "splice",
+          desc: "배열의 기존 요소를 삭제 또는 교체하거나 새 요소를 추가하여 내용을 변경합니다.",
+          type: "mutating",
+          code: `const arr = ['a', 'c', 'd'];
+arr.splice(1, 0, 'b');
+// arr: ['a', 'b', 'c', 'd']`,
+        },
+        {
+          category: "add-remove",
+          name: "toSpliced",
+          desc: "splice()와 같지만 원본을 변경하지 않고 <strong>새로운 배열</strong>을 반환합니다.",
+          type: "immutable",
+          isNew: true,
+          code: `const arr = ['a', 'c'];
+const newArr = arr.toSpliced(1, 0, 'b');
+// newArr: ['a', 'b', 'c']
+// arr: ['a', 'c'] (변경 x)`,
+        },
+        {
+          category: "add-remove",
+          name: "with",
+          desc: "특정 인덱스의 값을 변경하여 <strong>새로운 배열</strong>을 반환합니다. (arr[i] = val의 불변 버전)",
+          type: "immutable",
+          isNew: true,
+          code: `const arr = ['a', 'b'];
+const newArr = arr.with(1, 'x');
+// newArr: ['a', 'x']`,
+        },
 
-        function log(message) {
-            output.innerHTML += message + '<br>';
-        }
+        // 2. 검색 및 조회
+        {
+          category: "search",
+          name: "at",
+          desc: "정수 인덱스를 받아 해당 요소를 반환합니다. <strong>음수</strong>를 사용하여 뒤에서부터 접근 가능합니다.",
+          type: "read",
+          isNew: true,
+          code: `const arr = ['a', 'b', 'c'];
+arr.at(-1); // 'c'`,
+        },
+        {
+          category: "search",
+          name: "find",
+          desc: "제공된 테스트 함수를 만족하는 <strong>첫 번째 요소</strong>의 값을 반환합니다.",
+          type: "read",
+          code: `const arr = [5, 12, 8];
+arr.find(x => x > 10); // 12`,
+        },
+        {
+          category: "search",
+          name: "findIndex",
+          desc: "제공된 테스트 함수를 만족하는 <strong>첫 번째 요소의 인덱스</strong>를 반환합니다.",
+          type: "read",
+          code: `const arr = [5, 12, 8];
+arr.findIndex(x => x > 10); // 1`,
+        },
+        {
+          category: "search",
+          name: "findLast",
+          desc: "배열을 역순으로 검색하여 조건을 만족하는 첫 번째 요소를 반환합니다.",
+          type: "read",
+          isNew: true,
+          code: `const arr = [5, 12, 8, 13];
+arr.findLast(x => x > 10); // 13`,
+        },
+        {
+          category: "search",
+          name: "includes",
+          desc: "배열에 특정 요소가 포함되어 있는지 여부를 확인합니다 (true/false).",
+          type: "read",
+          code: `['a', 'b', 'c'].includes('a'); // true`,
+        },
+        {
+          category: "search",
+          name: "indexOf",
+          desc: "배열에서 지정된 요소를 찾을 수 있는 첫 번째 인덱스를 반환합니다.",
+          type: "read",
+          code: `['a', 'b', 'a'].indexOf('a'); // 0`,
+        },
 
-        // Existing methods
-        log("Original array: " + fruits);
+        // 3. 순회 및 변형
+        {
+          category: "iterate",
+          name: "forEach",
+          desc: "배열의 각 요소에 대해 제공된 함수를 한 번씩 실행합니다.",
+          type: "read",
+          code: `['a', 'b'].forEach(x => console.log(x));`,
+        },
+        {
+          category: "iterate",
+          name: "map",
+          desc: "배열 내의 모든 요소 각각에 대하여 주어진 함수를 호출한 결과를 모아 <strong>새로운 배열</strong>을 반환합니다.",
+          type: "immutable",
+          code: `[1, 2].map(x => x * 2); 
+// [2, 4]`,
+        },
+        {
+          category: "iterate",
+          name: "filter",
+          desc: "주어진 함수의 테스트를 통과하는 모든 요소를 모아 <strong>새로운 배열</strong>을 반환합니다.",
+          type: "immutable",
+          code: `[1, 10, 5].filter(x => x > 5);
+// [10]`,
+        },
+        {
+          category: "iterate",
+          name: "reduce",
+          desc: "배열의 각 요소에 대해 리듀서(reducer) 함수를 실행하여 <strong>하나의 결과값</strong>을 반환합니다.",
+          type: "read",
+          code: `[1, 2, 3].reduce((acc, cur) => acc + cur, 0);
+// 6`,
+        },
+        {
+          category: "iterate",
+          name: "flatMap",
+          desc: "매핑 함수를 사용해 각 요소를 매핑한 다음, 결과를 새로운 배열로 평탄화(depth 1)합니다.",
+          type: "immutable",
+          code: `[1, 2].flatMap(x => [x, x * 2]);
+// [1, 2, 2, 4]`,
+        },
+        {
+          category: "iterate",
+          name: "some",
+          desc: "배열 안의 <strong>어떤 요소라도</strong> 주어진 판별 함수를 통과하는지 테스트합니다.",
+          type: "read",
+          code: `[1, 2, 3].some(x => x > 2); // true`,
+        },
+        {
+          category: "iterate",
+          name: "every",
+          desc: "배열 안의 <strong>모든 요소</strong>가 주어진 판별 함수를 통과하는지 테스트합니다.",
+          type: "read",
+          code: `[1, 2, 3].every(x => x > 0); // true`,
+        },
 
-        // 추가/제거
-        // push(): 배열의 끝에 요소를 추가하고 반환되는 값은 새로운 길이입니다.
-        fruits.push('mango');
-        log("After push(): " + fruits);
+        // 4. 정렬 및 순서
+        {
+          category: "sort",
+          name: "sort",
+          desc: "배열의 요소를 적절한 위치에 정렬한 후 그 배열을 반환합니다. (기본은 문자열 유니코드 순서)",
+          type: "mutating",
+          code: `const arr = [3, 1, 2];
+arr.sort();
+// arr: [1, 2, 3]`,
+        },
+        {
+          category: "sort",
+          name: "toSorted",
+          desc: "sort()와 같지만 원본을 변경하지 않고 <strong>정렬된 새 배열</strong>을 반환합니다.",
+          type: "immutable",
+          isNew: true,
+          code: `const arr = [3, 1, 2];
+const sorted = arr.toSorted();
+// sorted: [1, 2, 3], arr: [3, 1, 2]`,
+        },
+        {
+          category: "sort",
+          name: "reverse",
+          desc: "배열의 순서를 반전합니다.",
+          type: "mutating",
+          code: `const arr = [1, 2];
+arr.reverse(); 
+// arr: [2, 1]`,
+        },
+        {
+          category: "sort",
+          name: "toReversed",
+          desc: "reverse()와 같지만 원본을 변경하지 않고 <strong>순서가 반전된 새 배열</strong>을 반환합니다.",
+          type: "immutable",
+          isNew: true,
+          code: `const arr = [1, 2];
+const reversed = arr.toReversed();
+// reversed: [2, 1], arr: [1, 2]`,
+        },
 
-        // pop(): 배열의 마지막 요소를 제거하고 반환합니다.
-        let lastFruit = fruits.pop();
-        log("Popped fruit: " + lastFruit);
-        log("After pop(): " + fruits);
+        // 5. 구조 변환
+        {
+          category: "transform",
+          name: "join",
+          desc: "배열의 모든 요소를 연결해 <strong>하나의 문자열</strong>로 만듭니다.",
+          type: "read",
+          code: `['a', 'b'].join('-'); // "a-b"`,
+        },
+        {
+          category: "transform",
+          name: "slice",
+          desc: "배열의 <strong>일부분</strong>을 얕은 복사본으로 새로운 배열 객체로 반환합니다.",
+          type: "immutable",
+          code: `const arr = ['a', 'b', 'c'];
+arr.slice(1); // ['b', 'c']`,
+        },
+        {
+          category: "transform",
+          name: "concat",
+          desc: "인자로 주어진 배열이나 값들을 기존 배열에 합쳐서 <strong>새 배열</strong>을 반환합니다.",
+          type: "immutable",
+          code: `['a'].concat(['b']); // ['a', 'b']`,
+        },
+        {
+          category: "transform",
+          name: "flat",
+          desc: "모든 하위 배열 요소를 지정한 깊이까지 재귀적으로 이어붙인 새로운 배열을 생성합니다.",
+          type: "immutable",
+          code: `[1, [2, 3]].flat(); // [1, 2, 3]`,
+        },
+        {
+          category: "transform",
+          name: "Array.from",
+          desc: "유사 배열 객체나 반복 가능한 객체를 얕게 복사해 <strong>새로운 Array 객체</strong>를 만듭니다.",
+          type: "immutable",
+          code: `Array.from('foo');
+// ['f', 'o', 'o']`,
+        },
+        {
+          category: "transform",
+          name: "fill",
+          desc: "배열의 시작 인덱스부터 끝 인덱스까지 정적 값 하나로 채웁니다.",
+          type: "mutating",
+          code: `[1, 2, 3].fill(0);
+// [0, 0, 0]`,
+        },
+      ];
 
-        // unshift(): 배열의 처음에 요소를 추가하고 반환되는 값은 새로운 길이입니다.
-        fruits.unshift('pear');
-        log("After unshift(): " + fruits);
+      function renderCards() {
+        apiData.forEach((api) => {
+          const container = document.getElementById(`grid-${api.category}`);
+          if (!container) return;
 
-        // shift(): 배열의 첫 번째 요소를 제거하고 반환합니다.
-        let firstFruit = fruits.shift();
-        log("Shifted fruit: " + firstFruit);
-        log("After shift(): " + fruits);
+          const card = document.createElement("div");
+          card.className = "card";
 
-        //검색
-        // indexOf(): 특정 값이 배열에 있는지 확인하고 찾은 위치를 반환합니다 (값 없으면 -1).
-        let bananaIndex = fruits.indexOf('banana');
-        log("Index of 'banana': " + bananaIndex);
+          let badgeClass = "";
+          let badgeText = "";
 
-        // lastIndexOf(): 특정 값이 배열에서 마지막으로 등장한 위치를 반환합니다 (-1은 존재하지 않을 때).
-        fruits.push('apple');
-        let lastAppleIndex = fruits.lastIndexOf('apple');
-        log("Last index of 'apple': " + lastAppleIndex);
+          if (api.type === "mutating") {
+            badgeClass = "badge mutating";
+            badgeText = "Mutating";
+          } else if (api.type === "immutable") {
+            badgeClass = "badge immutable";
+            badgeText = "New Array";
+          } else {
+            badgeClass = "badge read";
+            badgeText = "Read/Value";
+          }
 
-        // findIndex(): 배열에서 주어진 조건을 만족하는 요소의 인덱스를 반환합니다. 조건이 맞는 요소가 없으면 -1 을 반환합니다.
-        let indexOfLongFruit = fruits.findIndex(fruit => fruit.length > 5);
-        log("Index of first fruit with more than 5 characters: " + indexOfLongFruit);
-        
-        // find(): 배열에서 주어진 조건을 만족하는 첫 번째 요소를 반환합니다. 조건이 맞는 요소가 없으면 undefined 를 반환합니다.
-        let foundFruit = fruits.find(fruit => fruit.startsWith('g'));
-        log("First fruit starting with 'g': " + foundFruit);
+          const newTag = api.isNew
+            ? '<span class="new-tag">NEW (ES2023)</span>'
+            : "";
 
-        // includes: 해당 값이 있는지만 반환(true, false)
-        log("'바나나'가 있나요? " + fruits.includes('banana'));
-        
-        // entries(): 배열의 모든 요소를 **키-값(key-value pair)**으로 반환합니다. 키는 인덱스이고, 값은 해당 인덱스에 있는 요소입니다.
-        let fruitEntries = fruits.entries();
-        log("Entries of fruits array:");
-        for (let entry of fruitEntries) {
-            log(entry);
-        }
+          card.innerHTML = `
+                    <div class="card-header">
+                        <div class="method-name">${api.name}${newTag}</div>
+                        <div class="${badgeClass}">${badgeText}</div>
+                    </div>
+                    <div class="card-desc">${api.desc}</div>
+                    <div class="code-block">
+                        ${highlightCode(api.code)}
+                    </div>
+                `;
 
-        // keys(): 배열의 모든 **인덱스(키)**를 반환합니다.
-        let fruitKeys = fruits.keys();
-        log("Keys of fruits array:");
-        for (let key of fruitKeys) {
-            log(key);
-        }
-
-        // values(): 배열의 모든 **값(요소)**을 반환합니다.
-        let fruitValues = fruits.values();
-        log("Values of fruits array:");
-        for (let value of fruitValues) {
-            log(value);
-        }
-
-        // join(): API는 배열의 요소들을 주어진 문자열을 사용하여 연결해서 새로운 문자열을 만드는 메서드입니다.
-        let fruitString = fruits.join(' - ');
-        log("Joined fruits: " + fruitString);        
-
-        // 순환/변형
-        // 중복 제거1
-        fruits.push('banana');
-        let uniqueFruits = [...new Set(fruits)];
-        log("Array after removing duplicates: " + uniqueFruits);
-
-        // 중복 제거2
-        let uniqueFruitsAlt = fruits.filter((fruit, index, self) => 
-            self.indexOf(fruit) === index
-        );
-        log("Array after removing duplicates (alternative method): " + uniqueFruitsAlt);
-
-        // slice(): 배열의 특정 부분을 복사하여 새로운 배열을 만듭니다. 시작 인덱스와 끝 인덱스를 지정할 수 있습니다 (끝 인덱스는 포함되지 않습니다).
-        let slicedFruits = fruits.slice(1, 3);
-        log("Sliced fruits: " + slicedFruits);
-
-        // splice(): 배열의 특정 위치에서 요소를 추가하거나 제거하는 메서드입니다. 시작 인덱스와 삭제할 개수 또는 추가할 요소들을 지정합니다.
-        fruits.splice(2, 1, 'cherry', 'blueberry');
-        log("After splice(): " + fruits);
-
-        // concat(): 두 개 이상의 배열을 결합하여 하나의 새로운 배열을 반환합니다.
-        let moreFruits = ['peach', 'plum'];
-        let allFruits = fruits.concat(moreFruits);
-        log("Concatenated fruits: " + allFruits);
-
-        // forEach(): 배열의 각 요소를 순회하며 지정된 함수를 실행합니다.
-        log("forEach() output:");
-        fruits.forEach((fruit, index) => {
-            log(`Fruit ${index + 1}: ${fruit}`);
+          container.appendChild(card);
         });
+      }
 
-        // map(): 배열의 각 요소를 변형하여 새로운 배열을 반환합니다.
-        let upperFruits = fruits.map(fruit => fruit.toUpperCase());
-        log("Uppercase fruits: " + upperFruits);
+      function highlightCode(code) {
+        // 매우 간단한 구문 강조 (Regex)
+        return code
+          .replace(
+            /\/\/.*$/gm,
+            (match) => `<span class="comment">${match}</span>`,
+          )
+          .replace(
+            /'[^']*'/g,
+            (match) => `<span class="string">${match}</span>`,
+          )
+          .replace(
+            /\b(const|let|var|function|return|if|else)\b/g,
+            (match) => `<span class="keyword">${match}</span>`,
+          )
+          .replace(
+            /\b\d+\b/g,
+            (match) => `<span class="number">${match}</span>`,
+          )
+          .replace(/\n/g, "<br>");
+      }
 
-        // filter(): 특정 조건을 만족하는 요소만 포함하여 새로운 배열을 반환합니다.
-        let longFruits = fruits.filter(fruit => fruit.length > 5);
-        log("Fruits with more than 5 characters: " + longFruits);
-
-        // reduce(): 배열의 요소들을 하나로 합쳐 특정 값을 반환합니다.
-        let totalLength = fruits.reduce((sum, fruit) => sum + fruit.length, 0);
-        log("Total length of all fruits: " + totalLength);
-
-        // sort(): 배열의 요소를 기본적으로 오름차순으로 정렬합니다.
-        fruits.sort();
-        log("After sort(): " + fruits);
-
-        // reverse(): 배열의 요소 순서를 역순으로 바꿉니다.
-        fruits.reverse();
-        log("After reverse(): " + fruits);
-
-        // fill(): 배열의 특정 구간을 새로운 값으로 채웁니다. (기존 요소는 변경됩니다)
-        let filledArray = new Array(3).fill('melon');
-        log("Filled array: " + filledArray);
-
-        // some(): 배열의 적어도 하나의 요소에 대해 주어진 함수가 참을 반환하는지 확인합니다.
-        let hasShortFruit = fruits.some(fruit => fruit.length < 5);
-        log("Has fruit with less than 5 characters: " + hasShortFruit);
-
-        // every(): 배열의 모든 요소에 대해 주어진 함수가 참을 반환하는지 확인합니다.
-        let allLongFruits = fruits.every(fruit => fruit.length > 3);
-        log("All fruits have more than 3 characters: " + allLongFruits);
-
-        // shuffle(): 배열의 요소를 랜덤하게 섞습니다 (Fisher-Yates 셔플 알고리즘 사용)
-        function shuffle(array) {
-            const shuffled = [...array]; // 원본 배열 복사
-            
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            
-            return shuffled;
-        }
-
-        let shuffledFruits = shuffle(fruits);
-        log("Original fruits: " + fruits);
-        log("Shuffled fruits: " + shuffledFruits);
-
-        // 추가 셔플 예시 (원본 배열 직접 수정)
-        function shuffleInPlace(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        let testFruits = ['apple', 'banana', 'orange', 'grape', 'kiwi'];
-        log("Before in-place shuffle: " + testFruits);
-        shuffleInPlace(testFruits);
-        log("After in-place shuffle: " + testFruits);
+      // 실행
+      document.addEventListener("DOMContentLoaded", renderCards);
     </script>
-</body>
+  </body>
 </html>
