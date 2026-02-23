@@ -24,6 +24,7 @@
   }
   &-body {
     position: relative;
+    cursor: pointer;
     @each $level in 1, 2, 3, 4 {
       &.level-#{$level} {
         @if ($level != 4) {
@@ -33,6 +34,7 @@
         }
 
         @each $type in 1, 2 {
+          // 주택(1), 빌라/아파트/별장(2) 2가지 타입으로 정리
           &.type-#{$type} {
             .architecture {
               background-image: url(../img/type#{$type}_level#{$level}_light.png);
@@ -41,21 +43,43 @@
         }
       }
     }
+
+    &.is-animating {
+      .tool {
+        animation: hammer 0.15s ease-in-out;
+      }
+      .architecture {
+        animation: shake 0.45s ease-in-out 0.15s;
+      }
+    }
+
+    &.disabled,
+    &[aria-disabled="true"] {
+      cursor: default;
+      // opacity: 0.7;
+    }
   }
+
   .architecture {
     width: 260px;
     height: 260px;
     background: no-repeat center center / contain;
     margin: 0 auto;
+    transition: transform 0.1s ease;
+    pointer-events: none;
+    transform-origin: center 90%;
   }
+
   .tool {
     width: 128px;
     height: 128px;
     position: absolute;
     top: -6px;
     left: 50%;
+    margin-left: -40px;
     background: no-repeat center center / contain;
-    transform-origin: right bottom;
+    transform-origin: 80% 80%;
+    pointer-events: none;
   }
 
   &-footer {
@@ -70,9 +94,14 @@
     li {
       display: flex;
       align-items: center;
-      padding: 4px;
+      padding: 4px 12px 4px 4px;
       border-radius: 20px;
+      background: #fff;
       box-shadow: 0 4px 16px 0 rgba(12, 17, 29, 0.06);
+      font-size: 14px;
+      font-weight: 600;
+      color: #344054;
+
       .icon {
         display: flex;
         align-items: center;
@@ -80,11 +109,66 @@
         position: relative;
         width: 32px;
         height: 32px;
-        margin-right: 12px;
+        margin-right: 8px;
         border-radius: 50%;
         background: #f0f4fa;
         flex-shrink: 0;
+
+        svg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          transform: rotate(-90deg);
+          circle {
+            fill: none;
+            stroke: #e4e7ec;
+            stroke-width: 3;
+          }
+          path {
+            fill: none;
+            stroke: #4c7dff;
+            stroke-width: 3;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.3s ease;
+          }
+        }
       }
     }
+  }
+}
+
+@keyframes hammer {
+  0% {
+    transform: rotate(0deg);
+  }
+  70% {
+    transform: rotate(35deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+  30% {
+    transform: scale3d(1.1, 0.9, 1);
+  }
+  40% {
+    transform: scale3d(0.92, 1.08, 1);
+  }
+  50% {
+    transform: scale3d(1.05, 0.95, 1);
+  }
+  65% {
+    transform: scale3d(0.98, 1.02, 1);
+  }
+  75% {
+    transform: scale3d(1.02, 0.98, 1);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
   }
 }

@@ -13,19 +13,8 @@
         <p class="card-subtitle">잘하고 있어요!</p>
       </header>
 
-      <!-- 
-      타입은 주택(type-1), 빌라(type-2), 아파트(type-2), 별장(type-2) 4가지로 설정가능 (type-...클래스로 제거)
-      레벨은 1~4지만 별도로 설정가능 (level-...클래스로 제거)
-      레별별로 클릭 갯수 설정 가능해야하며, (임시 현재는 레벨당 50번씩 터치가능하게)
-      레별별 클릭 할당을 채우면 다음 레벨로 업그레이드
-      마지막 레별은 완성형태를 보여주기에 클릭 이벤트 없음
-      클릭시 클릭인터렉션을 보여줘야함
-      클릭시 인터렉션은 .tool(망치)이 rotate로 먼저 움직이고 (두들리는 느낌)돌아오면
-      .architecture이 건축되는 느낌으로 흔들리면 됩니다.
-      1번에는 10번 클릭 가능, 이후 휴식시간이 지나야만 클릭가능(임시 설정 10분)
-      aria-label로 현재 레별과 타입을 설정하고 클릭수도 표기해야함
-      -->
       <div
+        id="cardBody"
         class="card-body type-1 level-1"
         role="button"
         aria-label="주택짓기, 레벨1, 클릭수 0/50"
@@ -37,26 +26,155 @@
       <div class="card-footer">
         <ul>
           <li>
-            <!-- 레벨당 전체 클릭대비 누적클릭에 대하여 svg를 활용하여도넛차트와 같은 형태로 보여줘야함
-            svg 사이즈 32 * 32 , bg #F0F4FA, 라인 #4C7DFF, 두께 3px
-            아래 디자인된 svg 참고
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <circle cx="16" cy="16" r="14.5" stroke="#E4E7EC" stroke-width="3"/>
-            <path d="M15.9999 1.5C22.4372 1.5 27.8947 5.6948 29.7881 11.5" stroke="#4C7DFF" stroke-width="3" stroke-linecap="round"/>
-            </svg>
-            -->
-            <span class="icon">🏠</span>
-            <!-- 현재 레별 표시 마지막에는 '완성!' -->
+            <span class="icon" id="progressIcon">
+              <svg width="32" height="32" viewBox="0 0 32 32">
+                <circle cx="16" cy="16" r="14.5" />
+                <path
+                  id="progressPath"
+                  d="M16 1.5 A 14.5 14.5 0 1 1 16 30.5 A 14.5 14.5 0 1 1 16 1.5"
+                />
+              </svg>
+              🏠
+            </span>
+            <!-- 현재 레별 표시, 마지막에는 '완성!' -->
             <span>Lv.1</span>
           </li>
 
           <!-- 클릭할수 있는 남은 시간 표시, 완성시 비노출 -->
-          <li>
+          <li id="timerItem">
             <span class="icon">🔨</span>
             <span>23:59:59</span>
           </li>
         </ul>
       </div>
     </article>
+
+    <script>
+      (function () {
+        const CONFIG = {
+          MAX_LEVEL: 4,
+          CLICKS_PER_LEVEL: 50,
+          MAX_SESSION_CLICKS: 10,
+          COOLDOWN_MS: 10 * 60 * 6000, // 60분
+          TYPES: {
+            1: "주택",
+            2: "빌라",
+            3: "아파트",
+            4: "별장",
+          },
+        };
+
+        const state = {
+          type: 1, // 1~4 설정 가능
+          level: 1,
+          totalClicks: 0,
+          sessionClicks: 0,
+          isCoolingDown: false,
+          nextAvailableTime: null,
+          isAnimating: false,
+        };
+
+        const elements = {
+          cardBody: document.getElementById("cardBody"),
+          progressPath: document.getElementById("progressPath"),
+        };
+
+        const CIRCUMFERENCE = 2 * Math.PI * 14.5;
+
+        function setDisabledState(isDisabled) {
+          if (isDisabled) {
+            elements.cardBody.classList.add("disabled");
+            elements.cardBody.setAttribute("aria-disabled", "true");
+          } else {
+            elements.cardBody.classList.remove("disabled");
+            elements.cardBody.removeAttribute("aria-disabled");
+          }
+        }
+
+        function updateUI() {
+          const isCompleted = state.level === CONFIG.MAX_LEVEL;
+          setDisabledState(state.isCoolingDown || isCompleted);
+
+          // 접근성 속성 업데이트
+          const typeName = CONFIG.TYPES[state.type];
+          const progress = `${state.totalClicks}/${CONFIG.CLICKS_PER_LEVEL}`;
+          elements.cardBody.setAttribute(
+            "aria-label",
+            `${typeName}짓기, 레벨${state.level}, 클릭수 ${progress}`,
+          );
+
+          // SVG 프로그래스 업데이트
+          const ratio = state.totalClicks / CONFIG.CLICKS_PER_LEVEL;
+          const offset = CIRCUMFERENCE - ratio * CIRCUMFERENCE;
+          elements.progressPath.style.strokeDasharray = `${CIRCUMFERENCE}`;
+          elements.progressPath.style.strokeDashoffset = offset;
+        }
+
+        function startCooldown() {
+          state.isCoolingDown = true;
+          state.nextAvailableTime = Date.now() + CONFIG.COOLDOWN_MS;
+
+          setDisabledState(true);
+
+          // 타이머 자동 해제 로직 (UI 업데이트 없이 상태만 처리)
+          setTimeout(() => {
+            state.isCoolingDown = false;
+            state.sessionClicks = 0;
+            state.nextAvailableTime = null;
+            updateUI();
+          }, CONFIG.COOLDOWN_MS);
+        }
+
+        function handleLevelUp() {
+          if (state.totalClicks >= CONFIG.CLICKS_PER_LEVEL) {
+            if (state.level < CONFIG.MAX_LEVEL) {
+              state.level++;
+              state.totalClicks = 0;
+              updateUI();
+            }
+          }
+        }
+
+        function handleAction() {
+          if (
+            state.level === CONFIG.MAX_LEVEL ||
+            state.isCoolingDown ||
+            state.isAnimating
+          )
+            return;
+
+          // 애니메이션 실행
+          state.isAnimating = true;
+          elements.cardBody.classList.add("is-animating");
+
+          setTimeout(() => {
+            elements.cardBody.classList.remove("is-animating");
+            state.isAnimating = false;
+          }, 600);
+
+          // 데이터 업데이트
+          state.totalClicks++;
+          state.sessionClicks++;
+
+          if (state.sessionClicks >= CONFIG.MAX_SESSION_CLICKS) {
+            startCooldown();
+          }
+
+          handleLevelUp();
+          updateUI();
+        }
+
+        // 초기화
+        function init() {
+          if (!elements.cardBody) return;
+
+          elements.cardBody.addEventListener("click", handleAction);
+
+          updateUI();
+        }
+
+        init();
+      })();
+    </script>
   </body>
 </html>
