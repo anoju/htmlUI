@@ -26,26 +26,6 @@
   &-body {
     position: relative;
     cursor: pointer;
-    @each $level in 1, 2, 3, 4 {
-      &.level-#{$level} {
-        @if ($level != 4) {
-          .tool {
-            &::before {
-              background-image: url(../img/tool_level#{$level}.png);
-            }
-          }
-        }
-
-        @each $type in 1, 2 {
-          // 주택(1), 빌라/아파트/별장(2) 2가지 타입으로 정리
-          &.type-#{$type} {
-            .architecture {
-              background-image: url(../img/type#{$type}_level#{$level}_light.png);
-            }
-          }
-        }
-      }
-    }
 
     &.is-animating {
       .tool {
@@ -109,6 +89,27 @@
       left: auto;
       right: 50%;
       transform: rotateY(180deg);
+    }
+  }
+
+  @each $type in 1, 2 {
+    // 주택(1), 빌라/아파트/별장(2) 2가지 타입으로 정리
+    .build-type-#{$type} {
+      .architecture {
+        background-image: url(../img/type#{$type}_level#{$level}_light.png);
+      }
+    }
+    @each $level in 1, 2, 3, 4 {
+      // 1~4등급
+      &.build-level-#{$level} {
+        @if ($level != 4) {
+          .tool {
+            &::before {
+              background-image: url(../img/tool_level#{$level}.png);
+            }
+          }
+        }
+      }
     }
   }
 
