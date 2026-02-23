@@ -59,6 +59,17 @@
       }
     }
 
+    &.is-level-up {
+      .architecture {
+        animation: zoomOut 0.3s ease-in forwards;
+      }
+      &.is-in {
+        .architecture {
+          animation: zoomIn 0.3s ease-out forwards;
+        }
+      }
+    }
+
     &.disabled,
     &[aria-disabled="true"] {
       cursor: default;
@@ -189,5 +200,27 @@
   }
   100% {
     transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes zoomOut {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes zoomIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
 }

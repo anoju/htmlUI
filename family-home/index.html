@@ -67,7 +67,7 @@
         const state = {
           type: 1, // 1~4 설정 가능
           level: 1,
-          totalClicks: 0,
+          totalClicks: 45, // 테스트를 위해 임시로 45개 설정(누적 클릭수)
           sessionClicks: 0,
           isCoolingDown: false,
           nextAvailableTime: null,
@@ -129,9 +129,31 @@
         function handleLevelUp() {
           if (state.totalClicks >= CONFIG.CLICKS_PER_LEVEL) {
             if (state.level < CONFIG.MAX_LEVEL) {
-              state.level++;
-              state.totalClicks = 0;
-              updateUI();
+              state.isAnimating = true; // 레벨업 연출 동안 클릭 차단
+
+              // 레벨업 애니메이션 시작 (줌아웃)
+              elements.cardBody.classList.add("is-level-up");
+
+              setTimeout(() => {
+                // 기존 레벨 클래스 제거 및 신규 레벨 클래스 추가
+                const oldClass = `level-${state.level}`;
+                state.level++;
+                const newClass = `level-${state.level}`;
+
+                elements.cardBody.classList.remove(oldClass);
+                elements.cardBody.classList.add(newClass);
+
+                state.totalClicks = 0;
+                updateUI();
+
+                // 줌인 애니메이션 시작
+                elements.cardBody.classList.add("is-in");
+
+                setTimeout(() => {
+                  elements.cardBody.classList.remove("is-level-up", "is-in");
+                  state.isAnimating = false; // 모든 연출이 끝나면 차단 해제
+                }, 300);
+              }, 300);
             }
           }
         }
@@ -158,6 +180,7 @@
           setTimeout(() => {
             elements.cardBody.classList.remove("is-animating");
             state.isAnimating = false;
+            handleLevelUp();
           }, 600);
 
           // 데이터 업데이트
@@ -168,7 +191,6 @@
             startCooldown();
           }
 
-          handleLevelUp();
           updateUI();
         }
 
