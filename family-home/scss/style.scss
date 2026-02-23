@@ -30,7 +30,9 @@
       &.level-#{$level} {
         @if ($level != 4) {
           .tool {
-            background-image: url(../img/tool_level#{$level}.png);
+            &::before {
+              background-image: url(../img/tool_level#{$level}.png);
+            }
           }
         }
 
@@ -47,7 +49,10 @@
 
     &.is-animating {
       .tool {
-        animation: hammer 0.15s ease-in-out;
+        opacity: 1;
+        &::before {
+          animation: hammer 0.15s ease-in-out;
+        }
       }
       .architecture {
         animation: shake 0.45s ease-in-out 0.15s;
@@ -77,9 +82,23 @@
     position: absolute;
     top: -6px;
     left: 50%;
-    background: no-repeat center center / contain;
-    transform-origin: 80% 80%;
+
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s;
+    &::before {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: no-repeat center center / contain;
+      transform-origin: 80% 80%;
+    }
+    &.reverse {
+      left: auto;
+      right: 50%;
+      transform: rotateY(180deg);
+    }
   }
 
   &-footer {
