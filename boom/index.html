@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/style.min.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <!-- 
+      .box를 클릭하면 중력이 작용한거 처럼 .floor 에 떨어지면서
+      먼지가 올라오는듯한 효과가 필요하다 
+      모든 인터렉션이 끝나면 맨처음으로 초기화
+      -->
+      <div
+        class="box"
+        id="movingBox"
+        role="button"
+        aria-label="상자 떨어뜨리기"
+      ></div>
+      <div class="floor"></div>
+      <div class="dust-container" id="dustContainer"></div>
+    </div>
+
+    <script>
+      const box = document.getElementById("movingBox");
+      const dustContainer = document.getElementById("dustContainer");
+
+      box.addEventListener("click", () => {
+        if (box.classList.contains("is-falling")) return;
+
+        box.classList.add("is-falling");
+
+        // 박스가 바닥에 닿았을 때 (애니메이션 종료 시점)
+        box.addEventListener(
+          "animationend",
+          () => {
+            createDustParticles();
+
+            // 모든 효과가 끝난 후 초기화 (2초 후)
+            setTimeout(resetAll, 2000);
+          },
+          { once: true },
+        );
+      });
+
+      function createDustParticles() {
+        const particleCount = 12;
+        for (let i = 0; i < particleCount; i++) {
+          const dust = document.createElement("div");
+          dust.className = "dust animate";
+
+          // 랜덤한 방향과 거리 설정
+          const dx = (Math.random() - 0.5) * 150 + "px";
+          const dy = -(Math.random() * 40 + 20) + "px";
+          const left = Math.random() * 40 + 30 + "%";
+
+          dust.style.setProperty("--dx", dx);
+          dust.style.setProperty("--dy", dy);
+          dust.style.left = left;
+
+          // 애니메이션 딜레이 랜덤화
+          dust.style.animationDelay = Math.random() * 0.2 + "s";
+
+          dustContainer.appendChild(dust);
+
+          // 애니메이션 종료 후 요소 삭제
+          dust.addEventListener("animationend", () => {
+            dust.remove();
+          });
+        }
+      }
+
+      function resetAll() {
+        box.classList.remove("is-falling");
+        // 강제 리플로우를 통해 애니메이션을 초기 상태로 되돌림
+        box.style.display = "none";
+        box.offsetHeight; // trigger reflow
+        box.style.display = "block";
+      }
+    </script>
+  </body>
+</html>
