@@ -252,10 +252,10 @@
 
           for (let i = 0; i < particleCount; i++) {
             const p = document.createElement("div");
-            const colors = ["is-gold", "is-green", "is-blue", "is-red"];
+            // const colors = ["is-gold", "is-green", "is-blue", "is-red"];
+            const colors = ["is-gold", "is-green", "is-blue"];
             const colorClass =
               colors[Math.floor(Math.random() * colors.length)];
-            console.log(colorClass);
             p.className = `buff-particle ${colorClass}`;
 
             // 슬롯 기반 위치 계산 (10% ~ 90% 범위를 슬롯으로 나눔)
