@@ -99,7 +99,75 @@
     top: 75px;
     left: 0;
     pointer-events: none;
-    z-index: 5;
+  }
+
+  .buff-container {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .buff-particle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(0.5px);
+    opacity: 0;
+    animation: risingUp 1s ease-out forwards;
+
+    &.is-gold {
+      background: radial-gradient(
+        circle,
+        #ffffff 0%,
+        #ffeb3b 40%,
+        #ff9800 70%,
+        rgba(255, 152, 0, 0) 100%
+      );
+      box-shadow:
+        0 0 15px rgba(255, 193, 7, 0.9),
+        0 0 30px rgba(255, 87, 34, 0.4);
+    }
+
+    &.is-green {
+      background: radial-gradient(
+        circle,
+        #ffffff 0%,
+        #b2ff59 40%,
+        #76ff03 70%,
+        rgba(118, 255, 3, 0) 100%
+      );
+      box-shadow:
+        0 0 15px rgba(178, 255, 89, 0.9),
+        0 0 30px rgba(118, 255, 3, 0.4);
+    }
+
+    &.is-blue {
+      background: radial-gradient(
+        circle,
+        #ffffff 0%,
+        #e1f5fe 40%,
+        #b3e5fc 70%,
+        rgba(179, 229, 252, 0) 100%
+      );
+      box-shadow:
+        0 0 15px rgba(225, 245, 254, 0.9),
+        0 0 30px rgba(179, 229, 252, 0.4);
+    }
+
+    &.is-red {
+      background: radial-gradient(
+        circle,
+        #ffffff 0%,
+        #ff8a80 40%,
+        #ff5252 70%,
+        rgba(255, 82, 82, 0) 100%
+      );
+      box-shadow:
+        0 0 15px rgba(255, 138, 128, 0.9),
+        0 0 30px rgba(255, 82, 82, 0.4);
+    }
   }
 
   .dust {
@@ -257,6 +325,20 @@
   }
   100% {
     transform: translate(var(--dx), var(--dy)) scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes risingUp {
+  0% {
+    transform: translateY(0) translateX(0) scale(0.5);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-200px) translateX(var(--tx)) scale(1.5);
     opacity: 0;
   }
 }

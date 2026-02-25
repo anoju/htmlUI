@@ -22,6 +22,7 @@
           aria-label="주택짓기, 레벨1, 클릭수 0/50"
         >
           <div class="architecture"></div>
+          <div id="buffContainer" class="buff-container"></div>
           <div class="tool">
             <div class="dust-container" id="dustContainer"></div>
           </div>
@@ -98,6 +99,7 @@
           build: document.getElementById("build"),
           tool: document.querySelector(".tool"),
           dustContainer: document.getElementById("dustContainer"),
+          buffContainer: document.getElementById("buffContainer"),
           progressPath: document.getElementById("progressPath"),
           preloader: document.getElementById("preloader"),
         };
@@ -219,6 +221,7 @@
           // 망치 애니메이션(0.15s)이 끝나는 시점에 먼지 발생
           setTimeout(() => {
             createDustParticles();
+            createBuffParticles();
           }, 150);
 
           setTimeout(() => {
@@ -236,6 +239,47 @@
           }
 
           updateUI();
+        }
+
+        function createBuffParticles() {
+          const particleCount = 12;
+          // 겹침 방지를 위한 슬롯 생성 및 셔플
+          const slots = Array.from({ length: particleCount }, (_, i) => i);
+          for (let i = slots.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [slots[i], slots[j]] = [slots[j], slots[i]];
+          }
+
+          for (let i = 0; i < particleCount; i++) {
+            const p = document.createElement("div");
+            const colors = ["is-gold", "is-green", "is-blue", "is-red"];
+            const colorClass =
+              colors[Math.floor(Math.random() * colors.length)];
+            console.log(colorClass);
+            p.className = `buff-particle ${colorClass}`;
+
+            // 슬롯 기반 위치 계산 (10% ~ 90% 범위를 슬롯으로 나눔)
+            const slotWidth = 80 / particleCount;
+            const left =
+              10 + slots[i] * slotWidth + Math.random() * slotWidth * 0.5 + "%";
+
+            const size = Math.floor(Math.random() * 5) * 3 + 6 + "px"; // 6, 9, 12, 15, 18
+            const duration = Math.floor(Math.random() * 4) * 0.3 + 0.9 + "s"; // 0.9, 1.2, 1.5, 1.8
+            const delay = Math.random() * 0.3 + "s";
+            const tx = (Math.random() - 0.5) * 40 + "px"; // 좌우 흔들림 폭
+            const bottom = Math.floor(Math.random() * 6) * 3 + 10 + "%"; // 10, 13, 16, 19, 22, 25
+
+            p.style.left = left;
+            p.style.bottom = bottom;
+            p.style.width = size;
+            p.style.height = size;
+            p.style.setProperty("--tx", tx);
+            p.style.animationDuration = duration;
+            p.style.animationDelay = delay;
+
+            elements.buffContainer.appendChild(p);
+            p.addEventListener("animationend", () => p.remove());
+          }
         }
 
         function createDustParticles() {
