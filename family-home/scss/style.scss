@@ -101,6 +101,20 @@
     pointer-events: none;
   }
 
+  .dust {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background-color: rgba(150, 150, 150, 0.6);
+    border-radius: 50%;
+    opacity: 0;
+    &.animate {
+      animation: riseAndFade 0.6s ease-out forwards;
+    }
+  }
+
   .buff-container {
     position: absolute;
     top: 0;
@@ -167,20 +181,6 @@
       box-shadow:
         0 0 15px rgba(255, 138, 128, 0.9),
         0 0 30px rgba(255, 82, 82, 0.4);
-    }
-  }
-
-  .dust {
-    position: absolute;
-    bottom: 50%;
-    left: 50%;
-    width: 12px;
-    height: 12px;
-    background-color: rgba(150, 150, 150, 0.4);
-    border-radius: 50%;
-    opacity: 0;
-    &.animate {
-      animation: riseAndFade 0.6s ease-out forwards;
     }
   }
 
