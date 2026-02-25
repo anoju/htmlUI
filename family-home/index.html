@@ -13,16 +13,19 @@
         <p class="card-subtitle">잘하고 있어요!</p>
       </header>
 
-      <!-- build-type-1 build-level-1 -->
-      <div
-        id="cardBody"
-        class="card-body"
-        role="button"
-        aria-label="주택짓기, 레벨1, 클릭수 0/50"
-      >
-        <div class="architecture"></div>
-        <div class="tool"></div>
-        <div class="dust-container" id="dustContainer"></div>
+      <div class="card-body">
+        <!-- build-type-1 build-level-1 -->
+        <div
+          id="build"
+          class="build-wrap"
+          role="button"
+          aria-label="주택짓기, 레벨1, 클릭수 0/50"
+        >
+          <div class="architecture"></div>
+          <div class="tool">
+            <div class="dust-container" id="dustContainer"></div>
+          </div>
+        </div>
       </div>
 
       <!-- bg 이미지 프리로더 -->
@@ -92,7 +95,7 @@
         };
 
         const elements = {
-          cardBody: document.getElementById("cardBody"),
+          build: document.getElementById("build"),
           tool: document.querySelector(".tool"),
           dustContainer: document.getElementById("dustContainer"),
           progressPath: document.getElementById("progressPath"),
@@ -103,18 +106,18 @@
 
         function setDisabledState(isDisabled) {
           if (isDisabled) {
-            elements.cardBody.classList.add("disabled");
-            elements.cardBody.setAttribute("aria-disabled", "true");
+            elements.build.classList.add("disabled");
+            elements.build.setAttribute("aria-disabled", "true");
           } else {
-            elements.cardBody.classList.remove("disabled");
-            elements.cardBody.removeAttribute("aria-disabled");
+            elements.build.classList.remove("disabled");
+            elements.build.removeAttribute("aria-disabled");
           }
         }
 
         function readyUI() {
           const typeClass = `build-type-${state.type === 1 ? 1 : 2}`;
           const levelClass = `build-level-${state.level}`;
-          elements.cardBody.classList.add(typeClass, levelClass);
+          elements.build.classList.add(typeClass, levelClass);
         }
 
         function updateUI() {
@@ -124,7 +127,7 @@
           // 접근성 속성 업데이트
           const typeName = CONFIG.TYPES[state.type];
           const progress = `${state.totalClicks}/${CONFIG.CLICKS_PER_LEVEL}`;
-          elements.cardBody.setAttribute(
+          elements.build.setAttribute(
             "aria-label",
             `${typeName}짓기, 레벨${state.level}, 클릭수 ${progress}`,
           );
@@ -168,7 +171,7 @@
               state.isAnimating = true; // 레벨업 연출 동안 클릭 차단
 
               // 레벨업 애니메이션 시작 (줌아웃)
-              elements.cardBody.classList.add("is-level-up");
+              elements.build.classList.add("is-level-up");
 
               setTimeout(() => {
                 // 기존 레벨 클래스 제거 및 신규 레벨 클래스 추가
@@ -176,17 +179,17 @@
                 state.level++;
                 const newClass = `build-level-${state.level}`;
 
-                elements.cardBody.classList.remove(oldClass);
-                elements.cardBody.classList.add(newClass);
+                elements.build.classList.remove(oldClass);
+                elements.build.classList.add(newClass);
 
                 state.totalClicks = 0;
                 updateUI();
 
                 // 줌인 애니메이션 시작
-                elements.cardBody.classList.add("is-in");
+                elements.build.classList.add("is-in");
 
                 setTimeout(() => {
-                  elements.cardBody.classList.remove("is-level-up", "is-in");
+                  elements.build.classList.remove("is-level-up", "is-in");
                   state.isAnimating = false; // 모든 연출이 끝나면 차단 해제
                 }, 300);
               }, 300);
@@ -208,12 +211,10 @@
 
           elements.tool.style.top = `${randomTop}px`;
           elements.tool.classList.toggle("reverse", isReverse);
-          elements.dustContainer.style.top = `${randomTop}px`;
-          elements.dustContainer.classList.toggle("reverse", isReverse);
 
           // 애니메이션 실행
           state.isAnimating = true;
-          elements.cardBody.classList.add("is-animating");
+          elements.build.classList.add("is-animating");
 
           // 망치 애니메이션(0.15s)이 끝나는 시점에 먼지 발생
           setTimeout(() => {
@@ -221,7 +222,7 @@
           }, 150);
 
           setTimeout(() => {
-            elements.cardBody.classList.remove("is-animating");
+            elements.build.classList.remove("is-animating");
             state.isAnimating = false;
             handleLevelUp();
           }, 600);
@@ -256,18 +257,18 @@
             elements.dustContainer.appendChild(dust);
 
             // 애니메이션 종료 후 요소 삭제
-            // dust.addEventListener("animationend", () => {
-            //   dust.remove();
-            // });
+            dust.addEventListener("animationend", () => {
+              dust.remove();
+            });
           }
         }
 
         // 초기화
         function init() {
-          if (!elements.cardBody) return;
+          if (!elements.build) return;
           readyUI();
 
-          elements.cardBody.addEventListener("click", handleAction);
+          elements.build.addEventListener("click", handleAction);
 
           updateUI();
         }

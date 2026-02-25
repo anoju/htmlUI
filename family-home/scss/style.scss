@@ -23,7 +23,8 @@
     font-size: 14px;
     color: #005df9;
   }
-  &-body {
+
+  .build-wrap {
     position: relative;
     cursor: pointer;
 
@@ -73,7 +74,6 @@
     position: absolute;
     top: -6px;
     left: 50%;
-
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.1s;
@@ -94,17 +94,12 @@
 
   .dust-container {
     position: absolute;
-    top: -6px;
-    left: 50%;
     width: 94px;
     height: 50px;
-    margin-top: 70px;
+    top: 75px;
+    left: 0;
     pointer-events: none;
     z-index: 5;
-    &.reverse {
-      left: auto;
-      right: 50%;
-    }
   }
 
   .dust {
