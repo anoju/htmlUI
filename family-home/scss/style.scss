@@ -115,6 +115,7 @@
     height: 12px;
     background-color: rgba(150, 150, 150, 0.6);
     border-radius: 50%;
+    filter: blur(2px);
     opacity: 0;
     &.animate {
       animation: riseAndFade 0.6s ease-out forwards;
