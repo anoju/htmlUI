@@ -46,7 +46,7 @@
         box-sizing: border-box;
       }
       .input.range {
-        height: 200px;
+        height: 60px;
       }
       .input + .input {
         margin-top: 10px;
@@ -55,6 +55,29 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+      }
+      dl {
+        margin-top: 20px;
+        background: #fafafa;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-sizing: border-box;
+      }
+      dt {
+        font-weight: bold;
+        font-size: 16px;
+        color: #333;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #ccc;
+        word-break: keep-all;
+      }
+      dd {
+        margin: 15px 0 0 0;
+      }
+      dd input[type="radio"],
+      dd input[type="checkbox"] {
+        vertical-align: middle;
       }
     </style>
     <script>
@@ -78,46 +101,223 @@
 
   <body>
     <div id="wrap">
-      <input
-        type="range"
-        class="input range"
-        min="1"
-        max="31"
-        value="1"
-        step="1"
-      />
-      <br />
-      <br />
-      <input type="text" class="input" placeholder="일반 text" />
-      <br />
-      <br />
-      <input type="text" class="input ellipsis" placeholder="짤리면 말줄임" />
-      <br />
-      <br />
-      <br />
-      <br />
-      <input type="date" class="input" name="" id="" />
-      <br />
-      <br />
-      <br />
-      <br />
-      <input
-        type="text"
-        class="input"
-        placeholder="maxlength 5설정"
-        maxlength="5"
-      />
-      <br />
-      <br />
-      <input
-        type="text"
-        class="input maxlength"
-        placeholder="maxlength 5설정(별도 js 처리)"
-        maxlength="5"
-      />
-      <br />
-      <br />
-      <br />
+      <dl>
+        <dt>text 타입 : 가장 기본적인 한 줄 텍스트 입력 필드입니다.</dt>
+        <dd><input type="text" class="input" placeholder="일반 text" /></dd>
+      </dl>
+
+      <!-- <dl>
+        <dt>
+          text 타입 (ellipsis) : 텍스트가 길어지면 말줄임표(...)로 표시합니다.
+        </dt>
+        <dd>
+          <input
+            type="text"
+            class="input ellipsis"
+            placeholder="짤리면 말줄임"
+          />
+        </dd>
+      </dl> -->
+
+      <!-- <dl>
+        <dt>
+          text 타입 (maxlength) : 입력할 수 있는 최대 글자 수를 제한합니다.
+        </dt>
+        <dd>
+          <input
+            type="text"
+            class="input"
+            placeholder="maxlength 5설정"
+            maxlength="5"
+          />
+        </dd>
+      </dl> -->
+
+      <dl>
+        <dt>
+          text 타입 (maxlength JS 처리) : 자바스크립트를 이용해 최대 글자 수를
+          제어합니다.
+        </dt>
+        <dd>
+          <input
+            type="text"
+            class="input maxlength"
+            placeholder="maxlength 5설정(별도 js 처리)"
+            maxlength="5"
+          />
+        </dd>
+      </dl>
+
+      <dl>
+        <dt>
+          password 타입 : 입력한 내용이 마스킹 처리되어 보이지 않는 비밀번호
+          필드를 생성합니다.
+        </dt>
+        <dd><input type="password" class="input" placeholder="비밀번호" /></dd>
+      </dl>
+
+      <dl>
+        <dt>
+          email 타입 : 이메일 주소를 입력받으며 브라우저 차원에서 기본 유효성
+          검사를 제공합니다.
+        </dt>
+        <dd>
+          <input type="email" class="input" placeholder="test@test.com" />
+        </dd>
+      </dl>
+
+      <dl>
+        <dt>
+          tel 타입 : 전화번호를 입력하며 모바일에서 전화번호 전용 키패드를
+          띄웁니다.
+        </dt>
+        <dd><input type="tel" class="input" placeholder="010-0000-0000" /></dd>
+      </dl>
+
+      <dl>
+        <dt>
+          url 타입 : 웹 주소를 입력받으며 URL 형태 여부를 브라우저 자체적으로
+          검증합니다.
+        </dt>
+        <dd><input type="url" class="input" placeholder="https://..." /></dd>
+      </dl>
+
+      <dl>
+        <dt>
+          search 타입 : 검색어 입력에 특화되어, 모바일 등에서 전용 키패드가
+          표시되는 경우가 많습니다.
+        </dt>
+        <dd><input type="search" class="input" placeholder="검색어 입력" /></dd>
+      </dl>
+
+      <dl>
+        <dt>
+          number 타입 : 숫자를 입력할 수 있고 스피너를 이용해 값을 증감할 수
+          있습니다.
+        </dt>
+        <dd><input type="number" class="input" placeholder="10" /></dd>
+      </dl>
+
+      <dl>
+        <dt>range 타입 : 슬라이더 형태로 숫자 범위를 지정할 수 있습니다.</dt>
+        <dd>
+          <input
+            type="range"
+            class="input range"
+            min="1"
+            max="31"
+            value="1"
+            step="1"
+          />
+        </dd>
+      </dl>
+
+      <dl>
+        <dt>
+          date 타입 : 특정 연도, 월, 일을 선택할 수 있는 달력을 제공합니다.
+        </dt>
+        <dd><input type="date" class="input" name="" id="" /></dd>
+      </dl>
+
+      <dl>
+        <dt>time 타입 : 시, 분 등의 특정 시간을 선택할 수 있게 합니다.</dt>
+        <dd><input type="time" class="input" /></dd>
+      </dl>
+
+      <dl>
+        <dt>
+          datetime-local 타입 : 지역 시간 기준으로 날짜와 시간을 선택할 수 있게
+          합니다.
+        </dt>
+        <dd><input type="datetime-local" class="input" /></dd>
+      </dl>
+
+      <dl>
+        <dt>month 타입 : 연도와 월 단위로 날짜를 선택할 수 있게 합니다.</dt>
+        <dd><input type="month" class="input" /></dd>
+      </dl>
+
+      <dl>
+        <dt>
+          week 타입 : 특정 연도와 그 해의 몇 번째 주차인지를 선택할 수 있습니다.
+        </dt>
+        <dd><input type="week" class="input" /></dd>
+      </dl>
+
+      <dl>
+        <dt>
+          radio 타입 : 동일 그룹(name 속성) 내에서 하나만 선택 가능한 라디오
+          버튼입니다.
+        </dt>
+        <dd>
+          <input type="radio" name="demo-radio" id="rad1" />
+          <label for="rad1">옵션 A</label>&nbsp;
+          <input type="radio" name="demo-radio" id="rad2" />
+          <label for="rad2">옵션 B</label>
+        </dd>
+      </dl>
+
+      <dl>
+        <dt>checkbox 타입 : 선택 및 해제가 가능한 체크박스를 생성합니다.</dt>
+        <dd>
+          <input type="checkbox" id="chk1" />
+          <label for="chk1">체크 항목</label>
+        </dd>
+      </dl>
+
+      <dl>
+        <dt>color 타입 : 색상을 선택할 수 있는 위젯을 제공합니다.</dt>
+        <dd><input type="color" class="input" /></dd>
+      </dl>
+
+      <dl>
+        <dt>
+          file 타입 : 파일을 선택하거나 기기에서 업로드할 수 있도록 돕습니다.
+        </dt>
+        <dd>
+          <input
+            type="file"
+            class="input"
+            style="padding: 5px; line-height: normal"
+          />
+        </dd>
+      </dl>
+
+      <dl>
+        <dt>button 타입 : 클릭 가능한 일반 버튼을 생성합니다.</dt>
+        <dd><input type="button" value="버튼" class="input" /></dd>
+      </dl>
+
+      <dl>
+        <dt>submit 타입 : 작성한 폼 데이터를 서버 등 목적지로 제출합니다.</dt>
+        <dd><input type="submit" value="제출 버튼" class="input" /></dd>
+      </dl>
+
+      <dl>
+        <dt>
+          reset 타입 : 폼 내부에 있는 모든 입력값을 초기값으로 되돌립니다.
+        </dt>
+        <dd><input type="reset" value="초기화 버튼" class="input" /></dd>
+      </dl>
+
+      <dl>
+        <dt>image 타입 : 이미지 형태의 폼 제출 버튼을 만듭니다.</dt>
+        <dd>
+          <input
+            type="image"
+            src="https://via.placeholder.com/80x30?text=Submit"
+            alt="제출 이미지"
+          />
+        </dd>
+      </dl>
+
+      <dl>
+        <dt>
+          hidden 타입 : 사용자에게는 보이지 않지만 폼 전송 시 서버로 데이터가
+          부가적으로 전달됩니다.
+        </dt>
+        <dd><input type="hidden" value="숨김값" />(화면에 표시되지 않음)</dd>
+      </dl>
     </div>
   </body>
 </html>
