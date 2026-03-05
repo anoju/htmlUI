@@ -470,6 +470,21 @@ const updated = items.map(item =>
         },
         {
           category: "iterate",
+          name: "map (모든 객체 기존값 수정)",
+          desc: "객체 배열의 <strong>모든 객체</strong>가 이미 가지고 있는 기존 속성값을 일괄 변경하여 새로운 배열을 반환합니다.",
+          type: "immutable",
+          code: `const products = [
+  { id: 1, price: 1000 },
+  { id: 2, price: 2000 }
+];
+// 모든 상품 가격을 10% 인상
+const updatedProducts = products.map(p => ({
+  ...p,
+  price: p.price * 1.1
+}));`,
+        },
+        {
+          category: "iterate",
           name: "forEach (객체 직접 수정)",
           desc: "객체 배열을 순회하면서 <strong>조건을 만족하는 객체들</strong>의 속성을 원본에 직접 반영(Mutate)합니다.",
           type: "mutating",
@@ -482,6 +497,20 @@ items.forEach(item => {
   if (item.state === 'wait') {
     item.state = 'run';
   }
+});`,
+        },
+        {
+          category: "iterate",
+          name: "forEach (모든 객체 기존값 수정)",
+          desc: "객체 배열의 <strong>모든 객체</strong>를 순회하며 원본이 가진 기존 속성값을 직접 계산하여 교체(Mutate)합니다.",
+          type: "mutating",
+          code: `const products = [
+  { id: 1, price: 1000 },
+  { id: 2, price: 2000 }
+];
+// 모든 상품 가격을 10% 인상 (원본 수정)
+products.forEach(p => {
+  p.price = p.price * 1.1;
 });`,
         },
         {
