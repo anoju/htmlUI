@@ -119,7 +119,7 @@
         </dd>
       </dl> -->
 
-      <!-- <dl>
+      <dl>
         <dt>
           text 타입 (maxlength) : 입력할 수 있는 최대 글자 수를 제한합니다.
         </dt>
@@ -131,9 +131,9 @@
             maxlength="5"
           />
         </dd>
-      </dl> -->
+      </dl>
 
-      <dl>
+      <!-- <dl>
         <dt>
           text 타입 (maxlength JS 처리) : 자바스크립트를 이용해 최대 글자 수를
           제어합니다.
@@ -146,7 +146,7 @@
             maxlength="5"
           />
         </dd>
-      </dl>
+      </dl> -->
 
       <dl>
         <dt>
@@ -154,14 +154,6 @@
           필드를 생성합니다.
         </dt>
         <dd><input type="password" class="input" placeholder="비밀번호" /></dd>
-        <dd>
-          <input
-            type="text"
-            class="input"
-            placeholder="비밀번호"
-            inputmode="text"
-          />
-        </dd>
       </dl>
 
       <dl>
@@ -170,13 +162,13 @@
           검사를 제공합니다.
         </dt>
         <dd>
-          <input type="email" class="input" placeholder="test@test.com" />
+          <input type="email" class="input" placeholder="이메일 - type=email" />
         </dd>
         <dd>
           <input
             type="text"
             class="input"
-            placeholder="test@test.com"
+            placeholder="이메일 - inputmode=email"
             inputmode="email"
           />
         </dd>
@@ -187,12 +179,14 @@
           tel 타입 : 전화번호를 입력하며 모바일에서 전화번호 전용 키패드를
           띄웁니다.
         </dt>
-        <dd><input type="tel" class="input" placeholder="010-0000-0000" /></dd>
+        <dd>
+          <input type="tel" class="input" placeholder="전화번호 - type=tel" />
+        </dd>
         <dd>
           <input
             type="text"
             class="input"
-            placeholder="010-0000-0000"
+            placeholder="전화번호 - inputmode=tel"
             inputmode="tel"
           />
         </dd>
@@ -203,12 +197,14 @@
           url 타입 : 웹 주소를 입력받으며 URL 형태 여부를 브라우저 자체적으로
           검증합니다.
         </dt>
-        <dd><input type="url" class="input" placeholder="https://..." /></dd>
+        <dd>
+          <input type="url" class="input" placeholder="웹주소 - type=url" />
+        </dd>
         <dd>
           <input
             type="text"
             class="input"
-            placeholder="https://..."
+            placeholder="웹주소 - inputmode=url"
             inputmode="url"
           />
         </dd>
@@ -219,12 +215,18 @@
           search 타입 : 검색어 입력에 특화되어, 모바일 등에서 전용 키패드가
           표시되는 경우가 많습니다.
         </dt>
-        <dd><input type="search" class="input" placeholder="검색어 입력" /></dd>
+        <dd>
+          <input
+            type="search"
+            class="input"
+            placeholder="검색어 입력(type=search)"
+          />
+        </dd>
         <dd>
           <input
             type="text"
             class="input"
-            placeholder="검색어 입력"
+            placeholder="검색어 입력(inputmode=search)"
             inputmode="search"
           />
         </dd>
@@ -235,13 +237,23 @@
           number 타입 : 숫자를 입력할 수 있고 스피너를 이용해 값을 증감할 수
           있습니다.
         </dt>
-        <dd><input type="number" class="input" placeholder="10" /></dd>
+        <dd>
+          <input type="number" class="input" placeholder="숫자 - type=number" />
+        </dd>
         <dd>
           <input
             type="text"
             class="input"
-            placeholder="10"
+            placeholder="숫자 - inputmode=numeric"
             inputmode="numeric"
+          />
+        </dd>
+        <dd>
+          <input
+            type="text"
+            class="input"
+            placeholder="숫자 - inputmode=decimal (소수점 포함)"
+            inputmode="decimal"
           />
         </dd>
       </dl>
