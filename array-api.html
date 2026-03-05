@@ -485,6 +485,23 @@ const updatedProducts = products.map(p => ({
         },
         {
           category: "iterate",
+          name: "map (상태/Props 안전한 복사)",
+          desc: "Vue/React에서 <code style='color:#fca5a5;'>[...arr]</code>를 쓰더라도 <strong>내부 객체는 원본 참조를 유지</strong>하는 문제를 해결합니다. 객체까지 새로 얕은 복사하여 원본(Props)을 보호합니다.",
+          type: "immutable",
+          code: `const propsItems = [{ id: 1, val: 10 }];
+
+// ❌ 잘못된 예 (props 원본 내부 객체 변형 발생)
+// const bad = [...propsItems]; 
+// bad[0].val = 20; // 경고: Mutating props!
+
+// ✅ 올바른 예 (map과 전개 연산자로 객체도 새로 생성)
+const safeItems = propsItems.map(item => ({
+  ...item,   // 기존 속성 복제
+  val: 20    // 수정할 속성 덮어쓰기
+}));`,
+        },
+        {
+          category: "iterate",
           name: "forEach (객체 직접 수정)",
           desc: "객체 배열을 순회하면서 <strong>조건을 만족하는 객체들</strong>의 속성을 원본에 직접 반영(Mutate)합니다.",
           type: "mutating",
@@ -504,7 +521,7 @@ items.forEach(item => {
           name: "forEach (모든 객체 기존값 수정)",
           desc: "객체 배열의 <strong>모든 객체</strong>를 순회하며 원본이 가진 기존 속성값을 직접 계산하여 교체(Mutate)합니다.",
           type: "mutating",
-          code: `const products = [
+          code: `const items = [
   { id: 1, price: 1000 },
   { id: 2, price: 2000 }
 ];
