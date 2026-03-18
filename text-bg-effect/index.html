@@ -51,14 +51,14 @@
       /* 밑에 깔려있는 베이스 텍스트 (덮일 때 같이 숨겨져야 투명구멍을 안 가립니다) */
       .base-svg {
         clip-path: inset(0 0 0 0);
-        animation: hideBase var(--anim-duration) infinite;
+        animation: hideBase var(--anim-duration) forwards;
       }
 
       /* 애니메이션이 적용되는 상위 덮개 레이어 */
       .sweep-layer {
         pointer-events: none;
         clip-path: inset(0 100% 0 0);
-        animation: revealSweep var(--anim-duration) infinite;
+        animation: revealSweep var(--anim-duration) forwards;
       }
 
       /* 덮개 영역 애니메이션: 좌측부터 채우고 우측으로 사라짐 */
