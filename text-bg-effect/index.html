@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Knockout Sweep Effect</title>
+    <style>
+      :root {
+        --sweep-bg-color: #007aff; /* 왼쪽에서 채워지는 꽉 찬 배경 색상 */
+        --base-text-color: #ffffff; /* 안 덮였을 때 베이스로 깔려있는 텍스트 색상 */
+        --anim-duration: 4s;
+      }
+
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        /* 
+          투명함을 증명하기 위한 임의의 배경 이미지. 
+          실제환경에서는 z-index가 낮은 <video> 등을 뒤에 대신 깔면 됩니다.
+        */
+        background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2560&auto=format&fit=crop') center/cover no-repeat;
+        
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      }
+
+      /* 텍스트 효과 전체 컨테이너 */
+      .sweep-container {
+        position: relative;
+        width: 100vw;
+        height: 200px; /* 상황에 맞춰 높이 조절 */
+        max-width: 1000px;
+        user-select: none;
+      }
+
+      /* 베이스 텍스트 레이어, 움직이는 블록 레이어 공통 포지션 */
+      .base-svg, .sweep-layer {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+      }
+
+      svg {
+        display: block;
+        width: 100%; height: 100%;
+      }
+
+      /* 밑에 깔려있는 베이스 텍스트 (덮일 때 같이 숨겨져야 투명구멍을 안 가립니다) */
+      .base-svg {
+        clip-path: inset(0 0 0 0);
+        animation: hideBase var(--anim-duration) infinite;
+      }
+
+      /* 애니메이션이 적용되는 상위 덮개 레이어 */
+      .sweep-layer {
+        pointer-events: none;
+        clip-path: inset(0 100% 0 0);
+        animation: revealSweep var(--anim-duration) infinite;
+      }
+
+      /* 덮개 영역 애니메이션: 좌측부터 채우고 우측으로 사라짐 */
+      @keyframes revealSweep {
+        0% {
+          clip-path: inset(0 100% 0 0);
+          animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+        }
+        35% {
+          clip-path: inset(0 0 0 0); /* 꽉 찬 상태 */
+          animation-timing-function: linear; 
+        }
+        65% {
+          clip-path: inset(0 0 0 0); 
+          animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+        }
+        100% {
+          clip-path: inset(0 0 0 100%); /* 오른쪽으로 사라짐 */
+        }
+      }
+
+      /* 베이스 텍스트 애니메이션: 덮개가 덮은 부분은 삭제(clip)하여 영상 배경이 비치게 함 */
+      @keyframes hideBase {
+        0% {
+          clip-path: inset(0 0 0 0); /* 다 보임 */
+          animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+        }
+        35% {
+          clip-path: inset(0 0 0 100%); /* 왼쪽부터 완전히 잘려나가서 숨겨짐 */
+          animation-timing-function: linear;
+        }
+        65% {
+          clip-path: inset(0 100% 0 0); /* 상태 반전 (우측을 깎아서 숨김) - 모양이 자연스럽게 역전환될 준비 */
+          animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+        }
+        100% {
+          clip-path: inset(0 0 0 0); /* 덮개가 우측으로 사라지면서 다시 베이스 텍스트가 좌측부터 드러남 */
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- 
+      글자 부분을 하얗게나 검게 '속이는' 것이 아니라, 
+      **실제로 완전히 투명하게 구멍(Knockout)을 내어 뒷 배경(영상)이 보이도록** 
+      SVG 마스크를 사용한 고도화된 구조입니다.
+    -->
+    <div class="sweep-container">
+      
+      <!-- 1. 밑에 깔려있는 베이스 텍스트 (덮이는 영역만큼 투명해지는 애니메이션 적용) -->
+      <svg class="base-svg">
+        <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-size="5rem" font-weight="900" fill="var(--base-text-color)">
+          SWEEP EFFECT
+        </text>
+      </svg>
+
+      <!-- 2. 왼쪽에서 애니메이션으로 채워지는 레이어 (SVG text mask 활용) -->
+      <div class="sweep-layer">
+        <svg>
+          <defs>
+            <mask id="knockout-text">
+              <!-- 흰색 영역은 덮었을때 색상이 보일 바탕 영역입니다. (보존) -->
+              <rect width="100%" height="100%" fill="white" />
+              <!-- 검은색 영역의 텍스트 배치로 해당 모양만큼 배경을 투명하게 뚫어냅니다. (펀칭) -->
+              <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-size="5rem" font-weight="900" fill="black">
+                SWEEP EFFECT
+              </text>
+            </mask>
+          </defs>
+          
+          <!-- mask를 적용한 솔리드 배경 사각형 (이 사각형은 부모 div의 clip-path에 의해 좌우로 잘림) -->
+          <rect width="100%" height="100%" fill="var(--sweep-bg-color)" mask="url(#knockout-text)" />
+        </svg>
+      </div>
+      
+    </div>
+
+  </body>
+</html>
