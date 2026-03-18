@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Specificity Calculator</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="calculator-container" id="calculatorContainer">
+        <header class="header">
+            <h1 class="header__title">CSS Specificity Calculator</h1>
+            <p class="header__description">CSS 선택자를 입력하여 스타일 우선순위 점수를 계산하고 분석해보세요.</p>
+        </header>
+
+        <main class="main-content">
+            <div class="comparison-container">
+                <div class="input-card" id="inputCard1">
+                    <h3 class="input-card__title">선택자 A</h3>
+                    <div class="input-wrapper">
+                        <input type="text" id="selectorInput1" class="input-field" placeholder="예: #main .nav" aria-label="선택자 A 입력">
+                    </div>
+                </div>
+                <div class="comparison-vs">VS</div>
+                <div class="input-card" id="inputCard2">
+                    <h3 class="input-card__title">선택자 B</h3>
+                    <div class="input-wrapper">
+                        <input type="text" id="selectorInput2" class="input-field" placeholder="예: body .container div" aria-label="선택자 B 입력">
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-section">
+                <button id="calculateBtn" class="calculate-btn">점수 비교하기</button>
+            </div>
+
+            <div id="resultSection" class="result-section hidden">
+                <div class="comparison-results">
+                    <!-- Result Card A -->
+                    <div class="result-card" id="resultCardA">
+                        <div class="result-card__header">선택자 A</div>
+                        <div class="result-card__score" id="totalScoreA">0</div>
+                        <div class="result-card__details">
+                            <span id="specSummaryA">(0, 0, 0)</span>
+                            <span class="important-badge hidden" id="importantBadgeA">!important</span>
+                        </div>
+                    </div>
+
+                    <!-- Result Card B -->
+                    <div class="result-card" id="resultCardB">
+                        <div class="result-card__header">선택자 B</div>
+                        <div class="result-card__score" id="totalScoreB">0</div>
+                        <div class="result-card__details">
+                            <span id="specSummaryB">(0, 0, 0)</span>
+                            <span class="important-badge hidden" id="importantBadgeB">!important</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="winner-announcement" id="winnerAnnouncement">
+                    결과를 기다리는 중...
+                </div>
+            </div>
+
+            <div class="guide-panel">
+                <h2 class="guide-panel__title">CSS 점수 가이드 (Specificity Guide)</h2>
+                <div class="guide-grid">
+                    <div class="guide-item">
+                        <span class="guide-item__label">!important</span>
+                        <span class="guide-item__score">무한대 (∞)</span>
+                    </div>
+                    <div class="guide-item">
+                        <span class="guide-item__label">인라인 스타일 (style="")</span>
+                        <span class="guide-item__score">1,000점</span>
+                    </div>
+                    <div class="guide-item">
+                        <span class="guide-item__label">ID 선택자 (#id)</span>
+                        <span class="guide-item__score">100점</span>
+                    </div>
+                    <div class="guide-item">
+                        <span class="guide-item__label">Class, Attr, Pseudo-class</span>
+                        <span class="guide-item__score">10점</span>
+                    </div>
+                    <div class="guide-item">
+                        <span class="guide-item__label">Tag, Pseudo-element</span>
+                        <span class="guide-item__score">1점</span>
+                    </div>
+                    <div class="guide-item">
+                        <span class="guide-item__label">전체 선택자 (*), 부정 선택자</span>
+                        <span class="guide-item__score">0점</span>
+                    </div>
+                </div>
+                <p class="guide-panel__note">* 본 계산기는 가상의 인라인 점수 체계(1000, 100, 10, 1)를 시각화 목적으로 사용합니다.</p>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p class="footer__note">참고: <code>!important</code>나 인라인 스타일은 이 계산기에 포함되지 않습니다.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
