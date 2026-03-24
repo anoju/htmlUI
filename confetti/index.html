@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Confetti Function</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f1f5f9;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+      }
+
+      .celebration-container {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        height: 600px;
+        background-color: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      .trigger-button {
+        padding: 16px 32px;
+        font-size: 1.125rem;
+        font-weight: bold;
+        color: #ffffff;
+        background-color: #4f46e5;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        transition:
+          background-color 0.2s ease,
+          transform 0.1s ease,
+          box-shadow 0.2s ease;
+        z-index: 10;
+      }
+
+      .trigger-button:hover {
+        background-color: #4338ca;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+      }
+
+      .trigger-button:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+      }
+
+      .confetti-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 5;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="celebration-container" id="celebrationContainer">
+      <button type="button" class="trigger-button" id="triggerButton">
+        효과 터뜨리기
+      </button>
+      <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
+    </main>
+
+    <script>
+      /**
+       * @description
+       * 캔버스 요소 하나와 설정 객체를 받아 컨페티 효과를 동작시키는 독립형 함수입니다.
+       * 클래스로 묶거나 전역 공간을 분리하여 다른 곳에서 가져다 쓰기 편리하게 제공합니다.
+       */
+      const makeConfettiEffect = (() => {
+        // 애니메이션 제어를 위한 내장 상태값
+        let particles = [];
+        let animationId = null;
+
+        // 무작위 범위 추출 유틸리티
+        const randomRange = (min, max) => Math.random() * (max - min) + min;
+
+        // 1. 단일 파티클 클래스
+        class ConfettiParticle {
+          constructor(x, y, options) {
+            this.x = x;
+            this.y = y;
+
+            this.width = randomRange(8, 14);
+            this.height = randomRange(16, 22);
+
+            // 옵션(각도/강도 구하기)
+            // 캔버스의 좌표계상 위쪽 방향 정중앙은 -90도(또는 270도)입니다.
+            const centerAngle = (Math.PI * 3) / 2; // 직각 위쪽 (1.5 PI)
+            const spreadRad = (options.spread * Math.PI) / 180; // 퍼짐(spread) 각도 라디안 변환
+
+            // centerAngle 기준으로 뻗어나갈 범위 절반씩 설정 (-퍼짐각도/2 ~ +퍼짐각도/2)
+            const angle = randomRange(
+              centerAngle - spreadRad / 2,
+              centerAngle + spreadRad / 2,
+            );
+
+            // 강도(velocity)에 랜덤성을 약간 주어 한 번에 뭉쳐서 그려지는 현상을 방지
+            const velocity = randomRange(
+              options.velocity * 0.7,
+              options.velocity * 1.1,
+            );
+
+            this.vx = Math.cos(angle) * velocity;
+            this.vy = Math.sin(angle) * velocity;
+
+            // 공기 저항 및 환경 변수
+            this.friction = 0.95;
+            // 떨어지는 가속도 적용 (옵션에서 전달받음)
+            this.gravity = options.gravity;
+
+            this.rotationZ = randomRange(0, 360);
+            this.rotationX = randomRange(0, 360);
+            this.rotationY = randomRange(0, 360);
+
+            this.rotationSpeedZ = randomRange(-4, 4);
+            this.rotationSpeedX = randomRange(-12, 12);
+            this.rotationSpeedY = randomRange(-12, 12);
+
+            this.color =
+              options.colors[Math.floor(Math.random() * options.colors.length)];
+            this.shape =
+              options.shapes[Math.floor(Math.random() * options.shapes.length)];
+            this.opacity = 1;
+            this.fadeRate = randomRange(0.005, 0.015);
+          }
+
+          update() {
+            this.vx *= this.friction;
+            this.vy *= this.friction;
+
+            this.vy += this.gravity;
+            this.x += this.vx;
+            this.y += this.vy;
+
+            this.rotationZ += this.rotationSpeedZ;
+            this.rotationX += this.rotationSpeedX;
+            this.rotationY += this.rotationSpeedY;
+
+            if (this.vy > 0) {
+              this.opacity -= this.fadeRate;
+            }
+          }
+
+          draw(ctx) {
+            if (this.opacity <= 0) return;
+
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, this.opacity);
+            ctx.translate(this.x, this.y);
+            ctx.rotate((this.rotationZ * Math.PI) / 180);
+
+            const scaleX = Math.cos((this.rotationY * Math.PI) / 180);
+            const scaleY = Math.cos((this.rotationX * Math.PI) / 180);
+            ctx.scale(Math.abs(scaleX) + 0.1, Math.abs(scaleY) + 0.1);
+
+            ctx.fillStyle = this.color;
+            
+            // 형태(shape) 옵션에 따른 렌더링 분기
+            if (this.shape === "circle") {
+              ctx.beginPath();
+              // 타원(ellipse)으로 그려서 3D 회전 시 자연스러운 원형 입체감을 유지합니다
+              ctx.ellipse(0, 0, this.width / 2, this.height / 2, 0, 0, Math.PI * 2);
+              ctx.fill();
+            } else {
+              // 기본 사각형 (square 옵션 대응)
+              ctx.fillRect(
+                -this.width / 2,
+                -this.height / 2,
+                this.width,
+                this.height,
+              );
+            }
+            ctx.restore();
+          }
+        }
+
+        // 2. 최종으로 외부에서 사용하게 될 발동 함수
+        return (canvasObj, userOptions = {}) => {
+          if (!canvasObj) return;
+          const ctx = canvasObj.getContext("2d");
+          if (!ctx) return;
+
+          // 사용자가 제공한 옵션 혹은 기본 옵션
+          const defaults = {
+            colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"],
+            shapes: ["square", "circle"], // 사용할 모양 배열 지원 ('square', 'circle')
+            particleCount: 20, // 파티클 수
+            velocity: 24, // 강도(터져 올라가는 높이/초기 가속도 최고치)
+            spread: 80, // 각도(퍼지는 반경: 80도면 중앙 기준 좌로 40, 우로 40)
+            gravity: 0.4, // 떨어지는 가속도 조절 (낮을수록 천천히 떠다니며 내려옴)
+          };
+          const config = { ...defaults, ...userOptions };
+
+          // [resize 이벤트 제거 관련 조치]
+          // 캔버스의 그리기 영역(width, height)과 실제 DOM(Client) 크기를 효과 렌더링 시작 직전에만 동기화시킵니다.
+          // 항상 브라우저 창 크기를 줄였다 늘렸다 하는 경우가 아니기 때문에 불필요한 이벤트리스너를 둘 필요는 없습니다.
+          canvasObj.width = canvasObj.clientWidth;
+          canvasObj.height = canvasObj.clientHeight;
+
+          // 중앙 하단에서 시작
+          const startX = canvasObj.width / 2;
+          const startY = canvasObj.height;
+
+          for (let i = 0; i < config.particleCount; i++) {
+            particles.push(new ConfettiParticle(startX, startY, config));
+          }
+
+          // 애니메이션 루프
+          const animate = () => {
+            ctx.clearRect(0, 0, canvasObj.width, canvasObj.height);
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+              const particle = particles[i];
+              particle.update();
+              particle.draw(ctx);
+
+              if (
+                particle.opacity <= 0 ||
+                particle.y > canvasObj.height + 100
+              ) {
+                particles.splice(i, 1);
+              }
+            }
+
+            if (particles.length > 0) {
+              animationId = requestAnimationFrame(animate);
+            } else {
+              ctx.clearRect(0, 0, canvasObj.width, canvasObj.height);
+              cancelAnimationFrame(animationId);
+              animationId = null;
+            }
+          };
+
+          // 기존에 작동 중이지 않다면 새롭게 루프 실행 시작
+          if (!animationId) {
+            animate();
+          }
+        };
+      })();
+
+      // ----------------------------------------------------------------------
+      // [사용 예시 영역]
+      // ----------------------------------------------------------------------
+      const canvasRef = document.getElementById("confettiCanvas");
+      const triggerBtn = document.getElementById("triggerButton");
+
+      triggerBtn?.addEventListener("click", () => {
+        // 사용할 때 캔버스 요소와 구성 객체(options)를 전달합니다.
+        makeConfettiEffect(canvasRef, {
+          colors: ["#FF3860", "#FFDD57", "#48C774", "#3298DC", "#B86BFF"], // 내가 사용할 컬러 배열
+          shapes: ["square", "circle"], // 🌟 사각형 및 원형 조각 섞어서 투입 ("square"만 넣으면 사각형만 떨어짐)
+          particleCount: 20, // 총 터지는 파티클 수
+          velocity: 26, // 터지는 강도 (수치가 클수록 높이 솟음)
+          spread: 90, // 퍼지는 각도 (90 이면 부채꼴 90도 모양만큼 퍼짐)
+          gravity: 0.15, // 떨어지는 속도 조절 (기본 0.4, 낮을수록 천천히 하늘하늘 떨어짐)
+        });
+      });
+    </script>
+  </body>
+</html>
