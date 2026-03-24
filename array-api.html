@@ -565,6 +565,11 @@ const grouped = Object.values(data.reduce((acc, cur) => {
     acc[key] = { category: cur.category, items: [] };
   }
   acc[key].items.push({ name: cur.name, price: cur.price });
+  
+  // 💡 category를 제외한 나머지 모든 속성 한 번에 넣으려면 이렇게
+  // const { category, ...rest } = cur;
+  // acc[key].items.push(rest);
+  
   return acc;
 }, {}));
 // 결과:
@@ -592,7 +597,11 @@ const grouped = Object.values(data.reduce((acc, cur) => {
   if (!acc[key]) {
     acc[key] = { code: cur.code, category: cur.category, items: [] };
   }
-  acc[key].items.push({ name: cur.name, price: cur.price });
+  
+  // 💡 code, category를 제외한 나머지 모든 속성 한 번에 넣으려면 이렇게
+  // const { code, category, ...rest } = cur;
+  // acc[key].items.push(rest);
+  
   return acc;
 }, {}));
 // 결과:
