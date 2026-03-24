@@ -68,7 +68,7 @@
         width: 100%;
         height: 100%;
         pointer-events: none;
-        z-index: 5;
+        z-index: 1;
       }
     </style>
   </head>
@@ -114,19 +114,24 @@
               centerAngle + spreadRad / 2,
             );
 
-            // 강도(velocity)에 랜덤성을 약간 주어 한 번에 뭉쳐서 그려지는 현상을 방지
+            // 강도(velocity) 범위를 좀 더 넓혀 터지는 입체감을 줍니다
             const velocity = randomRange(
-              options.velocity * 0.7,
-              options.velocity * 1.1,
+              options.velocity * 0.6,
+              options.velocity * 1.2,
             );
 
             this.vx = Math.cos(angle) * velocity;
             this.vy = Math.sin(angle) * velocity;
 
-            // 공기 저항 및 환경 변수
-            this.friction = 0.95;
-            // 떨어지는 가속도 적용 (옵션에서 전달받음)
-            this.gravity = options.gravity;
+            // 공기 저항(마찰력)을 파티클마다 다르게 두어 똑같은 속도로 떨어지는 현상 방지
+            this.friction = randomRange(0.90, 0.98);
+            
+            // 떨어지는 중력에도 무게(mass) 차이를 주어 낙하 속도 분산 (0.7 ~ 1.3 배)
+            this.gravity = options.gravity * randomRange(0.7, 1.3);
+
+            // 좌우 흔들림(잎사귀가 흩날리는 듯한 효과) 변수
+            this.driftBase = randomRange(-1.5, 1.5);
+            this.driftPhase = randomRange(0, Math.PI * 2);
 
             this.rotationZ = randomRange(0, 360);
             this.rotationX = randomRange(0, 360);
@@ -150,6 +155,12 @@
 
             this.vy += this.gravity;
             this.x += this.vx;
+            
+            // 떨어지는 중에만 좌우 흔들림(바람에 날리는 효과) 추가
+            if (this.vy > 0) {
+              this.driftPhase += 0.1;
+              this.x += Math.sin(this.driftPhase) * this.driftBase;
+            }
             this.y += this.vy;
 
             this.rotationZ += this.rotationSpeedZ;
@@ -174,12 +185,20 @@
             ctx.scale(Math.abs(scaleX) + 0.1, Math.abs(scaleY) + 0.1);
 
             ctx.fillStyle = this.color;
-            
+
             // 형태(shape) 옵션에 따른 렌더링 분기
             if (this.shape === "circle") {
               ctx.beginPath();
               // 타원(ellipse)으로 그려서 3D 회전 시 자연스러운 원형 입체감을 유지합니다
-              ctx.ellipse(0, 0, this.width / 2, this.height / 2, 0, 0, Math.PI * 2);
+              ctx.ellipse(
+                0,
+                0,
+                this.width / 2,
+                this.height / 2,
+                0,
+                0,
+                Math.PI * 2,
+              );
               ctx.fill();
             } else {
               // 기본 사각형 (square 옵션 대응)
@@ -208,6 +227,7 @@
             velocity: 24, // 강도(터져 올라가는 높이/초기 가속도 최고치)
             spread: 80, // 각도(퍼지는 반경: 80도면 중앙 기준 좌로 40, 우로 40)
             gravity: 0.4, // 떨어지는 가속도 조절 (낮을수록 천천히 떠다니며 내려옴)
+            duration: 0, // 🌟 분산 배출 시간 (ms). 0이면 한 번에 전체 폭발.
           };
           const config = { ...defaults, ...userOptions };
 
@@ -217,12 +237,44 @@
           canvasObj.width = canvasObj.clientWidth;
           canvasObj.height = canvasObj.clientHeight;
 
-          // 중앙 하단에서 시작
+          // 중앙 하단에서 시작 (시작 위치 미세 분산)
           const startX = canvasObj.width / 2;
           const startY = canvasObj.height;
 
-          for (let i = 0; i < config.particleCount; i++) {
-            particles.push(new ConfettiParticle(startX, startY, config));
+          // duration 옵션에 따른 분산 배출 로직
+          if (!config.duration || config.duration <= 0) {
+            // 시간 설정이 없으면 한 번에 즉각 배출
+            for (let i = 0; i < config.particleCount; i++) {
+              particles.push(new ConfettiParticle(startX + randomRange(-10, 10), startY, config));
+            }
+          } else {
+            // 시간 설정이 있으면 일정 시간 동안 꾸준히 나누어서 배출
+            let particlesEmitted = 0;
+            let interval = config.duration / config.particleCount;
+            let batchSize = 1;
+
+            // setTimeout/ setInterval의 최적화를 위해 최소 배출 간격을 16ms로 설정
+            if (interval < 16) {
+              batchSize = Math.ceil(16 / interval);
+              interval = 16;
+            }
+
+            const emitInterval = setInterval(() => {
+              const currentBatch = Math.min(batchSize, config.particleCount - particlesEmitted);
+              for (let i = 0; i < currentBatch; i++) {
+                particles.push(new ConfettiParticle(startX + randomRange(-10, 10), startY, config));
+              }
+              particlesEmitted += currentBatch;
+
+              // 만약 비동기 배출 중 애니메이션 루프가 끝났다면 다시 깨워줍니다.
+              if (!animationId && particles.length > 0) {
+                animate();
+              }
+
+              if (particlesEmitted >= config.particleCount) {
+                clearInterval(emitInterval);
+              }
+            }, interval);
           }
 
           // 애니메이션 루프
@@ -269,10 +321,11 @@
         makeConfettiEffect(canvasRef, {
           colors: ["#FF3860", "#FFDD57", "#48C774", "#3298DC", "#B86BFF"], // 내가 사용할 컬러 배열
           shapes: ["square", "circle"], // 🌟 사각형 및 원형 조각 섞어서 투입 ("square"만 넣으면 사각형만 떨어짐)
-          particleCount: 20, // 총 터지는 파티클 수
+          particleCount: 200, // 총 터지는 파티클 수
           velocity: 26, // 터지는 강도 (수치가 클수록 높이 솟음)
           spread: 90, // 퍼지는 각도 (90 이면 부채꼴 90도 모양만큼 퍼짐)
           gravity: 0.15, // 떨어지는 속도 조절 (기본 0.4, 낮을수록 천천히 하늘하늘 떨어짐)
+          duration: 2000, // 🌟 이 시간(ms) 동안 분산되어 지속 배출됨 (예: 2초간 흩뿌려짐)
         });
       });
     </script>
