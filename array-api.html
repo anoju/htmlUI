@@ -552,6 +552,63 @@ const total = cart.reduce((acc, cur) => acc + cur.price, 0);
         },
         {
           category: "iterate",
+          name: "reduce (단일 조건 그룹화)",
+          desc: "<strong>단일 속성(category)</strong>만을 기준으로 객체 배열을 그룹화하여 새로운 데이터 구조를 만듭니다.",
+          type: "immutable",
+          code: `const data = [
+  {code: 1, category: '사과', name: '제주 사과', price: 1500},
+  {code: 2, category: '사과', name: '서울 사과', price: 2500}
+];
+const grouped = Object.values(data.reduce((acc, cur) => {
+  const key = cur.category;
+  if (!acc[key]) {
+    acc[key] = { category: cur.category, items: [] };
+  }
+  acc[key].items.push({ name: cur.name, price: cur.price });
+  return acc;
+}, {}));
+// 결과:
+// [
+//   {
+//     category: '사과',
+//     items: [
+//       {name: '제주 사과', price: 1500},
+//       {name: '서울 사과', price: 2500}
+//     ]
+//   }
+// ]`,
+        },
+        {
+          category: "iterate",
+          name: "reduce (다중 조건 그룹화)",
+          desc: "<strong>다중 속성(code, category)</strong>을 결합한 키로 객체 배열을 묶어서 하위 배열(items)이 있는 구조로 변환합니다.",
+          type: "immutable",
+          code: `const data = [
+  {code: 1, category: '바나나', name: '제주바나나', price: 5000},
+  {code: 1, category: '바나나', name: '서울바나나', price: 6000}
+];
+const grouped = Object.values(data.reduce((acc, cur) => {
+  const key = cur.code + '-' + cur.category;
+  if (!acc[key]) {
+    acc[key] = { code: cur.code, category: cur.category, items: [] };
+  }
+  acc[key].items.push({ name: cur.name, price: cur.price });
+  return acc;
+}, {}));
+// 결과:
+// [
+//   {
+//     code: 1,
+//     category: '바나나',
+//     items: [
+//       {name: '제주바나나', price: 5000},
+//       {name: '서울바나나', price: 6000}
+//     ]
+//   }
+// ]`,
+        },
+        {
+          category: "iterate",
           name: "flatMap",
           desc: "매핑 함수를 사용해 각 요소를 매핑한 다음, 결과를 새로운 배열로 평탄화(depth 1)합니다.",
           type: "immutable",
