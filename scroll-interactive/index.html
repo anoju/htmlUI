@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iPhone 15 Pro - Apple (Clone)</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Library Styles -->
+    <link rel="stylesheet" href="./lib/scroll-interactor.css" />
+
+    <style>
+      :root {
+        --bg-color: #000;
+        --text-color: #f5f5f7;
+        --accent-color: #9b9b9b;
+        --nav-height: 48px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Montserrat", "Noto Sans KR", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.5;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Premium Navigation */
+      .global-nav {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: var(--nav-height);
+        background: rgba(0, 0, 0, 0.82);
+        backdrop-filter: blur(20px);
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+      }
+      .global-nav a {
+        color: var(--accent-color);
+        text-decoration: none;
+        font-size: 12px;
+        margin: 0 20px;
+        transition: color 0.3s;
+      }
+      .global-nav a:hover {
+        color: #fff;
+      }
+
+      .local-nav {
+        position: sticky;
+        top: var(--nav-height);
+        width: 100%;
+        height: 52px;
+        background: rgba(22, 22, 23, 0.82);
+        backdrop-filter: blur(20px);
+        z-index: 999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+      }
+      .local-nav-content {
+        width: 100%;
+        max-width: 980px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 22px;
+      }
+      .product-title {
+        font-size: 21px;
+        font-weight: 700;
+      }
+      .cta-button {
+        background: #0071e3;
+        color: #fff;
+        padding: 4px 11px;
+        border-radius: 980px;
+        font-size: 12px;
+        text-decoration: none;
+        transition: background 0.3s;
+      }
+      .cta-button:hover {
+        background: #0077ed;
+      }
+
+      /* Sections */
+      .hero-message {
+        font-size: 4rem;
+        font-weight: 900;
+        width: fit-content;
+        background: linear-gradient(135deg, #fff 0%, #a2a2a2 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        padding: 0 20px;
+      }
+
+      .feature-text {
+        font-size: 1.5rem;
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+        font-weight: 700;
+      }
+
+      .sub-message {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #86868b;
+      }
+      .highlight {
+        color: #f5f5f7;
+      }
+
+      .si-normal-section {
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40vh;
+        padding: 50px 20px;
+      }
+
+      /* Section 2 Giant Text Style */
+      .reveal-text-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #000;
+        overflow: hidden;
+      }
+      .giant-text {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: #f5f5f7;
+        text-align: center;
+        line-height: 1.2;
+        transform: scale(600); /* Initial massive scale */
+        white-space: nowrap;
+      }
+
+      /* Loading Screen */
+      .si-before-load #loading-overlay {
+        display: flex;
+      }
+      #loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 2000;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Section 4 Custom Styles (Non-Canvas) */
+      .blend-wrapper {
+        width: 80%; /* Initial content width */
+        height: 70vh;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        overflow: hidden;
+        border-radius: 30px;
+        transition: border-radius 0.3s;
+        z-index: 10;
+        background: #111;
+      }
+      .blend-img-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      .blend-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .blend-img.img-2 {
+        clip-path: inset(100% 0 0 0);
+      }
+
+      /* Footer */
+      footer {
+        padding: 60px 20px;
+        background: #111;
+        text-align: center;
+        color: #86868b;
+        font-size: 14px;
+        border-top: 1px solid #333;
+      }
+    </style>
+  </head>
+  <body class="si-before-load">
+    <div id="loading-overlay">
+      <div class="spinner"></div>
+      <p style="margin-top: 20px; color: #fff">티타늄급 로딩 중...</p>
+    </div>
+
+    <nav class="global-nav">
+      <a href="#">Store</a>
+      <a href="#">Mac</a>
+      <a href="#">iPad</a>
+      <a href="#">iPhone</a>
+      <a href="#">Watch</a>
+      <a href="#">Support</a>
+    </nav>
+
+    <nav class="local-nav">
+      <div class="local-nav-content">
+        <div class="product-title">iPhone 15 Pro</div>
+        <div>
+          <a
+            href="#"
+            style="
+              color: #86868b;
+              text-decoration: none;
+              font-size: 12px;
+              margin-right: 20px;
+            "
+            >Overview</a
+          >
+          <a href="#" class="cta-button">Buy Now</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Section 1: Hero Scrubber -->
+    <section id="section-hero" class="si-scroll-section">
+      <div class="si-sticky-container">
+        <canvas id="canvas-hero" width="1920" height="1080"></canvas>
+        <div class="si-sticky-elem msg-1">
+          <h1 class="hero-message">티타늄. 강인함.<br />가벼움. 프로.</h1>
+        </div>
+        <div class="si-sticky-elem msg-2">
+          <h1 class="hero-message">
+            A17 Pro 칩.<br />게이트웨이 투 프로 레벨.
+          </h1>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Giant Text Reveal (Sticky) -->
+    <section id="section-zoom" class="si-scroll-section">
+      <div class="si-sticky-container">
+        <div class="reveal-text-wrapper">
+          <h2 class="giant-text">
+            새로운 디자인의 핵심은<br />
+            역대 가장 가벼운 프로 라인업을 완성하는<br />
+            항공우주 등급의 티타늄입니다.
+          </h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Detail Scrubber -->
+    <section id="section-detail" class="si-scroll-section">
+      <div class="si-sticky-container">
+        <canvas id="canvas-detail" width="1920" height="1080"></canvas>
+        <div class="si-sticky-elem msg-3">
+          <h2 class="hero-message" style="font-size: 3rem">
+            새로운 카메라 시스템.<br />가장 강력한 줌.
+          </h2>
+        </div>
+        <div
+          class="si-sticky-elem msg-4"
+          style="text-align: left; padding: 0 10vw"
+        >
+          <p class="feature-text">최대 5배 광학 줌으로 거리를 좁히다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Final Image Blend (DOM version) -->
+    <section id="section-blend" class="si-scroll-section">
+      <div class="si-sticky-container" style="background: #000">
+        <div class="blend-wrapper">
+          <div class="blend-img-container">
+            <img
+              src="./assets/images/blend-image-1.jpg"
+              class="blend-img img-1"
+              alt="iPhone Detail 1"
+            />
+            <img
+              src="./assets/images/blend-image-2.jpg"
+              class="blend-img img-2"
+              alt="iPhone Detail 2"
+            />
+          </div>
+        </div>
+        <div class="si-sticky-elem msg-final" style="pointer-events: none">
+          <h1 class="hero-message">iPhone 15 Pro</h1>
+          <p style="margin-top: 20px; font-size: 1.2rem; color: #86868b">
+            강력한 성능, 가벼운 무게.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final Footnotes Space -->
+    <section
+      class="si-normal-section"
+      style="background: #000; min-height: 100vh; padding: 200px 0"
+    >
+      <div class="feature-text" style="color: #424245; font-size: 1rem">
+        <p>
+          1. iPhone 15 Pro 및 iPhone 15 Pro Max는 수심 6m에서 최대 30분 동안
+          견딜 수 있는 IP68 등급을 획득하였습니다.
+        </p>
+        <br />
+        <p>2. 배터리 사용 시간은 사용 패턴 및 설정에 따라 다를 수 있습니다.</p>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2026 Apple Inc. All rights reserved. (Demo Clone)</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="./lib/scroll-interactor.js"></script>
+    <script>
+      // Asset Paths from the reference directory provided by user
+      const ASSET_PATH_1 = "./assets/video/001/";
+      const ASSET_PATH_2 = "./assets/video/002/";
+      const BLEND_IMG_1 = "./assets/images/blend-image-1.jpg";
+      const BLEND_IMG_2 = "./assets/images/blend-image-2.jpg";
+
+      const interactor = new ScrollInteractor({
+        container: "body",
+        inertia: 0.1,
+        scenes: [
+          {
+            selector: "#section-hero",
+            type: "sticky",
+            height: "500vh",
+            imageSequence: {
+              path: ASSET_PATH_1,
+              prefix: "IMG_",
+              startNum: 6726,
+              count: 300,
+              extension: ".JPG",
+            },
+            animations: {
+              ".msg-1": {
+                opacityIn: [1, 1, { start: 0, end: 0.1 }],
+                translateYIn: [0, 0, { start: 0, end: 0.1 }],
+                opacityOut: [1, 0, { start: 0.25, end: 0.35 }],
+                translateYOut: [0, -20, { start: 0.25, end: 0.35 }],
+              },
+              ".msg-2": {
+                opacityIn: [0, 1, { start: 0.5, end: 0.6 }],
+                translateYIn: [20, 0, { start: 0.5, end: 0.6 }],
+                opacityOut: [1, 0, { start: 0.8, end: 0.9 }],
+                translateYOut: [0, -20, { start: 0.8, end: 0.9 }],
+              },
+            },
+          },
+          {
+            selector: "#section-zoom",
+            type: "sticky",
+            height: "500vh",
+            onUpdate: ({ currentYOffset, sceneHeight, scene, interactor }) => {
+              const text = scene.el.querySelector(".giant-text");
+
+              // Giant Scale Zoom-Out Logic (Maximized)
+              // Start at 200x scale (guaranteed to fill screen with the text color)
+              const scale = interactor.calcValue(
+                [600, 1, { start: 0, end: 0.8 }],
+                currentYOffset,
+                sceneHeight,
+              );
+
+              text.style.transform = `scale(${scale})`;
+            },
+          },
+          {
+            selector: "#section-detail",
+            type: "sticky",
+            height: "500vh",
+            imageSequence: {
+              path: ASSET_PATH_2,
+              prefix: "IMG_",
+              startNum: 7027,
+              count: 300,
+              extension: ".JPG",
+            },
+            onUpdate: ({
+              currentYOffset,
+              rawYOffset,
+              sceneHeight,
+              scene,
+              interactor,
+            }) => {
+              const stickyCont = scene.el.querySelector(".si-sticky-container");
+
+              // Instant Freeze: using rawYOffset to lock position instantly
+              if (currentYOffset / sceneHeight > 0.8) {
+                const fadeOut = interactor.calcValue(
+                  [1, 0, { start: 0.9, end: 1.0 }],
+                  currentYOffset,
+                  sceneHeight,
+                );
+                stickyCont.style.opacity = fadeOut;
+
+                // Locked: translating exactly by the scroll difference without inertia
+                const lockOffset = rawYOffset - sceneHeight * 0.8;
+                stickyCont.style.transform = `translate3d(0, ${lockOffset}px, 0)`;
+              } else {
+                stickyCont.style.opacity = 1;
+                stickyCont.style.transform = `none`;
+              }
+            },
+            animations: {
+              canvas: {
+                opacityIn: [0, 1, { start: 0, end: 0.1 }],
+              },
+              ".msg-3": {
+                opacityIn: [0, 1, { start: 0.1, end: 0.2 }],
+                scaleIn: [0.8, 1, { start: 0.1, end: 0.2 }],
+                opacityOut: [1, 0, { start: 0.4, end: 0.5 }],
+              },
+              ".msg-4": {
+                opacityIn: [0, 1, { start: 0.6, end: 0.7 }],
+                translateYIn: [50, 0, { start: 0.6, end: 0.7 }],
+                opacityOut: [1, 0, { start: 0.8, end: 0.9 }],
+              },
+            },
+          },
+          {
+            selector: "#section-blend",
+            type: "sticky",
+            height: "500vh",
+            onUpdate: ({ currentYOffset, sceneHeight, scene, interactor }) => {
+              const wrapper = scene.el.querySelector(".blend-wrapper");
+              const img2 = scene.el.querySelector(".img-2");
+              const msg = scene.el.querySelector(".msg-final");
+
+              // Ensure z-index is higher to overlap section 3
+              scene.el.style.zIndex = 50;
+
+              // 1. Expand width (80% -> 100%)
+              const expandWidth = interactor.calcValue(
+                [80, 100, { start: 0, end: 0.2 }],
+                currentYOffset,
+                sceneHeight,
+              );
+              const expandHeight = interactor.calcValue(
+                [70, 100, { start: 0, end: 0.2 }],
+                currentYOffset,
+                sceneHeight,
+              );
+              const radius = interactor.calcValue(
+                [30, 0, { start: 0, end: 0.2 }],
+                currentYOffset,
+                sceneHeight,
+              );
+
+              wrapper.style.width = `${expandWidth}%`;
+              wrapper.style.height = `${expandHeight}vh`;
+              wrapper.style.borderRadius = `${radius}px`;
+
+              // 2. Blend images (Clip path)
+              const blend = interactor.calcValue(
+                [100, 0, { start: 0.3, end: 0.6 }],
+                currentYOffset,
+                sceneHeight,
+              );
+              img2.style.clipPath = `inset(${blend}% 0 0 0)`;
+
+              // 3. Shrink width back (100% -> 80%)
+              const shrinkWidth = interactor.calcValue(
+                [100, 80, { start: 0.7, end: 0.9 }],
+                currentYOffset,
+                sceneHeight,
+              );
+              const shrinkHeight = interactor.calcValue(
+                [100, 70, { start: 0.7, end: 0.9 }],
+                currentYOffset,
+                sceneHeight,
+              );
+              const shrinkRadius = interactor.calcValue(
+                [0, 30, { start: 0.7, end: 0.9 }],
+                currentYOffset,
+                sceneHeight,
+              );
+
+              if (currentYOffset / sceneHeight > 0.7) {
+                wrapper.style.width = `${shrinkWidth}%`;
+                wrapper.style.height = `${shrinkHeight}vh`;
+                wrapper.style.borderRadius = `${shrinkRadius}px`;
+              }
+
+              // 4. Message fade
+              msg.style.opacity = interactor.calcValue(
+                [0, 1, { start: 0.8, end: 0.95 }],
+                currentYOffset,
+                sceneHeight,
+              );
+            },
+          },
+          {
+            selector: ".si-normal-section",
+            type: "normal",
+          },
+        ],
+      });
+    </script>
+  </body>
+</html>
