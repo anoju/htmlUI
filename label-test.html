@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>test</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: #f8f9fa;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        line-height: 1.5;
+        color: #333;
+      }
+      .wrap {
+        background: #fff;
+        max-width: 480px;
+        padding: 40px 20px;
+        margin: 0 auto;
+        min-height: 100vh;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      }
+      h1 {
+        font-size: 1.2rem;
+        margin-bottom: 24px;
+        color: #111;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+      .section {
+        margin-bottom: 32px;
+        padding: 16px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+      }
+      .section h2 {
+        font-size: 1rem;
+        margin-bottom: 12px;
+        color: #666;
+      }
+      .item {
+        margin-bottom: 16px;
+      }
+      .lbl {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        cursor: pointer; /* 클릭 가능하다는 시각적 힌트 */
+      }
+      .button {
+        display: block;
+        width: 100%;
+        line-height: 44px;
+        height: 44px;
+        background: #007bff;
+        color: #fff;
+        font-size: 16px;
+        text-align: center;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      .input {
+        display: block;
+        width: 100%;
+        height: 44px;
+        padding: 0 12px;
+        background: #fff;
+        color: #333;
+        font-size: 16px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+      }
+      .desc {
+        font-size: 0.85rem;
+        color: #888;
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <h1>Label 스크린리더기 Test</h1>
+
+      <!-- Case 1: Standard 'for' association (Button) -->
+      <div class="section">
+        <h2>Case 1: for 속성 + Button</h2>
+        <div class="item">
+          <label class="lbl" for="btn-case-1">버튼 레이블 (for 연결)</label>
+          <button id="btn-case-1" class="button">일반 버튼</button>
+          <p class="desc">
+            TalkBack은 label 클릭 시 target이 활성화됨을 인지하고 힌트를
+            출력합니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- Case 2: Standard 'for' association (Input) -->
+      <div class="section">
+        <h2>Case 2: for 속성 + Input</h2>
+        <div class="item">
+          <label class="lbl" for="input-case-1">입력창 레이블 (for 연결)</label>
+          <input
+            type="text"
+            id="input-case-1"
+            class="input"
+            placeholder="여기에 입력"
+          />
+          <p class="desc">
+            입력창에 포커스를 주는 행위 자체가 '활성화'로 간주됩니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- Case 3: Wrapping association -->
+      <div class="section">
+        <h2>Case 3: 감싸기(Implicit) 방식</h2>
+        <div class="item">
+          <label class="lbl">
+            감싸진 레이블
+            <input type="checkbox" style="margin-left: 8px" />
+          </label>
+          <p class="desc">
+            레이블 내부에 폼 요소가 있으면 레이블 영역 전체가 클릭 타겟이
+            됩니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- Case 4: JavaScript Event Listener (No explicit link) -->
+      <div class="section">
+        <h2>Case 4: JS 클릭 이벤트가 있는 레이블</h2>
+        <div class="item">
+          <label class="lbl" id="js-label" for="btn-case-2"
+            >버튼 레이블(레이블 자체에 클릭 이벤트)</label
+          >
+          <button id="btn-case-2" class="button">일반 버튼</button>
+        </div>
+
+        <div class="item" id="js-item">
+          <label class="lbl" for="input-case-2"
+            >입력창 레이블(레이블 부모 .item에 클릭 이벤트)</label
+          >
+          <input
+            type="text"
+            id="input-case-2"
+            class="input"
+            placeholder="여기에 입력"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("js-label")
+        .addEventListener("click", function () {
+          alert("레이블이 클릭되었습니다.");
+        });
+
+      document.getElementById("js-item").addEventListener("click", function () {
+        alert("아이템이 클릭되었습니다.");
+      });
+    </script>
+  </body>
+</html>
