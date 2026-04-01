@@ -2,14 +2,54 @@
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
-    <title>Swiper demo</title>
+    <title>test</title>
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"
     />
+    <style>
+      label {
+        display: block;
+      }
+      button {
+        display: block;
+        width: 100%;
+        margin-top: 8px;
+
+        line-height: 40px;
+        height: 40px;
+        background: blue;
+        color: #fff;
+        font-size: 16px;
+        text-align: center;
+        border: none;
+        border-radius: 4px;
+      }
+    </style>
   </head>
 
   <body>
-    <button aria-label="더보기" title="바로가기">버튼22</button>
+    <div class="div" onclick="divClick">
+      <label>레이블</label>
+      <button id="button-1" aria-label="더보기" title="바로가기">버튼22</button>
+    </div>
+
+    <div class="input">
+      <input type="text" placeholder="숫자를 입력하세요" />
+    </div>
+
+    <script>
+      const div = document.querySelector(".div");
+      //div 클릭 이벤트
+      div.addEventListener("click", () => {
+        console.log("div 클릭");
+      });
+
+      const divClick = () => {
+        console.log("div 클릭");
+      };
+    </script>
+
+    input:
   </body>
 </html>

@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Hybrid Keypad - inputmode="none"</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #6366f1;
+        --bg: #0f172a;
+        --card-bg: rgba(30, 41, 59, 0.7);
+        --border: rgba(255, 255, 255, 0.1);
+        --text: #f8fafc;
+        --text-muted: #94a3b8;
+        --keypad-bg: rgba(15, 23, 42, 0.95);
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        margin: 0;
+        padding: 40px 20px;
+        background-color: var(--bg);
+        background-image:
+          radial-gradient(
+            circle at top right,
+            rgba(99, 102, 241, 0.1),
+            transparent
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(168, 85, 247, 0.1),
+            transparent
+          );
+        color: var(--text);
+        font-family: "Inter", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 480px;
+      }
+
+      h1 {
+        font-family: "Outfit", sans-serif;
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        background: linear-gradient(to right, #818cf8, #c084fc);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .input-group {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 24px;
+        margin-bottom: 1.5rem;
+        backdrop-filter: blur(12px);
+      }
+
+      .label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        letter-spacing: 0.05em;
+      }
+
+      /* --- Native Input with inputmode="none" --- */
+      .smart-input {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1.5px solid var(--border);
+        border-radius: 14px;
+        padding: 16px 20px;
+        font-size: 1.5rem;
+        font-family: "Outfit", sans-serif;
+        color: var(--text);
+        outline: none;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Native cursor remains, system keyboard stays hidden */
+      }
+
+      .smart-input:focus {
+        border-color: var(--primary);
+        background: rgba(0, 0, 0, 0.35);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+      }
+
+      .smart-input::placeholder {
+        color: rgba(255, 255, 255, 0.15);
+      }
+
+      /* --- Alignment Cases --- */
+      .align-l {
+        text-align: left;
+      }
+      .align-c {
+        text-align: center;
+      }
+      .align-r {
+        text-align: right;
+      }
+
+      /* --- Sliding Keypad Sheet --- */
+      .keypad-sheet {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        width: 100%;
+        max-width: 500px;
+        background: var(--keypad-bg);
+        backdrop-filter: blur(30px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-top-left-radius: 30px;
+        border-top-right-radius: 30px;
+        padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+        transform: translate(-50%, 105%);
+        transition:
+          transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          opacity 0.3s;
+        opacity: 0;
+        z-index: 9999;
+        box-shadow: 0 -25px 50px rgba(0, 0, 0, 0.6);
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .keypad-sheet.is-visible {
+        transform: translate(-50%, 0);
+        opacity: 1;
+      }
+
+      .keypad-handle {
+        grid-column: span 3;
+        width: 44px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+        margin: -10px auto 20px;
+      }
+
+      .key {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        border-radius: 18px;
+        padding: 22px;
+        font-size: 1.5rem;
+        font-family: "Outfit", sans-serif;
+        font-weight: 500;
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.1s;
+        user-select: none;
+      }
+
+      .key:active {
+        background: var(--primary);
+        transform: scale(0.94);
+        box-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
+      }
+
+      .key.special {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text-muted);
+      }
+      .key.delete-key {
+        color: #f43f5e;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Hybrid Input System</h1>
+
+      <div class="input-group">
+        <span class="label">Amount (Center Align)</span>
+        <input
+          type="text"
+          class="smart-input align-c"
+          inputmode="none"
+          placeholder="0"
+        />
+      </div>
+
+      <div class="input-group">
+        <span class="label">Reference (Left Align)</span>
+        <input
+          type="text"
+          class="smart-input align-l"
+          inputmode="none"
+          placeholder="Enter code"
+        />
+      </div>
+    </div>
+
+    <!-- The Sliding Keypad -->
+    <div class="keypad-sheet" id="mainKeypad">
+      <div class="keypad-handle"></div>
+      <div class="key" data-value="1">1</div>
+      <div class="key" data-value="2">2</div>
+      <div class="key" data-value="3">3</div>
+      <div class="key" data-value="4">4</div>
+      <div class="key" data-value="5">5</div>
+      <div class="key" data-value="6">6</div>
+      <div class="key" data-value="7">7</div>
+      <div class="key" data-value="8">8</div>
+      <div class="key" data-value="9">9</div>
+      <div class="key special" data-action="clear">CLEAR</div>
+      <div class="key" data-value="0">0</div>
+      <div class="key delete-key" data-action="delete">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+          <line x1="18" y1="9" x2="12" y2="15"></line>
+          <line x1="12" y1="9" x2="18" y2="15"></line>
+        </svg>
+      </div>
+    </div>
+
+    <script>
+      const keypad = document.getElementById("mainKeypad");
+      let activeInput = null;
+
+      // --- Core Keypad & Focus Logic ---
+      document.querySelectorAll(".smart-input").forEach((input) => {
+        // Show keypad on focus
+        input.addEventListener("focus", (e) => {
+          activeInput = input;
+          keypad.classList.add("is-visible");
+        });
+
+        // Stop focus events from bubbling to window if needed
+        input.addEventListener("click", (e) => e.stopPropagation());
+      });
+
+      // Global click to hide keypad (when not clicking input or keypad)
+      window.addEventListener("click", (e) => {
+        if (
+          !e.target.closest(".smart-input") &&
+          !e.target.closest(".keypad-sheet")
+        ) {
+          if (activeInput) {
+            activeInput.blur();
+            activeInput = null;
+          }
+          keypad.classList.remove("is-visible");
+        }
+      });
+
+      // Keypad Button Interaction
+      keypad.querySelectorAll(".key").forEach((key) => {
+        key.addEventListener("click", (e) => {
+          e.preventDefault(); // Prevent focus loss
+          e.stopPropagation();
+
+          const val = key.dataset.value;
+          const action = key.dataset.action;
+
+          handleInput(val, action);
+        });
+      });
+
+      function handleInput(val, action) {
+        if (!activeInput) return;
+
+        const input = activeInput;
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        const currentVal = input.value;
+
+        if (action === "clear") {
+          input.value = "";
+        } else if (action === "delete") {
+          if (start === end) {
+            // Backspace single character
+            input.value =
+              currentVal.slice(0, start - 1) + currentVal.slice(end);
+            input.setSelectionRange(start - 1, start - 1);
+          } else {
+            // Delete selection
+            input.value = currentVal.slice(0, start) + currentVal.slice(end);
+            input.setSelectionRange(start, start);
+          }
+        } else if (val) {
+          // Insert at caret position
+          input.value =
+            currentVal.slice(0, start) + val + currentVal.slice(end);
+          const nextPos = start + val.length;
+          input.setSelectionRange(nextPos, nextPos);
+        }
+
+        // Always keep input focused after keypad click
+        input.focus();
+      }
+    </script>
+  </body>
+</html>

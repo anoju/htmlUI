@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Sliding Keypad & Fake Cursor System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #6366f1;
+        --bg: #0f172a;
+        --card-bg: rgba(30, 41, 59, 0.7);
+        --border: rgba(255, 255, 255, 0.1);
+        --text: #f8fafc;
+        --text-muted: #94a3b8;
+        --keypad-bg: rgba(15, 23, 42, 0.95);
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        margin: 0;
+        padding: 40px 20px;
+        background-color: var(--bg);
+        background-image:
+          radial-gradient(
+            circle at top right,
+            rgba(99, 102, 241, 0.1),
+            transparent
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(168, 85, 247, 0.1),
+            transparent
+          );
+        color: var(--text);
+        font-family: "Inter", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 480px;
+        padding-bottom: 300px; /* Space for the keypad not to cover content when open maybe, or just scrolling */
+      }
+
+      h1 {
+        font-family: "Outfit", sans-serif;
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        background: linear-gradient(to right, #818cf8, #c084fc);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .case-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 1.25rem;
+        backdrop-filter: blur(12px);
+        transition:
+          transform 0.3s ease,
+          border-color 0.3s;
+      }
+
+      .case-card:hover {
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .label-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+      }
+
+      .case-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+      }
+
+      /* --- Global Fake Cursor Styles --- */
+      .fake-input-wrapper {
+        position: relative;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+      }
+
+      .fake-input-wrapper.is-focused {
+        border-color: var(--primary);
+        background: rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      }
+
+      .fake-input-target {
+        width: 100%;
+        display: block;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text);
+        font-family: "Outfit", sans-serif;
+        caret-color: transparent;
+        box-sizing: border-box;
+        user-select: none;
+      }
+
+      .fake-cursor {
+        position: absolute;
+        width: 2px;
+        background-color: var(--primary);
+        pointer-events: none;
+        opacity: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 2px;
+        box-shadow: 0 0 8px var(--primary);
+      }
+
+      .is-focused .fake-cursor {
+        animation: cursor-blink 1.1s infinite;
+      }
+
+      @keyframes cursor-blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+
+      /* --- Custom Styles --- */
+      .size-s {
+        font-size: 1rem;
+        padding: 12px 16px;
+      }
+      .size-m {
+        font-size: 1.5rem;
+        padding: 16px 20px;
+      }
+      .size-l {
+        font-size: 2rem;
+        padding: 20px 24px;
+        font-weight: 600;
+      }
+
+      .align-l {
+        text-align: left;
+      }
+      .align-c {
+        text-align: center;
+      }
+      .align-r {
+        text-align: right;
+      }
+
+      /* --- Sliding Keypad Sheet --- */
+      .keypad-sheet {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        width: 100%;
+        max-width: 500px;
+        background: var(--keypad-bg);
+        backdrop-filter: blur(30px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-top-left-radius: 28px;
+        border-top-right-radius: 28px;
+        padding: 20px 20px calc(15px + env(safe-area-inset-bottom));
+        transform: translate(-50%, 105%);
+        transition:
+          transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          opacity 0.3s;
+        opacity: 0;
+        z-index: 9999;
+        box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.5);
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .keypad-sheet.is-visible {
+        transform: translate(-50%, 0);
+        opacity: 1;
+      }
+
+      .keypad-handle {
+        grid-column: span 3;
+        width: 40px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
+        margin: -10px auto 15px;
+      }
+
+      .key {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        border-radius: 16px;
+        padding: 20px;
+        font-size: 1.5rem;
+        font-family: "Outfit", sans-serif;
+        font-weight: 500;
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        user-select: none;
+      }
+
+      .key:active {
+        background: var(--primary);
+        transform: scale(0.92);
+        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+      }
+
+      .key.special {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+
+      .key.delete-key {
+        color: #f43f5e;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Sliding Keypad Demo</h1>
+
+      <div class="case-card">
+        <div class="label-group">
+          <span class="case-label">Account PIN</span>
+        </div>
+        <div class="fake-input-wrapper">
+          <input
+            type="text"
+            class="fake-input-target align-c size-l"
+            readonly
+            placeholder="Enter PIN"
+          />
+          <div class="fake-cursor"></div>
+        </div>
+      </div>
+
+      <div class="case-card">
+        <div class="label-group">
+          <span class="case-label">Phone Number</span>
+        </div>
+        <div class="fake-input-wrapper">
+          <input
+            type="text"
+            class="fake-input-target align-l size-m"
+            readonly
+            value="010-"
+          />
+          <div class="fake-cursor"></div>
+        </div>
+      </div>
+
+      <div class="case-card">
+        <div class="label-group">
+          <span class="case-label">Amount (KRW)</span>
+        </div>
+        <div class="fake-input-wrapper">
+          <input
+            type="text"
+            class="fake-input-target align-r size-m"
+            readonly
+            value="0"
+          />
+          <div class="fake-cursor"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The Sliding Keypad -->
+    <div class="keypad-sheet" id="mainKeypad">
+      <div class="keypad-handle"></div>
+      <div class="key" data-value="1">1</div>
+      <div class="key" data-value="2">2</div>
+      <div class="key" data-value="3">3</div>
+      <div class="key" data-value="4">4</div>
+      <div class="key" data-value="5">5</div>
+      <div class="key" data-value="6">6</div>
+      <div class="key" data-value="7">7</div>
+      <div class="key" data-value="8">8</div>
+      <div class="key" data-value="9">9</div>
+      <div class="key special" data-action="clear">CLR</div>
+      <div class="key" data-value="0">0</div>
+      <div class="key delete-key" data-action="delete">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+          <line x1="18" y1="9" x2="12" y2="15"></line>
+          <line x1="12" y1="9" x2="18" y2="15"></line>
+        </svg>
+      </div>
+    </div>
+
+    <script>
+      class FakeCursorManager {
+        constructor() {
+          this.wrappers = document.querySelectorAll(".fake-input-wrapper");
+          this.keypad = document.getElementById("mainKeypad");
+          this.activeWrapper = null;
+          this.init();
+        }
+
+        init() {
+          this.wrappers.forEach((wrapper) => {
+            wrapper.addEventListener("click", (e) => {
+              e.stopPropagation();
+              this.activate(wrapper);
+            });
+          });
+
+          // Prevent keypad click from blurring
+          this.keypad.addEventListener("click", (e) => e.stopPropagation());
+
+          // Keypad button logic
+          this.keypad.querySelectorAll(".key").forEach((key) => {
+            key.addEventListener("click", () => {
+              const val = key.dataset.value;
+              const action = key.dataset.action;
+              this.handleInput(val, action);
+            });
+          });
+
+          // Window click to close
+          window.addEventListener("click", () => this.deactivateAll());
+
+          // Refresh cursor positions on resize
+          window.addEventListener("resize", () => {
+            if (this.activeWrapper) this.updatePosition(this.activeWrapper);
+          });
+        }
+
+        activate(wrapper) {
+          this.deactivateAll();
+          this.activeWrapper = wrapper;
+          wrapper.classList.add("is-focused");
+          this.keypad.classList.add("is-visible");
+          this.updatePosition(wrapper);
+        }
+
+        deactivateAll() {
+          this.wrappers.forEach((w) => w.classList.remove("is-focused"));
+          this.keypad.classList.remove("is-visible");
+          this.activeWrapper = null;
+        }
+
+        handleInput(val, action) {
+          if (!this.activeWrapper) return;
+          const input = this.activeWrapper.querySelector(".fake-input-target");
+
+          if (action === "clear") {
+            input.value = "";
+          } else if (action === "delete") {
+            input.value = input.value.slice(0, -1);
+          } else if (val !== undefined) {
+            // Numeric input logic
+            if (input.value === "0" && val !== ".") input.value = "";
+            input.value += val;
+          }
+
+          this.updatePosition(this.activeWrapper);
+        }
+
+        updatePosition(wrapper) {
+          const input = wrapper.querySelector(".fake-input-target");
+          const cursor = wrapper.querySelector(".fake-cursor");
+          if (!input || !cursor) return;
+
+          const style = window.getComputedStyle(input);
+          const textAlign = style.textAlign;
+          const fontSize = parseFloat(style.fontSize);
+          const paddingLeft = parseFloat(style.paddingLeft);
+          const paddingRight = parseFloat(style.paddingRight);
+          const text = input.value || input.placeholder || "";
+          const isEmpty = !input.value;
+
+          // Measure text width precisely
+          const textWidth = this.measureText(text, style);
+
+          // Set cursor height
+          cursor.style.height = `${fontSize * 1.25}px`;
+
+          // Handle positioning based on alignment
+          const wrapperRect = input.getBoundingClientRect();
+          const wrapperWidth = wrapperRect.width;
+
+          if (textAlign === "center") {
+            const centerBase = wrapperWidth / 2;
+            const pos = centerBase + textWidth / 2 + 1;
+            cursor.style.left = `${pos}px`;
+            cursor.style.right = "auto";
+          } else if (textAlign === "right" || textAlign === "end") {
+            cursor.style.left = "auto";
+            cursor.style.right = `${paddingRight}px`;
+          } else {
+            const pos = paddingLeft + textWidth + 1;
+            cursor.style.left = `${pos}px`;
+            cursor.style.right = "auto";
+          }
+        }
+
+        measureText(text, style) {
+          const span = document.createElement("span");
+          span.style.font = style.font;
+          span.style.letterSpacing = style.letterSpacing;
+          span.style.fontWeight = style.fontWeight;
+          span.style.fontFamily = style.fontFamily;
+          span.style.textTransform = style.textTransform;
+          span.style.visibility = "hidden";
+          span.style.position = "absolute";
+          span.style.whiteSpace = "pre";
+          span.textContent = text;
+          document.body.appendChild(span);
+          const width = span.offsetWidth;
+          document.body.removeChild(span);
+          return width;
+        }
+      }
+
+      new FakeCursorManager();
+    </script>
+  </body>
+</html>
