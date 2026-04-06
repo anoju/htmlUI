@@ -1,113 +1,188 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="utf-8" />
-  <title>Swiper demo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
-  <!-- Link Swiper's CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <head>
+    <meta charset="utf-8" />
+    <title>Swiper demo</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"
+    />
+    <!-- Link Swiper's CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
 
-  <!-- Demo styles -->
-  <style>
-    html,
-    body {
-      position: relative;
-      height: 100%;
-    }
+    <!-- Demo styles -->
+    <style>
+      html,
+      body {
+        position: relative;
+        height: 100%;
+      }
 
-    body {
-      background: #eee;
-      font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-      font-size: 14px;
-      color: #000;
-      margin: 0;
-      padding: 0;
-    }
+      body {
+        background: #eee;
+        font-family:
+          Helvetica Neue,
+          Helvetica,
+          Arial,
+          sans-serif;
+        font-size: 14px;
+        color: #000;
+        margin: 0;
+        padding: 0;
+      }
 
-    .swiper {
-      width: 100%;
-      height: 100%;
-    }
+      .swiper {
+        width: 100%;
+        height: 100%;
+      }
 
-    .swiper-slide {
-      width: 300px;
-      text-align: center;
-      font-size: 18px;
-      background: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border:1px solid #000;
-    }
+      .swiper-slide {
+        width: 300px;
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #000;
+      }
 
-    .swiper-slide img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+      .swiper-slide img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
 
-    .swiper {
-      margin-left: auto;
-      margin-right: auto;
-    }
-  </style>
-</head>
+      .swiper {
+        margin-left: auto;
+        margin-right: auto;
+      }
+    </style>
+  </head>
 
-<body>
-  <h1>테스트</h1>
-  <!-- Swiper -->
-  <div class="swiper mySwiper">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide">Slide 1</div>
-      <div class="swiper-slide">Slide 2</div>
-      <div class="swiper-slide">Slide 3</div>
-      <div class="swiper-slide">Slide 4</div>
-      <div class="swiper-slide">Slide 5</div>
-      <div class="swiper-slide">Slide 6</div>
-      <div class="swiper-slide">Slide 7</div>
-      <div class="swiper-slide">Slide 8</div>
-      <div class="swiper-slide">Slide 9</div>
+  <body>
+    <h1>테스트</h1>
+    <!-- Swiper -->
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">Slide 1</div>
+        <div class="swiper-slide">Slide 2</div>
+        <div class="swiper-slide">Slide 3</div>
+        <div class="swiper-slide">Slide 4</div>
+        <div class="swiper-slide">Slide 5</div>
+        <div class="swiper-slide">Slide 6</div>
+        <div class="swiper-slide">Slide 7</div>
+        <div class="swiper-slide">Slide 8</div>
+        <div class="swiper-slide">Slide 9</div>
+      </div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-pagination"></div>
     </div>
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-pagination"></div>
-  </div>
 
-  <!-- Swiper JS -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script> -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.3/swiper-bundle.min.js" integrity="sha512-ILrDRgEiIojcsKyBy12ZU7MtOf78F2fj3vve/AN5i94iXLQ8PZN7IJYPphmAGdwZmTv4N+OzY3trvqGIEY87VA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Swiper JS -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script> -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.3/swiper-bundle.min.js"
+      integrity="sha512-ILrDRgEiIojcsKyBy12ZU7MtOf78F2fj3vve/AN5i94iXLQ8PZN7IJYPphmAGdwZmTv4N+OzY3trvqGIEY87VA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
 
-  <!-- Initialize Swiper -->
-<script>
-    var swiper = new Swiper(".mySwiper", {
-      observer: true,
-      observeParents: true,
-      watchOverflow: true,
-      centeredSlides: true,
-      slidesPerView: 'auto',
-      loop: true,
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-      autoplay: true,
-      // autoplay: {
-      //   delay: 2500,
-      //   // disableOnInteraction: false,
-      // },
-      on:{
-        slideChangeTransitionEnd: function(){
-          console.log('slideChangeTransitionEnd') 
+    <!-- Initialize Swiper -->
+    <script>
+      /**
+       * Swiper 슬라이드 웹 접근성 처리 (노출되는 슬라이드 외 aria-hidden 처리)
+       * @param {Swiper} swiper Swiper 인스턴스
+       * @param {HTMLElement} container Swiper 컨테이너 엘리먼트
+       */
+      function updateSwiperA11y(swiper, container) {
+        if (!swiper || !container) return;
+
+        const slides = container.querySelectorAll(".swiper-slide");
+        const containerRect = container.getBoundingClientRect();
+
+        let maxVisibleArea = 0;
+        let mostVisibleSlideIndex = 0;
+        let visibleCount = 0;
+
+        slides.forEach((slide, index) => {
+          const slideRect = slide.getBoundingClientRect();
+
+          // 슬라이드가 컨테이너 영역과 겹치는 부분 계산
+          const overlapLeft = Math.max(containerRect.left, slideRect.left);
+          const overlapRight = Math.min(containerRect.right, slideRect.right);
+          const overlapTop = Math.max(containerRect.top, slideRect.top);
+          const overlapBottom = Math.min(
+            containerRect.bottom,
+            slideRect.bottom,
+          );
+
+          const overlapWidth = Math.max(0, overlapRight - overlapLeft);
+          const overlapHeight = Math.max(0, overlapBottom - overlapTop);
+          const overlapArea = overlapWidth * overlapHeight;
+
+          const slideArea = slideRect.width * slideRect.height;
+          // 부동 소수점 오차를 고려하여 99% 이상 노출 시 노출된 것으로 간주
+          const visibleRatio = slideArea > 0 ? overlapArea / slideArea : 0;
+
+          if (visibleRatio >= 0.99) {
+            slide.removeAttribute("aria-hidden");
+            slide.removeAttribute("inert");
+            visibleCount++;
+          } else {
+            // 가장 많이 노출된 슬라이드 추적 (완전히 노출된 슬라이드가 없을 경우 대비)
+            if (overlapArea > maxVisibleArea) {
+              maxVisibleArea = overlapArea;
+              mostVisibleSlideIndex = index;
+            }
+            slide.setAttribute("aria-hidden", "true");
+            slide.setAttribute("inert", "true");
+          }
+        });
+
+        // 완전히 노출되는 슬라이드가 하나도 없으면 가장 많이 노출된 슬라이드를 활성화
+        if (visibleCount === 0 && slides.length > 0) {
+          const fallbackSlide = slides[mostVisibleSlideIndex];
+          if (fallbackSlide) {
+            fallbackSlide.removeAttribute("aria-hidden");
+            fallbackSlide.removeAttribute("inert");
+          }
         }
       }
-    });
-  </script>
-</body>
 
+      var swiper = new Swiper(".mySwiper", {
+        observer: true,
+        observeParents: true,
+        watchOverflow: true,
+        centeredSlides: true,
+        slidesPerView: "auto",
+        loop: true,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+        autoplay: true,
+        on: {
+          init: function () {
+            updateSwiperA11y(this, this.el);
+          },
+          slideChangeTransitionEnd: function () {
+            updateSwiperA11y(this, this.el);
+          },
+          resize: function () {
+            updateSwiperA11y(this, this.el);
+          },
+        },
+      });
+    </script>
+  </body>
 </html>
