@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>고정 크기(40x40) & 고정 간격(12px) 반응형 배치</title>
+    <style>
+      /* 기본 테마 설정 */
+      @import url("https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap");
+
+      :root {
+        --bg-color: #0f172a;
+        --card-bg: linear-gradient(135deg, #fbbf24, #f59e0b);
+        --text-color: #f8fafc;
+        --item-size: 40px;
+        --fixed-gap: 12px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: "Pretendard", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 60px 20px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 600px;
+      }
+
+      .title-section {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .title-section h1 {
+        font-size: 1.4rem;
+        margin-bottom: 8px;
+        background: linear-gradient(to right, #fbbf24, #f59e0b);
+        -webkit-background-clip: text;
+        background-clip: text; /* 표준 속성 추가 */
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* 그리드 레이아웃 설정 (Flexbox 사용) */
+      .grid-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        /* gap 제거: 줄바꿈 요소와 중첩되어 커지는 문제 해결 */
+        margin: 0 auto;
+      }
+
+      /* 아이템 기본 스타일 (40x40, 마진을 통한 12px 간격 구현) */
+      .grid-item {
+        width: var(--item-size);
+        height: var(--item-size);
+        margin: 6px; /* 상하좌우 6px씩 -> 합쳐서 12px 간격 발생 */
+        background: var(--card-bg);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #78350f;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      .grid-item:hover {
+        transform: scale(1.1) rotate(5deg);
+      }
+
+      /* 강제 줄바꿈 요소 */
+      .line-break {
+        flex-basis: 100%;
+        height: 0;
+      }
+
+      /* [TABLET] 5, 5 배치 (768px 이상) */
+      @media (min-width: 768px) {
+        .line-break {
+          display: none; /* 줄바꿈 요소를 없애서 5개씩 쭉 흐르게 함 */
+        }
+        .grid-container {
+          /* (40px + 마진 12px) * 5개 = 260px */
+          max-width: 260px;
+        }
+      }
+
+      /* 안내문 */
+      .info-box {
+        margin-top: 50px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        border-left: 4px solid #fbbf24;
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .info-box ul {
+        list-style: none;
+        font-size: 0.85rem;
+        line-height: 1.8;
+        color: #94a3b8;
+      }
+
+      .info-box strong {
+        color: #f8fafc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title-section">
+      <h1>Fixed Logic Layout</h1>
+      <p>Mobile: 3-4-3 Arrangement | Tablet: 5-5</p>
+    </div>
+
+    <div class="container">
+      <div class="grid-container">
+        <!-- Row 1 (3 items) -->
+        <div class="grid-item">1</div>
+        <div class="grid-item">2</div>
+        <div class="grid-item">3</div>
+
+        <div class="line-break"></div>
+        <!-- Force Break after 3 -->
+
+        <!-- Row 2 (4 items) -->
+        <div class="grid-item">4</div>
+        <div class="grid-item">5</div>
+        <div class="grid-item">6</div>
+        <div class="grid-item">7</div>
+
+        <div class="line-break"></div>
+        <!-- Force Break after 4 -->
+
+        <!-- Row 3 (3 items) -->
+        <div class="grid-item">8</div>
+        <div class="grid-item">9</div>
+        <div class="grid-item">10</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <ul>
+        <li>• 아이템 크기: <strong>40px × 40px</strong> 고정</li>
+        <li>• 아이템 간격: <strong>12px</strong> 고정 (gap 사용)</li>
+        <li>
+          • 모바일: <code>line-break</code> 요소를 사용해 정확히
+          <strong>3, 4, 3</strong> 배치
+        </li>
+        <li>
+          • 태블릿: <code>display: none</code> 처리로 자연스러운
+          <strong>5, 5</strong> 배치
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>
