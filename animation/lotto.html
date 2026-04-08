@@ -29,42 +29,25 @@
 
       body {
         font-family: "Outfit", "Noto Sans KR", sans-serif;
-        background: var(--bg-gradient);
-        color: var(--text-main);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 40px 20px;
-      }
-
-      header {
-        text-align: center;
-        margin-bottom: 24px;
-      }
-
-      .lotto-title {
-        font-size: 2.2rem;
-        font-weight: 800;
-        background: linear-gradient(to right, #60a5fa, #a78bfa);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        letter-spacing: -0.02em;
       }
 
       /* Machine Container */
       .machine-wrapper {
+        height: 100dvh;
         position: relative;
-        margin-bottom: 40px;
-        padding: 20px;
+        background: var(--bg-gradient);
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        padding: 40px 20px;
         perspective: 800px; /* 3D 입체 투영점 적용 */
       }
 
       /* The Glass Circular Bowl */
       .bowl-glass {
         position: relative;
-        width: 140px;
-        height: 140px;
+        width: calc(var(--container-radius, 70px) * 2);
+        height: calc(var(--container-radius, 70px) * 2);
         border-radius: 50%;
         background: radial-gradient(
           circle at 30% 30%,
@@ -82,30 +65,15 @@
         transform-style: preserve-3d;
       }
 
-      /* Machine Stand */
-      .machine-base {
-        width: 140px;
-        height: 50px;
-        background: linear-gradient(180deg, #1e293b, #0f172a);
-        margin: 0 auto;
-        border-radius: 0 0 24px 24px;
-        border: 1px solid var(--card-border);
-        border-top: none;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-        position: relative;
-        top: -15px;
-        z-index: 5;
-      }
-
       /* Faux 3D Physics Ball Inside */
       .machine-ball {
         position: absolute;
         top: 50%;
         left: 50%;
-        width: 38px;
-        height: 38px;
-        margin-top: -19px;
-        margin-left: -19px;
+        width: calc(var(--ball-radius, 19px) * 2);
+        height: calc(var(--ball-radius, 19px) * 2);
+        margin-top: calc(var(--ball-radius, 19px) * -1);
+        margin-left: calc(var(--ball-radius, 19px) * -1);
         border-radius: 50%;
         display: flex;
         justify-content: center;
@@ -119,7 +87,6 @@
           0 5px 10px rgba(0, 0, 0, 0.5);
         user-select: none;
         will-change: transform;
-        transition: opacity 0.3s ease;
         z-index: 15;
       }
 
@@ -139,163 +106,22 @@
       .ball-green {
         background: radial-gradient(circle at 30% 30%, #6ee7b7, #059669);
       }
-
-      /* Results Tray */
-      .result-tray {
-        background: var(--card-bg);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid var(--card-border);
-        border-radius: 20px;
-        width: 100%;
-        max-width: 400px;
-        min-height: 160px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 40px;
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-        position: relative;
-      }
-
-      .tray-empty-text {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        position: absolute;
-      }
-
-      /* Drawn Big Ball */
-      .result-ball {
-        width: 90px;
-        height: 90px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 2.2rem;
-        font-weight: 800;
-        color: #fff;
-        box-shadow:
-          0 10px 15px -3px rgba(0, 0, 0, 0.5),
-          inset -8px -8px 20px rgba(0, 0, 0, 0.4),
-          inset 5px 5px 15px rgba(255, 255, 255, 0.7);
-        position: relative;
-      }
-
-      .result-ball::after {
-        content: "";
-        position: absolute;
-        top: 10px;
-        left: 15px;
-        width: 25px;
-        height: 12px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.7);
-        transform: rotate(-45deg);
-      }
-
-      /* Pop out from machine animation */
-      @keyframes popOutFromMachine {
-        0% {
-          transform: translateY(-300px) scale(0.3);
-          opacity: 0;
-        }
-        50% {
-          transform: translateY(30px) scale(1.1);
-          opacity: 1;
-          filter: blur(0px);
-        }
-        75% {
-          transform: translateY(-10px) scale(0.95);
-          opacity: 1;
-        }
-        100% {
-          transform: translateY(0) scale(1);
-          opacity: 1;
-          filter: blur(0);
-        }
-      }
-
-      .animate-drop {
-        animation: popOutFromMachine 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-      }
-
-      /* Button */
-      .draw-btn {
-        background: linear-gradient(
-          135deg,
-          var(--primary-color),
-          var(--primary-hover)
-        );
-        color: #fff;
-        border: none;
-        border-radius: 12px;
-        padding: 16px 40px;
-        font-size: 1.2rem;
-        font-weight: 600;
-        cursor: pointer;
-        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
-        transition: all 0.2s;
-      }
-
-      .draw-btn:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 15px 25px -3px rgba(37, 99, 235, 0.6);
-      }
-
-      .draw-btn:disabled {
-        background: #475569;
-        box-shadow: none;
-        cursor: not-allowed;
-        opacity: 0.8;
-      }
     </style>
   </head>
   <body>
-    <header>
-      <h1 class="lotto-title">행운의 공 뽑기</h1>
-    </header>
-
-    <main>
-      <!-- 3D 겹침 효과 볼 혼합 머신 -->
-      <section class="machine-wrapper" aria-hidden="true">
-        <div class="bowl-glass" id="bowlGlass"></div>
-        <div class="machine-base"></div>
-      </section>
-
-      <!-- 추첨 결과 (단 1개만 노출) -->
-      <section
-        class="result-tray"
-        id="resultTray"
-        aria-live="polite"
-        aria-atomic="true"
-        aria-label="결과 대기 중"
-      >
-        <span class="tray-empty-text">결과가 이곳에 표시됩니다</span>
-      </section>
-
-      <div style="text-align: center">
-        <button id="drawBtn" class="draw-btn" aria-label="추첨 시작하기">
-          추첨 시작하기
-        </button>
-      </div>
-    </main>
+    <!-- 3D 겹침 효과 볼 혼합 머신 -->
+    <section class="machine-wrapper" aria-hidden="true">
+      <div class="bowl-glass" id="bowlGlass"></div>
+    </section>
 
     <script>
-      /**
-       * 로또 믹싱 및 추첨 인터랙션을 완전 모듈화한 컴포넌트 팩토리 함수입니다.
-       * 전역 오염을 막고 옵션을 통해 여러 곳에서 재사용할 수 있습니다.
-       * @param {Object} options - 커스텀 설정 객체
-       */
-      const createLottoMachine = (options = {}) => {
+      const lottoAnimation = (options = {}) => {
         // 1. 기본값과 사용자가 전달한 옵션 병합 (Defensive Object Merge)
         const config = {
-          bowlId: "bowlGlass",
-          btnId: "drawBtn",
-          trayId: "resultTray",
+          container: "#bowlGlass",
           totalBalls: 5, // 머신 안에 생성할 공 개수
-          bowlRadius: 70, // 머신(유리어항)의 물리적 충돌 반지름
-          ballRadius: 19, // 각 공의 충돌 및 시각적 반지름
+          containerRadius: 100, // 머신(유리어항)의 물리적 충돌 반지름
+          ballRadius: 25, // 각 공의 충돌 및 시각적 반지름
           maxSpeed: 5, // 공 이동 속도
           ballClasses: null, // 사용자 정의 클래스 (기본 배정 없음)
           ...options,
@@ -303,21 +129,18 @@
 
         // 2. DOM 요소 방어적 참조
         const domNodes = {
-          drawBtn: document.getElementById(config.btnId),
-          bowlGlass: document.getElementById(config.bowlId),
-          resultTray: document.getElementById(config.trayId),
+          container: document.querySelector(config.container),
         };
 
-        if (!domNodes.bowlGlass || !domNodes.resultTray) {
+        if (!domNodes.container) {
           console.error(
-            "Lotto Component Error: 필수 DOM(머신 또는 결과 트레이)을 찾을 수 없습니다.",
+            "Lotto Component Error: 필수 DOM(머신)을 찾을 수 없습니다.",
           );
           return null;
         }
 
         // 3. 인스턴스 내부 상태 관리
         const machineBalls = [];
-        let isDrawingState = false;
         let animationFrameId = null;
 
         // 4. 모듈화된 내부 클래스 정의
@@ -342,35 +165,31 @@
 
             // 원 중심부터 임의 배치
             const angle = Math.random() * Math.PI * 2;
-            const radiusPos = Math.random() * (config.bowlRadius * 0.5);
+            const radiusPos = Math.random() * (config.containerRadius * 0.5);
             this.x = Math.cos(angle) * radiusPos;
             this.y = Math.sin(angle) * radiusPos;
-            // 공 개수에 맞춰 좁게 제한된 Z축 범위
-            this.maxZ = config.totalBalls * 2;
-            this.z = (Math.random() - 0.5) * (this.maxZ * 2);
+
+            // 초기 무작위 레이어(zIndex) 배정
+            this.el.style.zIndex = Math.floor(
+              Math.random() * config.totalBalls * 2,
+            );
 
             // 초기 랜덤 속도
             this.vx = (Math.random() - 0.5) * 8;
             this.vy = (Math.random() - 0.5) * 8;
-            this.vz = (Math.random() - 0.5) * 6;
 
             // 시각적 회전(Rotate) 설정
             this.rot = Math.random() * 360;
             this.rotDir = Math.random() > 0.5 ? 1 : -1; // 회전 방향 (좌측/우측)
-
-            this.isDrawn = false;
           }
 
           update() {
-            if (this.isDrawn) return;
-
             // 유기적인 곡선 흔들림 강제
             this.vx += (Math.random() - 0.5) * 1.5;
             this.vy += (Math.random() - 0.5) * 1.5;
 
             this.x += this.vx;
             this.y += this.vy;
-            this.z += this.vz;
 
             const targetSpeed = config.maxSpeed;
             const speed2D = Math.hypot(this.vx, this.vy);
@@ -380,38 +199,37 @@
               this.vy = (this.vy / speed2D) * targetSpeed;
             }
 
-            // Z축 (깊이) 바운딩 패스: 전체 공 개수 기반의 좁은 교차 범위 설정 적용
-            if (this.z > this.maxZ) {
-              this.z = this.maxZ;
-              this.vz *= -1;
-            }
-            if (this.z < -this.maxZ) {
-              this.z = -this.maxZ;
-              this.vz *= -1;
-            }
-
             // 2D 가장자리 벽 튕김 처리 (반사각 모델)
             const dist = Math.hypot(this.x, this.y);
-            if (dist > config.bowlRadius - this.r) {
+            const boundary = config.containerRadius - this.r;
+            
+            if (dist > boundary) {
               const nx = this.x / dist;
               const ny = this.y / dist;
 
-              const p = 2 * (this.vx * nx + this.vy * ny);
-              this.vx = this.vx - p * nx;
-              this.vy = this.vy - p * ny;
-
-              this.x = nx * (config.bowlRadius - this.r);
-              this.y = ny * (config.bowlRadius - this.r);
+              // 공의 이동 방향이 벽 바깥쪽을 향하고 있을 때만 반사 (중복 충돌 방지)
+              const dotProduct = this.vx * nx + this.vy * ny;
+              if (dotProduct > 0) {
+                const p = 2 * dotProduct;
+                this.vx = this.vx - p * nx;
+                this.vy = this.vy - p * ny;
+                
+                // 단 1회의 반사 이벤트 시점에만 순서 교차
+                this.el.style.zIndex = Math.floor(
+                  Math.random() * config.totalBalls * 2,
+                );
+              }
+              
+              // 화면 밖으로 벗어남 방지용 위치 보정 (안전 장치)
+              this.x = nx * boundary;
+              this.y = ny * boundary;
             }
-
-            const depthZIndex = Math.floor(this.z) + this.maxZ;
 
             // 회전치 누적 계산 (순간적인 이동 속도인 speed2D에 비례하여 자연스럽게 굴러가도록 설계)
             this.rot += speed2D * this.rotDir * 1.5;
 
-            // 거리(Z축)에 비례한 원근감 스케일 및 회전 렌더링
+            // 회전 렌더링
             this.el.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rot}deg)`;
-            this.el.style.zIndex = depthZIndex;
           }
         }
 
@@ -421,102 +239,36 @@
         };
 
         const initMachine = () => {
-          domNodes.bowlGlass.innerHTML = "";
+          domNodes.container.style.setProperty(
+            "--container-radius",
+            `${config.containerRadius}px`,
+          );
+          domNodes.container.style.setProperty(
+            "--ball-radius",
+            `${config.ballRadius}px`,
+          );
+          domNodes.container.innerHTML = "";
           machineBalls.length = 0;
           for (let i = 0; i < config.totalBalls; i++) {
             const ball = new Faux3DBall(i);
-            domNodes.bowlGlass.appendChild(ball.el);
+            domNodes.container.appendChild(ball.el);
             machineBalls.push(ball);
           }
           startPhysicsLoop();
         };
 
-        const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
-
-        const createResultBallEl = (numText, customClass) => {
-          const el = document.createElement("div");
-          el.className = "result-ball";
-          if (customClass) {
-            el.classList.add(customClass);
-          }
-          el.textContent = numText;
-          el.setAttribute("aria-label", `선택된 번호는 ${numText}번 입니다`);
-          return el;
-        };
-
-        const handleDraw = async () => {
-          if (!domNodes.drawBtn) return;
-
-          domNodes.drawBtn.disabled = true;
-          domNodes.drawBtn.textContent = "혼합 중...";
-          domNodes.resultTray.innerHTML = "";
-          domNodes.resultTray.setAttribute(
-            "aria-label",
-            "번호를 섞고 있습니다",
-          );
-
-          machineBalls.forEach((b) => {
-            b.isDrawn = false;
-            b.el.style.opacity = 1;
-          });
-
-          isDrawingState = true;
-          await sleep(1500);
-          isDrawingState = false;
-
-          try {
-            const pickedIdx = Math.floor(Math.random() * machineBalls.length);
-            const pickedBall = machineBalls[pickedIdx];
-
-            pickedBall.isDrawn = true;
-            pickedBall.el.style.opacity = 0;
-
-            // 실제 DOM에 렌더링하기 위해 엘리먼트 텍스트(id) 사용
-            const resultBallEl = createResultBallEl(
-              pickedBall.el.textContent,
-              pickedBall.customClass,
-            );
-            domNodes.resultTray.appendChild(resultBallEl);
-
-            await sleep(50);
-            resultBallEl.classList.add("animate-drop");
-
-            domNodes.resultTray.setAttribute(
-              "aria-label",
-              `당첨 번호 ${pickedBall.el.textContent}번이 추출되었습니다`,
-            );
-          } catch (e) {
-            console.error("Extraction Error:", e);
-          } finally {
-            if (domNodes.drawBtn) {
-              domNodes.drawBtn.disabled = false;
-              domNodes.drawBtn.textContent = "다시 추첨하기";
-            }
-          }
-        };
-
-        // 5. 컴포넌트 마운트 및 리스너 등록
+        // 5. 컴포넌트 마운트
         initMachine();
-        const clickHandler = () => handleDraw();
-
-        if (domNodes.drawBtn) {
-          domNodes.drawBtn.addEventListener("click", clickHandler);
-        }
 
         // 6. 메모리 누수 방지용 클린업(Unmount) 메서드 제공
         const destroy = () => {
           cancelAnimationFrame(animationFrameId);
-          if (domNodes.drawBtn) {
-            domNodes.drawBtn.removeEventListener("click", clickHandler);
-          }
-          domNodes.bowlGlass.innerHTML = "";
-          domNodes.resultTray.innerHTML = "";
+          domNodes.container.innerHTML = "";
           machineBalls.length = 0;
         };
 
         // 외부 인터페이스 반환
         return {
-          draw: handleDraw,
           destroy: destroy,
         };
       };
@@ -524,14 +276,12 @@
       // ==========================================
       // 사용 예시 (옵션을 넘겨서 인스턴스화)
       // ==========================================
-      const myLottoMachine = createLottoMachine({
-        bowlId: "bowlGlass",
-        btnId: "drawBtn",
-        trayId: "resultTray",
+      const myLottoMachine = lottoAnimation({
+        container: "#bowlGlass",
         totalBalls: 5, // 원하는 공 개수
-        bowlRadius: 70, // 머신 크기
+        containerRadius: 70, // 머신 크기
         ballRadius: 19, // 공 크기
-        maxSpeed: 5, // 공 이동 속도
+        maxSpeed: 3, // 공 이동 속도
         ballClasses: [
           "ball-yellow",
           "ball-blue",
