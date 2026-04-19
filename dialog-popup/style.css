@@ -263,6 +263,12 @@ body {
 .btn--amber:hover {
   background-color: #d97706;
 }
+.btn--slate {
+  background-color: #475569;
+}
+.btn--slate:hover {
+  background-color: #334155;
+}
 .btn--close-icon {
   background: transparent;
   border: none;

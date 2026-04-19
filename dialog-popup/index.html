@@ -20,7 +20,7 @@
           배경 영역을 어두운 오버레이로 차단하고 모달 외부 조작을 방지합니다. 폼
           입력이나 확인 등 사용자 집중이 강제될 때 사용합니다.
         </p>
-        <button type="button" id="openShowModalBtn" class="btn">
+        <button type="button" class="btn" data-open="focusDialog">
           showModal() 로 열기
         </button>
       </div>
@@ -32,7 +32,11 @@
           배경 차단 없이 단순 팝업창을 엽니다. 이 버튼을 누르면 팝업이 뜬
           상태에서도 화면 스크롤이나 바깥 버튼 클릭이 가능해집니다.
         </p>
-        <button type="button" id="openShowBtn" class="btn btn--secondary">
+        <button
+          type="button"
+          class="btn btn--secondary"
+          data-show="focusDialog"
+        >
           show() 로 열기
         </button>
       </div>
@@ -51,13 +55,20 @@
         <h3>4. 부가적인 레이아웃 형태</h3>
         <button
           type="button"
-          id="openBottomSheetBtn"
           class="btn btn--emerald btn--margin-bottom-small"
+          data-open="bottomSheetDialog"
         >
           바텀 시트 (Bottom Sheet) 열기
         </button>
-        <button type="button" id="openFullPopupBtn" class="btn btn--amber">
+        <button
+          type="button"
+          class="btn btn--amber btn--margin-bottom-small"
+          data-open="fullPopupDialog"
+        >
           풀 팝업 (Full Screen) 열기
+        </button>
+        <button type="button" id="openProgrammaticBtn" class="btn btn--slate">
+          JS 별도 함수 호출로 열기
         </button>
       </div>
 
@@ -76,9 +87,15 @@
           지원해야 한다면 <code>showModal()</code> 호출 시 에러가 발생합니다.
         </p>
         <div class="warning-box">
-          <strong class="text-warning-dark">💡 실무 권장 해결책 (Polyfill 사용법):</strong><br>
-          아래 코드를 HTML 파일과 자바스크립트에 추가하기만 하면, 구형 기기에서도 최신 <code>showModal()</code> 문법이 완벽하게 돌아가게끔 브라우저가 패치됩니다.
-          <pre class="code-snippet-box"><code>&lt;!-- 1. Polyfill CDN 스크립트 및 CSS 추가 (head 영역에 삽입) --&gt;
+          <strong class="text-warning-dark"
+            >💡 실무 권장 해결책 (Polyfill 사용법):</strong
+          ><br />
+          아래 코드를 HTML 파일과 자바스크립트에 추가하기만 하면, 구형
+          기기에서도 최신 <code>showModal()</code> 문법이 완벽하게 돌아가게끔
+          브라우저가 패치됩니다.
+          <pre
+            class="code-snippet-box"
+          ><code>&lt;!-- 1. Polyfill CDN 스크립트 및 CSS 추가 (head 영역에 삽입) --&gt;
 &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.5.6/dialog-polyfill.min.css"&gt;
 &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.5.6/dialog-polyfill.min.js"&gt;&lt;/script&gt;
 
@@ -96,6 +113,7 @@
       id="focusDialog"
       class="custom-dialog"
       aria-labelledby="dialogTitle"
+      data-backdrop-close
     >
       <header class="dialog__header">
         <!-- tabindex="-1"을 주면 프로그래밍적으로 포커스를 받을 수 있게 되며, autofocus를 통해 오픈 시 최우선적으로 포커스를 가져옵니다. -->
@@ -121,10 +139,14 @@
       </div>
 
       <footer class="dialog__footer">
-        <button type="button" id="closeModalBtn" class="btn btn--secondary">
+        <button
+          type="button"
+          class="btn btn--secondary"
+          data-close="focusDialog"
+        >
           종료 (close)
         </button>
-        <button type="button" id="confirmModalBtn" class="btn">저장</button>
+        <button type="button" class="btn" data-close="focusDialog">저장</button>
       </footer>
     </dialog>
 
@@ -133,6 +155,7 @@
       id="bottomSheetDialog"
       class="custom-dialog custom-dialog--bottom-sheet"
       aria-labelledby="bottomSheetTitle"
+      data-backdrop-close
     >
       <div class="dialog__handler"></div>
       <header class="dialog__header dialog__header--no-border">
@@ -145,7 +168,7 @@
         <button
           type="button"
           class="btn btn--emerald btn--full-width"
-          id="closeBottomBtn"
+          data-close="bottomSheetDialog"
         >
           확인
         </button>
@@ -165,7 +188,7 @@
         <button
           type="button"
           class="btn--close-icon"
-          id="closeFullPopupIconBtn"
+          data-close="fullPopupDialog"
           aria-label="닫기"
         >
           ✕
@@ -178,7 +201,11 @@
         </div>
       </div>
       <footer class="dialog__footer dialog__footer--flat">
-        <button type="button" id="closeFullPopupBtn" class="btn btn--amber">
+        <button
+          type="button"
+          class="btn btn--amber"
+          data-close="fullPopupDialog"
+        >
           적용 후 닫기
         </button>
       </footer>
