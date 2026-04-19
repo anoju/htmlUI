@@ -6,6 +6,46 @@
   --modal-bg: #ffffff;
 }
 
+/* 
+================================================ 
+Dialog 네이티브 스타일 리셋 (CSS Reset)
+오래된 브라우저나 크롬/사파리 간 미세하게 다른 기본 패딩, 
+검은색 테두리, 투명도 등을 완벽하게 통일시키기 위한 리셋 코어
+================================================ 
+*/
+dialog {
+  /* 1. 상태 및 위치 기준: 브라우저가 제공하는 레이어 메커니즘 수동 강제(스펙 통일) */
+  display: none;
+  position: absolute; /* show()로 열렸을 때의 일반 레이어 상태 */
+  inset: 0; /* 화면(부모) 전역으로 좌표를 당겨서 margin: auto를 통한 중앙 정렬을 도움 */
+
+  /* 2. 외형 리셋: 여백 및 테두리 완전히 제거 */
+  padding: 0;
+  margin: auto;
+  border: none;
+  background: transparent;
+  color: inherit;
+  
+  /* 3. 모바일 스크롤 독립성 확보 */
+  touch-action: auto; /* body 스크롤락이 걸려도 모달 내부 컨텐츠의 터치 스크롤은 강제 점유 */
+  overscroll-behavior: contain; /* 모달 맨 끝에서 스크롤 튕길 때 body가 들썩이는 현상 차단 */
+}
+
+dialog[open] {
+  display: block; /* 열렸을 때 화면에 노출 */
+}
+
+/* showModal()로 열렸을 때 (크롬 내부 엔진 호환 및 W3C 표준) */
+dialog:-internal-dialog-in-top-layer {
+  position: fixed; /* 이전 크롬/엣지 브라우저 엔진(Blink) 하위 호환용 */
+}
+dialog:modal {
+  position: fixed; /* W3C 공식 표준 규격: 뷰포트 기준으로 화면에 완벽 고정 */
+}
+dialog::backdrop {
+  background: transparent;
+}
+
 body {
   font-family:
     "Pretendard",
@@ -22,6 +62,14 @@ body {
   justify-content: center;
   min-height: 100vh;
   margin: 0;
+}
+
+/* 모달이 열렸을 때 (배경 스크롤 완벽 차단용 클래스) */
+body.scroll-lock {
+  /* PC 스크롤바 방지 */
+  overflow: hidden; 
+  /* 모바일(iOS 등) 스와이프 스크롤 강제 차단 */
+  touch-action: none; 
 }
 
 .main-container {
@@ -105,13 +153,11 @@ body {
   background-color: #d1d5db;
 }
 
-/* Dialog 모달 최상위 스타일 */
+/* 리셋 위에 그려진 사용자 정의 모달 UI 베이스 */
 .custom-dialog {
-  padding: 0;
-  border: none;
+  background-color: var(--modal-bg);
   border-radius: 16px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  background-color: var(--modal-bg);
   width: 90%;
   max-width: 400px;
   color: var(--text-color);
@@ -307,12 +353,20 @@ body {
   overflow-y: auto;
 }
 @keyframes slideUpBottom {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 @keyframes slideDownBottom {
-  from { transform: translateY(0); }
-  to { transform: translateY(100%); }
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
 }
 .custom-dialog--bottom-sheet[open] {
   animation: slideUpBottom 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -346,12 +400,24 @@ body {
   overflow-y: auto;
 }
 @keyframes slideUpFull {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 @keyframes slideDownFull {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(40px); }
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(40px);
+  }
 }
 .custom-dialog--full-screen[open] {
   animation: slideUpFull 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;

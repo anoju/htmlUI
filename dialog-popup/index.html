@@ -10,16 +10,39 @@
     <main class="main-container">
       <h1>HTML5 Native Dialog API 마스터</h1>
       <p class="description">
-        커스텀으로 짜여진 라이브러리 함수가 아닙니다! 순수 <strong>HTML5 <code>&lt;dialog&gt;</code> 요소가 자체적으로 제공하는 네이티브 자바스크립트 메서드 3가지</strong>의 기능과 기본 포커스 동작 원리를 완벽하게 분석하고 실습하는 환경입니다.
+        커스텀으로 짜여진 라이브러리 함수가 아닙니다! 순수
+        <strong
+          >HTML5 <code>&lt;dialog&gt;</code> 요소가 자체적으로 제공하는 네이티브
+          자바스크립트 메서드 3가지</strong
+        >의 기능과 기본 포커스 동작 원리를 완벽하게 분석하고 실습하는
+        환경입니다.
       </p>
 
       <!-- 1. showModal 카드 -->
       <div class="card">
         <h3>1. showModal() 메서드</h3>
         <ul class="feature-list">
-          <li><strong>백드롭 생성:</strong> 배경을 차단(<code>::backdrop</code>)하며 외부 마우스/키보드 조작을 완벽히 통제합니다.</li>
-          <li><strong>포커스 트랩 (Focus Trap):</strong> 열린 직후부터 <code>Tab</code> 키를 눌러도 포커스가 모달 내부에서만 순환하도록 갇힙니다.</li>
-          <li><strong>오토 포커스:</strong> 다이얼로그 내부에 <code>autofocus</code> 속성이 있거나 <code>tabindex</code>인 요소로 자동 포커싱됩니다.</li>
+          <li>
+            <strong>백드롭 생성:</strong> 배경을
+            차단(<code>::backdrop</code>)하며 외부 마우스/키보드 조작을 완벽히
+            통제합니다.
+          </li>
+          <li>
+            <strong>Top Layer 독립 (fixed):</strong> 브라우저 기본 CSS로 강제
+            <code>position: fixed</code> 가 걸리며, 부모의
+            <code>overflow</code>나 <code>z-index</code>를 뚫고
+            <strong>최상위 레이어(Top Layer)</strong>에 렌더링됩니다.
+          </li>
+          <li>
+            <strong>포커스 트랩 (Focus Trap):</strong> 열린 직후부터
+            <code>Tab</code> 키를 눌러도 포커스가 모달 내부에서만 순환하도록
+            갇힙니다.
+          </li>
+          <li>
+            <strong>오토 포커스:</strong> 다이얼로그 내부에
+            <code>autofocus</code> 속성이 있거나 <code>tabindex</code>인 요소로
+            자동 포커싱됩니다.
+          </li>
         </ul>
         <button type="button" class="btn" data-open="focusDialog">
           showModal() 로 열기
@@ -30,8 +53,20 @@
       <div class="card">
         <h3>2. show() 메서드</h3>
         <ul class="feature-list">
-          <li><strong>Non-modal 형태:</strong> 백드롭 오버레이가 생기지 않고 단순히 화면에 요소가 드러납니다.</li>
-          <li><strong>백그라운드 조작 허용:</strong> 팝업이 떠 있는 중에도 뒤쪽의 버튼을 조작하거나 스크롤 할 수 있습니다. 포커스 트랩이 해제됩니다.</li>
+          <li>
+            <strong>Non-modal 형태:</strong> 백드롭 오버레이가 생기지 않고
+            단순히 화면에 요소가 드러납니다.
+          </li>
+          <li>
+            <strong>일반 페이징 종속 (absolute):</strong> 기본
+            <code>position: absolute</code> 속성이 부여됩니다. 부모 요소 중
+            relative 설정이 있다면 위치가 틀어지거나 잘려 보일 수 있으니
+            주의해야 합니다.
+          </li>
+          <li>
+            <strong>백그라운드 조작 허용:</strong> 팝업이 떠 있는 중에도 뒤쪽의
+            버튼을 조작하거나 스크롤 할 수 있습니다. 포커스 트랩이 해제됩니다.
+          </li>
         </ul>
         <button
           type="button"
@@ -46,9 +81,21 @@
       <div class="card card--margin-bottom-large">
         <h3>3. close([반환값]) 및 기타 API</h3>
         <ul class="feature-list feature-list--no-btn">
-          <li><strong>포커스 복귀:</strong> 모달이 닫히면, 열기 직전 활성화되었던 요소(버튼)로 브라우저가 스스로 <strong>포커스를 반환</strong>해줍니다.</li>
-          <li><strong>결과값 반환:</strong> <code>close('ok')</code> 처럼 파라미터를 넘기면, 이후 자바스크립트에서 <code>dialog.returnValue</code> 로 값을 편하게 읽을 수 있습니다.</li>
-          <li><strong>네이티브 이벤트:</strong> <code>ESC</code> 키를 누르면 브라우저 하드웨어 로직에 의해 <code>cancel</code> 이벤트가 발생하고 모달을 알아서 닫습니다. 추가 메서드 없이 이 3가지만으로 제어됩니다.</li>
+          <li>
+            <strong>포커스 복귀:</strong> 모달이 닫히면, 열기 직전 활성화되었던
+            요소(버튼)로 브라우저가 스스로
+            <strong>포커스를 반환</strong>해줍니다.
+          </li>
+          <li>
+            <strong>결과값 반환:</strong> <code>close('ok')</code> 처럼
+            파라미터를 넘기면, 이후 자바스크립트에서
+            <code>dialog.returnValue</code> 로 값을 편하게 읽을 수 있습니다.
+          </li>
+          <li>
+            <strong>네이티브 이벤트:</strong> <code>ESC</code> 키를 누르면
+            브라우저 하드웨어 로직에 의해 <code>cancel</code> 이벤트가 발생하고
+            모달을 알아서 닫습니다. 추가 메서드 없이 이 3가지만으로 제어됩니다.
+          </li>
         </ul>
       </div>
 
@@ -80,13 +127,14 @@
           ⚠️ 10년 치 구형 브라우저 실무 지원 시 주의사항
         </h3>
         <p class="margin-bottom-small">
-          기본적인 <code>&lt;dialog&gt;</code> 기반의 모달은
+          기본적인 <code>&lt;dialog&gt;</code> 기반의 모달은 (fixed나 absolute
+          같은 User-Agent 기본 스타일링을 포함하여)
           <strong
-            >2022년 상반기(iOS Safari 15.4 이상) 최신 브라우저부터 완벽히
-            지원</strong
-          >됩니다.<br />
-          만약 2014년~2021년 사이의 구형 아이폰(iOS 14 이하)이나 IE 환경까지
-          지원해야 한다면 <code>showModal()</code> 호출 시 에러가 발생합니다.
+            >2022년 상반기(iOS Safari 15.4 이상) 최신 브라우저부터 스펙이 완전히
+            통일되어 호환성 문제가 없습니다</strong
+          >.<br />
+          다만, 2014년~2021년 사이의 구형 아이폰이나 IE까지 동일한 디자인(기본
+          스타일)과 로직으로 지원해야 한다면 에러가 발생합니다.
         </p>
         <div class="warning-box">
           <strong class="text-warning-dark"
@@ -115,7 +163,6 @@
       id="focusDialog"
       class="custom-dialog"
       aria-labelledby="dialogTitle"
-      data-backdrop-close
     >
       <header class="dialog__header">
         <!-- tabindex="-1"을 주면 프로그래밍적으로 포커스를 받을 수 있게 되며, autofocus를 통해 오픈 시 최우선적으로 포커스를 가져옵니다. -->

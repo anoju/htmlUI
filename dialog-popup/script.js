@@ -15,6 +15,8 @@ const dialog = {
 
     if (isModal) {
       el.showModal();
+      // 모달 오픈 시 배경 스크롤 차단
+      document.body.classList.add("scroll-lock");
     } else {
       el.show();
     }
@@ -34,6 +36,8 @@ const dialog = {
     const onAnimationEnd = () => {
       el.classList.remove("is-closing");
       el.close();
+      // 애니메이션이 끝나고 완전히 닫힌 후 배경 스크롤 차단 해제
+      document.body.classList.remove("scroll-lock");
       el.removeEventListener("animationend", onAnimationEnd);
     };
 
