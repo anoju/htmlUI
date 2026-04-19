@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dialog 모달 포커스 예제</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <main class="main-container">
+    <h1>Dialog Element 포커스 테스트</h1>
+    <p>아래 버튼을 눌러 모달을 열어보세요.</p>
+    <!-- 포커스가 돌아올 버튼 -->
+    <button type="button" id="openModalBtn" class="btn">모달 열기</button>
+  </main>
+
+  <!-- 다이얼로그 (이 안에 포커스가 갇힘) -->
+  <dialog id="focusDialog" class="custom-dialog" aria-labelledby="dialogTitle">
+    <header class="dialog__header">
+      <h2 class="dialog__title" id="dialogTitle">새로운 메시지</h2>
+    </header>
+    <div class="dialog__content">
+      <label for="userNameInput">모달 내 첫 포커스 요소:</label>
+      <input type="text" id="userNameInput" class="dialog__input" placeholder="이름을 입력하세요">
+      <p class="dialog__note">모달이 열리면 모바일과 데스크탑 환경 모두 이 입력창으로 포커스가 알아서 이동합니다.</p>
+    </div>
+    <footer class="dialog__footer">
+      <button type="button" id="closeModalBtn" class="btn btn--secondary">닫기</button>
+      <button type="button" id="confirmModalBtn" class="btn">확인</button>
+    </footer>
+  </dialog>
+
+  <script src="./script.js"></script>
+</body>
+</html>

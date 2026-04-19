@@ -1,0 +1,140 @@
+/* BEM 명명 규칙 및 케밥 케이스 준수 */
+:root {
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+  --bg-color: #f3f4f6;
+  --text-color: #1f2937;
+  --modal-bg: #ffffff;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.main-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn--secondary {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.btn--secondary:hover {
+  background-color: #d1d5db;
+}
+
+/* Dialog 모달 스타일링 */
+.custom-dialog {
+  padding: 0;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  background-color: var(--modal-bg);
+  width: 90%;
+  max-width: 400px;
+  
+  /* 애니메이션 초기 상태 */
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  display: none;
+}
+
+/* 다이얼로그가 열려있을 때 */
+.custom-dialog[open] {
+  display: block;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* 모달 오버레이(배경) 스타일링 */
+.custom-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.custom-dialog[open]::backdrop {
+  opacity: 1;
+}
+
+.dialog__header {
+  padding: 1.5rem 1.5rem 0.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.dialog__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.dialog__content {
+  padding: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #4b5563;
+}
+
+.dialog__input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.dialog__input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.dialog__note {
+  margin-top: 16px;
+  font-size: 0.875rem;
+}
+
+.dialog__footer {
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  background-color: #f9fafb;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
