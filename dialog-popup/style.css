@@ -62,6 +62,17 @@ body {
   line-height: 1.5;
 }
 
+.feature-list {
+  margin: 0.5rem 0 1.2rem;
+  padding-left: 1.2rem;
+  color: #4b5563;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.feature-list--no-btn {
+  margin-bottom: 0;
+}
+
 .btn {
   padding: 12px 24px;
   font-size: 1rem;
