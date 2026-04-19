@@ -145,8 +145,7 @@ const initProgrammaticTestExample = () => {
       dialog.open(targetElement, true);
 
       btn.innerText = originalText;
-      btn.style.opacity = "1";
-      btn.style.cursor = "pointer";
+      btn.removeAttribute("style");
       btn.disabled = false;
     }, 1500);
   });
