@@ -1,36 +1,189 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dialog 모달 포커스 예제</title>
-  <link rel="stylesheet" href="./style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dialog 메서드 & 인터랙션 예제</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="main-container">
+      <h1>Dialog 완벽 마스터</h1>
+      <p class="description">
+        시각적 페이드 애니메이션(인터랙션) 통합 및 세 가지 핵심 메서드 실습.
+      </p>
 
-  <main class="main-container">
-    <h1>Dialog Element 포커스 테스트</h1>
-    <p>아래 버튼을 눌러 모달을 열어보세요.</p>
-    <!-- 포커스가 돌아올 버튼 -->
-    <button type="button" id="openModalBtn" class="btn">모달 열기</button>
-  </main>
+      <!-- 1. showModal 카드 -->
+      <div class="card">
+        <h3>1. showModal() 메서드</h3>
+        <p>
+          배경 영역을 어두운 오버레이로 차단하고 모달 외부 조작을 방지합니다. 폼
+          입력이나 확인 등 사용자 집중이 강제될 때 사용합니다.
+        </p>
+        <button type="button" id="openShowModalBtn" class="btn">
+          showModal() 로 열기
+        </button>
+      </div>
 
-  <!-- 다이얼로그 (이 안에 포커스가 갇힘) -->
-  <dialog id="focusDialog" class="custom-dialog" aria-labelledby="dialogTitle">
-    <header class="dialog__header">
-      <h2 class="dialog__title" id="dialogTitle">새로운 메시지</h2>
-    </header>
-    <div class="dialog__content">
-      <label for="userNameInput">모달 내 첫 포커스 요소:</label>
-      <input type="text" id="userNameInput" class="dialog__input" placeholder="이름을 입력하세요">
-      <p class="dialog__note">모달이 열리면 모바일과 데스크탑 환경 모두 이 입력창으로 포커스가 알아서 이동합니다.</p>
-    </div>
-    <footer class="dialog__footer">
-      <button type="button" id="closeModalBtn" class="btn btn--secondary">닫기</button>
-      <button type="button" id="confirmModalBtn" class="btn">확인</button>
-    </footer>
-  </dialog>
+      <!-- 2. show 카드 -->
+      <div class="card">
+        <h3>2. show() 메서드</h3>
+        <p>
+          배경 차단 없이 단순 팝업창을 엽니다. 이 버튼을 누르면 팝업이 뜬
+          상태에서도 화면 스크롤이나 바깥 버튼 클릭이 가능해집니다.
+        </p>
+        <button type="button" id="openShowBtn" class="btn btn--secondary">
+          show() 로 열기
+        </button>
+      </div>
 
-  <script src="./script.js"></script>
-</body>
+      <!-- 3. close 설명 카드 -->
+      <div class="card card--margin-bottom-large">
+        <h3>3. close() 메서드</h3>
+        <p>
+          열려있는 모달을 닫고, 열기 직전 위치로 포커스를 센스있게 되돌려
+          줍니다. 아래 모달 내부의 [닫기] 버튼 코드에 적용되어 있습니다.
+        </p>
+      </div>
+
+      <!-- 4. 다양한 레이아웃 카드 -->
+      <div class="card card--margin-bottom-large">
+        <h3>4. 부가적인 레이아웃 형태</h3>
+        <button
+          type="button"
+          id="openBottomSheetBtn"
+          class="btn btn--emerald btn--margin-bottom-small"
+        >
+          바텀 시트 (Bottom Sheet) 열기
+        </button>
+        <button type="button" id="openFullPopupBtn" class="btn btn--amber">
+          풀 팝업 (Full Screen) 열기
+        </button>
+      </div>
+
+      <!-- 5. 호환성 주의사항 카드 -->
+      <div class="card card--warning">
+        <h3 class="text-warning">
+          ⚠️ 10년 치 구형 브라우저 실무 지원 시 주의사항
+        </h3>
+        <p class="margin-bottom-small">
+          기본적인 <code>&lt;dialog&gt;</code> 기반의 모달은
+          <strong
+            >2022년 상반기(iOS Safari 15.4 이상) 최신 브라우저부터 완벽히
+            지원</strong
+          >됩니다.<br />
+          만약 2014년~2021년 사이의 구형 아이폰(iOS 14 이하)이나 IE 환경까지
+          지원해야 한다면 <code>showModal()</code> 호출 시 에러가 발생합니다.
+        </p>
+        <div class="warning-box">
+          <strong class="text-warning-dark">💡 실무 권장 해결책 (Polyfill 사용법):</strong><br>
+          아래 코드를 HTML 파일과 자바스크립트에 추가하기만 하면, 구형 기기에서도 최신 <code>showModal()</code> 문법이 완벽하게 돌아가게끔 브라우저가 패치됩니다.
+          <pre class="code-snippet-box"><code>&lt;!-- 1. Polyfill CDN 스크립트 및 CSS 추가 (head 영역에 삽입) --&gt;
+&lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.5.6/dialog-polyfill.min.css"&gt;
+&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.5.6/dialog-polyfill.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- 2. 자바스크립트에서 다이얼로그 요소 구문 적용 (사용 전 1회 호출) --&gt;
+&lt;script&gt;
+  const myDialog = document.getElementById('dialogBase');
+  dialogPolyfill.registerDialog(myDialog);
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+    </main>
+
+    <!-- 다이얼로그 요소 -->
+    <dialog
+      id="focusDialog"
+      class="custom-dialog"
+      aria-labelledby="dialogTitle"
+    >
+      <header class="dialog__header">
+        <!-- tabindex="-1"을 주면 프로그래밍적으로 포커스를 받을 수 있게 되며, autofocus를 통해 오픈 시 최우선적으로 포커스를 가져옵니다. -->
+        <h2 class="dialog__title" id="dialogTitle" tabindex="-1" autofocus>
+          상세 정보 입력
+        </h2>
+      </header>
+
+      <div class="dialog__content">
+        <label for="userNameInput">다이얼로그 안으로 포커스가 갇힘:</label>
+        <input
+          type="text"
+          id="userNameInput"
+          class="dialog__input"
+          placeholder="이름을 입력하세요"
+        />
+        <div class="dialog__note">
+          <strong>인터랙션 팁:</strong> 모달이 열릴 때와 닫힐 때 자바스크립트
+          'is-closing' 클래스를 활용한
+          <strong>부드러운 열리고 닫히는 애니메이션</strong>이 연결되어
+          있습니다.
+        </div>
+      </div>
+
+      <footer class="dialog__footer">
+        <button type="button" id="closeModalBtn" class="btn btn--secondary">
+          종료 (close)
+        </button>
+        <button type="button" id="confirmModalBtn" class="btn">저장</button>
+      </footer>
+    </dialog>
+
+    <!-- 바텀 시트 다이얼로그 -->
+    <dialog
+      id="bottomSheetDialog"
+      class="custom-dialog custom-dialog--bottom-sheet"
+      aria-labelledby="bottomSheetTitle"
+    >
+      <div class="dialog__handler"></div>
+      <header class="dialog__header dialog__header--no-border">
+        <h2 class="dialog__title" id="bottomSheetTitle" tabindex="-1" autofocus>
+          옵션 선택 (바텀 시트)
+        </h2>
+      </header>
+      <div class="dialog__content dialog__content--bottom">
+        <p>모바일 기기의 화면 하단에서 올라오는 팝업 형태입니다.</p>
+        <button
+          type="button"
+          class="btn btn--emerald btn--full-width"
+          id="closeBottomBtn"
+        >
+          확인
+        </button>
+      </div>
+    </dialog>
+
+    <!-- 풀 팝업 다이얼로그 -->
+    <dialog
+      id="fullPopupDialog"
+      class="custom-dialog custom-dialog--full-screen"
+      aria-labelledby="fullPopupTitle"
+    >
+      <header class="dialog__header dialog__header--flex-between">
+        <h2 class="dialog__title" id="fullPopupTitle" tabindex="-1" autofocus>
+          전체 화면 팝업
+        </h2>
+        <button
+          type="button"
+          class="btn--close-icon"
+          id="closeFullPopupIconBtn"
+          aria-label="닫기"
+        >
+          ✕
+        </button>
+      </header>
+      <div class="dialog__content">
+        <p>화면 전체를 덮는 풀 스크린 팝업입니다.</p>
+        <div class="dialog__dummy-scroll-area">
+          내부 내용이 길 경우 스크롤링이 들어갑니다. (강제 스크롤 가능 구역)
+        </div>
+      </div>
+      <footer class="dialog__footer dialog__footer--flat">
+        <button type="button" id="closeFullPopupBtn" class="btn btn--amber">
+          적용 후 닫기
+        </button>
+      </footer>
+    </dialog>
+
+    <script src="./script.js"></script>
+  </body>
 </html>
