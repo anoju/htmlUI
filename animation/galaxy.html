@@ -1,71 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>우주 배경 (Radial Deep Space)</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #000;
-      font-family: sans-serif;
-    }
-    #space-canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-    }
-    .content-overlay {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      color: #fff;
-      pointer-events: none;
-    }
-    .title {
-      font-size: 3rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-      margin-bottom: 1rem;
-    }
-    .subtitle {
-      font-size: 1.2rem;
-      font-weight: 300;
-      color: #b0b0d0;
-      text-shadow: 0 0 10px rgba(176, 176, 208, 0.5);
-    }
-  </style>
-</head>
-<body>
-  <canvas id="space-canvas"></canvas>
-  
-  <div class="content-overlay">
-    <div class="title">DEEP SPACE</div>
-    <div class="subtitle">기본 방사형 (골고루 퍼진 별들)</div>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>우주 배경 (Radial Deep Space)</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #000;
+        font-family: sans-serif;
+      }
+      #space-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+      .content-overlay {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        color: #fff;
+        pointer-events: none;
+      }
+      .title {
+        font-size: 3rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        margin-bottom: 1rem;
+      }
+      .subtitle {
+        font-size: 1.2rem;
+        font-weight: 300;
+        color: #b0b0d0;
+        text-shadow: 0 0 10px rgba(176, 176, 208, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="space-canvas"></canvas>
 
-  <script src="./galaxy.js"></script>
-  <script>
-    // 기본 방사형 우주
-    createGalaxyAnimation('space-canvas', {
-      backgroundType: 'radial',
-      starDistribution: 'uniform', 
-      backgroundColors: ['#101525', '#050711', '#000000']
-    });
-  </script>
-</body>
+    <div class="content-overlay">
+      <div class="title">DEEP SPACE</div>
+      <div class="subtitle">기본 방사형 (골고루 퍼진 별들)</div>
+    </div>
+
+    <script src="./galaxy.js"></script>
+    <script>
+      // 기본 방사형 우주
+      createGalaxyAnimation("space-canvas", {
+        backgroundType: "radial",
+        starDistribution: "uniform",
+        backgroundColors: ["#101525", "#050711", "#000000"],
+        starDensity: 3000, // 몰린 쪽에 별이 쏟아지도록 밀도 조절
+      });
+    </script>
+  </body>
 </html>
