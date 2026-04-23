@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>우주 배경 (Galaxy Animation)</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+      font-family: sans-serif;
+    }
+    #space-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+    .content-overlay {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      color: #fff;
+      pointer-events: none; /* 배경과 상호작용 방해 안 함 */
+    }
+    .title {
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+      margin-bottom: 1rem;
+    }
+    .subtitle {
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: #b0b0d0;
+      text-shadow: 0 0 10px rgba(176, 176, 208, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="space-canvas"></canvas>
+  
+  <div class="content-overlay">
+    <div class="title">DEEP SPACE</div>
+    <div class="subtitle">아주 천천히 흐르는 우주의 시간</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('space-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    let stars = [];
+    let shootingStars = [];
+
+    // 별 색상 팔레트 (다양한 온도의 별 색상)
+    const starColors = ['#ffffff', '#ffe9c4', '#d4fbff', '#f4d7ff', '#a3c2ff'];
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      initStars();
+    }
+
+    class Star {
+      constructor() {
+        this.reset(true);
+      }
+
+      reset(initial = false) {
+        // 초기화 시 화면 전체에, 리셋 시 화면 우측 밖이나 위쪽에 생성하여 자연스럽게 흘러오도록 함
+        this.x = initial ? Math.random() * width : width + Math.random() * 100;
+        this.y = Math.random() * height;
+        
+        // 별의 크기 (원근감 표현을 위해 다양하게)
+        this.radius = Math.random() * 1.5 + 0.2;
+        
+        // 투명도 및 반짝임 속도
+        this.alpha = Math.random();
+        this.alphaChange = (Math.random() * 0.015 + 0.005) * (Math.random() < 0.5 ? 1 : -1);
+        
+        // 원근감(Parallax)를 위한 깊이값 설정 (큰 별일수록 가까이 있고 빨리 이동)
+        this.depth = this.radius / 1.7; 
+        
+        // 아주 천천히 이동하는 속도 (카메라가 우측으로 패닝하는 듯한 효과)
+        this.vx = -this.depth * 0.15;
+        this.vy = this.depth * 0.02;
+        
+        this.color = starColors[Math.floor(Math.random() * starColors.length)];
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        
+        // 반짝임 효과
+        this.alpha += this.alphaChange;
+        if (this.alpha <= 0.1) {
+          this.alphaChange = Math.abs(this.alphaChange);
+        } else if (this.alpha >= 1) {
+          this.alphaChange = -Math.abs(this.alphaChange);
+        }
+
+        // 화면 밖으로 나가면 다시 오른쪽에서 생성
+        if (this.x < -10 || this.y > height + 10) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        
+        // 큰 별들은 약간의 빛 번짐 효과 추가
+        if (this.radius > 1) {
+          ctx.shadowBlur = this.radius * 3;
+          ctx.shadowColor = this.color;
+        }
+        
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    class ShootingStar {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        // 화면 오른쪽 위에서 주로 시작하도록 설정
+        this.x = Math.random() * (width * 1.5);
+        this.y = -Math.random() * 500;
+        
+        // 별똥별의 길이, 속도, 두께
+        this.len = Math.random() * 100 + 50;
+        this.speed = Math.random() * 15 + 8;
+        this.size = Math.random() * 1.5 + 0.5;
+        
+        // 아주 간간히 등장하도록 대기 시간을 길게 설정 (프레임 단위)
+        this.waitTime = Math.random() * 800 + 200; 
+        this.active = false;
+        
+        // 떨어지는 각도 (우상단 -> 좌하단)
+        this.angle = Math.PI / 4 + (Math.random() * 0.2 - 0.1); // 약 45도 방향
+        this.vx = -Math.cos(this.angle) * this.speed;
+        this.vy = Math.sin(this.angle) * this.speed;
+      }
+
+      update() {
+        if (this.active) {
+          this.x += this.vx;
+          this.y += this.vy;
+          
+          // 화면을 완전히 벗어나면 비활성화 후 리셋
+          if (this.x < -this.len || this.y > height + this.len) {
+            this.active = false;
+            this.reset();
+          }
+        } else {
+          if (this.waitTime > 0) {
+            this.waitTime--;
+          } else {
+            this.active = true;
+          }
+        }
+      }
+
+      draw() {
+        if (!this.active) return;
+        
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        
+        // 꼬리의 끝점 계산 (이동 반대 방향)
+        const tailX = this.x - this.vx * (this.len / this.speed);
+        const tailY = this.y - this.vy * (this.len / this.speed);
+        
+        ctx.lineTo(tailX, tailY);
+        ctx.lineWidth = this.size;
+        
+        // 머리 부분은 밝고 꼬리로 갈수록 투명해지는 그라디언트
+        const gradient = ctx.createLinearGradient(this.x, this.y, tailX, tailY);
+        gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
+        gradient.addColorStop(0.1, "rgba(255, 255, 255, 0.8)");
+        gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+
+        ctx.strokeStyle = gradient;
+        
+        // 별똥별 빛 번짐
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#ffffff';
+        
+        // 선 끝을 둥글게
+        ctx.lineCap = "round";
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    function initStars() {
+      stars = [];
+      // 화면 크기에 비례하여 별 개수 조절 (밀도)
+      const numStars = Math.floor((width * height) / 1200); 
+      for (let i = 0; i < numStars; i++) {
+        stars.push(new Star());
+      }
+
+      shootingStars = [];
+      // 별똥별은 최대 3개까지만 관리하여 화면에 너무 많이 나오지 않게 함
+      for (let i = 0; i < 3; i++) {
+        shootingStars.push(new ShootingStar());
+      }
+    }
+
+    function drawBackground() {
+      // 심도 있는 우주 배경을 위한 방사형 그라디언트
+      const gradient = ctx.createRadialGradient(
+        width * 0.3, height * 0.3, 0, 
+        width / 2, height / 2, Math.max(width, height)
+      );
+      // 다크 블루/퍼플 계열의 우주 색상
+      gradient.addColorStop(0, '#101525');
+      gradient.addColorStop(0.5, '#050711');
+      gradient.addColorStop(1, '#000000');
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function animate() {
+      // 이전 프레임을 지우고 배경을 다시 그림
+      drawBackground();
+      
+      // 모든 별 업데이트 및 그리기
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+
+      // 별똥별 업데이트 및 그리기
+      shootingStars.forEach(shootingStar => {
+        shootingStar.update();
+        shootingStar.draw();
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    // 리사이즈 이벤트 처리
+    window.addEventListener('resize', resize);
+    
+    // 초기화 및 애니메이션 시작
+    resize();
+    animate();
+  </script>
+</body>
+</html>
