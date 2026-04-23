@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>우주 배경 (Galaxy Animation)</title>
+  <title>우주 배경 (Radial Deep Space)</title>
   <style>
     body, html {
       margin: 0;
@@ -33,7 +33,7 @@
       width: 100%;
       height: 100%;
       color: #fff;
-      pointer-events: none; /* 배경과 상호작용 방해 안 함 */
+      pointer-events: none;
     }
     .title {
       font-size: 3rem;
@@ -55,241 +55,16 @@
   
   <div class="content-overlay">
     <div class="title">DEEP SPACE</div>
-    <div class="subtitle">아주 천천히 흐르는 우주의 시간</div>
+    <div class="subtitle">기본 방사형 (골고루 퍼진 별들)</div>
   </div>
 
+  <script src="./galaxy.js"></script>
   <script>
-    /**
-     * 우주 배경 애니메이션을 생성합니다.
-     * @param {string|HTMLCanvasElement} canvasElement - 캔버스 요소 또는 ID
-     * @param {Object} options - 애니메이션 설정 옵션
-     */
-    function createGalaxyAnimation(canvasElement, options = {}) {
-      const canvas = typeof canvasElement === 'string' ? document.getElementById(canvasElement) : canvasElement;
-      if (!canvas) {
-        console.error('Canvas element not found');
-        return;
-      }
-      
-      const ctx = canvas.getContext('2d');
-
-      // 기본 옵션과 사용자 옵션 병합
-      const config = {
-        starColors: ['#ffffff', '#ffe9c4', '#d4fbff', '#f4d7ff', '#a3c2ff'], // 일반 별 색상 배열
-        starDensity: 1200, // 별 밀도 (수치가 낮을수록 별이 많아짐, 계산식: 화면 넓이 / 밀도)
-        maxShootingStars: 3, // 화면에 동시에 존재할 수 있는 최대 별똥별 개수
-        shootingStarWaitTime: [200, 1000], // 별똥별 등장 대기 시간 프레임 범위 [최소, 최대]
-        shootingStarSpeed: [8, 23], // 별똥별 이동 속도 범위 [최소, 최대]
-        shootingStarLength: [50, 150], // 별똥별 꼬리 길이 범위 [최소, 최대]
-        starSpeedMultiplier: 1, // 전체 별 이동 속도 배수
-        backgroundColors: ['#101525', '#050711', '#000000'], // 방사형 우주 배경 그라디언트 (0%, 50%, 100%)
-        ...options
-      };
-
-      let width, height;
-      let stars = [];
-      let shootingStars = [];
-      let animationFrameId;
-
-      class Star {
-        constructor() {
-          this.reset(true);
-        }
-
-        reset(initial = false) {
-          // 화면 밖 오른쪽에서 생성되어 자연스럽게 흘러오도록 함
-          this.x = initial ? Math.random() * width : width + Math.random() * 100;
-          this.y = Math.random() * height;
-          this.radius = Math.random() * 1.5 + 0.2;
-          
-          this.alpha = Math.random();
-          this.alphaChange = (Math.random() * 0.015 + 0.005) * (Math.random() < 0.5 ? 1 : -1);
-          this.depth = this.radius / 1.7; // 원근감을 위한 깊이
-          
-          // 옵션의 속도 배수를 적용
-          this.vx = -this.depth * 0.15 * config.starSpeedMultiplier;
-          this.vy = this.depth * 0.02 * config.starSpeedMultiplier;
-          
-          this.color = config.starColors[Math.floor(Math.random() * config.starColors.length)];
-        }
-
-        update() {
-          this.x += this.vx;
-          this.y += this.vy;
-          
-          // 반짝임 효과
-          this.alpha += this.alphaChange;
-          if (this.alpha <= 0.1) {
-            this.alphaChange = Math.abs(this.alphaChange);
-          } else if (this.alpha >= 1) {
-            this.alphaChange = -Math.abs(this.alphaChange);
-          }
-
-          // 화면을 완전히 벗어나면 재설정
-          if (this.x < -10 || this.y > height + 10) {
-            this.reset();
-          }
-        }
-
-        draw() {
-          ctx.save();
-          ctx.globalAlpha = this.alpha;
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-          ctx.fillStyle = this.color;
-          
-          if (this.radius > 1) {
-            ctx.shadowBlur = this.radius * 3;
-            ctx.shadowColor = this.color;
-          }
-          
-          ctx.fill();
-          ctx.restore();
-        }
-      }
-
-      class ShootingStar {
-        constructor() {
-          this.reset();
-        }
-
-        reset() {
-          this.x = Math.random() * (width * 1.5);
-          this.y = -Math.random() * 500;
-          
-          // 옵션으로 받은 범위 내에서 랜덤 값 추출
-          this.len = Math.random() * (config.shootingStarLength[1] - config.shootingStarLength[0]) + config.shootingStarLength[0];
-          this.speed = Math.random() * (config.shootingStarSpeed[1] - config.shootingStarSpeed[0]) + config.shootingStarSpeed[0];
-          this.size = Math.random() * 1.5 + 0.5;
-          
-          this.waitTime = Math.random() * (config.shootingStarWaitTime[1] - config.shootingStarWaitTime[0]) + config.shootingStarWaitTime[0]; 
-          this.active = false;
-          
-          // 약 45도 방향 (우상단 -> 좌하단)
-          this.angle = Math.PI / 4 + (Math.random() * 0.2 - 0.1); 
-          this.vx = -Math.cos(this.angle) * this.speed;
-          this.vy = Math.sin(this.angle) * this.speed;
-        }
-
-        update() {
-          if (this.active) {
-            this.x += this.vx;
-            this.y += this.vy;
-            
-            if (this.x < -this.len || this.y > height + this.len) {
-              this.active = false;
-              this.reset();
-            }
-          } else {
-            if (this.waitTime > 0) {
-              this.waitTime--;
-            } else {
-              this.active = true;
-            }
-          }
-        }
-
-        draw() {
-          if (!this.active) return;
-          
-          ctx.save();
-          ctx.beginPath();
-          ctx.moveTo(this.x, this.y);
-          
-          const tailX = this.x - this.vx * (this.len / this.speed);
-          const tailY = this.y - this.vy * (this.len / this.speed);
-          
-          ctx.lineTo(tailX, tailY);
-          ctx.lineWidth = this.size;
-          
-          const gradient = ctx.createLinearGradient(this.x, this.y, tailX, tailY);
-          gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
-          gradient.addColorStop(0.1, "rgba(255, 255, 255, 0.8)");
-          gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
-
-          ctx.strokeStyle = gradient;
-          ctx.shadowBlur = 15;
-          ctx.shadowColor = '#ffffff';
-          ctx.lineCap = "round";
-          ctx.stroke();
-          ctx.restore();
-        }
-      }
-
-      function initStars() {
-        stars = [];
-        const numStars = Math.floor((width * height) / config.starDensity); 
-        for (let i = 0; i < numStars; i++) {
-          stars.push(new Star());
-        }
-
-        shootingStars = [];
-        for (let i = 0; i < config.maxShootingStars; i++) {
-          shootingStars.push(new ShootingStar());
-        }
-      }
-
-      function drawBackground() {
-        const gradient = ctx.createRadialGradient(
-          width * 0.3, height * 0.3, 0, 
-          width / 2, height / 2, Math.max(width, height)
-        );
-        
-        gradient.addColorStop(0, config.backgroundColors[0]);
-        gradient.addColorStop(0.5, config.backgroundColors[1]);
-        gradient.addColorStop(1, config.backgroundColors[2]);
-        
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
-      }
-
-      function animate() {
-        drawBackground();
-        
-        stars.forEach(star => {
-          star.update();
-          star.draw();
-        });
-
-        shootingStars.forEach(shootingStar => {
-          shootingStar.update();
-          shootingStar.draw();
-        });
-
-        animationFrameId = requestAnimationFrame(animate);
-      }
-
-      function handleResize() {
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
-        initStars();
-      }
-
-      window.addEventListener('resize', handleResize);
-      handleResize();
-      animate();
-
-      // 인스턴스 제어 객체 반환 (메모리 누수 방지용)
-      return {
-        destroy: () => {
-          window.removeEventListener('resize', handleResize);
-          cancelAnimationFrame(animationFrameId);
-        }
-      };
-    }
-
-    // 함수 호출 및 실행 예시 (다양한 옵션 활용 가능)
-    const galaxyInstance = createGalaxyAnimation('space-canvas', {
-      starColors: ['#ffffff', '#ffe9c4', '#d4fbff', '#f4d7ff', '#a3c2ff'],
-      starDensity: 1200,              // 숫자가 작을수록 별이 촘촘해짐 (기본 1200)
-      maxShootingStars: 3,            // 화면에 렌더링될 별똥별 최대 개수
-      shootingStarWaitTime: [200, 1000], // 별똥별이 다시 나오기까지의 프레임 대기 시간
-      shootingStarSpeed: [8, 23],     // 별똥별 떨어지는 속도 [최소, 최대]
-      shootingStarLength: [50, 150],  // 별똥별 꼬리 길이 [최소, 최대]
-      starSpeedMultiplier: 1,         // 별들이 이동하는 속도 배수
-      backgroundColors: ['#101525', '#050711', '#000000'] // 우주 배경 그라디언트 색상 (3단계)
+    // 기본 방사형 우주
+    createGalaxyAnimation('space-canvas', {
+      backgroundType: 'radial',
+      starDistribution: 'uniform', 
+      backgroundColors: ['#101525', '#050711', '#000000']
     });
   </script>
 </body>
