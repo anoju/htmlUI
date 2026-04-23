@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Moving Text Gradient</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #1a1a1a;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        /* 3D 효과를 위한 원근감 설정 */
+        perspective: 1000px;
+        overflow: hidden; /* 모바일 등에서 스크롤 방지 */
+      }
+
+      .gradient-text {
+        font-size: 4rem;
+        font-weight: 800;
+        text-align: center;
+        line-height: 1.4;
+
+        /* 그라데이션 및 배경 사이즈 */
+        background: linear-gradient(
+          89.99deg,
+          #5bd0f6 0.01%,
+          #7074ff 48.96%,
+          #2974ff 98.43%
+        );
+        background-size: 200% auto;
+
+        /* 텍스트 클리핑 */
+        color: transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+
+        /* JS에서 제어할 것이므로 CSS 애니메이션은 제거합니다. */
+        /* 부드러운 전환을 원할 경우 약간의 트랜지션을 줄 수 있지만, 
+         JS에서 requestAnimationFrame을 쓰므로 여기서는 생략합니다. */
+        transform-style: preserve-3d;
+        will-change: transform, background-position;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="gradient-text" id="textEl">
+      텍스트에<br />
+      그라데이션 컬러 적용<br />
+      마우스에 따라 움직이는 효과
+    </div>
+
+    <script>
+      const textEl = document.getElementById("textEl");
+
+      // 현재 보간(Lerp) 상태값
+      let currentX = 0;
+      let currentY = 0;
+      let currentBgX = 50; // 그라데이션의 중간 위치
+
+      // 목표(Target) 상태값
+      let targetX = 0;
+      let targetY = 0;
+      let targetBgX = 50;
+
+      const maxRotation = 25; // 글자가 바라볼 최대 회전 각도 (도)
+      let idleTimer = null; // 대기 시간 체크용 타이머
+
+      function handleMove(e) {
+        if (idleTimer) clearTimeout(idleTimer); // 기존 타이머 초기화
+
+        let clientX, clientY;
+
+        // 터치와 마우스 이벤트 구분
+        if (e.touches && e.touches.length > 0) {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+        } else {
+          clientX = e.clientX;
+          clientY = e.clientY;
+        }
+
+        // 화면 중앙을 (0, 0)으로 계산
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+
+        // -1 (왼쪽/위) 부터 1 (오른쪽/아래) 사이의 비율 계산
+        const percentX = (clientX - centerX) / centerX;
+        const percentY = (clientY - centerY) / centerY;
+
+        // 마우스가 있는 방향을 바라보도록 각도 계산
+        targetY = percentX * maxRotation; // 좌우 각도
+        targetX = -percentY * maxRotation; // 상하 각도
+
+        // 그라데이션도 커서 위치에 따라 0% ~ 100% 사이로 이동
+        targetBgX = 50 + percentX * 50;
+
+        // 3초(3000ms) 동안 움직임이 없으면 원위치로 복귀
+        idleTimer = setTimeout(handleLeave, 3000);
+      }
+
+      // 마우스가 벗어나거나 터치가 끝났을 때 원위치로 복귀
+      function handleLeave() {
+        if (idleTimer) clearTimeout(idleTimer);
+        targetX = 0;
+        targetY = 0;
+        targetBgX = 50;
+      }
+
+      // 이벤트 리스너 등록
+      window.addEventListener("mousemove", handleMove);
+      window.addEventListener("touchmove", handleMove, { passive: false });
+
+      window.addEventListener("mouseleave", handleLeave);
+      window.addEventListener("touchend", handleLeave);
+
+      // 부드러운 애니메이션 렌더링 루프
+      function animate() {
+        // 현재 값에서 목표 값으로 10%씩 부드럽게 이동 (Lerp)
+        currentX += (targetX - currentX) * 0.1;
+        currentY += (targetY - currentY) * 0.1;
+        currentBgX += (targetBgX - currentBgX) * 0.1;
+
+        // Transform(3D 회전) 및 Background Position 적용
+        textEl.style.transform = `perspective(1000px) rotateX(${currentX}deg) rotateY(${currentY}deg)`;
+        textEl.style.backgroundPosition = `${currentBgX}% 50%`;
+
+        requestAnimationFrame(animate);
+      }
+
+      // 애니메이션 루프 시작
+      animate();
+    </script>
+  </body>
+</html>
