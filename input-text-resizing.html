@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multi-scaling Input System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #6366f1;
+        --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        --card-bg: rgba(255, 255, 255, 0.03);
+        --input-bg: rgba(255, 255, 255, 0.05);
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --border-color: rgba(255, 255, 255, 0.1);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg-gradient);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+
+      .app-wrapper {
+        width: 100%;
+        max-width: 540px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .header h1 {
+        font-family: "Outfit", sans-serif;
+        font-size: 2.5rem;
+        background: linear-gradient(to right, #818cf8, #c084fc);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+      }
+
+      /* 그리드 레이아웃: 여러 인풋 배치 */
+      .input-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .input-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+        transition: var(--transition);
+      }
+
+      .input-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .label-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+      }
+
+      .label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .size-indicator {
+        font-size: 0.75rem;
+        color: var(--primary);
+        font-weight: bold;
+        background: rgba(99, 102, 241, 0.1);
+        padding: 2px 8px;
+        border-radius: 4px;
+      }
+
+      /* 공통 클래스: js-auto-scale-container */
+      .input-field-box {
+        width: 100%;
+        height: 56px;
+        background: var(--input-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        transition: var(--transition);
+        overflow: hidden;
+      }
+
+      .input-field-box:focus-within {
+        border-color: var(--primary);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .input-field-box input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text-main);
+        font-family: inherit;
+        font-weight: 600;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-wrapper">
+      <header class="header">
+        <h1>Input Scaler</h1>
+        <p>어떤 필드든 글자 수에 맞춰 자동으로 크기가 조절됩니다.</p>
+      </header>
+
+      <div class="input-grid">
+        <!-- 첫 번째 인풋 (기본설정) -->
+        <div class="input-card">
+          <div class="label-group">
+            <span class="label">Project Name</span>
+            <span class="size-indicator js-size-badge">24px</span>
+          </div>
+          <div
+            class="input-field-box js-auto-scale"
+            data-max-size="24"
+            data-min-size="11"
+          >
+            <input type="text" placeholder="입력 시 크기가 줄어듭니다..." />
+          </div>
+        </div>
+
+        <!-- 두 번째 인풋 (다른 사이즈 옵션) -->
+        <div class="input-card">
+          <div class="label-group">
+            <span class="label">User Nickname</span>
+            <span class="size-indicator js-size-badge">20px</span>
+          </div>
+          <div
+            class="input-field-box js-auto-scale"
+            data-max-size="20"
+            data-min-size="10"
+          >
+            <input type="text" placeholder="닉네임을 입력하세요" />
+          </div>
+        </div>
+
+        <!-- 세 번째 인풋 (작은 사이즈) -->
+        <div class="input-card">
+          <div class="label-group">
+            <span class="label">Short Description</span>
+            <span class="size-indicator js-size-badge">18px</span>
+          </div>
+          <div
+            class="input-field-box js-auto-scale"
+            data-max-size="18"
+            data-min-size="10"
+          >
+            <input type="text" placeholder="간단한 설명을 적어주세요" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /**
+       * InputTextScaler Class
+       * 지정된 컨테이너 내부의 인풋 텍스트 크기를 자동으로 조절합니다.
+       */
+      class InputTextScaler {
+        // 싱글톤 패턴으로 측정용 요소를 공유 관리합니다.
+        static _ruler = null;
+
+        static get ruler() {
+          if (!this._ruler) {
+            this._ruler = document.createElement("span");
+            this._ruler.id = "auto-scale-shared-ruler";
+            Object.assign(this._ruler.style, {
+              visibility: "hidden",
+              position: "absolute",
+              whiteSpace: "pre",
+              pointerEvents: "none",
+              top: "-9999px",
+              left: "-9999px",
+            });
+            document.body.appendChild(this._ruler);
+          }
+          return this._ruler;
+        }
+
+        constructor(container) {
+          this.container = container;
+          this.input = container.querySelector("input");
+          this.badge = container
+            .closest(".input-card")
+            .querySelector(".js-size-badge");
+
+          // 데이터 속성으로부터 옵션 로드 (없으면 기본값)
+          this.config = {
+            maxSize: parseInt(container.dataset.maxSize) || 24,
+            minSize: parseInt(container.dataset.minSize) || 11,
+            padding: 32, // input-field-box의 패딩 좌우 합계 (16px * 2)
+          };
+
+          this.init();
+        }
+
+        init() {
+          // 초기 폰트 스타일 설정
+          this.input.style.fontSize = `${this.config.maxSize}px`;
+
+          // 이벤트 바인딩
+          const handleUpdate = () => this.update();
+          this.input.addEventListener("input", handleUpdate);
+          window.addEventListener("resize", handleUpdate);
+
+          // 초기 실행
+          this.update();
+        }
+
+        /**
+         * 현재 텍스트 너비를 계산하여 폰트 사이즈 적용
+         */
+        update() {
+          const text = this.input.value || this.input.placeholder;
+          const availableWidth =
+            this.container.clientWidth - this.config.padding;
+
+          let currentSize = this.config.maxSize;
+
+          const ruler = InputTextScaler.ruler;
+
+          // Ruler 설정 (해당 인스턴스의 스타일 복제)
+          ruler.textContent = text;
+          ruler.style.fontFamily = getComputedStyle(this.input).fontFamily;
+          ruler.style.fontWeight = getComputedStyle(this.input).fontWeight;
+
+          // 측정을 통한 사이즈 계산 (1px 단위)
+          ruler.style.fontSize = `${currentSize}px`;
+
+          while (
+            ruler.offsetWidth > availableWidth &&
+            currentSize > this.config.minSize
+          ) {
+            currentSize -= 1;
+            ruler.style.fontSize = `${currentSize}px`;
+          }
+
+          // 실제 반영
+          this.input.style.fontSize = `${currentSize}px`;
+          if (this.badge) {
+            this.badge.textContent = `${currentSize}px`;
+          }
+        }
+      }
+
+      /**
+       * 페이지 내의 모든 .js-auto-scale 요소 초기화
+       */
+      document.addEventListener("DOMContentLoaded", () => {
+        const scaleElements = document.querySelectorAll(".js-auto-scale");
+        scaleElements.forEach((el) => new InputTextScaler(el));
+      });
+    </script>
+  </body>
+</html>
