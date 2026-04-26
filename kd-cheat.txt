@@ -232,6 +232,8 @@ cheat_teleport x:838 y:3531 z:51 스칼리츠
 
 cheat_teleport x:913 y:899 z:125 브라닉
 
+cheat_teleport x:2241 y:941 z:77 쿠노 야영지
+
 쿠만군 캠프 (탈름버그 남쪽): cheat_teleport x:2415 y:2343 z:109
 
 쿠만군 캠프 (우지츠 동남쪽): cheat_teleport x:3580 y:3188 z:172
