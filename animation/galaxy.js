@@ -4,7 +4,7 @@
  * @param {string|HTMLCanvasElement} canvasElement - 애니메이션을 그릴 캔버스 DOM 요소 자체 또는 ID 문자열
  * @param {Object} [options={}] - 애니메이션 세부 설정 옵션 객체
  * @param {string[]} [options.starColors=['#ffffff', '#ffe9c4', '#d4fbff', '#f4d7ff', '#a3c2ff']] - 일반 별들이 가질 수 있는 색상 배열 (렌더링 시 랜덤 선택)
- * @param {number} [options.starDensity=1200] - 별의 밀도. (화면 넓이 / starDensity) 공식으로 별 개수를 산정하므로, 수치가 낮을수록 별이 더 촘촘히 렌더링됩니다.
+ * @param {number} [options.starDensity=3000] - 별의 밀도. (화면 넓이 / starDensity) 공식으로 별 개수를 산정하므로, 수치가 낮을수록 별이 더 촘촘히 렌더링됩니다.
  * @param {number} [options.maxShootingStars=3] - 화면에 동시에 렌더링 될 수 있는 별똥별의 최대 개수
  * @param {number[]} [options.shootingStarWaitTime=[200, 1000]] - 별똥별이 다시 등장하기까지의 프레임(Frame) 단위 대기 시간 범위 [최소, 최대]
  * @param {number[]} [options.shootingStarSpeed=[8, 23]] - 별똥별이 우하단으로 대각선 낙하하는 이동 속도 범위 [최소, 최대]
@@ -19,8 +19,8 @@
  * @param {number} [options.crossStarSizeMultiplier=1] - 십자가(+) 모양의 화면상 길이 배수 (기본값 1). 더 길게 하려면 1보다 큰 값 입력.
  * @param {string[]|null} [options.backgroundColors=null] - 우주 배경 그라디언트 색상 배열. null이면 캔버스 배경을 투명하게 비워두어 CSS로 배경을 제어할 수 있게 합니다.
  * @param {string} [options.backgroundType='radial'] - 배경 그라디언트 렌더링 타입. 'radial'(방사형) 또는 'linear'(선형) 선택.
- * @param {string} [options.starDistribution='uniform'] - 별들의 Y좌표(세로) 분포 형태. 'uniform'(균등 분포), 'top'(상단 밀집), 'bottom'(하단 밀집) 중 선택.
- * @param {number} [options.starDistributionPower=1.5] - starDistribution이 'top' 또는 'bottom'일 때 별들이 쏠리는 강도. 수치가 클수록 한쪽으로 더 극단적으로 몰립니다.
+ * @param {string} [options.starDistribution='uniform'] - 별들의 Y좌표(세로) 분포 형태. 'uniform'(균등 분포), 'top'(상단 밀집), 'bottom'(하단 밀집), 'center'(중앙 밀집) 중 선택.
+ * @param {number} [options.starDistributionPower=1.5] - starDistribution이 'uniform'이 아닐 때 별들이 쏠리는 강도. 수치가 클수록 한쪽으로 더 극단적으로 몰립니다.
  * @returns {Object} { destroy: Function } - 캔버스 리사이즈 이벤트 리스너 제거 및 애니메이션 프레임 호출을 멈추는 메모리 해제용 정리(Clean-up) 객체를 반환합니다.
  */
 function createGalaxyAnimation(canvasElement, options = {}) {
@@ -38,7 +38,7 @@ function createGalaxyAnimation(canvasElement, options = {}) {
   // 기본 옵션과 사용자 옵션 병합 (JSDoc에 명시된 기본값과 동일하게 유지)
   const config = {
     starColors: ["#ffffff", "#ffe9c4", "#d4fbff", "#f4d7ff", "#a3c2ff"],
-    starDensity: 1200,
+    starDensity: 3000,
     maxShootingStars: 3,
     shootingStarWaitTime: [200, 1000],
     shootingStarSpeed: [8, 23],
@@ -74,12 +74,16 @@ function createGalaxyAnimation(canvasElement, options = {}) {
 
     if (config.starDistribution === "top") {
       // 0(위쪽)에 가깝게 몰림
-      // 기존 Math.pow(rand, power)는 0에 무한대로 몰려 선이 생기는(Infinite Spike) 문제가 있었습니다.
-      // 1 - Math.pow(rand, 1 / power)를 사용하면 가장자리 최대 밀도가 power 배수로 유한하게 제한되며 부드러운 그라데이션이 형성됩니다.
       rand = 1 - Math.pow(rand, 1 / power);
     } else if (config.starDistribution === "bottom") {
       // 1(아래쪽)에 가깝게 몰림
       rand = Math.pow(rand, 1 / power);
+    } else if (config.starDistribution === "center") {
+      // 0.5(중앙)에 가깝게 몰림
+      const sign = rand < 0.5 ? -1 : 1;
+      const shiftedRand = Math.abs(rand - 0.5) * 2; // 0 ~ 1
+      const val = 1 - Math.pow(shiftedRand, 1 / power); // 0 근처로 몰림
+      rand = 0.5 + sign * val * 0.5;
     }
 
     return rand * height;
@@ -103,8 +107,7 @@ function createGalaxyAnimation(canvasElement, options = {}) {
       this.alpha = config.starMinAlpha;
       // 어두운 상태에서 시작하므로 무조건 점차 밝아지는 방향(양수)으로 설정
       this.alphaChange =
-        (Math.random() * 0.015 + 0.005) *
-        config.starTwinkleSpeed;
+        (Math.random() * 0.015 + 0.005) * config.starTwinkleSpeed;
 
       // 원근감(depth)은 최대 크기 대비 현재 크기의 비율로 계산
       this.depth = this.radius / config.starSize[1];
@@ -316,7 +319,7 @@ function createGalaxyAnimation(canvasElement, options = {}) {
     width = window.innerWidth;
     height = window.innerHeight;
     dpr = window.devicePixelRatio || 1;
-    
+
     // 고해상도(Retina) 디스플레이 대응
     canvas.width = width * dpr;
     canvas.height = height * dpr;

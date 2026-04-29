@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>은하수 중심 (Milky Way Center)</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        /* 은하수 중심부처럼 중앙이 밝은 타원형 그라디언트 배경 */
+        background: radial-gradient(
+          ellipse at center,
+          #1c0f2b 0%,
+          #0a0b14 50%,
+          #000000 100%
+        );
+        font-family: sans-serif;
+      }
+      #space-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+      .content-overlay {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        color: #fff;
+        pointer-events: none;
+      }
+      .title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-shadow:
+          0 0 20px rgba(255, 255, 255, 0.8),
+          0 0 40px rgba(176, 176, 208, 0.5);
+        margin-bottom: 1rem;
+      }
+      .subtitle {
+        font-size: 1.2rem;
+        font-weight: 300;
+        color: #e0e0ff;
+        text-shadow: 0 0 10px rgba(224, 224, 255, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="space-canvas"></canvas>
+
+    <div class="content-overlay">
+      <div class="title">MILKY WAY</div>
+      <div class="subtitle">우주 중심부의 은하수 띠</div>
+    </div>
+
+    <script src="./galaxy.js"></script>
+    <script>
+      createGalaxyAnimation("space-canvas", {
+        starDistribution: "center", // 별들이 세로 기준 중앙(0.5)으로 몰림
+        starDistributionPower: 4, // 몰리는 강도 (클수록 중앙으로 더 좁게 뭉침)
+        starDensity: 4000, // 밀집 영역에 별이 꽉 차 보이도록 조정
+      });
+    </script>
+  </body>
+</html>
