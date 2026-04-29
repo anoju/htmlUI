@@ -12,7 +12,8 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        background-color: #000;
+        /* 기존 캔버스에서 처리하던 배경을 CSS로 이관 (원하는 대로 수정 가능) */
+        background: radial-gradient(circle at 30% 30%, #101525 0%, #050711 50%, #000000 100%);
         font-family: sans-serif;
       }
       #space-canvas {
@@ -61,11 +62,8 @@
 
     <script src="./galaxy.js"></script>
     <script>
-      // 기본 방사형 우주
       createGalaxyAnimation("space-canvas", {
-        backgroundType: "radial",
         starDistribution: "uniform",
-        backgroundColors: ["#101525", "#050711", "#000000"],
         starDensity: 3000, // 몰린 쪽에 별이 쏟아지도록 밀도 조절
       });
     </script>
