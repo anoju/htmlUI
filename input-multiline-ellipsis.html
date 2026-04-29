@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>고급 입력 필드 가이드: 줄바꿈 & 말줄임</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.2);
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --input-bg: #0f172a;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            padding: 4rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .section:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.1);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .description {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* 1. Single-line Input with Ellipsis */
+        .input-group {
+            position: relative;
+        }
+
+        input.ellipsis-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            
+            /* 핵심 스타일 */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        input.ellipsis-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            text-overflow: clip;
+        }
+
+        /* 2. Multiline Input (contenteditable) */
+        .editable-input {
+            width: 100%;
+            min-height: 56px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .editable-input:empty:before {
+            content: attr(placeholder);
+            color: var(--text-muted);
+        }
+
+        .editable-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+
+        /* 3. Auto-resizing Textarea */
+        textarea.auto-resize {
+            width: 100%;
+            min-height: 56px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+            resize: none;
+            overflow: hidden;
+        }
+
+        textarea.auto-resize:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+
+        /* 4. Multi-line Ellipsis (Clamp) */
+        .clamp-box {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+
+            /* 핵심 스타일: 3줄 이상일 때 말줄임 */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        code {
+            background: rgba(0,0,0,0.3);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #ec4899;
+        }
+        /* 5. The Ultimate Solution: Fake Input */
+        .smart-input-container {
+            position: relative;
+            width: 100%;
+            min-height: 56px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            transition: var(--transition);
+            cursor: text;
+            display: flex;
+            align-items: center;
+            padding: 0 1.25rem;
+            overflow: hidden;
+        }
+
+        .smart-input-container:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+
+        .smart-display {
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-main);
+            font-size: 1rem;
+            pointer-events: none;
+        }
+
+        .smart-real-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 1rem 1.25rem;
+            color: var(--text-main);
+            font-size: 1rem;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .smart-real-input:focus {
+            opacity: 1;
+        }
+
+        .smart-real-input:focus + .smart-display {
+            visibility: hidden;
+        }
+
+        .smart-input-container.multiline {
+            height: auto;
+            align-items: flex-start;
+            padding: 1rem 1.25rem;
+        }
+
+        .smart-input-container.multiline .smart-display {
+            white-space: normal;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .smart-input-container.multiline textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            resize: none;
+            color: var(--text-main);
+            font-size: 1rem;
+            padding: 0;
+            display: none;
+        }
+
+        .smart-input-container.multiline.active textarea {
+            display: block;
+        }
+
+        .smart-input-container.multiline.active .smart-display {
+            display: none;
+        }
+
+        .input-label {
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>고급 입력 필드 디자인</h1>
+            <p class="subtitle">말줄임(Ellipsis)과 줄바꿈(Multiline) 구현 가이드</p>
+        </header>
+
+        <!-- Section 5: Ultimate Solution -->
+        <div class="section" style="border: 2px solid var(--primary);">
+            <span class="tag" style="background: var(--primary); color: white;">Best Practice</span>
+            <h2>스마트 커스텀 Input (Fake Input)</h2>
+            <p class="description">
+                사용자가 지적하신 <code>input</code>의 한계를 극복하는 방법입니다.<br>
+                평소에는 <code>div</code>로 완벽한 말줄임을 보여주고, 클릭 시에만 실제 입력창으로 전환합니다.
+            </p>
+            
+            <div class="input-label">단일 라인 말줄임 + 입력</div>
+            <div class="smart-input-container" onclick="this.querySelector('input').focus()">
+                <input type="text" class="smart-real-input" value="이 텍스트는 input 태그임에도 불구하고 평상시에 완벽하게 말줄임표가 표시됩니다." oninput="updateDisplay(this)">
+                <div class="smart-display">이 텍스트는 input 태그임에도 불구하고 평상시에 완벽하게 말줄임표가 표시됩니다.</div>
+            </div>
+
+            <div style="margin-top: 2rem;"></div>
+
+            <div class="input-label">멀티라인 말줄임(2줄) + 입력</div>
+            <div class="smart-input-container multiline" onclick="activateMultiline(this)">
+                <div class="smart-display">멀티라인 말줄임 예시입니다. 클릭하면 전체 내용을 수정할 수 있는 textarea로 변하며, 포커스를 잃으면 다시 2줄 말줄임 상태로 돌아갑니다. 아주 긴 텍스트를 입력해보세요.</div>
+                <textarea onblur="deactivateMultiline(this)" oninput="updateMultilineDisplay(this)">멀티라인 말줄임 예시입니다. 클릭하면 전체 내용을 수정할 수 있는 textarea로 변하며, 포커스를 잃으면 다시 2줄 말줄임 상태로 돌아갑니다. 아주 긴 텍스트를 입력해보세요.</textarea>
+            </div>
+        </div>
+
+        <!-- Section 1 -->
+        <div class="section">
+            <span class="tag">Single Line</span>
+            <h2>말줄임표가 있는 Input</h2>
+            <p class="description">
+                포커스가 없을 때 긴 텍스트를 <code>...</code>으로 처리합니다.<br>
+                CSS의 <code>text-overflow: ellipsis</code> 속성을 사용합니다.
+            </p>
+            <div class="input-group">
+                <input type="text" class="ellipsis-input" 
+                    value="이 텍스트는 매우 길어서 입력 필드의 너비를 초과하면 자동으로 말줄임표가 표시됩니다." 
+                    placeholder="텍스트를 입력하세요...">
+            </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="section">
+            <span class="tag">Multiline</span>
+            <h2>ContentEditable (추천)</h2>
+            <p class="description">
+                <code>div</code>에 <code>contenteditable</code> 속성을 부여하여 
+                내용에 따라 높이가 자동으로 늘어나는 유연한 입력 필드를 만듭니다.
+            </p>
+            <div class="editable-input" contenteditable="true" placeholder="줄바꿈이 가능한 입력을 해보세요 (Shift+Enter)"></div>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="section">
+            <span class="tag">Multiline</span>
+            <h2>자동 높이 조절 Textarea</h2>
+            <p class="description">
+                기존 <code>textarea</code>를 사용하면서 스크립트를 통해 
+                입력 내용에 맞춰 높이를 동적으로 조절합니다.
+            </p>
+            <textarea class="auto-resize" placeholder="내용을 입력하면 높이가 자동으로 조절됩니다..." oninput="handleAutoResize(this)"></textarea>
+        </div>
+
+        <!-- Section 4 -->
+        <div class="section">
+            <span class="tag">Display</span>
+            <h2>멀티라인 말줄임 (Clamp)</h2>
+            <p class="description">
+                입력 필드는 아니지만, 긴 본문을 특정 줄 수(예: 3줄)에서 
+                잘라야 할 때 <code>-webkit-line-clamp</code>를 사용합니다.
+            </p>
+            <div class="clamp-box">
+                이 텍스트는 멀티라인 말줄임 예시입니다. 여러 줄의 텍스트가 있을 때 사용자가 읽기 적당한 수준까지만 보여주고 나머지는 말줄임표로 처리하는 디자인 패턴입니다. 
+                주로 게시판 목록이나 카드 디자인에서 본문 요약을 보여줄 때 매우 유용하게 사용됩니다. 
+                CSS의 line-clamp 속성을 활용하면 복잡한 자바스크립트 계산 없이도 구현이 가능합니다.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 단일 라인 스마트 인풋 업데이트
+        function updateDisplay(input) {
+            const display = input.nextElementSibling;
+            display.textContent = input.value;
+        }
+
+        // 2. 멀티라인 스마트 인풋 활성화
+        function activateMultiline(container) {
+            container.classList.add('active');
+            const textarea = container.querySelector('textarea');
+            textarea.focus();
+            handleAutoResize(textarea);
+        }
+
+        // 3. 멀티라인 스마트 인풋 비활성화
+        function deactivateMultiline(textarea) {
+            const container = textarea.parentElement;
+            container.classList.remove('active');
+            const display = container.querySelector('.smart-display');
+            display.textContent = textarea.value;
+        }
+
+        function updateMultilineDisplay(textarea) {
+            handleAutoResize(textarea);
+        }
+
+        // Textarea 자동 높이 조절 함수
+        function handleAutoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
+        }
+
+        // 초기 실행: 페이지 로드 시 textarea 높이 조절
+        window.addEventListener('DOMContentLoaded', () => {
+            const textareas = document.querySelectorAll('.auto-resize');
+            textareas.forEach(ta => handleAutoResize(ta));
+        });
+    </script>
+</body>
+</html>
