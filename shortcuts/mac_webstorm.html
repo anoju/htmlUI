@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebStorm - macOS 단축키 가이드</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .header {
+            background: linear-gradient(135deg, #0070e0 0%, #c021c4 100%);
+            box-shadow: 0 4px 15px rgba(0, 112, 224, 0.3);
+        }
+        .category-title {
+            color: #0070e0;
+            border-bottom-color: #e1f5fe;
+        }
+        .search-input:focus {
+            border-color: #0070e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>WebStorm</h1>
+            <p>macOS 공식 단축키 가이드 (전체 목록)</p>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="단축키 검색..." id="searchInput">
+        </div>
+        
+        <div class="shortcuts-grid">
+            <!-- 일반 -->
+            <div class="shortcut-category">
+                <h2 class="category-title">일반 (General)</h2>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">전체 검색 (Search Everywhere)</span>
+                    <span class="shortcut-keys"><span class="key">⇧</span> <span class="key">⇧</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">액션 찾기 (Find Action)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⇧</span>+<span class="key">A</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">설정 (Settings)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">,</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">프로젝트 구조 (Project Structure)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">;</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">도구 창 열기 (1~9)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">1~9</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">모두 저장 (Save All)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">S</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">동기화 (Synchronize)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">Y</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">편집기 최대화/복구</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⇧</span>+<span class="key">F12</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">최근 파일 목록 (Recent Files)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">E</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">최근 위치 목록 (Recent Locations)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⇧</span>+<span class="key">E</span></span>
+                </div>
+            </div>
+
+            <!-- 편집 -->
+            <div class="shortcut-category">
+                <h2 class="category-title">편집 (Editing)</h2>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">기본 코드 완성 (Basic Completion)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">Space</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">스마트 코드 완성 (Smart Completion)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">⇧</span>+<span class="key">Space</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">구문 완성 (Complete Statement)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⇧</span>+<span class="key">Enter</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">파라미터 정보 (Parameter Info)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">P</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">퀵 다큐멘테이션 (Quick Documentation)</span>
+                    <span class="shortcut-keys"><span class="key">F1</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">외부 문서 (External Documentation)</span>
+                    <span class="shortcut-keys"><span class="key">⇧</span>+<span class="key">F1</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">코드 생성 (Generate)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">N</span> / <span class="key">⌃</span>+<span class="key">⏎</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">메서드 오버라이드 (Override Methods)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">O</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">메서드 구현 (Implement Methods)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">I</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">둘러싸기 (Surround With...)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">T</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">한 줄 주석 토글</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">/</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">블록 주석 토글</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">/</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">선택 영역 확장/축소</span>
+                    <span class="shortcut-keys"><span class="key">⌥</span>+<span class="key">↑</span> / <span class="key">↓</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">컨텍스트 정보 (Context Info)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">⇧</span>+<span class="key">Q</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">의도 액션 표시 (Show Intentions)</span>
+                    <span class="shortcut-keys"><span class="key">⌥</span>+<span class="key">⏎</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">코드 포맷 정렬 (Reformat Code)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">L</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">임포트 최적화 (Optimize Imports)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">⌥</span>+<span class="key">O</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">자동 들여쓰기 (Auto-Indent)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">⌥</span>+<span class="key">I</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">줄 복제 (Duplicate Line)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">D</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">줄 삭제 (Delete Line)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌫</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">줄 합치기 (Join Lines)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">⇧</span>+<span class="key">J</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">줄 나누기 (Split Line)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⏎</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">대소문자 전환 (Toggle Case)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⇧</span>+<span class="key">U</span></span>
+                </div>
+            </div>
+
+            <!-- 탐색 -->
+            <div class="shortcut-category">
+                <h2 class="category-title">탐색 (Navigation)</h2>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">클래스로 이동</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">O</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">파일로 이동</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⇧</span>+<span class="key">O</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">심볼로 이동</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">O</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">줄로 이동 (Go to Line)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">L</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">뒤로/앞으로 이동 (Back/Forward)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">[</span> / <span class="key">]</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">선언으로 이동 (Declaration)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">B</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">구현으로 이동 (Implementation)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">B</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">타입 선언으로 이동 (Type Declaration)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⇧</span>+<span class="key">B</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">부모 메서드로 이동 (Super-method)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">U</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">파일 구조 팝업 (File Structure)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">F12</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">다음/이전 메서드 이동</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">↑</span> / <span class="key">↓</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">코드 블록 시작/끝 이동</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">[</span> / <span class="key">]</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">오류 탐색 (Next/Prev Error)</span>
+                    <span class="shortcut-keys"><span class="key">F2</span> / <span class="key">⇧</span>+<span class="key">F2</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">북마크 토글</span>
+                    <span class="shortcut-keys"><span class="key">F3</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">북마크 목록 표시</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">F3</span></span>
+                </div>
+            </div>
+
+            <!-- 검색 및 바꾸기 -->
+            <div class="shortcut-category">
+                <h2 class="category-title">검색 및 바꾸기 (Search/Replace)</h2>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">현재 파일에서 찾기</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">F</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">다음/이전 찾기</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">G</span> / <span class="key">⌘</span>+<span class="key">⇧</span>+<span class="key">G</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">현재 파일에서 바꾸기</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">R</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">전체 경로에서 찾기 (Find in Files)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⇧</span>+<span class="key">F</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">전체 경로에서 바꾸기 (Replace in Files)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⇧</span>+<span class="key">R</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">다음 항목 선택 (Add Selection)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">G</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">모든 항목 선택 (Select All Occurrences)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">⌘</span>+<span class="key">G</span></span>
+                </div>
+            </div>
+
+            <!-- 사용처 검색 -->
+            <div class="shortcut-category">
+                <h2 class="category-title">사용처 검색 (Usage Search)</h2>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">사용처 찾기 (Find Usages)</span>
+                    <span class="shortcut-keys"><span class="key">⌥</span>+<span class="key">F7</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">현재 파일에서 사용처 찾기</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">F7</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">현재 파일에서 사용처 강조</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⇧</span>+<span class="key">F7</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">사용처 팝업 표시 (Show Usages)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">F7</span></span>
+                </div>
+            </div>
+
+            <!-- 리팩토링 -->
+            <div class="shortcut-category">
+                <h2 class="category-title">리팩토링 (Refactoring)</h2>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">이름 변경 (Rename)</span>
+                    <span class="shortcut-keys"><span class="key">⇧</span>+<span class="key">F6</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">리팩토링 메뉴 표시 (Refactor This)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">T</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">복사 (Copy) / 이동 (Move)</span>
+                    <span class="shortcut-keys"><span class="key">F5</span> / <span class="key">F6</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">안전한 삭제 (Safe Delete)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌦</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">메서드 추출 (Extract Method)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">M</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">변수 추출 (Extract Variable)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">V</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">필드 추출 (Extract Field)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">F</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">상수 추출 (Extract Constant)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">C</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">파라미터 추출 (Extract Parameter)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">P</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">인라인 (Inline)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">N</span></span>
+                </div>
+            </div>
+
+            <!-- 디버깅 및 실행 -->
+            <div class="shortcut-category">
+                <h2 class="category-title">실행 및 디버그 (Run/Debug)</h2>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">프로젝트 빌드 (Build)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">F9</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">구성 선택 및 실행 (Run...)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">⌥</span>+<span class="key">R</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">구성 선택 및 디버그 (Debug...)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">⌥</span>+<span class="key">D</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">실행 (Run)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">R</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">디버그 (Debug)</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">D</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">브레이크포인트 토글</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">F8</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">Step Over / Step Into</span>
+                    <span class="shortcut-keys"><span class="key">F8</span> / <span class="key">F7</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">Smart Step Into / Step Out</span>
+                    <span class="shortcut-keys"><span class="key">⇧</span>+<span class="key">F7</span> / <span class="key">⇧</span>+<span class="key">F8</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">커서까지 실행 (Run to Cursor)</span>
+                    <span class="shortcut-keys"><span class="key">⌥</span>+<span class="key">F9</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">식 평가 (Evaluate Expression)</span>
+                    <span class="shortcut-keys"><span class="key">⌥</span>+<span class="key">F8</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">프로그램 재개 (Resume Program)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">R</span></span>
+                </div>
+            </div>
+
+            <!-- VCS / Git -->
+            <div class="shortcut-category">
+                <h2 class="category-title">버전 관리 (VCS/Git)</h2>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">변경사항 커밋 (Commit)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">K</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">변경사항 푸시 (Push)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⇧</span>+<span class="key">K</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">프로젝트 업데이트 (Pull)</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">T</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">VCS 오퍼레이션 팝업</span>
+                    <span class="shortcut-keys"><span class="key">⌃</span>+<span class="key">V</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">'변경' 도구 창 표시</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">9</span></span>
+                </div>
+            </div>
+
+            <!-- 라이브 템플릿 -->
+            <div class="shortcut-category">
+                <h2 class="category-title">라이브 템플릿 (Live Templates)</h2>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">라이브 템플릿 삽입</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">J</span></span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-description">라이브 템플릿으로 둘러싸기</span>
+                    <span class="shortcut-keys"><span class="key">⌘</span>+<span class="key">⌥</span>+<span class="key">J</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>더 많은 단축키는 <a href="https://resources.jetbrains.com/storage/products/webstorm/docs/WebStorm_ReferenceCard_macOS.pdf" target="_blank">WebStorm 공식 Reference Card (PDF)</a>를 참조하세요.</p>
+            <p>키보드 단축키 설정: <strong>⌘ + , (Keymap 검색)</strong></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
