@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>우주 배경 (Top-Bottom Distribution)</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        /* 위아래 양 끝에 색상을 주어 별들이 몰려 있는 영역을 강조합니다. */
+        background: linear-gradient(to bottom, #1a0b2e 0%, #000000 30%, #000000 70%, #0a1128 100%);
+        font-family: sans-serif;
+      }
+      #space-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+      .content-overlay {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        color: #fff;
+        pointer-events: none;
+      }
+      .title {
+        font-size: 3rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        margin-bottom: 1rem;
+      }
+      .subtitle {
+        font-size: 1.2rem;
+        font-weight: 300;
+        color: #b0b0d0;
+        text-shadow: 0 0 10px rgba(176, 176, 208, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="space-canvas"></canvas>
+
+    <div class="content-overlay">
+      <div class="title">TOP-BOTTOM GALAXY</div>
+      <div class="subtitle">위, 아래 양극단으로 별이 몰리는 형태 (모양: +, x 혼합)</div>
+    </div>
+
+    <script src="./galaxy.js"></script>
+    <script>
+      createGalaxyAnimation("space-canvas", {
+        starDistribution: "top-bottom", // 상, 하단으로 별 분포
+        starDistributionPower: 3,       // 몰림 강도 (크면 더 극단적)
+        starDensity: 4000,
+        flareShape: "both",             // '+' 모양과 'x' 모양 혼합 
+      });
+    </script>
+  </body>
+</html>

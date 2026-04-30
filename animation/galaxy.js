@@ -14,12 +14,13 @@
  * @param {number} [options.starTwinkleSpeed=1] - 별들이 깜빡이는(반짝이는) 속도 배수. ( 0.01 ~ 1: 작을수록 느려짐)
  * @param {number} [options.starTwinkleDelay=1000] - 별이 완전히 어두워진 후 다시 밝아지기까지 대기하는 기본 시간(프레임) 값이 커질수록 별이 오랫동안 꺼져 있음
  * @param {number} [options.starMinAlpha=0.03] - 별이 깜빡이지 않고 대기할 때의 최소 투명도 (0 ~ 1, 기본값 0.03). 값이 0이면 완전히 안 보입니다.
- * @param {number} [options.crossStarSizeThreshold=0.7] - 십자가(+) 모양으로 빛나기 위한 최소 크기 비율 (0 ~ 1, 기본값 0.7: 상위 30% 크기)
- * @param {number} [options.crossStarProbability=0.3] - 크기 기준을 만족하는 별 중 십자가(+)로 빛날 확률 (0 ~ 1, 기본값 0.3: 30% 확률)
- * @param {number} [options.crossStarSizeMultiplier=1] - 십자가(+) 모양의 화면상 길이 배수 (기본값 1). 더 길게 하려면 1보다 큰 값 입력.
+ * @param {number} [options.flareSizeThreshold=0.7] - 특수 모양(+, x)으로 빛나기 위한 최소 크기 비율 (0 ~ 1, 기본값 0.7: 상위 30% 크기)
+ * @param {number} [options.flareProbability=0.3] - 크기 기준을 만족하는 별 중 특수 모양으로 빛날 확률 (0 ~ 1, 기본값 0.3: 30% 확률)
+ * @param {number} [options.flareSizeMultiplier=1] - 특수 모양의 화면상 길이 배수 (기본값 1). 더 길게 하려면 1보다 큰 값 입력.
+ * @param {string} [options.flareShape='both'] - 빛나는 모양. '+', 'x', 'both'(+, X 혼합) 중 선택 (기본값 'both').
  * @param {string[]|null} [options.backgroundColors=null] - 우주 배경 그라디언트 색상 배열. null이면 캔버스 배경을 투명하게 비워두어 CSS로 배경을 제어할 수 있게 합니다.
  * @param {string} [options.backgroundType='radial'] - 배경 그라디언트 렌더링 타입. 'radial'(방사형) 또는 'linear'(선형) 선택.
- * @param {string} [options.starDistribution='uniform'] - 별들의 Y좌표(세로) 분포 형태. 'uniform'(균등 분포), 'top'(상단 밀집), 'bottom'(하단 밀집), 'center'(중앙 밀집) 중 선택.
+ * @param {string} [options.starDistribution='uniform'] - 별들의 Y좌표(세로) 분포 형태. 'uniform'(균등 분포), 'top'(상단 밀집), 'bottom'(하단 밀집), 'center'(중앙 밀집), 'top-bottom'(위아래 양극단 밀집) 중 선택.
  * @param {number} [options.starDistributionPower=1.5] - starDistribution이 'uniform'이 아닐 때 별들이 쏠리는 강도. 수치가 클수록 한쪽으로 더 극단적으로 몰립니다.
  * @returns {Object} { destroy: Function } - 캔버스 리사이즈 이벤트 리스너 제거 및 애니메이션 프레임 호출을 멈추는 메모리 해제용 정리(Clean-up) 객체를 반환합니다.
  */
@@ -48,9 +49,10 @@ function createGalaxyAnimation(canvasElement, options = {}) {
     starTwinkleSpeed: 1,
     starTwinkleDelay: 1000,
     starMinAlpha: 0.03,
-    crossStarSizeThreshold: 0.7,
-    crossStarProbability: 0.3,
-    crossStarSizeMultiplier: 1,
+    flareSizeThreshold: 0.7,
+    flareProbability: 0.3,
+    flareSizeMultiplier: 1,
+    flareShape: "both",
     backgroundColors: null,
     backgroundType: "radial",
     starDistribution: "uniform",
@@ -84,6 +86,17 @@ function createGalaxyAnimation(canvasElement, options = {}) {
       const shiftedRand = Math.abs(rand - 0.5) * 2; // 0 ~ 1
       const val = 1 - Math.pow(shiftedRand, 1 / power); // 0 근처로 몰림
       rand = 0.5 + sign * val * 0.5;
+    } else if (config.starDistribution === "top-bottom") {
+      // 0(위쪽)과 1(아래쪽) 양극단에 몰림
+      const isTop = rand < 0.5;
+      const shiftedRand = isTop ? rand * 2 : (rand - 0.5) * 2; // 0 ~ 1
+      if (isTop) {
+        // 0 근처로 몰림
+        rand = (1 - Math.pow(shiftedRand, 1 / power)) * 0.5;
+      } else {
+        // 1 근처로 몰림
+        rand = 0.5 + Math.pow(shiftedRand, 1 / power) * 0.5;
+      }
     }
 
     return rand * height;
@@ -120,14 +133,21 @@ function createGalaxyAnimation(canvasElement, options = {}) {
 
       this.twinkleWait = Math.random() * config.starTwinkleDelay; // 초기 랜덤 대기 시간 부여
 
-      // 설정된 크기 비율과 확률에 따라 십자가 모양 별로 지정
+      // 설정된 크기 비율과 확률에 따라 특수 모양(+, x) 별로 지정
       const sizeThreshold =
         config.starSize[0] +
-        (config.starSize[1] - config.starSize[0]) *
-          config.crossStarSizeThreshold;
-      this.isCrossStar =
-        this.radius > sizeThreshold &&
-        Math.random() < config.crossStarProbability;
+        (config.starSize[1] - config.starSize[0]) * config.flareSizeThreshold;
+      this.isFlareStar =
+        this.radius > sizeThreshold && Math.random() < config.flareProbability;
+
+      // X 또는 + 모양 결정
+      if (this.isFlareStar) {
+        if (config.flareShape === "both") {
+          this.flareShape = Math.random() < 0.5 ? "+" : "x";
+        } else {
+          this.flareShape = config.flareShape;
+        }
+      }
     }
 
     update() {
@@ -169,21 +189,29 @@ function createGalaxyAnimation(canvasElement, options = {}) {
 
       ctx.fill();
 
-      // 밝아질 때(alpha > 0.5) 십자가 모양 렌더링 (Lens flare 효과)
-      if (this.isCrossStar && this.alpha > 0.5) {
+      // 밝아질 때(alpha > 0.5) 특수 모양 렌더링 (Lens flare 효과)
+      if (this.isFlareStar && this.alpha > 0.5) {
         const glowRatio = (this.alpha - 0.5) / 0.5; // 0 ~ 1
-        const crossSize =
-          this.radius * 7 * glowRatio * config.crossStarSizeMultiplier; // 십자가 길이
-        const thickness = Math.max(0.2, this.radius * 0.15); // 십자가 두께
+        const flareSize =
+          this.radius * 7 * glowRatio * config.flareSizeMultiplier; // 빛나는 길이
+        const thickness = Math.max(0.2, this.radius * 0.15); // 선 두께
 
         ctx.globalAlpha = this.alpha * glowRatio;
 
         ctx.beginPath();
-        // 정중앙 정렬 보장을 위해 직선(stroke)으로 십자가 그림
-        ctx.moveTo(this.x - crossSize, this.y);
-        ctx.lineTo(this.x + crossSize, this.y);
-        ctx.moveTo(this.x, this.y - crossSize);
-        ctx.lineTo(this.x, this.y + crossSize);
+        // 정중앙 정렬 보장을 위해 직선(stroke)으로 +/X 그림
+        if (this.flareShape === "x") {
+          const offset = flareSize * 0.7071; // 대각선 길이 (sin 45deg)
+          ctx.moveTo(this.x - offset, this.y - offset);
+          ctx.lineTo(this.x + offset, this.y + offset);
+          ctx.moveTo(this.x - offset, this.y + offset);
+          ctx.lineTo(this.x + offset, this.y - offset);
+        } else {
+          ctx.moveTo(this.x - flareSize, this.y);
+          ctx.lineTo(this.x + flareSize, this.y);
+          ctx.moveTo(this.x, this.y - flareSize);
+          ctx.lineTo(this.x, this.y + flareSize);
+        }
 
         ctx.lineWidth = thickness * 2;
         ctx.strokeStyle = this.color;
