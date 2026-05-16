@@ -176,6 +176,8 @@ cheat_teleport x:2778 y:675 z:100 라타이 결투장쪽 입구
 
 cheat_teleport x:2538 y:558 z:80 라타이 광장
 
+cheat_teleport x:2554 y:462 z:68 라타이 숙소
+
 cheat_teleport x:2458 y:699 z:29 라타이 테레사
 
 cheat_teleport x:871 y:1165 z:31 사사우 교회
