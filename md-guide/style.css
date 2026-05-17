@@ -212,6 +212,13 @@ main {
   font-weight: 800;
 }
 
+.editor-wrap {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 #markdown-input {
   width: 100%;
   flex: 1 1 auto;
@@ -226,6 +233,63 @@ main {
   font-size: 14px;
   line-height: 1.7;
   outline: none;
+}
+
+.copy-markdown-btn {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  color: #ffffff;
+  background: var(--brand);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.copy-markdown-btn svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.copy-markdown-btn:hover,
+.copy-markdown-btn:focus-visible {
+  background: #0f5369;
+  outline: none;
+}
+
+.copy-markdown-btn .tooltip-text {
+  position: absolute;
+  right: 50px;
+  bottom: 50%;
+  width: max-content;
+  max-width: 160px;
+  padding: 6px 8px;
+  color: #ffffff;
+  background: #17202a;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(50%);
+  transition: opacity 0.14s ease;
+}
+
+.copy-markdown-btn:hover .tooltip-text,
+.copy-markdown-btn:focus-visible .tooltip-text {
+  opacity: 1;
 }
 
 #markdown-input:focus {

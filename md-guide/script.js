@@ -47,6 +47,7 @@ copyButtons.forEach((button) => {
 const markdownInput = document.getElementById("markdown-input");
 const markdownPreview = document.getElementById("markdown-preview");
 const resetSampleButton = document.getElementById("reset-sample");
+const copyMarkdownButton = document.getElementById("copy-markdown");
 const tabButtons = document.querySelectorAll("[data-tab]");
 const tabPanels = document.querySelectorAll(".tab-panel");
 const guideLinks = document.querySelectorAll(".guide-tabs a");
@@ -289,6 +290,26 @@ if (resetSampleButton && markdownInput) {
   resetSampleButton.addEventListener("click", () => {
     markdownInput.value = sampleMarkdown;
     updatePreview();
+  });
+}
+
+if (copyMarkdownButton && markdownInput) {
+  copyMarkdownButton.addEventListener("click", async () => {
+    const tooltip = copyMarkdownButton.querySelector(".tooltip-text");
+    const original = tooltip ? tooltip.textContent : "";
+
+    try {
+      await navigator.clipboard.writeText(markdownInput.value);
+      if (tooltip) tooltip.textContent = "복사 완료";
+    } catch (error) {
+      markdownInput.select();
+      document.execCommand("copy");
+      if (tooltip) tooltip.textContent = "복사 완료";
+    }
+
+    setTimeout(() => {
+      if (tooltip) tooltip.textContent = original;
+    }, 1200);
   });
 }
 
