@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="금융 IT 및 증권사 MTS/HTS 화면 개발 솔루션 스마트 폼디 실전 소스 분석 및 작성 가이드 (Lua Script 문법)">
+    <title>스마트 폼디 Lua 기반 소스 분석 및 작성 가이드</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header" id="appHeader">
+        <div class="header-container">
+            <div class="brand">
+                <i class="fa-solid fa-moon brand-icon" aria-hidden="true"></i>
+                <span class="brand-name">SmartForm<span>LuaGuide</span></span>
+            </div>
+            
+            <div class="header-controls">
+                <!-- Search Box -->
+                <div class="search-box">
+                    <label for="searchInput" class="sr-only">가이드 검색</label>
+                    <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+                    <input type="search" id="searchInput" placeholder="Lua 분석 팁 검색..." aria-label="가이드 내용 검색">
+                </div>
+
+                <!-- Theme Toggle Button -->
+                <button type="button" id="themeToggleBtn" class="theme-toggle-btn" aria-label="다크 모드 전환" aria-live="polite">
+                    <i class="fa-solid fa-moon moon-icon" aria-hidden="true"></i>
+                    <i class="fa-solid fa-sun sun-icon" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar" id="appSidebar">
+            <nav class="sidebar-nav" aria-label="문서 목차">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#lua-core" class="nav-link active" id="navLinkCore">
+                            <i class="fa-solid fa-gears" aria-hidden="true"></i>
+                            <span>1. Lua 기본 문법 및 연산자</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#json-dataset" class="nav-link" id="navLinkJson">
+                            <i class="fa-solid fa-braces-asterisk" aria-hidden="true"></i>
+                            <span>2. JSON 파싱 & 테이블 제어</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tr-grid" class="nav-link" id="navLinkTr">
+                            <i class="fa-solid fa-table-list" aria-hidden="true"></i>
+                            <span>3. TR 송수신 & 컴포넌트 제어</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#defensive-coding" class="nav-link" id="navLinkDefensive">
+                            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                            <span>4. 예외 방지 (Defensive)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#practical-tips" class="nav-link" id="navLinkTips">
+                            <i class="fa-solid fa-terminal" aria-hidden="true"></i>
+                            <span>5. 실무 분석 치트시트</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content Port -->
+        <main class="app-content" id="mainContent">
+            <!-- Section 1: Lua Core -->
+            <section id="lua-core" class="content-section card-glass" aria-labelledby="headingCore">
+                <h1 id="headingCore" class="section-title">1. Lua 스크립트 핵심 문법 대조표</h1>
+                <div class="section-body">
+                    <p class="lead-text">
+                        자바스크립트나 일반 언어에 익숙한 개발자가 루아 소스코드를 처음 볼 때 헷갈리기 쉬운 연산자와 기본 문법의 차이점입니다.
+                    </p>
+                    
+                    <div class="doc-sources-table-container">
+                        <table class="doc-sources-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">비교 항목</th>
+                                    <th scope="col">JavaScript 문법</th>
+                                    <th scope="col">스마트 폼디 Lua 문법</th>
+                                    <th scope="col">주요 특징 및 주의점</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>주석 (Comment)</strong></td>
+                                    <td><code>// 단일행</code><br><code>/* 다중행 */</code></td>
+                                    <td><code>-- 단일행</code><br><code>--[[ 다중행 ]]--</code></td>
+                                    <td>하이픈 두 개(<code>--</code>)로 시작합니다.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>대입 연산자</strong></td>
+                                    <td><code>=</code></td>
+                                    <td><code>=</code></td>
+                                    <td>동일합니다.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>비교 연산자</strong></td>
+                                    <td><code>==</code>, <code>!=</code>, <code>===</code></td>
+                                    <td><code>==</code>, <code>~=</code></td>
+                                    <td><strong>같지 않음은 <code>~=</code></strong> 입니다. <code>!=</code>는 문법 에러를 유발합니다.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>문자열 연결</strong></td>
+                                    <td><code>+</code> 또는 <code>`tpl ${val}`</code></td>
+                                    <td><code>..</code></td>
+                                    <td>문자열 결합은 반드시 <strong><code>..</code></strong> 연산자를 사용해야 합니다.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>빈 값 / 널</strong></td>
+                                    <td><code>null</code>, <code>undefined</code></td>
+                                    <td><code>nil</code></td>
+                                    <td>값이 비어있거나 객체가 정의되지 않았으면 <strong><code>nil</code></strong>입니다.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>논리 연산자</strong></td>
+                                    <td><code>&&</code>, <code>||</code>, <code>!</code></td>
+                                    <td><code>and</code>, <code>or</code>, <code>not</code></td>
+                                    <td>영어 단어 그대로 사용합니다. (예: <code>if a and not b then</code>)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>지역 변수</strong></td>
+                                    <td><code>let</code>, <code>const</code></td>
+                                    <td><code>local</code></td>
+                                    <td>함수나 블록 내에서만 유효한 변수는 <code>local</code>로 선언합니다.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="info-alert warning" role="alert">
+                        <div class="alert-icon">
+                            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                        </div>
+                        <div class="alert-content">
+                            <strong>중요 (1-Based Indexing):</strong> 루아에서는 배열(Table)의 인덱스가 0이 아닌 <strong>1</strong>부터 시작합니다. 루프를 돌거나 첫 번째 요소에 접근할 때 <code>tArray[1]</code>을 사용해야 함에 극히 유의해야 합니다.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: JSON & Table -->
+            <section id="json-dataset" class="content-section card-glass" aria-labelledby="headingJson">
+                <h2 id="headingJson" class="section-title">2. JSON 데이터 파싱 및 테이블(Table) 제어</h2>
+                <div class="section-body">
+                    <p class="lead-text">서버나 다른 모듈로부터 수신한 JSON 문자열 파라미터를 파싱하고 테이블 구조로 순회하는 상세 코드 가이드입니다.</p>
+
+                    <h3>1) JSON 문자열 파싱 (json.parse)</h3>
+                    <p>전달인자로 넘어온 <code>sParam</code>이 JSON 포맷 문자열일 경우, Lua 테이블로 변환하는 정석 코드입니다.</p>
+                    <div class="code-block-wrapper">
+                        <pre><code>-- sParam: {"acct_info": {"accno": "1234", "acct_type": "RIA", "pnsn_no": nil}}
+local sLen = string.len(sParam) -- 문자열 길이 계산
+
+-- json.parse(대상스트링, 시작위치, 파싱할길이)
+local tJson = json.parse(sParam, 1, sLen)
+
+if tJson == nil then
+    print("JSON 파싱 에러 발생")
+    return
+end
+
+local tAcct = tJson["acct_info"]</code></pre>
+                    </div>
+
+                    <h3>2) 테이블(Table)의 유형과 다루는 법</h3>
+                    <p>루아는 유일한 자료구조로 테이블을 제공합니다. 이는 Key-Value 맵(객체)과 인덱스 리스트(배열) 역할을 모두 수행합니다.</p>
+                    
+                    <div class="grid-two-cols">
+                        <div class="info-card">
+                            <h3><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Key-Value 맵 형태</h3>
+                            <p>키를 이용해 값에 접근하거나 테이블 속성 형태로도 조회할 수 있습니다.</p>
+                            <div class="code-block-wrapper" style="margin-top: 12px; padding: 10px;">
+                                <pre style="font-size: 0.8rem;"><code>local tMap = {}
+tMap["key"] = "value"
+tMap.name = "홍길동" -- . 연산자 가능
+
+print(tMap["key"]) -- 출력: value
+print(tMap.name)   -- 출력: 홍길동</code></pre>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <h3><i class="fa-solid fa-list-ol" aria-hidden="true"></i> 인덱스 배열 형태 (1-based)</h3>
+                            <p>배열 크기는 <code>#</code> 기호를 붙여 구하며, 순회 시 <code>ipairs</code>를 사용합니다.</p>
+                            <div class="code-block-wrapper" style="margin-top: 12px; padding: 10px;">
+                                <pre style="font-size: 0.8rem;"><code>local tList = {"Apple", "Banana", "Cherry"}
+
+print(#tList) -- 출력: 3 (배열의 크기)
+print(tList[1]) -- 출력: Apple (첫번째 요소)
+
+-- 순차 순회 (index, value)
+for idx, val in ipairs(tList) do
+    print(idx .. ": " .. val)
+end</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: TR & Grid -->
+            <section id="tr-grid" class="content-section card-glass" aria-labelledby="headingTr">
+                <h2 id="headingTr" class="section-title">3. 비동기 TR 통신 및 계층형 UI 컴포넌트 제어</h2>
+                <div class="section-body">
+                    <p class="lead-text">네이티브 폼디 통신 API(SendTransaction 등) 호출 예제와 컴포넌트 속성(visible, caption)을 연동하는 실전 프로세스입니다.</p>
+
+                    <div class="step-guide-container">
+                        <!-- Step 1 -->
+                        <div class="step-guide-item">
+                            <div class="step-badge">호출</div>
+                            <div class="step-detail">
+                                <h4>1) 입력값 체크 및 파라미터 JSON 구성 후 TR 요청</h4>
+                                <p>입력 컴포넌트의 텍스트가 유효한지 확인하고 파라미터를 인코딩하여 비동기 전송을 보냅니다.</p>
+                                <div class="code-block-wrapper">
+                                    <pre><code>function f_RequestStockSearch()
+    -- UI 컴포넌트 텍스트 획득
+    local sCode = edtStockCode.text
+    
+    if sCode == nil or sCode == "" then
+        MessageBox("종목코드를 입력해주세요.")
+        return
+    end
+
+    -- 요청 데이터 테이블 선언
+    local tReq = {}
+    tReq["stock_code"] = sCode
+    tReq["search_type"] = "1"
+
+    -- 테이블을 JSON 문자열로 인코딩
+    local sParam = json.stringify(tReq)
+
+    -- 통신 공통 함수 호출 (TR코드, 입력파라미터, 콜백함수명)
+    SendTransaction("TR_STOCK_PRICE_SEARCH", sParam, "OnTrCallback")
+end</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="step-guide-item">
+                            <div class="step-badge">콜백</div>
+                            <div class="step-detail">
+                                <h4>2) 콜백 함수 분석 및 계층형 UI 제어</h4>
+                                <p>수신된 데이터를 기반으로 특정 UI 컨테이너의 가시성을 변경하고, 라벨에 텍스트를 대입합니다.</p>
+                                <div class="code-block-wrapper">
+                                    <pre><code>-- 비동기 통신 콜백 함수 정의
+function OnTrCallback(sTrId, nErrCode, sErrMsg)
+    if nErrCode &lt; 0 then
+        MessageBox("통신 실패: " .. (sErrMsg or "알 수 없는 에러"))
+        return
+    end
+
+    if sTrId == "TR_STOCK_PRICE_SEARCH" then
+        -- 캡처화면 계층형 UI 조작 유형
+        -- 1) visible 속성을 이용한 컴포넌트 가시화 및 은폐
+        contScrollV.visible = true
+        contStart.visible = false
+        
+        -- 2) JSON 파싱 후 라벨 caption 갱신
+        local tResult = json.parse(sErrMsg, 1, string.len(sErrMsg))
+        local sPrice = tResult["price"]
+        
+        contScrollV.lblCurrentPrice.caption = sPrice
+        
+        -- 3) 그리드나 리스트 뷰가 비어있을 때 에러 메시지 설정
+        if tResult["count"] == 0 then
+            contScrollV.pannList.SetEmptyMessage("해당 조건의 데이터가 없습니다.")
+        end
+    end
+end</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Defensive Coding -->
+            <section id="defensive-coding" class="content-section card-glass" aria-labelledby="headingDefensive">
+                <h2 id="headingDefensive" class="section-title">4. 루아 스크립트 예외 예방 (Defensive Coding)</h2>
+                <div class="section-body">
+                    <p class="lead-text">루아 스크립트 실행 중 자주 터지는 런타임 오류(Crash)를 예방하고 소스 코드의 신뢰성을 높이기 위한 설계 기법입니다.</p>
+
+                    <div class="grid-two-cols">
+                        <div class="info-card">
+                            <h3><i class="fa-solid fa-triangle-exclamation text-primary" aria-hidden="true"></i> 1. "attempt to index a nil value" 방지</h3>
+                            <p>중첩된 테이블(예: <code>tObj.subObj.value</code>)을 검사할 때, <code>subObj</code>가 nil인 경우 즉시 크래시가 발생합니다. 단축 평가(Short-circuit evaluation)를 이용해 널체크를 연속적으로 수행해야 합니다.</p>
+                            <div class="code-block-wrapper" style="margin-top: 12px; padding: 10px;">
+                                <pre style="font-size: 0.8rem;"><code>-- 위험한 코드
+local val = tAcct["sub"]["accno"] -- sub가 nil이면 에러!
+
+-- 안전한 방어 코드
+local sAccNo = ""
+if tAcct and tAcct["sub"] and tAcct["sub"]["accno"] then
+    sAccNo = tAcct["sub"]["accno"]
+end</code></pre>
+                            </div>
+                        </div>
+                        <div class="info-card">
+                            <h3><i class="fa-solid fa-percent text-primary" aria-hidden="true"></i> 2. 산술 연산 시의 nil 대리값 지정</h3>
+                            <p>연산식(<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>)의 대상 중 하나라도 nil일 경우 스크립트 실행이 중단됩니다. <code>or</code> 키워드를 사용하여 기본값(Default)을 명시적으로 대리 지정해 줍니다.</p>
+                            <div class="code-block-wrapper" style="margin-top: 12px; padding: 10px;">
+                                <pre style="font-size: 0.8rem;"><code>-- 위험한 코드
+local total = g_nQryTp + tData["count"] -- count가 nil이면 에러!
+
+-- 안전한 방어 코드
+-- count가 nil일 경우 0으로 자동 치환
+local total = (g_nQryTp or 0) + (tData["count"] or 0)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Practical Tips -->
+            <section id="practical-tips" class="content-section card-glass" aria-labelledby="headingTips">
+                <h2 id="headingTips" class="section-title">5. HTS/MTS 루아 소스 분석 치트시트 (Cheat Sheet)</h2>
+                <div class="section-body">
+                    <p class="lead-text">실제 소스 코드를 열었을 때 특정 변수나 함수를 즉시 역추적하여 흐름을 찾아내기 위한 키워드 사전입니다.</p>
+
+                    <div class="accordion-group">
+                        <div class="accordion-item">
+                            <button type="button" class="accordion-trigger" aria-expanded="true" aria-controls="tip1" id="tipBtn1">
+                                <span>1) 특정 UI 컴포넌트가 어디서 보여지고 숨겨지는지 추적할 때</span>
+                                <i class="fa-solid fa-chevron-down acc-arrow" aria-hidden="true"></i>
+                            </button>
+                            <div id="tip1" class="accordion-content" aria-labelledby="tipBtn1" role="region">
+                                <p>해당 컴포넌트의 ID(예: <code>lblInvestingTitle</code>)를 프로젝트 폴더 전체에서 검색한 후, 그 뒷부분에 <strong><code>.visible = false</code></strong> 또는 <strong><code>.visible = true</code></strong> 가 선언된 라인을 일괄 필터링합니다. 조건문(`if then`) 블록에 걸쳐있는 로직을 함께 스캔하여 비즈니스 분기 기준을 밝혀냅니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="tip2" id="tipBtn2">
+                                <span>2) 서버에 보내는 입력 파라미터 구조를 역설계할 때</span>
+                                <i class="fa-solid fa-chevron-down acc-arrow" aria-hidden="true"></i>
+                            </button>
+                            <div id="tip2" class="accordion-content" aria-labelledby="tipBtn2" role="region" hidden>
+                                <p>통신 요청 함수(예: <code>SendTransaction</code>)에 두 번째 매개변수로 들어가는 변수명을 추적합니다. 해당 변수가 <code>json.stringify(tReq)</code> 형태로 인코딩되기 전에 <code>tReq["컬럼명"] = 값</code> 형식으로 대입되고 있는 블록을 찾아내면 서버로 송신되는 데이터 스키마를 정의할 수 있습니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <button type="button" class="accordion-trigger" aria-expanded="false" aria-controls="tip3" id="tipBtn3">
+                                <span>3) 테이블의 디버깅 값을 콘솔 로그로 완벽하게 출력하고 싶을 때</span>
+                                <i class="fa-solid fa-chevron-down acc-arrow" aria-hidden="true"></i>
+                            </button>
+                            <div id="tip3" class="accordion-content" aria-labelledby="tipBtn3" role="region" hidden>
+                                <p>루아 테이블은 일반적인 `print(tAcct)`로는 메모리 주소값(<code>table: 0x...</code>)만 출력됩니다. 테이블 내부의 값을 사람이 읽을 수 있게 출력하려면 반드시 <strong><code>print(json.stringify(tAcct))</code></strong> 또는 해당 솔루션이 제공하는 JSON 스트링 변환 유틸을 사용해 텍스트로 인코딩한 뒤 찍어야 합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>&copy; 2026 Smart Form Designer Code Analysis Support Dashboard (Lua Script Base).</p>
+    </footer>
+
+    <!-- Custom Script -->
+    <script src="script.js"></script>
+</body>
+</html>
